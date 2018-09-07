@@ -44,7 +44,7 @@ namespace BaseLibrary.Utility
 
 		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle rectangle, Color? bgColor = null, Color? borderColor = null)
 		{
-			spriteBatch.DrawPanel(rectangle, TexturePanelBackground, bgColor ?? PanelColor);
+			spriteBatch.DrawPanel(rectangle, TexturePanelBackground, bgColor ?? ColorPanel);
 			spriteBatch.DrawPanel(rectangle, TexturePanelBorder, borderColor ?? Color.Black);
 		}
 

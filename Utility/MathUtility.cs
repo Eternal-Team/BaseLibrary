@@ -37,7 +37,9 @@ namespace BaseLibrary.Utility
 		}
 
 		public static Point16 Min(this Point16 point, Point16 compareTo) => new Point16(point.X > compareTo.X ? compareTo.X : point.X, point.Y > compareTo.Y ? compareTo.Y : point.Y);
+
 		public static T Min<T>(params T[] values) => values.Min();
+
 		public static T Max<T>(params T[] values) => values.Max();
 
 		public static T Clamp<T>(this T value, T min, T max)

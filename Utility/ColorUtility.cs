@@ -5,11 +5,11 @@ namespace BaseLibrary.Utility
 {
 	public static partial class Utility
 	{
-		public static readonly Color PanelColor_Selected = new Color(51, 65, 119);
-		public static readonly Color PanelColor_Hover = new Color(94, 120, 221);
-		public static readonly Color PanelColor = new Color(73, 94, 171);
+		public static readonly Color ColorPanel = new Color(73, 94, 171);
+		public static readonly Color ColorPanel_Selected = new Color(51, 65, 119);
+		public static readonly Color ColorPanel_Hovered = new Color(94, 120, 221);
 
-		public static readonly Color[] CoinColors =
+		public static readonly Color[] ColorCoins =
 		{
 			new Color(246, 138, 96),
 			new Color(181, 192, 193),

@@ -14,8 +14,11 @@ namespace BaseLibrary.Utility
 	{
 		public static readonly Regex colorGetText = new Regex(@"(?<=\[c\/\w{6}:)[^]]*(?=\])");
 		public static readonly Regex colorGetTag = new Regex(@"\[c\/\w{6}:[^]]*\]");
+
 		public static string ReplaceTagWithText(Match m) => colorGetText.Match(colorGetTag.Match(m.Value).Value).Value;
+
 		public static string ExtractText(string withTag) => colorGetTag.Replace(withTag, ReplaceTagWithText);
+
 		public static Vector2 Measure(this string text, DynamicSpriteFont font = null) => (font ?? Main.fontMouseText).MeasureString(text);
 
 		public static string Subscript(this int number)

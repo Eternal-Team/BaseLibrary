@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BaseLibrary.Utility
@@ -11,6 +12,8 @@ namespace BaseLibrary.Utility
 
 		public static int[,] To2DArray(this IList<int> arr, int width, int height)
 		{
+			if (arr.Count < width * height) throw new Exception("List does not contain enough elements");
+
 			int[,] newArr = new int[width, height];
 			for (int i = 0; i < width; i++)
 			{
@@ -23,9 +26,6 @@ namespace BaseLibrary.Utility
 			return newArr;
 		}
 
-		public static string Aggregate(this IEnumerable<string> enumerable, string joinSequence = ";")
-		{
-			return enumerable.Any() ? enumerable.Aggregate((x, y) => x + joinSequence + y) : string.Empty;
-		}
+		public static string Aggregate(this IEnumerable<string> enumerable, string joinSequence = ";") => enumerable.Any() ? enumerable.Aggregate((x, y) => x + joinSequence + y) : string.Empty;
 	}
 }
