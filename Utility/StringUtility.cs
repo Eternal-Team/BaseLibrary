@@ -32,5 +32,11 @@ namespace BaseLibrary.Utility
 			Type type = typeof(LocalizedText);
 			return (LocalizedText)type.Assembly.CreateInstance(type.FullName, false, BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] { translation.Key, translation.GetTranslation(Language.ActiveCulture.LegacyId) }, null, null);
 		}
+
+		public static ModTranslation SetDefault(this ModTranslation translation, string value)
+		{
+			translation.SetDefault(value);
+			return translation;
+		}
 	}
 }

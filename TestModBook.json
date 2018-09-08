@@ -1,0 +1,12 @@
+{
+  "Categories": [
+    {
+      "Name": "Category1",
+      "Texture": "Terraria/Item_149"
+    },
+    {
+      "Name": "Category2",
+      "Texture": "BaseLibrary/Textures/Placeholder"
+    }
+  ]
+}

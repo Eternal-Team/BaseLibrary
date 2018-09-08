@@ -79,5 +79,7 @@ namespace BaseLibrary.Utility
 		}
 
 		public static bool InTriangle(this Point point, Point[] array) => point.InTriangle(array[0], array[1], array[2]);
+
+		public static float ToRadians(this float angle) => (float)(Math.PI / 180f * angle);
 	}
 }

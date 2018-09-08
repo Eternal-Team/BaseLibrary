@@ -44,6 +44,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria [Modded]\Microsoft.Xna.Framework.Graphics.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\tModLoader\src\tModLoader\Terraria.Libraries\JSON.NET\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="ReLogic">
       <HintPath>..\..\..\tModLoader\references\ReLogic.dll</HintPath>
     </Reference>
@@ -64,7 +68,19 @@
     <Compile Include="Items\BaseItem.cs" />
     <Compile Include="Items\DevItem.cs" />
     <Compile Include="Items\LightedWall.cs" />
+    <Compile Include="ModBook\ModBookCategory.cs" />
+    <Compile Include="ModBook\CategoryConverter.cs" />
+    <Compile Include="ModBook\ModBookLoader.cs" />
+    <Compile Include="ModBook\ModBookUI.cs" />
+    <Compile Include="ModBook\ModBook.cs" />
+    <Compile Include="ModBook\TestModBook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\BaseElement.cs" />
+    <Compile Include="UI\BaseUI.cs" />
+    <Compile Include="UI\Elements\UIButton.cs" />
+    <Compile Include="UI\Elements\UIPanel.cs" />
+    <Compile Include="UI\GUI.cs" />
+    <Compile Include="UI\ScaleMode.cs" />
     <Compile Include="Utility\CollectionUtility.cs" />
     <Compile Include="Utility\InputUtility.cs" />
     <Compile Include="Utility\ItemUtility.cs" />
@@ -74,6 +90,7 @@
     <Compile Include="Utility\StringUtility.cs" />
     <Compile Include="Utility\TileUtility.cs" />
     <Compile Include="Utility\ColorUtility.cs" />
+    <Compile Include="Utility\UIUtility.cs" />
     <Compile Include="Utility\Utility.cs" />
     <Compile Include="Utility\WorldUtility.cs" />
     <Compile Include="Walls\LightedWall.cs" />
@@ -81,11 +98,11 @@
   <ItemGroup>
     <Content Include="build.txt" />
     <Content Include="description.txt" />
-    <Content Include="Textures\Items\LightedWall.png" />
     <Content Include="Textures\Placeholder.png" />
-    <Content Include="Textures\Walls\LightedWall.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="TestModBook.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"C:\Program Files (x86)\Steam\steamapps\content\app_105600\depot_105601\tModLoaderServer.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>

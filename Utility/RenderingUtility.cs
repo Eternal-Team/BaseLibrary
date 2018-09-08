@@ -170,5 +170,48 @@ namespace BaseLibrary.Utility
 				}
 			}
 		}
+
+		#region SpriteBatch
+		public static RasterizerState OverflowHiddenState = new RasterizerState
+		{
+			CullMode = CullMode.None,
+			ScissorTestEnable = true
+		};
+
+		public static void DrawImmediate(this SpriteBatch spriteBatch, Action<SpriteBatch> drawAction)
+		{
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenState, null, Main.UIScaleMatrix);
+			drawAction.Invoke(spriteBatch);
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenState, null, Main.UIScaleMatrix);
+		}
+
+		public static void DrawOverflowHidden(this SpriteBatch spriteBatch, UIElement uiElement, Action<SpriteBatch> drawAction)
+		{
+			Rectangle scissorRectangle = spriteBatch.GraphicsDevice.ScissorRectangle;
+			RasterizerState rasterizerState = spriteBatch.GraphicsDevice.RasterizerState;
+			SamplerState anisotropicClamp = SamplerState.AnisotropicClamp;
+
+			spriteBatch.End();
+			Rectangle clippingRectangle = uiElement.GetClippingRectangle(spriteBatch);
+			Rectangle adjustedClippingRectangle = Rectangle.Intersect(clippingRectangle, spriteBatch.GraphicsDevice.ScissorRectangle);
+			spriteBatch.GraphicsDevice.ScissorRectangle = adjustedClippingRectangle;
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, anisotropicClamp, DepthStencilState.None, OverflowHiddenState, null, Main.UIScaleMatrix);
+
+			drawAction.Invoke(spriteBatch);
+
+			rasterizerState = spriteBatch.GraphicsDevice.RasterizerState;
+			spriteBatch.End();
+			spriteBatch.GraphicsDevice.ScissorRectangle = scissorRectangle;
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, anisotropicClamp, DepthStencilState.None, rasterizerState, null, Main.UIScaleMatrix);
+		}
+
+		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position) => spriteBatch.Draw(texture, position, Color.White);
+
+		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Rectangle rectangle) => spriteBatch.Draw(texture, rectangle, Color.White);
+
+		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, CalculatedStyle dimensions, Color? color = null) => spriteBatch.Draw(texture, dimensions.ToRectangle(), color ?? Color.White);
+		#endregion
 	}
 }
