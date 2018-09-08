@@ -1,4 +1,4 @@
-﻿author = Eternal Team
+﻿author = Itorius & team
 version = 0.0.1
 displayName = Base Library
 homepage = http://forums.terraria.org/index.php?threads/itorius-mods.42289/
