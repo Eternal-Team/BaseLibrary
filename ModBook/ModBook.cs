@@ -10,7 +10,7 @@ namespace BaseLibrary.ModBook
 		public string Name { get; internal set; }
 		public Mod Mod { get; internal set; }
 
-		public List<Category> Categories = new List<Category>();
+		public List<Category> Categories { get; set; } = new List<Category>();
 
 		// note: possibly move to ModBookLoader, add support for further images (in-text, header's, etc.)
 

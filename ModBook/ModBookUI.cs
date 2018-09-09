@@ -1,4 +1,5 @@
-﻿using BaseLibrary.UI.Elements;
+﻿using BaseLibrary.UI;
+using BaseLibrary.UI.Elements;
 using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -34,7 +35,7 @@ namespace BaseLibrary.ModBook
 			int index = 0;
 			foreach (Category category in modBook.Categories)
 			{
-				UIButton categoryButton = new UIButton(category.GetTexture());
+				UIButton categoryButton = new UIButton(category.GetTexture(), ScaleMode.Zoom);
 				categoryButton.Width.Pixels = 40;
 				categoryButton.Height.Pixels = 40;
 				categoryButton.Left.Pixels = 8;

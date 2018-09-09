@@ -49,9 +49,8 @@ namespace BaseLibrary.ModBook
 
 			modBook.Initialize();
 
-			string s = Encoding.Default.GetString(ModLoader.GetFileBytes($"{mod.Name}/{name}.json"));
-
-			JsonConvert.PopulateObject(s, modBook, new JsonSerializerSettings { ContractResolver = new ModBookContractResolver(mod) });
+			string json = Encoding.Default.GetString(ModLoader.GetFileBytes($"{mod.Name}/{name}.json"));
+			JsonConvert.PopulateObject(json, modBook, new JsonSerializerSettings { Converters = { new CategoryConverter(mod) } });
 		}
 	}
 }

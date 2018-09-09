@@ -68,8 +68,8 @@
     <Compile Include="Items\BaseItem.cs" />
     <Compile Include="Items\DevItem.cs" />
     <Compile Include="Items\LightedWall.cs" />
-    <Compile Include="ModBook\ModBookCategory.cs" />
     <Compile Include="ModBook\CategoryConverter.cs" />
+    <Compile Include="ModBook\ModBookCategory.cs" />
     <Compile Include="ModBook\ModBookLoader.cs" />
     <Compile Include="ModBook\ModBookUI.cs" />
     <Compile Include="ModBook\ModBook.cs" />

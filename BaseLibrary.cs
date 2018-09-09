@@ -1,7 +1,7 @@
-﻿using System;
+﻿using BaseLibrary.ModBook;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using BaseLibrary.ModBook;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
