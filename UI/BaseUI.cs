@@ -1,5 +1,6 @@
 ﻿using BaseLibrary.UI.Elements;
 using BaseLibrary.Utility;
+using BaseLibrary.Utility.Swapping;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -15,6 +16,7 @@ namespace TheOneLibrary.Base.UI
 		{
 			panelMain.OnMouseDown += DragStart;
 			panelMain.OnMouseUp += DragEnd;
+			panelMain.SetPadding(0f);
 			Initialize();
 			Append(panelMain);
 		}
@@ -42,10 +44,12 @@ namespace TheOneLibrary.Base.UI
 		{
 			if (panelMain.ContainsPoint(Main.MouseScreen))
 			{
+				SwappingHotbar.InUI = true;
 				Main.LocalPlayer.mouseInterface = true;
 				Main.LocalPlayer.showItemIcon = false;
 				Main.ItemIconCacheUpdate(0);
 			}
+			else SwappingHotbar.InUI = false;
 
 			if (dragging)
 			{

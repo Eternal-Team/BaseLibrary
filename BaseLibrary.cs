@@ -1,7 +1,8 @@
-﻿using BaseLibrary.ModBook;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BaseLibrary.ModBook;
+using BaseLibrary.Utility.Swapping;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -22,6 +23,8 @@ namespace BaseLibrary
 		{
 			this.LoadTextures();
 			ModBookLoader.Load();
+
+			Swap(typeof(Player), "HandleHotbar", typeof(SwappingHotbar), "HandleHotbar");
 
 			MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", DrawMouseText, InterfaceScaleType.UI);
 

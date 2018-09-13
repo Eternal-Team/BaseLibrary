@@ -38,8 +38,24 @@ namespace BaseLibrary.UI.Elements
 			CalculatedStyle dimensions = GetDimensions();
 			if (texture != null)
 			{
-				if (scaleMode == ScaleMode.Stretch) spriteBatch.Draw(texture, dimensions);
-				else if (scaleMode == ScaleMode.Zoom) spriteBatch.Draw(texture, dimensions.Position(), null, Color.White, 0f, Vector2.Zero, Math.Min(dimensions.Width / texture.Width, dimensions.Height / texture.Height), SpriteEffects.None, 0f);
+				spriteBatch.End();
+				spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+
+				switch (scaleMode)
+				{
+					case ScaleMode.Stretch:
+						spriteBatch.Draw(texture, dimensions);
+						break;
+					case ScaleMode.Zoom:
+						spriteBatch.Draw(texture, dimensions.Position(), null, Color.White, 0f, Vector2.Zero, Math.Min(dimensions.Width / texture.Width, dimensions.Height / texture.Height), SpriteEffects.None, 0f);
+						break;
+					case ScaleMode.None:
+						spriteBatch.Draw(texture, dimensions.Position());
+						break;
+				}
+
+				spriteBatch.End();
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 			}
 		}
 	}

@@ -3,6 +3,7 @@
 	public enum ScaleMode
 	{
 		Stretch,
-		Zoom
+		Zoom,
+		None
 	}
 }

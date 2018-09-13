@@ -36,4 +36,4 @@ obj/*
 lib/*
 
 .vs/
-Utility/SwappingUtility.cs
+Utility/Swapping/*

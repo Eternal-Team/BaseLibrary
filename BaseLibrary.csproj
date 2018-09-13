@@ -32,6 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlRenderer, Version=1.5.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\HtmlRenderer.Core.1.5.0.5\lib\net45\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.WinForms, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\HtmlRenderer.Mono.1.5.0.6\lib\net45\HtmlRenderer.WinForms.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria [Modded]\Microsoft.Xna.Framework.dll</HintPath>
@@ -53,6 +59,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,7 +86,9 @@
     <Compile Include="UI\BaseElement.cs" />
     <Compile Include="UI\BaseUI.cs" />
     <Compile Include="UI\Elements\UIButton.cs" />
+    <Compile Include="UI\Elements\UIGrid.cs" />
     <Compile Include="UI\Elements\UIPanel.cs" />
+    <Compile Include="UI\Elements\UITexture.cs" />
     <Compile Include="UI\GUI.cs" />
     <Compile Include="UI\ScaleMode.cs" />
     <Compile Include="Utility\CollectionUtility.cs" />
@@ -88,6 +98,8 @@
     <Compile Include="Utility\ReflectionUtility.cs" />
     <Compile Include="Utility\RenderingUtility.cs" />
     <Compile Include="Utility\StringUtility.cs" />
+    <Compile Include="Utility\Swapping\SwappingHotbar.cs" />
+    <Compile Include="Utility\Swapping\SwappingUtility.cs" />
     <Compile Include="Utility\TileUtility.cs" />
     <Compile Include="Utility\ColorUtility.cs" />
     <Compile Include="Utility\UIUtility.cs" />
@@ -101,6 +113,7 @@
     <Content Include="Textures\Placeholder.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="TestModBook.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
