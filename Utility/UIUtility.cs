@@ -1,21 +1,22 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using BaseLibrary.UI;
+using Microsoft.Xna.Framework;
 using Terraria.UI;
+using TheOneLibrary.Base.UI;
 
 namespace BaseLibrary.Utility
 {
 	public static partial class Utility
 	{
-		//public static GUI<T> SetupGUI<T>(/*object obj = null*/) where T : BaseUI
-		//{
-		//	UserInterface userInterface = new UserInterface();
-		//	T state = Activator.CreateInstance<T>();
-		//	//(state as ITileEntityUI)?.SetTileEntity(obj as ModTileEntity);
-		//	//(state as IContainerUI)?.SetContainer(obj as IContainer);
-		//	state.Activate();
-		//	userInterface.SetState(state);
+		public static GUI<T> SetupGUI<T>(InterfaceScaleType? scaleType = null) where T : BaseUI
+		{
+			UserInterface userInterface = new UserInterface();
+			T state = Activator.CreateInstance<T>();
+			state.Activate();
+			userInterface.SetState(state);
 
-		//	return new GUI<T>(state, userInterface);
-		//}
+			return new GUI<T>(state, userInterface, scaleType ?? InterfaceScaleType.UI);
+		}
 
 		public static void Center(this UIElement element)
 		{
@@ -24,5 +25,7 @@ namespace BaseLibrary.Utility
 		}
 
 		public static Vector2 Size(this CalculatedStyle dimensions) => new Vector2(dimensions.Width, dimensions.Height);
+
+		public static RectangleF ToRectangleF(this CalculatedStyle dimensions) => new RectangleF(dimensions.X, dimensions.Y, dimensions.Width, dimensions.Height);
 	}
 }

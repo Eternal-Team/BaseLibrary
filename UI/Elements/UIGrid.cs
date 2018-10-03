@@ -115,6 +115,8 @@ namespace BaseLibrary.UI.Elements
 
 		public override void RecalculateChildren()
 		{
+			CalculatedStyle gridDimensions = GetDimensions();
+
 			float top = 0f;
 			float left = 0f;
 
@@ -124,6 +126,7 @@ namespace BaseLibrary.UI.Elements
 				CalculatedStyle dimensions = item.GetDimensions();
 				item.Top.Set(top, 0f);
 				item.Left.Set(left, 0f);
+				if (item.Width.Precent > 0f) item.Width.Set((gridDimensions.Width - (columns - 1) * ListPadding) * item.Width.Precent, 0f);
 				item.Recalculate();
 				if (i % columns == columns - 1 || i == items.Count - 1)
 				{

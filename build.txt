@@ -9,3 +9,4 @@ buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*, .editorconfig, .git
 includePDB = true
 languageVersion = 6
 dllReferences = HtmlRenderer, HtmlRenderer.WinForms
+modReferences = TerrariaHooks, ContainerLibrary

@@ -151,22 +151,24 @@ namespace BaseLibrary.Utility
 			{
 				foreach (PropertyInfo propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static).Where(x => x.PropertyType == typeof(Texture2D) || x.PropertyType.GetElementType() == typeof(Texture2D) || x.PropertyType.GenericTypeArguments.Any() && x.PropertyType.GenericTypeArguments[0] == typeof(Texture2D)))
 				{
+					PathOverrideAttribute overrideAttribute = propertyInfo.GetCustomAttribute<PathOverrideAttribute>();
+
 					if (propertyInfo.PropertyType.IsArray)
 					{
 						Texture2D[] array = (Texture2D[])propertyInfo.GetValue(null);
-						for (int i = 0; i < array.Length; i++) array[i] = ModLoader.GetTexture($"{mod.Name}/Textures/{propertyInfo.Name}_{i}");
+						for (int i = 0; i < array.Length; i++) array[i] = ModLoader.GetTexture(overrideAttribute?.path ?? $"{mod.Name}/Textures/{propertyInfo.Name}_{i}");
 					}
 					else if (propertyInfo.IsEnumerable())
 					{
 						List<Texture2D> list = (List<Texture2D>)propertyInfo.GetValue(null);
 						int i = 0;
-						while (File.Exists($"{mod.File.path}/Textures/{propertyInfo.Name}_{i}"))
+						while (File.Exists(overrideAttribute?.path ?? $"{mod.File.path}/Textures/{propertyInfo.Name}_{i}"))
 						{
-							list.Add(ModLoader.GetTexture($"{mod.Name}/Textures/{propertyInfo.Name}_{i}"));
+							list.Add(ModLoader.GetTexture(overrideAttribute?.path ?? $"{mod.Name}/Textures/{propertyInfo.Name}_{i}"));
 							i++;
 						}
 					}
-					else propertyInfo.SetValue(null, ModLoader.GetTexture($"{mod.Name}/Textures/{propertyInfo.Name}"));
+					else propertyInfo.SetValue(null, ModLoader.GetTexture(overrideAttribute?.path ?? $"{mod.Name}/Textures/{propertyInfo.Name}"));
 				}
 			}
 		}
@@ -212,6 +214,15 @@ namespace BaseLibrary.Utility
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Rectangle rectangle) => spriteBatch.Draw(texture, rectangle, Color.White);
 
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, CalculatedStyle dimensions, Color? color = null) => spriteBatch.Draw(texture, dimensions.ToRectangle(), color ?? Color.White);
+
+		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, RectangleF rectangleF, Color? color = null) => spriteBatch.Draw(texture, rectangleF.rectangle, null, color ?? Color.White);
 		#endregion
+	}
+
+	public class PathOverrideAttribute : Attribute
+	{
+		public string path;
+
+		public PathOverrideAttribute(string path) => this.path = path;
 	}
 }

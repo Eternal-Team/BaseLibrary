@@ -9,6 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Potentia", "Potentia", "{DEB5B1E5-4E9A-4A30-8EB7-03DBF9255BA1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContainerLibrary", "..\ContainerLibrary\ContainerLibrary.csproj", "{9FE1AF9C-346A-4106-8E05-CD9E271E2BEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortableStorage", "..\..\PortableStorage\PortableStorage.csproj", "{3D5B053C-9E05-42D9-B696-D8F2301F35C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,12 +23,21 @@ Global
 		{0387FE69-7E77-4DC7-9867-EC3994E946D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0387FE69-7E77-4DC7-9867-EC3994E946D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0387FE69-7E77-4DC7-9867-EC3994E946D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FE1AF9C-346A-4106-8E05-CD9E271E2BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FE1AF9C-346A-4106-8E05-CD9E271E2BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FE1AF9C-346A-4106-8E05-CD9E271E2BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FE1AF9C-346A-4106-8E05-CD9E271E2BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D5B053C-9E05-42D9-B696-D8F2301F35C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D5B053C-9E05-42D9-B696-D8F2301F35C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D5B053C-9E05-42D9-B696-D8F2301F35C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D5B053C-9E05-42D9-B696-D8F2301F35C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0387FE69-7E77-4DC7-9867-EC3994E946D2} = {C0DE9FA4-DE19-4046-A4C6-3A5E94D80DDC}
+		{9FE1AF9C-346A-4106-8E05-CD9E271E2BEE} = {C0DE9FA4-DE19-4046-A4C6-3A5E94D80DDC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {35163557-50AD-46BF-8E28-68A6A1D74251}

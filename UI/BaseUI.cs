@@ -1,6 +1,5 @@
 ﻿using BaseLibrary.UI.Elements;
 using BaseLibrary.Utility;
-using BaseLibrary.Utility.Swapping;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -34,7 +33,9 @@ namespace TheOneLibrary.Base.UI
 			if (evt.Target != panelMain) return;
 
 			CalculatedStyle dimensions = panelMain.GetDimensions();
-			offset = evt.MousePosition - dimensions.Position() + dimensions.Size() * 0.5f;
+			offset = evt.MousePosition - dimensions.Position();
+			panelMain.HAlign = panelMain.VAlign = 0f;
+
 			dragging = true;
 		}
 
@@ -44,19 +45,19 @@ namespace TheOneLibrary.Base.UI
 		{
 			if (panelMain.ContainsPoint(Main.MouseScreen))
 			{
-				SwappingHotbar.InUI = true;
+				BaseLibrary.BaseLibrary.InUI = true;
 				Main.LocalPlayer.mouseInterface = true;
 				Main.LocalPlayer.showItemIcon = false;
 				Main.ItemIconCacheUpdate(0);
 			}
-			else SwappingHotbar.InUI = false;
+			else BaseLibrary.BaseLibrary.InUI = false;
 
 			if (dragging)
 			{
 				CalculatedStyle dimensions = panelMain.GetDimensions();
 
-				panelMain.Left.Pixels = (Main.MouseScreen.X - offset.X).Clamp(-dimensions.Width * 0.5f, dimensions.Width * 0.5f);
-				panelMain.Top.Pixels = (Main.MouseScreen.Y - offset.Y).Clamp(-dimensions.Height * 0.5f, dimensions.Height * 0.5f);
+				panelMain.Left.Pixels = (Main.MouseScreen.X - offset.X).Clamp(0, Main.screenWidth - dimensions.Width);
+				panelMain.Top.Pixels = (Main.MouseScreen.Y - offset.Y).Clamp(0, Main.screenHeight - dimensions.Height);
 
 				Recalculate();
 			}

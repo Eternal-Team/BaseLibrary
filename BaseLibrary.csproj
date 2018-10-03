@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -60,19 +61,27 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="TerrariaHooks">
+      <HintPath>lib\TerrariaHooks.dll</HintPath>
+    </Reference>
     <Reference Include="tModLoader">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\content\app_105600\depot_105601\tModLoader.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseLibrary.cs" />
+    <Compile Include="Items\TestItem.cs" />
+    <Compile Include="Tiles\TileEntites\BaseTE.cs" />
+    <Compile Include="Tiles\BaseTile.cs" />
     <Compile Include="Items\BaseItem.cs" />
     <Compile Include="Items\DevItem.cs" />
     <Compile Include="Items\LightedWall.cs" />
@@ -86,6 +95,7 @@
     <Compile Include="UI\BaseElement.cs" />
     <Compile Include="UI\BaseUI.cs" />
     <Compile Include="UI\Elements\UIButton.cs" />
+    <Compile Include="UI\Elements\UICategory.cs" />
     <Compile Include="UI\Elements\UIGrid.cs" />
     <Compile Include="UI\Elements\UIPanel.cs" />
     <Compile Include="UI\Elements\UITexture.cs" />
@@ -95,10 +105,10 @@
     <Compile Include="Utility\InputUtility.cs" />
     <Compile Include="Utility\ItemUtility.cs" />
     <Compile Include="Utility\MathUtility.cs" />
+    <Compile Include="Utility\RectangleF.cs" />
     <Compile Include="Utility\ReflectionUtility.cs" />
     <Compile Include="Utility\RenderingUtility.cs" />
     <Compile Include="Utility\StringUtility.cs" />
-    <Compile Include="Utility\Swapping\SwappingHotbar.cs" />
     <Compile Include="Utility\Swapping\SwappingUtility.cs" />
     <Compile Include="Utility\TileUtility.cs" />
     <Compile Include="Utility\ColorUtility.cs" />
@@ -115,6 +125,12 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="TestModBook.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ContainerLibrary\ContainerLibrary.csproj">
+      <Project>{9FE1AF9C-346A-4106-8E05-CD9E271E2BEE}</Project>
+      <Name>ContainerLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

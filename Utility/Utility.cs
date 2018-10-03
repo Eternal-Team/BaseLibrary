@@ -1,5 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 
@@ -24,6 +29,25 @@ namespace BaseLibrary.Utility
 			MemoryStream output = new MemoryStream();
 			using (var deflateStream = new DeflateStream(input, CompressionMode.Decompress)) deflateStream.CopyTo(output);
 			return output.ToArray();
+		}
+
+		public static void UnloadNullableTypes()
+		{
+			foreach (Type type in Assembly.GetCallingAssembly().GetTypes())
+			{
+				foreach (FieldInfo field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+				{
+					if (!field.FieldType.IsValueType && !field.IsLiteral && !type.HasAttribute<CompilerGeneratedAttribute>())
+					{
+						if (field.FieldType.IsGenericType)
+						{
+							if (field.FieldType.GetGenericTypeDefinition() == typeof(List<>)) ((IList)field.GetValue(null)).Clear();
+							else if (field.FieldType.GetGenericTypeDefinition() == typeof(Dictionary<,>)) ((IDictionary)field.GetValue(null)).Clear();
+						}
+						else field.SetValue(null, null);
+					}
+				}
+			}
 		}
 	}
 }

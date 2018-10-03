@@ -1,92 +1,96 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using BaseLibrary.UI;
+﻿using System.IO;
 using BaseLibrary.UI.Elements;
 using BaseLibrary.Utility;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
-using Terraria.Graphics;
 using Terraria.UI;
-using TheArtOfDev.HtmlRenderer.WinForms;
 using TheOneLibrary.Base.UI;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace BaseLibrary.ModBook
 {
 	public class ModBookUI : BaseUI
 	{
-		private static readonly Texture2D dividerTexture;
+		public static Texture2D BookBackground { get; set; }
+
+		private UIGrid<UICategory> gridCategories = new UIGrid<UICategory>();
+		private UIScrollbar scrollbarCategories = new UIScrollbar();
+
 		private UIGrid<UITexture> gridHTML = new UIGrid<UITexture>();
 		private UIScrollbar scrollbarHTML = new UIScrollbar();
 
-		static ModBookUI()
-		{
-			dividerTexture = TextureManager.Load("Images/UI/Divider");
-		}
-
 		public override void Initialize()
 		{
-			panelMain.Width.Precent = 0.5f;
-			panelMain.Height.Precent = 0.5f;
+			panelMain.Width.Pixels = 1084;
+			panelMain.Height.Pixels = 720;
+			panelMain.customTexture = BookBackground;
 			panelMain.Center();
-			panelMain.OnPostDraw += spriteBatch =>
-			{
-				CalculatedStyle dimensions = panelMain.GetDimensions();
-				spriteBatch.Draw(dividerTexture, dimensions.Position() + new Vector2(dimensions.Width / 2f - 2f, 0), null, Color.White, 90f.ToRadians(), Vector2.Zero, new Vector2(dimensions.Height / 8f, 1f), SpriteEffects.None, 0f);
-			};
 
-			gridHTML.Width.Set(-16f, 0.5f);
-			gridHTML.Height.Set(-16f, 1f);
-			gridHTML.Left.Set(8f, 0.5f);
-			gridHTML.Top.Set(8f, 0f);
-			gridHTML.ListPadding = 4;
-			gridHTML.OverflowHidden = true;
-			panelMain.Append(gridHTML);
+			//gridCategories.Width.Set(-44f, 1f);
+			//gridCategories.Height.Set(-16f, 1f);
+			//gridCategories.Left.Set(8f, 0f);
+			//gridCategories.Top.Set(8f, 0f);
+			//gridCategories.ListPadding = 4;
+			//gridCategories.OverflowHidden = true;
+			//panelMain.Append(gridCategories);
 
-			scrollbarHTML.Height.Set(-16f, 1f);
-			scrollbarHTML.Left.Set(-28f, 1f);
-			scrollbarHTML.Top.Set(8f, 0f);
-			scrollbarHTML.SetView(100f, 1000f);
-			panelMain.Append(scrollbarHTML);
-			gridHTML.SetScrollbar(scrollbarHTML);
+			//scrollbarCategories.Left.Set(-28f, 1f);
+			//scrollbarCategories.Height.Set(-16f, 1f);
+			//scrollbarCategories.Top.Set(8f, 0f);
+			//scrollbarCategories.SetView(100f, 1000f);
+			//panelMain.Append(scrollbarCategories);
+			//gridCategories.SetScrollbar(scrollbarCategories);
+
+			//gridHTML.Width.Set(-16f, 0.5f);
+			//gridHTML.Height.Set(-16f, 1f);
+			//gridHTML.Left.Set(8f, 0.5f);
+			//gridHTML.Top.Set(8f, 0f);
+			//gridHTML.ListPadding = 4;
+			//gridHTML.OverflowHidden = true;
+			//panelMain.Append(gridHTML);
+
+			//scrollbarHTML.Height.Set(-16f, 1f);
+			//scrollbarHTML.Left.Set(-28f, 1f);
+			//scrollbarHTML.Top.Set(8f, 0f);
+			//scrollbarHTML.SetView(100f, 1000f);
+			//panelMain.Append(scrollbarHTML);
+			//gridHTML.SetScrollbar(scrollbarHTML);
 		}
 
 		public void Load(ModBook modBook)
 		{
-			int index = 0;
 			foreach (Category category in modBook.Categories)
 			{
-				UIButton categoryButton = new UIButton(category.GetTexture(), ScaleMode.Zoom);
-				categoryButton.Width.Pixels = 40;
-				categoryButton.Height.Pixels = 40;
-				categoryButton.Left.Pixels = 8;
-				categoryButton.Top.Pixels = 8 + 48 * index++;
-				categoryButton.GetHoverText += () => category.Name;
-				panelMain.Append(categoryButton);
+				UICategory uiCategory = new UICategory(category)
+				{
+					Width = new StyleDimension(0f, 1f),
+					Height = new StyleDimension(64f, 0f)
+				};
+				gridCategories.Add(uiCategory);
+				uiCategory.Initialize();
 			}
 
-			string html = $@"<h1 style='font-family:Comic Sans MS;color:white;'>This is a heading</h1><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><h1>This is the end</h1>";
-			Image image = HtmlRender.RenderToImageGdiPlus(html, (int)gridHTML.GetDimensions().Width);
-			image.Save(@"C:\Users\Itorius\Desktop\test.png", ImageFormat.Png);
-			//HtmlPanel panel = new HtmlPanel
+			//string html = File.ReadAllText(@"C:\Development\Web\HTML\index.html");
+			//CssData css = HtmlRender.ParseStyleSheet(File.ReadAllText(@"C:\Development\Web\CSS\index.css"));
+			//Image image = HtmlRender.RenderToImageGdiPlus(html/*, (int)gridHTML.GetDimensions().Width*/, cssData: css);
+
+			//Texture2D texture2D;
+			//using (MemoryStream stream = new MemoryStream())
 			//{
-			//    Text = html,
-			//    Size = new Size(500, 500)
-			//};
-			//
-			//foreach (LinkElementData<RectangleF> data in panel.GetValue<HtmlContainer>("_htmlContainer").GetLinks())
-			//{
-			//    Debug.WriteLine(data.Href + "\t" + data.Rectangle);
+			//	image.Save(stream, ImageFormat.Png);
+			//	texture2D = Texture2D.FromStream(Main.instance.GraphicsDevice, stream);
 			//}
 
-			UITexture texture = new UITexture(LoadPicture(@"C:\Users\Itorius\Desktop\test.png"));
-			texture.Width.Precent = 1f;
-			texture.Height.Pixels = image.Height;
-			texture.MaxHeight.Set(float.MaxValue, 0f);
-			gridHTML.Add(texture);
+			////foreach (LinkElementData<RectangleF> data in panel.GetValue<HtmlContainer>("_htmlContainer").GetLinks())
+			////{
+			////    Debug.WriteLine(data.Href + "\t" + data.Rectangle);
+			////}
+
+			//UITexture texture = new UITexture(texture2D);
+			//texture.Width.Precent = 1f;
+			//texture.Height.Pixels = image.Height;
+			//texture.MaxHeight.Set(float.MaxValue, 0f);
+			//gridHTML.Add(texture);
 		}
 
 		public static Texture2D LoadPicture(string filename)

@@ -10,10 +10,13 @@ namespace BaseLibrary.UI.Elements
 		public Color BorderColor = Color.Black;
 		public Color BackgroundColor = Utility.Utility.ColorPanel;
 
+		public Texture2D customTexture;
+
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			CalculatedStyle dimensions = GetDimensions();
-			spriteBatch.DrawPanel(dimensions, BackgroundColor, BorderColor);
+			if (customTexture != null) spriteBatch.Draw(customTexture, dimensions);
+			else spriteBatch.DrawPanel(dimensions, BackgroundColor, BorderColor);
 		}
 	}
 }

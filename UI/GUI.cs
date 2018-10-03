@@ -3,43 +3,41 @@
 
 //namespace TheOneLibrary.Base.UI
 //{
-//	public interface IGUI
-//	{
-//		BaseUI GetUI();
-//		UserInterface GetInterface();
-//		LegacyGameInterfaceLayer GetInterfaceLayer();
-//		bool Draw();
-//	}
 
-//	public class GUI<T> : IGUI where T : BaseUI
-//	{
-//		public T UI;
-//		public UserInterface UserInterface;
-//		public LegacyGameInterfaceLayer InterfaceLayer;
+using System;
+using Terraria;
+using Terraria.UI;
+using TheOneLibrary.Base.UI;
 
-//		public GUI(T ui, UserInterface userInterface, InterfaceScaleType scaleType = InterfaceScaleType.UI)
-//		{
-//			UI = ui;
-//			UserInterface = userInterface;
-//			InterfaceLayer = new LegacyGameInterfaceLayer($"{ui.GetType().Assembly.GetName().Name}:{ui.GetType().Name}", Draw, scaleType);
-//		}
+namespace BaseLibrary.UI
+{
+	public interface IGUI
+	{
+		BaseUI UI { get; set; }
+		UserInterface Interface { get; set; }
+		LegacyGameInterfaceLayer InterfaceLayer { get; set; }
+		bool Draw();
+	}
 
-//		public bool Draw()
-//		{
-//			//if (UI.Visible)
-//			//{
-//			UserInterface.Update(Main._drawInterfaceGameTime);
-//			UI.Draw(Main.spriteBatch);
-//			//}
+	public class GUI<T> : IGUI where T : BaseUI
+	{
+		public BaseUI UI { get; set; }
+		public UserInterface Interface { get; set; }
+		public LegacyGameInterfaceLayer InterfaceLayer { get; set; }
 
-//			return true;
-//		}
+		public GUI(T ui, UserInterface userInterface, InterfaceScaleType scaleType)
+		{
+			UI = ui;
+			Interface = userInterface;
+			Type type = ui.GetType();
+			InterfaceLayer = new LegacyGameInterfaceLayer($"{type.Assembly.GetName().Name}:{type.Name}", Draw, scaleType);
+		}
 
-//		public BaseUI GetUI() => UI;
-
-//		public UserInterface GetInterface() => UserInterface;
-
-//		public LegacyGameInterfaceLayer GetInterfaceLayer() => InterfaceLayer;
-//	}
-//}
-
+		public bool Draw()
+		{
+			Interface.Update(Main._drawInterfaceGameTime);
+			UI.Draw(Main.spriteBatch);
+			return true;
+		}
+	}
+}

@@ -1,53 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using BaseLibrary.ModBook;
-using BaseLibrary.Utility.Swapping;
-using Terraria;
+using BaseLibrary.UI;
+using On.Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
 using static BaseLibrary.Utility.Utility;
+using Main = Terraria.Main;
 
 namespace BaseLibrary
 {
+	// todo: use caching for reflectionutility
+
 	public class BaseLibrary : Mod
 	{
-		private LegacyGameInterfaceLayer MouseInterface;
+		internal static BaseLibrary Instance;
 
-		//private GUI<ModBookUI> BookUI;
-		private ModBookUI UI;
-		private UserInterface userInterface;
-		private LegacyGameInterfaceLayer InterfaceLayer;
+		internal static bool InUI;
+		private LegacyGameInterfaceLayer MouseInterface;
+		private GUI<ModBookUI> BookUI;
 
 		public override void Load()
 		{
-			this.LoadTextures();
+			Instance = this;
+
 			ModBookLoader.Load();
 
-			Swap(typeof(Player), "HandleHotbar", typeof(SwappingHotbar), "HandleHotbar");
+			Player.HandleHotbar += Player_HandleHotbar;
 
-			MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", DrawMouseText, InterfaceScaleType.UI);
-
-			#region temp
-			userInterface = new UserInterface();
-			UI = Activator.CreateInstance<ModBookUI>();
-			UI.Activate();
-			userInterface.SetState(UI);
-			InterfaceLayer = new LegacyGameInterfaceLayer("BaseLibrary: ModBook", delegate
+			if (!Main.dedServ)
 			{
-				userInterface.Update(Main._drawInterfaceGameTime);
-				UI.Draw(Main.spriteBatch);
-				return true;
-			});
-			UI.Load(ModBookLoader.modBooks.First().Value);
-			#endregion
+				this.LoadTextures();
 
-			//BookUI = SetupGUI<ModBookUI>();
+				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", DrawMouseText, InterfaceScaleType.UI);
+				BookUI = SetupGUI<ModBookUI>();
+			}
+		}
+
+		private void Player_HandleHotbar(Player.orig_HandleHotbar orig, Terraria.Player player)
+		{
+			if (InUI) return;
+			orig(player);
 		}
 
 		public override void Unload()
 		{
 			ModBookLoader.Unload();
+			UnloadNullableTypes();
 		}
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -56,7 +54,7 @@ namespace BaseLibrary
 			int HotbarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
 
 			if (MouseTextIndex != -1) layers.Insert(MouseTextIndex + 1, MouseInterface);
-			if (HotbarIndex != -1) layers.Insert(HotbarIndex + 1, InterfaceLayer);
+			//if (HotbarIndex != -1) layers.Insert(HotbarIndex + 1, BookUI.InterfaceLayer);
 		}
 	}
 }

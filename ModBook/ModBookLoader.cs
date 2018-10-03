@@ -10,14 +10,14 @@ namespace BaseLibrary.ModBook
 {
 	public static class ModBookLoader
 	{
-		public static Dictionary<string, ModBook> modBooks;
-		public static Dictionary<string, Texture2D> textureCache;
+		public static Dictionary<string, ModBook> modBooks = new Dictionary<string, ModBook>();
+		public static Dictionary<string, Texture2D> textureCache = new Dictionary<string, Texture2D>();
 
-		static ModBookLoader()
-		{
-			modBooks = new Dictionary<string, ModBook>();
-			textureCache = new Dictionary<string, Texture2D>();
-		}
+		//static ModBookLoader()
+		//{
+		//	modBooks = new Dictionary<string, ModBook>();
+		//	textureCache = new Dictionary<string, Texture2D>();
+		//}
 
 		public static ModBook GetModBook(string name) => modBooks.TryGetValue(name, out ModBook item) ? item : null;
 
