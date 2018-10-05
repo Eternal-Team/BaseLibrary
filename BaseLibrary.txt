@@ -1,0 +1,12 @@
+IntPtr hdcDest = destGraphics.GetHdc();
+IntPtr hdcSrc = srcGraphics.GetHdc();
+GDI32.BitBlt(
+    hdcDest,
+    0, 0,
+    this.axWebBrowser1.ClientRectangle.Width, this.axWebBrowser1.ClientRectangle.Height,
+    hdcSrc,
+    0, 0,
+    (int) GDI32.TernaryRasterOperations.SRCCOPY
+    );
+srcGraphics.ReleaseHdc(hdcSrc);
+destGraphics.ReleaseHdc(hdcDest);

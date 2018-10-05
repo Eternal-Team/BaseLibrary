@@ -18,14 +18,19 @@ namespace BaseLibrary.UI.Elements
 		{
 			this.category = category;
 
-			panel = new UIPanel();
-			panel.Width.Precent = panel.Height.Precent = 1f;
-			panel.SetPadding(8f);
+			panel = new UIPanel
+			{
+				Width = (0, 1),
+				Height = (0, 1),
+				Padding = (8, 8, 8, 8)
+			};
 
-			UITexture textureIcon = new UITexture(category.GetTexture(), TextureBorder, ScaleMode.Zoom);
-			textureIcon.SetPadding(4f);
-			textureIcon.Height.Set(0f, 1f);
-			textureIcon.substituteWidth = true;
+			UITexture textureIcon = new UITexture(category.GetTexture(), TextureBorder, ScaleMode.Zoom)
+			{
+				Height = (0, 1),
+				Padding = (8, 8, 8, 8),
+				substituteWidth = true
+			};
 			panel.Append(textureIcon);
 
 			UIText textName = new UIText(category.Name);

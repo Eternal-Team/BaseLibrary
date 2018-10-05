@@ -3,7 +3,6 @@ using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
@@ -58,9 +57,9 @@ namespace BaseLibrary.UI.Elements
 			{
 				if (searchMethod(items[i]))
 				{
-					scrollbar.ViewPosition = items[i].Top.Pixels;
-					if (bottom) scrollbar.ViewPosition = items[i].Top.Pixels + items[i].GetOuterDimensions().Height;
-					if (center) scrollbar.ViewPosition = items[i].Top.Pixels - GetInnerDimensions().Height / 2 + items[i].GetOuterDimensions().Height / 2;
+					scrollbar.ViewPosition = items[i].Top.pixels;
+					if (bottom) scrollbar.ViewPosition = items[i].Top.pixels + items[i].GetOuterDimensions().Height;
+					if (center) scrollbar.ViewPosition = items[i].Top.pixels - GetInnerDimensions().Height / 2 + items[i].GetOuterDimensions().Height / 2;
 					return;
 				}
 			}

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using BaseLibrary.Utility;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
-using static BaseLibrary.Utility.Utility;
 
-namespace BaseLibrary.UI
+namespace BaseLibrary.UI.Elements
 {
 	// todo: introduce Vector2 for position and size
 	// todo: make left,right,top,left floats
@@ -20,15 +22,81 @@ namespace BaseLibrary.UI
 		public bool substituteWidth;
 		public bool substituteHeight;
 
-		//public (float pixels, float precent) Widthtest
-		//{
-		//	get => (Width.Pixels, Width.Precent);
-		//	set
-		//	{
-		//		Width.Pixels = value.pixels;
-		//		Width.Precent = value.precent;
-		//	}
-		//}
+		public new (float pixels, float precent) Width
+		{
+			get => (base.Width.Pixels, base.Width.Precent);
+			set
+			{
+				base.Width.Pixels = value.pixels;
+				base.Width.Precent = value.precent;
+			}
+		}
+
+		public new (float pixels, float precent) Height
+		{
+			get => (base.Height.Pixels, base.Height.Precent);
+			set
+			{
+				base.Height.Pixels = value.pixels;
+				base.Height.Precent = value.precent;
+			}
+		}
+
+		public new (float pixels, float precent) Top
+		{
+			get => (base.Top.Pixels, base.Top.Precent);
+			set
+			{
+				base.Top.Pixels = value.pixels;
+				base.Top.Precent = value.precent;
+			}
+		}
+
+		public new (float pixels, float precent) Left
+		{
+			get => (base.Left.Pixels, base.Left.Precent);
+			set
+			{
+				base.Left.Pixels = value.pixels;
+				base.Left.Precent = value.precent;
+			}
+		}
+
+		public (float bottom, float left, float right, float top) Padding
+		{
+			get => (PaddingBottom, PaddingLeft, PaddingRight, PaddingTop);
+			set
+			{
+				PaddingBottom = value.bottom;
+				PaddingLeft = value.left;
+				PaddingRight = value.right;
+				PaddingTop = value.top;
+			}
+		}
+
+		public new List<UIElement> Elements
+		{
+			get => base.Elements;
+			set => base.Elements = value;
+		}
+
+		public event MouseEvent OnClickContinuous;
+		public event MouseEvent OnRightClickContinuous;
+
+		public virtual void ClickContinuous(UIMouseEvent evt) => OnClickContinuous?.Invoke(evt, this);
+
+		public virtual void RightClickContinuous(UIMouseEvent evt) => OnRightClickContinuous?.Invoke(evt, this);
+
+		public override void Update(GameTime gameTime)
+		{
+			if (Main.hasFocus && IsMouseHovering)
+			{
+				if (Main.mouseLeft) ClickContinuous(new UIMouseEvent(this, UserInterface.ActiveInstance.MousePosition));
+				if (Main.mouseRight) RightClickContinuous(new UIMouseEvent(this, UserInterface.ActiveInstance.MousePosition));
+			}
+
+			base.Update(gameTime);
+		}
 
 		public override void Recalculate()
 		{
@@ -36,17 +104,16 @@ namespace BaseLibrary.UI
 			if (Parent is UIList) parentDimensions.Height = float.MaxValue;
 
 			CalculatedStyle dimensions;
-			dimensions.X = Left.GetValue(parentDimensions.Width) + parentDimensions.X;
-			dimensions.Y = Top.GetValue(parentDimensions.Height) + parentDimensions.Y;
+			dimensions.X = base.Left.GetValue(parentDimensions.Width) + parentDimensions.X;
+			dimensions.Y = base.Top.GetValue(parentDimensions.Height) + parentDimensions.Y;
 
 			float minWidth = MinWidth.GetValue(parentDimensions.Width);
 			float maxWidth = MaxWidth.GetValue(parentDimensions.Width);
 			float minHeight = MinHeight.GetValue(parentDimensions.Height);
 			float maxHeight = MaxHeight.GetValue(parentDimensions.Height);
 
-
-			dimensions.Width = Width.GetValue(parentDimensions.Width).Clamp(minWidth, maxWidth);
-			dimensions.Height = Height.GetValue(parentDimensions.Height).Clamp(minHeight, maxHeight);
+			dimensions.Width = base.Width.GetValue(parentDimensions.Width).Clamp(minWidth, maxWidth);
+			dimensions.Height = base.Height.GetValue(parentDimensions.Height).Clamp(minHeight, maxHeight);
 
 			if (substituteWidth) dimensions.Width = dimensions.Height;
 			else if (substituteHeight) dimensions.Height = dimensions.Width;
@@ -83,16 +150,16 @@ namespace BaseLibrary.UI
 
 			PostDraw(spriteBatch);
 
-			if (IsMouseHovering && GetHoverText != null) DrawMouseText(GetHoverText.Invoke());
+			if (IsMouseHovering && GetHoverText != null) Utility.Utility.DrawMouseText(GetHoverText.Invoke());
 			//}
 		}
 
-		public virtual void AppendRange(IEnumerable<BaseElement> elements)
+		public virtual void Append(IEnumerable<BaseElement> elements)
 		{
 			foreach (BaseElement element in elements) Append(element);
 		}
 
-		public virtual void RemoveRange(IEnumerable<BaseElement> elements)
+		public virtual void RemoveChildren(IEnumerable<BaseElement> elements)
 		{
 			foreach (BaseElement element in elements) RemoveChild(element);
 		}

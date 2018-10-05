@@ -17,7 +17,7 @@ namespace BaseLibrary.Utility
 		public static string GetHotkeyValue(string hotkey)
 		{
 			Dictionary<string, ModHotKey> hotkeys = typeof(ModLoader).GetValue<Dictionary<string, ModHotKey>>("modHotKeys");
-			return hotkeys != null && hotkeys.ContainsKey(hotkey) ? (hotkeys[hotkey].GetAssignedKeys().Any() ? hotkeys[hotkey].GetAssignedKeys().First() : "Unassigned") : string.Empty;
+			return hotkeys != null && hotkeys.ContainsKey(hotkey) ? hotkeys[hotkey].GetAssignedKeys().Any() ? hotkeys[hotkey].GetAssignedKeys().First() : "Unassigned" : string.Empty;
 		}
 	}
 }

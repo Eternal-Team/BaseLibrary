@@ -7,16 +7,16 @@ using Terraria.UI;
 
 namespace TheOneLibrary.Base.UI
 {
-	public abstract class BaseUI : UIState
+	public abstract class BaseUI : BaseState
 	{
 		public UIPanel panelMain = new UIPanel();
 
 		public override void OnInitialize()
 		{
+			Initialize();
 			panelMain.OnMouseDown += DragStart;
 			panelMain.OnMouseUp += DragEnd;
 			panelMain.SetPadding(0f);
-			Initialize();
 			Append(panelMain);
 		}
 
@@ -56,8 +56,8 @@ namespace TheOneLibrary.Base.UI
 			{
 				CalculatedStyle dimensions = panelMain.GetDimensions();
 
-				panelMain.Left.Pixels = (Main.MouseScreen.X - offset.X).Clamp(0, Main.screenWidth - dimensions.Width);
-				panelMain.Top.Pixels = (Main.MouseScreen.Y - offset.Y).Clamp(0, Main.screenHeight - dimensions.Height);
+				panelMain.Left = ((Main.MouseScreen.X - offset.X).Clamp(0, Main.screenWidth - dimensions.Width), 0);
+				panelMain.Top = ((Main.MouseScreen.Y - offset.Y).Clamp(0, Main.screenHeight - dimensions.Height), 0);
 
 				Recalculate();
 			}

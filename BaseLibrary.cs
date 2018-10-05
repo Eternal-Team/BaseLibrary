@@ -15,9 +15,11 @@ namespace BaseLibrary
 	{
 		internal static BaseLibrary Instance;
 
-		internal static bool InUI;
+		public static bool InUI;
 		private LegacyGameInterfaceLayer MouseInterface;
-		private GUI<ModBookUI> BookUI;
+		public GUI<ModBookUI> BookUI;
+
+		public static ModHotKey hotkeyOpenBook;
 
 		public override void Load()
 		{
@@ -26,6 +28,8 @@ namespace BaseLibrary
 			ModBookLoader.Load();
 
 			Player.HandleHotbar += Player_HandleHotbar;
+
+			hotkeyOpenBook = RegisterHotKey("Open Mod Book", "M");
 
 			if (!Main.dedServ)
 			{
@@ -54,7 +58,7 @@ namespace BaseLibrary
 			int HotbarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
 
 			if (MouseTextIndex != -1) layers.Insert(MouseTextIndex + 1, MouseInterface);
-			//if (HotbarIndex != -1) layers.Insert(HotbarIndex + 1, BookUI.InterfaceLayer);
+			if (HotbarIndex != -1) layers.Insert(HotbarIndex + 1, BookUI.InterfaceLayer);
 		}
 	}
 }

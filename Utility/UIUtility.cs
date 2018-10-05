@@ -8,10 +8,10 @@ namespace BaseLibrary.Utility
 {
 	public static partial class Utility
 	{
-		public static GUI<T> SetupGUI<T>(InterfaceScaleType? scaleType = null) where T : BaseUI
+		public static GUI<T> SetupGUI<T>(InterfaceScaleType? scaleType = null, params object[] args) where T : BaseUI
 		{
 			UserInterface userInterface = new UserInterface();
-			T state = Activator.CreateInstance<T>();
+			T state = (T)Activator.CreateInstance(typeof(T), args);
 			state.Activate();
 			userInterface.SetState(state);
 
