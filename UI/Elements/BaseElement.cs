@@ -13,8 +13,9 @@ namespace BaseLibrary.UI.Elements
 	// todo: make left,right,top,left floats
 	// todo: functions for size and position?
 
-	public class BaseElement : UIElement
+	public class BaseElement : UIState
 	{
+		#region Fields
 		public event Action<SpriteBatch> OnPreDraw;
 		public event Action<SpriteBatch> OnPostDraw;
 		public event Func<string> GetHoverText;
@@ -82,6 +83,13 @@ namespace BaseLibrary.UI.Elements
 
 		public event MouseEvent OnClickContinuous;
 		public event MouseEvent OnRightClickContinuous;
+		#endregion
+
+		public BaseElement()
+		{
+			base.Width.Precent = base.Height.Precent = 0;
+			Recalculate();
+		}
 
 		public virtual void ClickContinuous(UIMouseEvent evt) => OnClickContinuous?.Invoke(evt, this);
 

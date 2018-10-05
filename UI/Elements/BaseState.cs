@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using Terraria.UI;
-
-namespace BaseLibrary.UI.Elements
+﻿namespace BaseLibrary.UI.Elements
 {
-	public class BaseState : UIState
+	public class BaseState : BaseElement
 	{
-		public List<UIElement> Elements
+		public BaseState()
 		{
-			get => base.Elements;
-			set => base.Elements = value;
+			Width = Height = (0, 1);
 		}
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using BaseLibrary.ModBook;
 using BaseLibrary.Utility;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent.UI.Elements;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -33,10 +32,12 @@ namespace BaseLibrary.UI.Elements
 			};
 			panel.Append(textureIcon);
 
-			UIText textName = new UIText(category.Name);
-			textName.Left.Set(8f, 1f);
-			textName.VAlign = 0.5f;
-			textureIcon.Append(textName);
+            UIText textName = new UIText(category.Name)
+            {
+                Left = (8, 1),
+                VAlign = 0.5f
+            };
+            textureIcon.Append(textName);
 
 			Append(panel);
 		}

@@ -14,6 +14,8 @@ namespace BaseLibrary.UI.Elements
 {
 	public class UIContainerSlot : BaseElement
 	{
+		// todo: mousewheel events
+
 		public Texture2D backgroundTexture = Main.inventoryBackTexture;
 
 		public ItemStackHandler Handler;
@@ -41,52 +43,50 @@ namespace BaseLibrary.UI.Elements
 
 		public override void Click(UIMouseEvent evt)
 		{
-			//if (CanInteract?.Invoke(Item, Main.mouseItem) ?? true)
-			//{
-			Item.newAndShiny = false;
-			Player player = Main.LocalPlayer;
-
-			if (ItemSlot.ShiftInUse)
+			if (Handler.IsItemValid(slot, Main.mouseItem))
 			{
-				//Utility.Utility.LootAll(Handler, (item, index) => index == slot);
-				OnInteract?.Invoke();
-				return;
+				Item.newAndShiny = false;
+				Player player = Main.LocalPlayer;
+
+				if (ItemSlot.ShiftInUse)
+				{
+					//Utility.Utility.LootAll(Handler, (item, index) => index == slot);
+					OnInteract?.Invoke();
+					return;
+				}
+
+				Item temp = Item;
+				Utils.Swap(ref temp, ref Main.mouseItem);
+				Item = temp;
+
+				if (Item.stack > 0) AchievementsHelper.NotifyItemPickup(player, Item);
+				if (Item.type == 0 || Item.stack < 1) Item = new Item();
+				if (Main.mouseItem.IsTheSameAs(Item))
+				{
+					Utils.Swap(ref Item.favorited, ref Main.mouseItem.favorited);
+					if (Item.stack != Item.maxStack && Main.mouseItem.stack != Main.mouseItem.maxStack)
+					{
+						if (Main.mouseItem.stack + Item.stack <= Main.mouseItem.maxStack)
+						{
+							Item.stack += Main.mouseItem.stack;
+							Main.mouseItem.stack = 0;
+						}
+						else
+						{
+							int delta = Main.mouseItem.maxStack - Item.stack;
+							Item.stack += delta;
+							Main.mouseItem.stack -= delta;
+						}
+					}
+				}
+
+				if (Main.mouseItem.type == 0 || Main.mouseItem.stack < 1) Main.mouseItem = new Item();
+				if (Main.mouseItem.type > 0 || Item.type > 0)
+				{
+					Recipe.FindRecipes();
+					Main.PlaySound(7);
+				}
 			}
-
-			Main.mouseItem = Main.mouseItem.IsAir ? Handler.ExtractItem(slot, Item.stack) : Handler.InsertItem(slot, Main.mouseItem);
-
-			//Item temp = Item;
-			//Utils.Swap(ref temp, ref Main.mouseItem);
-			//Item = temp;
-
-			//if (Item.stack > 0) AchievementsHelper.NotifyItemPickup(player, Item);
-			//if (Item.type == 0 || Item.stack < 1) Item = new Item();
-			//if (Main.mouseItem.IsTheSameAs(Item))
-			//{
-			//    Utils.Swap(ref Item.favorited, ref Main.mouseItem.favorited);
-			//    if (Item.stack != Item.maxStack && Main.mouseItem.stack != Main.mouseItem.maxStack)
-			//    {
-			//        if (Main.mouseItem.stack + Item.stack <= Main.mouseItem.maxStack)
-			//        {
-			//            Item.stack += Main.mouseItem.stack;
-			//            Main.mouseItem.stack = 0;
-			//        }
-			//        else
-			//        {
-			//            int delta = Main.mouseItem.maxStack - Item.stack;
-			//            Item.stack += delta;
-			//            Main.mouseItem.stack -= delta;
-			//        }
-			//    }
-			//}
-
-			//if (Main.mouseItem.type == 0 || Main.mouseItem.stack < 1) Main.mouseItem = new Item();
-			//if (Main.mouseItem.type > 0 || Item.type > 0)
-			//{
-			//    Recipe.FindRecipes();
-			//    Main.PlaySound(7);
-			//}
-
 			//OnInteract?.Invoke();
 
 			//Handler.Sync(slot);

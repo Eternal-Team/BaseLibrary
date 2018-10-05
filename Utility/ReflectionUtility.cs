@@ -80,7 +80,7 @@ namespace BaseLibrary.Utility
 				return (T)info.Invoke(obj, args);
 			}
 
-			return default;
+			return default(T);
 		}
 
 		public static T InvokeMethod<T>(this object obj, string name, object[] args = null, BindingFlags flags = defaultFlags) => obj.GetType().InvokeMethod<T>(name, args, obj, flags);
