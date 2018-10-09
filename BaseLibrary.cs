@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.ModBook;
 using BaseLibrary.UI;
-using On.Terraria;
+using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 using static BaseLibrary.Utility.Utility;
-using Main = Terraria.Main;
+using Player = On.Terraria.Player;
 
 namespace BaseLibrary
 {
@@ -21,13 +22,19 @@ namespace BaseLibrary
 
 		public static ModHotKey hotkeyOpenBook;
 
+		public static (string key, RecipeGroup group) recipeGroupT2HMBars;
+
 		public override void Load()
 		{
 			Instance = this;
 
 			ModBookLoader.Load();
 
-			Player.HandleHotbar += Player_HandleHotbar;
+			Player.HandleHotbar += (orig, player) =>
+			{
+				if (InUI) return;
+				orig(player);
+			};
 
 			hotkeyOpenBook = RegisterHotKey("Open Mod Book", "M");
 
@@ -40,16 +47,16 @@ namespace BaseLibrary
 			}
 		}
 
-		private void Player_HandleHotbar(Player.orig_HandleHotbar orig, Terraria.Player player)
-		{
-			if (InUI) return;
-			orig(player);
-		}
-
 		public override void Unload()
 		{
 			ModBookLoader.Unload();
 			UnloadNullableTypes();
+		}
+
+		public override void AddRecipeGroups()
+		{
+			recipeGroupT2HMBars = ("BaseLibrary:T2HMBars", new RecipeGroup(() => "T2HMBars", ItemID.MythrilBar, ItemID.OrichalcumBar));
+			RecipeGroup.RegisterGroup(recipeGroupT2HMBars.key, recipeGroupT2HMBars.group);
 		}
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)

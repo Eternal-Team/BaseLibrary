@@ -10,12 +10,12 @@
 //{
 //    public class TestItem : BaseItem
 //    {
-//        public ItemStackHandler handler = new ItemStackHandler(5);
+//        public ItemHandler handler = new ItemHandler(5);
 
 //        public override ModItem Clone()
 //        {
 //            TestItem clone = (TestItem)base.Clone();
-//            clone.handler = new ItemStackHandler(handler.stacks.Select(x => x.Clone()).ToList());
+//            clone.handler = new ItemHandler(handler.stacks.Select(x => x.Clone()).ToList());
 //            return clone;
 //        }
 

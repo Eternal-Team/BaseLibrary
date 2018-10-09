@@ -80,6 +80,12 @@ namespace BaseLibrary.Utility
 
 		public static bool InTriangle(this Point point, Point[] array) => point.InTriangle(array[0], array[1], array[2]);
 
-		public static float ToRadians(this float angle) => (float)(Math.PI / 180f * angle);
+		public static float ToRadians(this float angle) => MathHelper.Pi / 180f * angle;
+
+		public static T Remap<T>(this T value, double low1, double high1, double low2, double high2)
+		{
+			double castValue = (double)Convert.ChangeType(value, TypeCode.Double);
+			return (T)Convert.ChangeType(low2 + (castValue - low1) * (high2 - low2) / (high1 - low1), value.GetType());
+		}
 	}
 }

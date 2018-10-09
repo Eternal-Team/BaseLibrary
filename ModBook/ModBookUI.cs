@@ -1,12 +1,5 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using BaseLibrary.UI.Elements;
+﻿using BaseLibrary.UI.Elements;
 using BaseLibrary.Utility;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using TheArtOfDev.HtmlRenderer.Core;
-using TheArtOfDev.HtmlRenderer.WinForms;
 using TheOneLibrary.Base.UI;
 
 namespace BaseLibrary.ModBook
@@ -73,24 +66,24 @@ namespace BaseLibrary.ModBook
 			{
 			}
 
-			string html = File.ReadAllText(@"C:\Development\Web\HTML\index.html");
-			CssData css = HtmlRender.ParseStyleSheet(File.ReadAllText(@"C:\Development\Web\CSS\index.css"));
-			Image image = HtmlRender.RenderToImageGdiPlus(html /*, (int)gridHTML.GetDimensions().Width*/, cssData: css);
+			//string html = File.ReadAllText(@"C:\Development\Web\HTML\index.html");
+			//CssData css = HtmlRender.ParseStyleSheet(File.ReadAllText(@"C:\Development\Web\CSS\index.css"));
+			//Image image = HtmlRender.RenderToImageGdiPlus(html /*, (int)gridHTML.GetDimensions().Width*/, cssData: css);
 
-			Texture2D texture2D;
-			using (MemoryStream stream = new MemoryStream())
-			{
-				image.Save(stream, ImageFormat.Png);
-				texture2D = Texture2D.FromStream(Main.instance.GraphicsDevice, stream);
-			}
+			//Texture2D texture2D;
+			//using (MemoryStream stream = new MemoryStream())
+			//{
+			//	image.Save(stream, ImageFormat.Png);
+			//	texture2D = Texture2D.FromStream(Main.instance.GraphicsDevice, stream);
+			//}
 
-			UITexture texture = new UITexture(texture2D)
-			{
-				Width = (0, 1),
-				Height = (texture2D.Height, 0)
-			};
-			texture.MaxHeight.Set(float.MaxValue, 0);
-			panelMain.Append(texture);
+			//UITexture texture = new UITexture(texture2D)
+			//{
+			//	Width = (0, 1),
+			//	Height = (texture2D.Height, 0)
+			//};
+			//texture.MaxHeight.Set(float.MaxValue, 0);
+			//panelMain.Append(texture);
 		}
 
 		public void Load(ModBook modBook)

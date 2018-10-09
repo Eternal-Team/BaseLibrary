@@ -32,12 +32,12 @@ namespace BaseLibrary.UI.Elements
 			};
 			panel.Append(textureIcon);
 
-            UIText textName = new UIText(category.Name)
-            {
-                Left = (8, 1),
-                VAlign = 0.5f
-            };
-            textureIcon.Append(textName);
+			UIText textName = new UIText(category.Name)
+			{
+				Left = (8, 1),
+				VAlign = 0.5f
+			};
+			textureIcon.Append(textName);
 
 			Append(panel);
 		}

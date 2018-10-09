@@ -35,12 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlRenderer, Version=1.5.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\HtmlRenderer.Core.1.5.0.5\lib\net45\HtmlRenderer.dll</HintPath>
-    </Reference>
-    <Reference Include="HtmlRenderer.WinForms, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\HtmlRenderer.Mono.1.5.0.6\lib\net45\HtmlRenderer.WinForms.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria [Modded]\Microsoft.Xna.Framework.dll</HintPath>
@@ -62,7 +56,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -100,7 +93,7 @@
     <Compile Include="UI\Elements\BaseState.cs" />
     <Compile Include="UI\Elements\UIButton.cs" />
     <Compile Include="UI\Elements\UICategory.cs" />
-    <Compile Include="UI\Elements\UIContainerSlot.cs" />
+    <Compile Include="UI\Elements\UIColorSelection.cs" />
     <Compile Include="UI\Elements\UIGrid.cs" />
     <Compile Include="UI\Elements\UIPanel.cs" />
     <Compile Include="UI\Elements\UIScrollbar.cs" />
@@ -132,12 +125,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="TestModBook.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ContainerLibrary\ContainerLibrary.csproj">
-      <Project>{9FE1AF9C-346A-4106-8E05-CD9E271E2BEE}</Project>
-      <Name>ContainerLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -142,6 +142,81 @@ namespace BaseLibrary.Utility
 			return true;
 		}
 
+		public static Texture2D CreateGrad(int width, int height)
+		{
+			Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, width, height);
+			Color[] data = new Color[width * height];
+
+			for (int x = 0; x < width; x++)
+			{
+				Color c = HSL2RGB(Math.Round((decimal)x / width, 2), 1.0m, 0.5m);
+				for (int y = 0; y < height; y++) data[y * width + x] = c;
+			}
+
+			texture.SetData(data);
+			return texture;
+		}
+
+		public static Color HSL2RGB(decimal h, decimal sl, decimal l)
+		{
+			decimal r = l;
+			decimal g = l;
+			decimal b = l;
+
+			decimal v = l <= 0.5m ? l * (1.0m + sl) : l + sl - l * sl;
+
+			if (v > 0)
+			{
+				decimal m = l + l - v;
+				decimal sv = (v - m) / v;
+				h *= 6.0m;
+				int sextant = (int)h;
+				decimal fract = h - sextant;
+				decimal vsf = v * sv * fract;
+				decimal mid1 = m + vsf;
+				decimal mid2 = v - vsf;
+
+				if (h < 1m || h == 6m)
+				{
+					r = v;
+					g = mid1;
+					b = m;
+				}
+				else if (h < 2m)
+				{
+					r = mid2;
+					g = v;
+					b = m;
+				}
+				else if (h < 3m)
+				{
+					r = m;
+					g = v;
+					b = mid1;
+				}
+				else if (h < 4m)
+				{
+					r = m;
+					g = mid2;
+					b = v;
+				}
+				else if (h < 5m)
+				{
+					r = mid1;
+					g = m;
+					b = v;
+				}
+				else if (h < 6m)
+				{
+					r = v;
+					g = m;
+					b = mid2;
+				}
+			}
+
+			return new Color(Convert.ToByte(r * 255m), Convert.ToByte(g * 255m), Convert.ToByte(b * 255m));
+		}
+
 		// Note: Consider prefixing names with UI/Tile/Item/etc to specify Textures subfolder
 		public static void LoadTextures(this Mod mod)
 		{
