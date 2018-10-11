@@ -71,7 +71,7 @@ namespace BaseLibrary.Utility
 			return item;
 		}
 
-		public static bool HasSpace(List<Item> items, Item item) => items.FindAll(x => x.type == item.type).Select(x => x.maxStack - x.stack).Sum(x => x) >= item.stack || items.Any(t => t.IsAir);
+		public static bool HasSpace(this List<Item> items, Item item) => items.Any(t => t.IsAir) || items.Any(x => x.type == item.type && x.stack < x.maxStack);
 
 		public static IEnumerable<int> InsertItem(List<Item> from, List<Item> to) => from.SelectMany(x => InsertItem(x, to));
 
