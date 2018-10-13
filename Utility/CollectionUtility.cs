@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria;
+using Terraria.ModLoader;
 
 namespace BaseLibrary.Utility
 {
@@ -31,6 +33,14 @@ namespace BaseLibrary.Utility
 		public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
 		{
 			foreach (T VARIABLE in enumerable) action(VARIABLE);
+		}
+
+		public static IEnumerable<TResult> OfType<TResult>(this IEnumerable<Item> source) where TResult : ModItem
+		{
+			foreach (Item item in source)
+			{
+				if (item.modItem is TResult result) yield return result;
+			}
 		}
 	}
 }

@@ -178,7 +178,7 @@ namespace BaseLibrary.UI.Elements
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, null, Utility.Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
 
 			DrawSelf(spriteBatch);
-			typeof(UIInnerList).InvokeMethod<object>("DrawChildren", new object[] { spriteBatch }, innerList);
+			innerList.InvokeMethod<object>("DrawChildren", spriteBatch);
 
 			spriteBatch.End();
 			spriteBatch.GraphicsDevice.ScissorRectangle = prevRect;

@@ -62,7 +62,8 @@ namespace BaseLibrary.Utility
 			}
 		}
 
-		public static T InvokeMethod<T>(this Type type, string name, object[] args = null, object obj = null, BindingFlags flags = defaultFlags)
+		// instance, w flags
+		public static T InvokeMethod<T>(this Type type, string name, object obj, BindingFlags flags, params object[] args)
 		{
 			MethodInfo info = type.GetMethod(name, flags);
 			if (info != null)
@@ -83,7 +84,20 @@ namespace BaseLibrary.Utility
 			return default(T);
 		}
 
-		public static T InvokeMethod<T>(this object obj, string name, object[] args = null, BindingFlags flags = defaultFlags) => obj.GetType().InvokeMethod<T>(name, args, obj, flags);
+		// instance object, w/o flags
+		public static T InvokeMethod<T>(this Type type, string name, object obj, params object[] args) => type.InvokeMethod<T>(name, obj, defaultFlags, args);
+
+		// static object, w flags
+		public static T InvokeMethod<T>(this Type type, string name, BindingFlags flags, params object[] args) => type.InvokeMethod<T>(name, null, flags, args);
+
+		// static objects, w/o flags
+		public static T InvokeMethod<T>(this Type type, string name, params object[] args) => type.InvokeMethod<T>(name, null, defaultFlags, args);
+
+		// instance, w flags
+		public static T InvokeMethod<T>(this object obj, string name, BindingFlags flags, params object[] args) => obj.GetType().InvokeMethod<T>(name, obj, flags, args);
+
+		// instance, w/o flags
+		public static T InvokeMethod<T>(this object obj, string name, params object[] args) => obj.GetType().InvokeMethod<T>(name, obj, defaultFlags, args);
 
 		public static bool HasAttribute<T>(this MemberInfo field) => field.GetCustomAttributes().Any(x => x.GetType() == typeof(T));
 
