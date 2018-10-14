@@ -142,15 +142,21 @@ namespace BaseLibrary.Utility
 			return true;
 		}
 
-		public static Texture2D CreateGrad(int width, int height)
+		public static Texture2D CreateGrad(int width, int steps)
 		{
-			Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, width, height);
-			Color[] data = new Color[width * height];
+			Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, width, 1);
+			Color[] data = new Color[width];
 
-			for (int x = 0; x < width; x++)
+			int nextX = 0;
+			int step = 0;
+			foreach (int i in DistributeInteger(width, steps))
 			{
-				Color c = HSL2RGB(Math.Round((decimal)x / width, 2), 1.0m, 0.5m);
-				for (int y = 0; y < height; y++) data[y * width + x] = c;
+				Color c = HSL2RGB(step / (decimal)steps, 1.0m, 0.5m);
+
+				for (int x = nextX; x < nextX + i; x++) data[x] = c;
+
+				nextX += i;
+				step++;
 			}
 
 			texture.SetData(data);
@@ -217,7 +223,6 @@ namespace BaseLibrary.Utility
 			return new Color(Convert.ToByte(r * 255m), Convert.ToByte(g * 255m), Convert.ToByte(b * 255m));
 		}
 
-		// Note: Consider prefixing names with UI/Tile/Item/etc to specify Textures subfolder
 		public static void LoadTextures(this Mod mod)
 		{
 			if (Main.dedServ) return;

@@ -8,6 +8,9 @@ namespace BaseLibrary.UI.Elements
 	public class UIColorSelection : BaseElement
 	{
 		private Texture2D texture;
+		private int steps;
+
+		public UIColorSelection(int steps) => this.steps = steps;
 
 		public Color GetColor()
 		{
@@ -27,10 +30,10 @@ namespace BaseLibrary.UI.Elements
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			CalculatedStyle dimensions = GetDimensions();
-			if (texture == null) texture = Utility.Utility.CreateGrad((int)dimensions.Width - 4, (int)dimensions.Height - 4);
+			if (texture == null) texture = Utility.Utility.CreateGrad((int)dimensions.Width - 4, steps);
 
 			spriteBatch.Draw(Main.magicPixel, dimensions.Position(), null, Color.Black, 0f, Vector2.Zero, new Vector2(dimensions.Width, dimensions.Height / 1000f), SpriteEffects.None, 0f);
-			spriteBatch.Draw(texture, dimensions.Position() + new Vector2(2, 2), null, Color.White, 0f, Vector2.Zero, new Vector2((dimensions.Width - 4f) / texture.Width, (dimensions.Height - 4f) / texture.Height), SpriteEffects.None, 0f);
+			spriteBatch.Draw(texture, dimensions.Position() + new Vector2(2, 2), null, Color.White, 0f, Vector2.Zero, new Vector2(1f, dimensions.Height - 4f), SpriteEffects.None, 0f);
 		}
 	}
 }

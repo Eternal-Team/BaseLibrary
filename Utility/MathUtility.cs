@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
@@ -58,6 +59,22 @@ namespace BaseLibrary.Utility
 			int output = (int)Math.Round((double)value / step);
 			if (Math.Abs(output) < 0.0 && value > 0) output += 1;
 			return output * step;
+		}
+
+		public static IEnumerable<int> DistributeInteger(int total, int divider)
+		{
+			if (divider == 0) yield return 0;
+			else
+			{
+				int rest = total % divider;
+				double result = total / (double)divider;
+
+				for (int i = 0; i < divider; i++)
+				{
+					if (rest-- > 0) yield return (int)Math.Ceiling(result);
+					else yield return (int)Math.Floor(result);
+				}
+			}
 		}
 
 		public static bool InTriangle(this Point point, Point t0, Point t1, Point t2)
