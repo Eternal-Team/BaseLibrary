@@ -43,6 +43,16 @@ namespace BaseLibrary.UI.Elements
 			}
 		}
 
+		public Vector2 Size
+		{
+			get => GetDimensions().Size();
+			set
+			{
+				base.Width.Pixels = value.X;
+				base.Height.Pixels = value.Y;
+			}
+		}
+
 		public new (float pixels, float precent) Top
 		{
 			get => (base.Top.Pixels, base.Top.Precent);
@@ -60,6 +70,16 @@ namespace BaseLibrary.UI.Elements
 			{
 				base.Left.Pixels = value.pixels;
 				base.Left.Precent = value.precent;
+			}
+		}
+
+		public Vector2 Position
+		{
+			get => GetDimensions().Position();
+			set
+			{
+				base.Left.Pixels = value.X;
+				base.Top.Pixels = value.Y;
 			}
 		}
 

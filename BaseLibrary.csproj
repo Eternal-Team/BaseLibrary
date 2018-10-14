@@ -99,6 +99,7 @@
     <Compile Include="UI\Elements\UIPanel.cs" />
     <Compile Include="UI\Elements\UIScrollbar.cs" />
     <Compile Include="UI\Elements\UIText.cs" />
+    <Compile Include="UI\Elements\UITextButton.cs" />
     <Compile Include="UI\Elements\UITexture.cs" />
     <Compile Include="UI\GUI.cs" />
     <Compile Include="UI\ScaleMode.cs" />
