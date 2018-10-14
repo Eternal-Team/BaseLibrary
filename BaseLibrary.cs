@@ -34,8 +34,8 @@ namespace BaseLibrary
 
 			Player.HandleHotbar += (orig, player) =>
 			{
-				if (InUI) return;
-				orig(player);
+				if (!InUI) orig(player);
+				InUI = false;
 			};
 
 			hotkeyOpenBook = RegisterHotKey("Open Mod Book", "M");

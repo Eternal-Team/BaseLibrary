@@ -40,7 +40,6 @@ namespace BaseLibrary.UI.Elements
 				Main.LocalPlayer.showItemIcon = false;
 				Main.ItemIconCacheUpdate(0);
 			}
-			else BaseLibrary.InUI = false;
 
 			if (dragging)
 			{
