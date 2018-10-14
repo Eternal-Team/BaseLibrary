@@ -16,7 +16,7 @@ namespace BaseLibrary.ModBook
 
 		public override void Initialize()
 		{
-			panelMain = new UIPanel
+			panelMain = new UIDraggablePanel
 			{
 				Width = (1084, 0),
 				Height = (610, 0),

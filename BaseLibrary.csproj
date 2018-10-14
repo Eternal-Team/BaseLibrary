@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseLibrary.cs" />
+    <Compile Include="UI\Elements\UIDraggablePanel.cs" />
     <Compile Include="Items\TestItem.cs" />
     <Compile Include="ModPlayer.cs" />
     <Compile Include="Tiles\TileEntites\BaseTE.cs" />
