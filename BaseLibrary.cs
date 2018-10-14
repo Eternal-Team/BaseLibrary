@@ -16,6 +16,8 @@ namespace BaseLibrary
 	{
 		internal static BaseLibrary Instance;
 
+		public static List<Item> itemsCache;
+
 		public static bool InUI;
 		private LegacyGameInterfaceLayer MouseInterface;
 		public GUI<ModBookUI> BookUI;
@@ -51,6 +53,18 @@ namespace BaseLibrary
 		{
 			ModBookLoader.Unload();
 			UnloadNullableTypes();
+		}
+
+		public override void PostSetupContent()
+		{
+			itemsCache = new List<Item>();
+
+			for (int type = 0; type < ItemLoader.ItemCount; type++)
+			{
+				Item item = new Item();
+				item.SetDefaults(type, false);
+				itemsCache.Add(item);
+			}
 		}
 
 		public override void AddRecipeGroups()
