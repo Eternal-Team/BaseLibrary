@@ -105,11 +105,7 @@ namespace BaseLibrary.UI.Elements
 		public event MouseEvent OnRightClickContinuous;
 		#endregion
 
-		public BaseElement()
-		{
-			base.Width.Precent = base.Height.Precent = 0;
-			Recalculate();
-		}
+		public BaseElement() => base.Width.Precent = base.Height.Precent = 0;
 
 		public virtual void ClickContinuous(UIMouseEvent evt) => OnClickContinuous?.Invoke(evt, this);
 

@@ -1,39 +1,27 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
+	public enum Channel
+	{
+		R, G, B, A, All
+	}
+
 	public class UIColorSelection : BaseElement
 	{
-		private Texture2D texture;
-		private int steps;
-
-		public UIColorSelection(int steps) => this.steps = steps;
-
-		public Color GetColor()
+		public UIColorSelection(int steps, Channel channel = Channel.All)
 		{
-			CalculatedStyle dimensions = GetDimensions();
+			UIColor uiColor = new UIColor(Color.Black);
+			uiColor.Width = uiColor.Height = (0, 1);
+			Append(uiColor);
 
-			int x = (int)(Main.mouseX - dimensions.X);
-			int y = (int)(Main.mouseY - dimensions.Y);
-
-			Color[] data = new Color[texture.Width * texture.Height];
-			texture.GetData(data);
-
-			Vector2 scale = new Vector2(dimensions.Width / texture.Width, dimensions.Height / texture.Height);
-
-			return data[(int)(y / scale.Y) * texture.Width + (int)(x / scale.X)];
-		}
-
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
-			CalculatedStyle dimensions = GetDimensions();
-			if (texture == null) texture = Utility.Utility.CreateGrad((int)dimensions.Width - 4, steps);
-
-			spriteBatch.Draw(Main.magicPixel, dimensions.Position(), null, Color.Black, 0f, Vector2.Zero, new Vector2(dimensions.Width, dimensions.Height / 1000f), SpriteEffects.None, 0f);
-			spriteBatch.Draw(texture, dimensions.Position() + new Vector2(2, 2), null, Color.White, 0f, Vector2.Zero, new Vector2(1f, dimensions.Height - 4f), SpriteEffects.None, 0f);
+			UIGradient gradient = new UIGradient(steps, channel);
+			gradient.Width = gradient.Height = (-4, 1);
+			gradient.Position = new Vector2(2);
+			gradient.OnChangeColor += newColor => uiColor.color = newColor;
+			uiColor.Append(gradient);
 		}
 	}
 }

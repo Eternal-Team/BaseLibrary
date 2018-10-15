@@ -1,17 +1,18 @@
-﻿using System;
+﻿using BaseLibrary.UI.Elements;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
+using UIPanel = Terraria.GameContent.UI.Elements.UIPanel;
 
 namespace BaseLibrary.Utility
 {
@@ -142,7 +143,7 @@ namespace BaseLibrary.Utility
 			return true;
 		}
 
-		public static Texture2D CreateGrad(int width, int steps)
+		public static Texture2D CreateGrad(int width, int steps, Channel channel)
 		{
 			Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, width, 1);
 			Color[] data = new Color[width];
@@ -151,7 +152,25 @@ namespace BaseLibrary.Utility
 			int step = 0;
 			foreach (int i in DistributeInteger(width, steps))
 			{
-				Color c = HSL2RGB(step / (decimal)steps, 1.0m, 0.5m);
+				Color c = Color.White;
+				switch (channel)
+				{
+					case Channel.R:
+						c = new Color(255 * step / steps, 0, 0);
+						break;
+					case Channel.G:
+						c = new Color(0, 255 * step / steps, 0);
+						break;
+					case Channel.B:
+						c = new Color(0, 0, 255 * step / steps);
+						break;
+					case Channel.A:
+						c = new Color(0, 0, 0, 255 * step / steps);
+						break;
+					default:
+						c = HSL2RGB(step / (decimal)steps, 1.0m, 0.5m);
+						break;
+				}
 
 				for (int x = nextX; x < nextX + i; x++) data[x] = c;
 

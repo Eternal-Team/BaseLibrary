@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseLibrary.cs" />
+    <Compile Include="UI\Elements\UIColor.cs" />
     <Compile Include="UI\Elements\UIDraggablePanel.cs" />
     <Compile Include="Items\TestItem.cs" />
     <Compile Include="ModPlayer.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="UI\Elements\UIButton.cs" />
     <Compile Include="UI\Elements\UICategory.cs" />
     <Compile Include="UI\Elements\UIColorSelection.cs" />
+    <Compile Include="UI\Elements\UIGradient.cs" />
     <Compile Include="UI\Elements\UIGrid.cs" />
     <Compile Include="UI\Elements\UIPanel.cs" />
     <Compile Include="UI\Elements\UIScrollbar.cs" />
