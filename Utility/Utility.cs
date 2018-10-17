@@ -49,5 +49,16 @@ namespace BaseLibrary.Utility
 				}
 			}
 		}
+
+		public static IEnumerable<object> ToEnumerable(this object tuple)
+		{
+			foreach (FieldInfo field in tuple.GetType().GetFields())
+			{
+				if (field.Name == "Rest")
+					foreach (object o in field.GetValue(tuple).ToEnumerable())
+						yield return o;
+				else yield return field.GetValue(tuple);
+			}
+		}
 	}
 }

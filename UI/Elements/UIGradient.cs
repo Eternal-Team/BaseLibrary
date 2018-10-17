@@ -2,7 +2,6 @@
 using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria;
 using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
@@ -19,7 +18,7 @@ namespace BaseLibrary.UI.Elements
 			this.steps = steps;
 			this.channel = channel;
 		}
-		
+
 		public override void Click(UIMouseEvent evt)
 		{
 			base.Click(evt);

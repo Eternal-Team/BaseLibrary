@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.DataStructures;
 
 namespace BaseLibrary.Utility
@@ -97,12 +98,23 @@ namespace BaseLibrary.Utility
 
 		public static bool InTriangle(this Point point, Point[] array) => point.InTriangle(array[0], array[1], array[2]);
 
+		public static bool IsInCircularSector(this Vector2 point, Vector2 center, float radius, float startAngle, float endAngle)
+		{
+			Vector2 distance = point - center;
+			double angle = Math.Atan(distance.X / distance.Y);
+			return Vector2.Distance(center, point) <= radius && angle >= startAngle && angle <= endAngle;
+		}
+
 		public static float ToRadians(this float angle) => MathHelper.Pi / 180f * angle;
+
+		public static float ToDegrees(this float angle) => angle * 180f / MathHelper.Pi;
 
 		public static T Remap<T>(this T value, double low1, double high1, double low2, double high2)
 		{
 			double castValue = (double)Convert.ChangeType(value, TypeCode.Double);
 			return (T)Convert.ChangeType(low2 + (castValue - low1) * (high2 - low2) / (high1 - low1), value.GetType());
 		}
+
+		public static Vector2 ToScreenCoordinates(this Point16 point) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange));
 	}
 }

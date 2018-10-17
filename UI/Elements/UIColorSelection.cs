@@ -1,12 +1,14 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Microsoft.Xna.Framework;
 
 namespace BaseLibrary.UI.Elements
 {
 	public enum Channel
 	{
-		R, G, B, A, All
+		R,
+		G,
+		B,
+		A,
+		All
 	}
 
 	public class UIColorSelection : BaseElement
