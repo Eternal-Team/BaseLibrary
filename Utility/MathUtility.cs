@@ -78,7 +78,7 @@ namespace BaseLibrary.Utility
 			}
 		}
 
-		public static bool InTriangle(this Point point, Point t0, Point t1, Point t2)
+		public static bool IsInTriangle(this Point point, Point t0, Point t1, Point t2)
 		{
 			var s = t0.Y * t2.X - t0.X * t2.Y + (t2.Y - t0.Y) * point.X + (t0.X - t2.X) * point.Y;
 			var t = t0.X * t1.Y - t0.Y * t1.X + (t0.Y - t1.Y) * point.X + (t1.X - t0.X) * point.Y;
@@ -96,13 +96,33 @@ namespace BaseLibrary.Utility
 			return s > 0 && t > 0 && s + t <= A;
 		}
 
-		public static bool InTriangle(this Point point, Point[] array) => point.InTriangle(array[0], array[1], array[2]);
+		public static bool IsInTriangle(this Point point, Point[] array) => point.IsInTriangle(array[0], array[1], array[2]);
 
 		public static bool IsInCircularSector(this Vector2 point, Vector2 center, float radius, float startAngle, float endAngle)
 		{
 			Vector2 distance = point - center;
 			double angle = Math.Atan(distance.X / distance.Y);
 			return Vector2.Distance(center, point) <= radius && angle >= startAngle && angle <= endAngle;
+		}
+
+		public static bool IsInPolygon4(this Vector2 point, params Vector2[] polygon)
+		{
+			bool result = false;
+			int j = polygon.Length - 1;
+			for (int i = 0; i < polygon.Length; i++)
+			{
+				if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
+				{
+					if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
+					{
+						result = !result;
+					}
+				}
+
+				j = i;
+			}
+
+			return result;
 		}
 
 		public static float ToRadians(this float angle) => MathHelper.Pi / 180f * angle;

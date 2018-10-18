@@ -49,6 +49,19 @@ namespace BaseLibrary.Utility
 			spriteBatch.DrawPanel(rectangle, TexturePanelBorder, borderColor ?? Color.Black);
 		}
 
+		public static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
+		{
+			float num = Vector2.Distance(start, end);
+			Vector2 vector = (end - start) / num;
+			Vector2 value = start;
+			float rotation = vector.ToRotation();
+			for (float num2 = 0f; num2 <= num; num2 += 1f)
+			{
+				spriteBatch.Draw(Main.blackTileTexture, value, null, color, rotation, Vector2.Zero, 0.1f, SpriteEffects.None, 0f);
+				value = start + num2 * vector;
+			}
+		}
+
 		public static void DrawOutline(this SpriteBatch spriteBatch, Point16 start, Point16 end, Color color, float lineSize, bool addZero = false)
 		{
 			float width = Math.Abs(start.X - end.X) * 16 + 16;
