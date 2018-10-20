@@ -1,11 +1,11 @@
-﻿using System;
+﻿using BaseLibrary.UI.Elements;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using BaseLibrary.UI.Elements;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameInput;
@@ -41,6 +41,27 @@ namespace BaseLibrary.Utility
 			spriteBatch.Draw(texture, new Rectangle(point.X + 12, point.Y + 12, width, height), new Rectangle(12, 12, 4, 4), color);
 		}
 
+		public static void DrawSlot(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture = null)
+		{
+			if (texture == null) texture = Main.inventoryBackTexture;
+
+			Point point = new Point(dimensions.X, dimensions.Y);
+			Point point2 = new Point(point.X + dimensions.Width - 8, point.Y + dimensions.Height - 8);
+			int width = point2.X - point.X - 8;
+			int height = point2.Y - point.Y - 8;
+			spriteBatch.Draw(texture, new Rectangle(point.X, point.Y, 8, 8), new Rectangle(0, 0, 8, 8), Color.White);
+			spriteBatch.Draw(texture, new Rectangle(point2.X, point.Y, 8, 8), new Rectangle(44, 0, 8, 8), Color.White);
+			spriteBatch.Draw(texture, new Rectangle(point.X, point2.Y, 8, 8), new Rectangle(0, 44, 8, 8), Color.White);
+			spriteBatch.Draw(texture, new Rectangle(point2.X, point2.Y, 8, 8), new Rectangle(44, 44, 8, 8), Color.White);
+			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point.Y, width, 8), new Rectangle(8, 0, 36, 8), Color.White);
+			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point2.Y, width, 8), new Rectangle(8, 44, 36, 8), Color.White);
+			spriteBatch.Draw(texture, new Rectangle(point.X, point.Y + 8, 8, height), new Rectangle(0, 8, 8, 36), Color.White);
+			spriteBatch.Draw(texture, new Rectangle(point2.X, point.Y + 8, 8, height), new Rectangle(44, 8, 8, 36), Color.White);
+			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point.Y + 8, width, height), new Rectangle(8, 8, 36, 36), Color.White);
+		}
+
+		public static void DrawSlot(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Texture2D texture = null) => spriteBatch.DrawSlot(dimensions.ToRectangle(), texture);
+
 		public static void DrawPanel(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? bgColor = null, Color? borderColor = null) => spriteBatch.DrawPanel(dimensions.ToRectangle(), bgColor, borderColor);
 
 		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle rectangle, Color? bgColor = null, Color? borderColor = null)
@@ -49,7 +70,7 @@ namespace BaseLibrary.Utility
 			spriteBatch.DrawPanel(rectangle, TexturePanelBorder, borderColor ?? Color.Black);
 		}
 
-		public static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
+		public static void DrawLine(this SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
 		{
 			float num = Vector2.Distance(start, end);
 			Vector2 vector = (end - start) / num;
@@ -292,15 +313,6 @@ namespace BaseLibrary.Utility
 			ScissorTestEnable = true
 		};
 
-		public static void DrawImmediate(this SpriteBatch spriteBatch, Action<SpriteBatch> drawAction)
-		{
-			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenState, null, Main.UIScaleMatrix);
-			drawAction.Invoke(spriteBatch);
-			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenState, null, Main.UIScaleMatrix);
-		}
-
 		public static void DrawOverflowHidden(this SpriteBatch spriteBatch, UIElement uiElement, Action<SpriteBatch> drawAction)
 		{
 			Rectangle scissorRectangle = spriteBatch.GraphicsDevice.ScissorRectangle;
@@ -328,6 +340,26 @@ namespace BaseLibrary.Utility
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, CalculatedStyle dimensions, Color? color = null) => spriteBatch.Draw(texture, dimensions.ToRectangle(), color ?? Color.White);
 
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, RectangleF rectangleF, Color? color = null) => spriteBatch.Draw(texture, rectangleF.rectangle, null, color ?? Color.White);
+
+		public static void DrawImmediate(this SpriteBatch spriteBatch, Action<SpriteBatch> drawAction)
+		{
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenState, null, Main.UIScaleMatrix);
+			drawAction.Invoke(spriteBatch);
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenState, null, Main.UIScaleMatrix);
+		}
+
+		public static void DrawWithTransformation(this SpriteBatch spriteBatch, Matrix transformation, Action<SpriteBatch> drawAction)
+		{
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, transformation);
+
+			drawAction(spriteBatch);
+
+			spriteBatch.End();
+			spriteBatch.Begin();
+		}
 		#endregion
 	}
 

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 
@@ -105,6 +105,10 @@ namespace BaseLibrary.Utility
 			return Vector2.Distance(center, point) <= radius && angle >= startAngle && angle <= endAngle;
 		}
 
+		public static Vector2[] CreatePolygon(Vector2 dimensions, Vector2 origin = default(Vector2), float scale = 1f) => new[] { new Vector2(-origin.X, -origin.Y) * scale, new Vector2(dimensions.X - origin.X, -origin.Y) * scale, new Vector2(dimensions.X - origin.X, dimensions.Y - origin.Y) * scale, new Vector2(-origin.X, dimensions.Y - origin.Y) * scale };
+
+		public static Vector2[] Transform(this Vector2[] polygon, Matrix matrix) => polygon.Select(point => Vector2.Transform(point, matrix)).ToArray();
+
 		public static bool IsInPolygon4(this Vector2 point, params Vector2[] polygon)
 		{
 			bool result = false;
@@ -135,6 +139,10 @@ namespace BaseLibrary.Utility
 			return (T)Convert.ChangeType(low2 + (castValue - low1) * (high2 - low2) / (high1 - low1), value.GetType());
 		}
 
-		public static Vector2 ToScreenCoordinates(this Point16 point) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange));
+		public static Vector2 ToScreenCoordinates(this Point16 point) => point.ToVector2() * 16 - Main.screenPosition;
+
+		public static Vector2 WithOffscreenRange(this Vector2 vector) => vector + (Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange));
+
+		public static Matrix OffscreenMatrix => Main.drawToScreen ? Matrix.CreateTranslation(0, 0, 0) : Matrix.CreateTranslation(Main.offScreenRange, Main.offScreenRange, 0);
 	}
 }
