@@ -25,7 +25,5 @@ namespace BaseLibrary.Utility
 		}
 
 		public static Vector2 Size(this CalculatedStyle dimensions) => new Vector2(dimensions.Width, dimensions.Height);
-
-		public static RectangleF ToRectangleF(this CalculatedStyle dimensions) => new RectangleF(dimensions.X, dimensions.Y, dimensions.Width, dimensions.Height);
 	}
 }

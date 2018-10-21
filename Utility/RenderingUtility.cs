@@ -1,11 +1,11 @@
-﻿using BaseLibrary.UI.Elements;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using BaseLibrary.UI.Elements;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameInput;
@@ -338,8 +338,6 @@ namespace BaseLibrary.Utility
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Rectangle rectangle) => spriteBatch.Draw(texture, rectangle, Color.White);
 
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, CalculatedStyle dimensions, Color? color = null) => spriteBatch.Draw(texture, dimensions.ToRectangle(), color ?? Color.White);
-
-		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, RectangleF rectangleF, Color? color = null) => spriteBatch.Draw(texture, rectangleF.rectangle, null, color ?? Color.White);
 
 		public static void DrawImmediate(this SpriteBatch spriteBatch, Action<SpriteBatch> drawAction)
 		{

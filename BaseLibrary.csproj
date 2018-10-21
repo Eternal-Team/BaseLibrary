@@ -110,7 +110,6 @@
     <Compile Include="Utility\InputUtility.cs" />
     <Compile Include="Utility\ItemUtility.cs" />
     <Compile Include="Utility\MathUtility.cs" />
-    <Compile Include="Utility\RectangleF.cs" />
     <Compile Include="Utility\ReflectionUtility.cs" />
     <Compile Include="Utility\RenderingUtility.cs" />
     <Compile Include="Utility\StringUtility.cs" />

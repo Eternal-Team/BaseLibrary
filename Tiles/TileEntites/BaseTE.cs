@@ -1,6 +1,9 @@
 ﻿using System;
+using BaseLibrary.UI.Elements;
 using BaseLibrary.Utility;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,6 +11,15 @@ using Terraria.ObjectData;
 
 namespace BaseLibrary.Tiles.TileEntites
 {
+	public abstract class BaseTEWithUI<T> : BaseTE where T : BaseElement
+	{
+		public abstract T UI { get; }
+		public Vector2? UIPosition;
+
+		public virtual LegacySoundStyle OpenSound => SoundID.Item1;
+		public virtual LegacySoundStyle CloseSound => SoundID.Item1;
+	}
+
 	public abstract class BaseTE : ModTileEntity
 	{
 		public abstract Type TileType { get; }

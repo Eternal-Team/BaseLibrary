@@ -1,5 +1,4 @@
 ﻿using System;
-using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -39,7 +38,7 @@ namespace BaseLibrary.UI.Elements
 			switch (scaleMode)
 			{
 				case ScaleMode.Stretch:
-					spriteBatch.Draw(textureBack, dimensions.ToRectangleF() + new RectangleF(PaddingTop, PaddingTop, PaddingTop * -2f, PaddingTop * -2f));
+					spriteBatch.Draw(textureBack, new Rectangle((int)(dimensions.X + PaddingTop), (int)(dimensions.Y + PaddingTop), (int)(dimensions.Width - PaddingTop * 2f), (int)(dimensions.Height - PaddingTop * 2f)));
 					break;
 				case ScaleMode.Zoom:
 					spriteBatch.Draw(textureBack, dimensions.Position() + dimensions.Size() * 0.5f, null, Color.White, 0f, new Vector2(textureBack.Width, textureBack.Height) * 0.5f, Math.Min((dimensions.Width - PaddingTop * 2f) / textureBack.Width, (dimensions.Height - PaddingTop * 2f) / textureBack.Height), SpriteEffects.None, 0f);
