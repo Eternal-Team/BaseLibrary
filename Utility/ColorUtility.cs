@@ -8,6 +8,7 @@ namespace BaseLibrary.Utility
 		public static readonly Color ColorPanel = new Color(73, 94, 171);
 		public static readonly Color ColorPanel_Selected = new Color(51, 65, 119);
 		public static readonly Color ColorPanel_Hovered = new Color(94, 120, 221);
+		public static readonly Color ColorSlot = new Color(63, 65, 151);
 
 		public static readonly Color[] ColorCoins =
 		{

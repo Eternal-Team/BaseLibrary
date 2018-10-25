@@ -127,6 +127,7 @@
     <Content Include="Textures\Placeholder.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Effects\BarShader.xnb" />
     <None Include="packages.config" />
     <None Include="TestModBook.json" />
   </ItemGroup>

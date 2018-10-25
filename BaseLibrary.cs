@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.ModBook;
 using BaseLibrary.UI;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,7 +16,7 @@ namespace BaseLibrary
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
-
+		
 		public static List<Item> itemsCache;
 
 		public static bool InUI;

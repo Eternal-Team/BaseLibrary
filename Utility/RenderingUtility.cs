@@ -41,26 +41,29 @@ namespace BaseLibrary.Utility
 			spriteBatch.Draw(texture, new Rectangle(point.X + 12, point.Y + 12, width, height), new Rectangle(12, 12, 4, 4), color);
 		}
 
-		public static void DrawSlot(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture = null)
+		public static void DrawSlot(this SpriteBatch spriteBatch, Rectangle dimensions, Color? color = null, Texture2D texture = null)
 		{
-			if (texture == null) texture = Main.inventoryBackTexture;
+			if (texture == null) texture = Main.inventoryBack13Texture;
+			if (color == null) color = ColorSlot;
 
 			Point point = new Point(dimensions.X, dimensions.Y);
 			Point point2 = new Point(point.X + dimensions.Width - 8, point.Y + dimensions.Height - 8);
 			int width = point2.X - point.X - 8;
 			int height = point2.Y - point.Y - 8;
-			spriteBatch.Draw(texture, new Rectangle(point.X, point.Y, 8, 8), new Rectangle(0, 0, 8, 8), Color.White);
-			spriteBatch.Draw(texture, new Rectangle(point2.X, point.Y, 8, 8), new Rectangle(44, 0, 8, 8), Color.White);
-			spriteBatch.Draw(texture, new Rectangle(point.X, point2.Y, 8, 8), new Rectangle(0, 44, 8, 8), Color.White);
-			spriteBatch.Draw(texture, new Rectangle(point2.X, point2.Y, 8, 8), new Rectangle(44, 44, 8, 8), Color.White);
-			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point.Y, width, 8), new Rectangle(8, 0, 36, 8), Color.White);
-			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point2.Y, width, 8), new Rectangle(8, 44, 36, 8), Color.White);
-			spriteBatch.Draw(texture, new Rectangle(point.X, point.Y + 8, 8, height), new Rectangle(0, 8, 8, 36), Color.White);
-			spriteBatch.Draw(texture, new Rectangle(point2.X, point.Y + 8, 8, height), new Rectangle(44, 8, 8, 36), Color.White);
-			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point.Y + 8, width, height), new Rectangle(8, 8, 36, 36), Color.White);
+
+			Color value = color.Value;
+			spriteBatch.Draw(texture, new Rectangle(point.X, point.Y, 8, 8), new Rectangle(0, 0, 8, 8), value);
+			spriteBatch.Draw(texture, new Rectangle(point2.X, point.Y, 8, 8), new Rectangle(44, 0, 8, 8), value);
+			spriteBatch.Draw(texture, new Rectangle(point.X, point2.Y, 8, 8), new Rectangle(0, 44, 8, 8), value);
+			spriteBatch.Draw(texture, new Rectangle(point2.X, point2.Y, 8, 8), new Rectangle(44, 44, 8, 8), value);
+			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point.Y, width, 8), new Rectangle(8, 0, 36, 8), value);
+			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point2.Y, width, 8), new Rectangle(8, 44, 36, 8), value);
+			spriteBatch.Draw(texture, new Rectangle(point.X, point.Y + 8, 8, height), new Rectangle(0, 8, 8, 36), value);
+			spriteBatch.Draw(texture, new Rectangle(point2.X, point.Y + 8, 8, height), new Rectangle(44, 8, 8, 36), value);
+			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point.Y + 8, width, height), new Rectangle(8, 8, 36, 36), value);
 		}
 
-		public static void DrawSlot(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Texture2D texture = null) => spriteBatch.DrawSlot(dimensions.ToRectangle(), texture);
+		public static void DrawSlot(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? color = null, Texture2D texture = null) => spriteBatch.DrawSlot(dimensions.ToRectangle(), color, texture);
 
 		public static void DrawPanel(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? bgColor = null, Color? borderColor = null) => spriteBatch.DrawPanel(dimensions.ToRectangle(), bgColor, borderColor);
 
@@ -357,6 +360,24 @@ namespace BaseLibrary.Utility
 
 			spriteBatch.End();
 			spriteBatch.Begin();
+		}
+
+		public static void DrawScissor(this SpriteBatch spriteBatch, Rectangle rectangle, Action<SpriteBatch> drawAction)
+		{
+			Rectangle scissorRectangle = spriteBatch.GraphicsDevice.ScissorRectangle;
+			RasterizerState rasterizerState = spriteBatch.GraphicsDevice.RasterizerState;
+			SamplerState anisotropicClamp = SamplerState.AnisotropicClamp;
+
+			spriteBatch.End();
+			spriteBatch.GraphicsDevice.ScissorRectangle = rectangle;
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, anisotropicClamp, DepthStencilState.None, OverflowHiddenState, null, Main.UIScaleMatrix);
+
+			drawAction.Invoke(spriteBatch);
+
+			rasterizerState = spriteBatch.GraphicsDevice.RasterizerState;
+			spriteBatch.End();
+			spriteBatch.GraphicsDevice.ScissorRectangle = scissorRectangle;
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, anisotropicClamp, DepthStencilState.None, rasterizerState, null, Main.UIScaleMatrix);
 		}
 		#endregion
 	}
