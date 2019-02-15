@@ -14,6 +14,8 @@ namespace BaseLibrary.Utility
 
 		public static bool IsKeyDown(this int key) => IsKeyDown((Keys)key);
 
+		public static bool IsKeyPressed(this Keys key) => Main.inputText.IsKeyDown(key) && !Main.oldInputText.IsKeyDown(key);
+
 		public static string GetHotkeyValue(string hotkey)
 		{
 			Dictionary<string, ModHotKey> hotkeys = typeof(ModLoader).GetValue<Dictionary<string, ModHotKey>>("modHotKeys");

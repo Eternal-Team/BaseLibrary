@@ -3,6 +3,7 @@ using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
@@ -15,6 +16,28 @@ namespace BaseLibrary.UI.Elements
 		public UITextButton(string text)
 		{
 			this.text = text;
+			SetPadding(8);
+		}
+
+		public override void MouseOver(UIMouseEvent evt)
+		{
+			base.MouseOver(evt);
+
+			Main.PlaySound(SoundID.MenuTick);
+		}
+
+		public override void MouseOut(UIMouseEvent evt)
+		{
+			base.MouseOut(evt);
+
+			Main.PlaySound(SoundID.MenuTick);
+		}
+
+		public override void Click(UIMouseEvent evt)
+		{
+			base.Click(evt);
+
+			Main.PlaySound(SoundID.MenuTick);
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -10,17 +9,7 @@ namespace BaseLibrary.Utility
 	{
 		public const BindingFlags defaultFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-		public static List<Type> intTypes = new List<Type>
-		{
-			typeof(byte),
-			typeof(sbyte),
-			typeof(ushort),
-			typeof(short),
-			typeof(uint),
-			typeof(int),
-			typeof(ulong),
-			typeof(long)
-		};
+		public static FieldInfo GetFieldInfo(this Type type, string name, BindingFlags flags = defaultFlags) => type.GetField(name, flags);
 
 		public static T GetValue<T>(this Type type, string name, object obj = null, BindingFlags flags = defaultFlags) => (T)(type.GetProperty(name, flags)?.GetValue(obj) ?? type.GetField(name, flags)?.GetValue(obj));
 

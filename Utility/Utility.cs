@@ -72,5 +72,7 @@ namespace BaseLibrary.Utility
 
 			return false;
 		}
+
+		public static (short, short) ToOrder(this IntPtr intPtr) => ((short)intPtr.ToInt32(), (short)(intPtr.ToInt32() >> 16));
 	}
 }

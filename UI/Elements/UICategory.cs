@@ -28,7 +28,7 @@ namespace BaseLibrary.UI.Elements
 			{
 				Height = (0, 1),
 				Padding = (8, 8, 8, 8),
-				substituteWidth = true
+				SubstituteWidth = true
 			};
 			panel.Append(textureIcon);
 

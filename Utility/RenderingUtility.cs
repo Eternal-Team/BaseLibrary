@@ -9,10 +9,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameInput;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
-using UIPanel = Terraria.GameContent.UI.Elements.UIPanel;
 
 namespace BaseLibrary.Utility
 {
@@ -21,8 +21,8 @@ namespace BaseLibrary.Utility
 		public static string MouseText;
 		public static Color? colorMouseText;
 
-		internal static Texture2D TexturePanelBackground => typeof(UIPanel).GetValue<Texture2D>("_backgroundTexture");
-		internal static Texture2D TexturePanelBorder => typeof(UIPanel).GetValue<Texture2D>("_borderTexture");
+		public static Texture2D TexturePanelBackground = ModLoader.GetTexture("Terraria/UI/PanelBackground");
+		public static Texture2D TexturePanelBorder = ModLoader.GetTexture("Terraria/UI/PanelBorder");
 
 		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color color)
 		{
@@ -39,6 +39,14 @@ namespace BaseLibrary.Utility
 			spriteBatch.Draw(texture, new Rectangle(point.X, point.Y + 12, 12, height), new Rectangle(0, 12, 12, 4), color);
 			spriteBatch.Draw(texture, new Rectangle(point2.X, point.Y + 12, 12, height), new Rectangle(16, 12, 12, 4), color);
 			spriteBatch.Draw(texture, new Rectangle(point.X + 12, point.Y + 12, width, height), new Rectangle(12, 12, 4, 4), color);
+		}
+
+		public static void DrawPanel(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? bgColor = null, Color? borderColor = null) => spriteBatch.DrawPanel(dimensions.ToRectangle(), bgColor, borderColor);
+
+		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle rectangle, Color? bgColor = null, Color? borderColor = null)
+		{
+			spriteBatch.DrawPanel(rectangle, TexturePanelBackground, bgColor ?? ColorPanel);
+			spriteBatch.DrawPanel(rectangle, TexturePanelBorder, borderColor ?? Color.Black);
 		}
 
 		public static void DrawSlot(this SpriteBatch spriteBatch, Rectangle dimensions, Color? color = null, Texture2D texture = null)
@@ -64,14 +72,6 @@ namespace BaseLibrary.Utility
 		}
 
 		public static void DrawSlot(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? color = null, Texture2D texture = null) => spriteBatch.DrawSlot(dimensions.ToRectangle(), color, texture);
-
-		public static void DrawPanel(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? bgColor = null, Color? borderColor = null) => spriteBatch.DrawPanel(dimensions.ToRectangle(), bgColor, borderColor);
-
-		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle rectangle, Color? bgColor = null, Color? borderColor = null)
-		{
-			spriteBatch.DrawPanel(rectangle, TexturePanelBackground, bgColor ?? ColorPanel);
-			spriteBatch.DrawPanel(rectangle, TexturePanelBorder, borderColor ?? Color.Black);
-		}
 
 		public static void DrawLine(this SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
 		{
@@ -205,7 +205,7 @@ namespace BaseLibrary.Utility
 						c = new Color(0, 0, 0, 255 * step / steps);
 						break;
 					default:
-						c = HSL2RGB(step / (decimal)steps, 1.0m, 0.5m);
+						c = HSL2RGB(step / (float)steps, 1.0f, 0.5f);
 						break;
 				}
 
@@ -219,56 +219,56 @@ namespace BaseLibrary.Utility
 			return texture;
 		}
 
-		public static Color HSL2RGB(decimal h, decimal sl, decimal l)
+		public static Color HSL2RGB(float h, float sl, float l)
 		{
-			decimal r = l;
-			decimal g = l;
-			decimal b = l;
+			float r = l;
+			float g = l;
+			float b = l;
 
-			decimal v = l <= 0.5m ? l * (1.0m + sl) : l + sl - l * sl;
+			float v = l <= 0.5f ? l * (1f + sl) : l + sl - l * sl;
 
 			if (v > 0)
 			{
-				decimal m = l + l - v;
-				decimal sv = (v - m) / v;
-				h *= 6.0m;
+				float m = l + l - v;
+				float sv = (v - m) / v;
+				h *= 6f;
 				int sextant = (int)h;
-				decimal fract = h - sextant;
-				decimal vsf = v * sv * fract;
-				decimal mid1 = m + vsf;
-				decimal mid2 = v - vsf;
+				float fract = h - sextant;
+				float vsf = v * sv * fract;
+				float mid1 = m + vsf;
+				float mid2 = v - vsf;
 
-				if (h < 1m || h == 6m)
+				if (h < 1f || Math.Abs(h - 6f) < 0.0)
 				{
 					r = v;
 					g = mid1;
 					b = m;
 				}
-				else if (h < 2m)
+				else if (h < 2f)
 				{
 					r = mid2;
 					g = v;
 					b = m;
 				}
-				else if (h < 3m)
+				else if (h < 3f)
 				{
 					r = m;
 					g = v;
 					b = mid1;
 				}
-				else if (h < 4m)
+				else if (h < 4f)
 				{
 					r = m;
 					g = mid2;
 					b = v;
 				}
-				else if (h < 5m)
+				else if (h < 5f)
 				{
 					r = mid1;
 					g = m;
 					b = v;
 				}
-				else if (h < 6m)
+				else if (h < 6f)
 				{
 					r = v;
 					g = m;
@@ -276,7 +276,7 @@ namespace BaseLibrary.Utility
 				}
 			}
 
-			return new Color(Convert.ToByte(r * 255m), Convert.ToByte(g * 255m), Convert.ToByte(b * 255m));
+			return new Color(r, g, b);
 		}
 
 		public static void LoadTextures(this Mod mod)
@@ -378,6 +378,53 @@ namespace BaseLibrary.Utility
 			spriteBatch.End();
 			spriteBatch.GraphicsDevice.ScissorRectangle = scissorRectangle;
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, anisotropicClamp, DepthStencilState.None, rasterizerState, null, Main.UIScaleMatrix);
+		}
+
+		public static void DrawItem(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size)
+		{
+			if (!item.IsAir)
+			{
+				Texture2D itemTexture = Main.itemTexture[item.type];
+				Rectangle rect = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
+				Color newColor = Color.White;
+				float pulseScale = 1f;
+				ItemSlot.GetItemLight(ref newColor, ref pulseScale, item);
+				float scale = Math.Min(size.X / rect.Width, size.Y / rect.Height);
+
+				Vector2 origin = rect.Size() * 0.5f * pulseScale;
+
+				if (ItemLoader.PreDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, scale * pulseScale))
+				{
+					spriteBatch.Draw(itemTexture, position, rect, item.GetAlpha(newColor), 0f, origin, scale * pulseScale, SpriteEffects.None, 0f);
+					if (item.color != Color.Transparent) spriteBatch.Draw(itemTexture, position, rect, item.GetColor(Color.White), 0f, origin, scale * pulseScale, SpriteEffects.None, 0f);
+				}
+
+				ItemLoader.PostDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, scale * pulseScale);
+				if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(Main.wireTexture, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
+				if (item.stack > 1) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontItemStack, item.stack.ToString(), position + new Vector2(10f, 26f) * scale, Color.White, 0f, Vector2.Zero, new Vector2(scale), -1f, scale);
+			}
+		}
+
+		public static void DrawNPC(this SpriteBatch spriteBatch, NPC npc, Vector2 position, Vector2 size)
+		{
+			Main.instance.LoadNPC(npc.type);
+
+			Texture2D npcTexture = Main.npcTexture[npc.type];
+
+			Rectangle rectangle = new Rectangle(0, 0, Main.npcTexture[npc.type].Width, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type]);
+
+			Color color = npc.color != Color.Transparent ? new Color(npc.color.R, npc.color.G, npc.color.B, 255f) : new Color(1f, 1f, 1f);
+
+			Main.spriteBatch.Draw(npcTexture, position, rectangle, color, 0, rectangle.Size() * 0.5f, Math.Min(size.X / rectangle.Width, size.Y / rectangle.Height), SpriteEffects.None, 0);
+		}
+
+		public static void DrawProjectile(this SpriteBatch spriteBatch, Projectile proj, Vector2 position, Vector2 size)
+		{
+			Main.instance.LoadProjectile(proj.type);
+
+			Texture2D projTexture = Main.projectileTexture[proj.type];
+
+			Main.spriteBatch.Draw(projTexture, position, null, Color.White, 0, projTexture.Size() * 0.5f, Math.Min(size.X / projTexture.Width, size.Y / projTexture.Height), SpriteEffects.None, 0);
 		}
 		#endregion
 	}

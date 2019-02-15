@@ -9,7 +9,6 @@ using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
-	// todo: introduce Vector2 for position and size
 	// todo: make left,right,top,left floats
 	// todo: functions for size and position?
 
@@ -20,8 +19,8 @@ namespace BaseLibrary.UI.Elements
 		public event Action<SpriteBatch> OnPostDraw;
 		public event Func<string> GetHoverText;
 
-		public bool substituteWidth;
-		public bool substituteHeight;
+		public bool SubstituteWidth;
+		public bool SubstituteHeight;
 
 		public new (float pixels, float precent) Width
 		{
@@ -122,6 +121,8 @@ namespace BaseLibrary.UI.Elements
 			base.Update(gameTime);
 		}
 
+		public event Action<CalculatedStyle> OnSizeChanged;
+
 		public override void Recalculate()
 		{
 			CalculatedStyle parentDimensions = Parent?.GetInnerDimensions() ?? UserInterface.ActiveInstance.GetDimensions();
@@ -139,8 +140,8 @@ namespace BaseLibrary.UI.Elements
 			dimensions.Width = base.Width.GetValue(parentDimensions.Width).Clamp(minWidth, maxWidth);
 			dimensions.Height = base.Height.GetValue(parentDimensions.Height).Clamp(minHeight, maxHeight);
 
-			if (substituteWidth) dimensions.Width = dimensions.Height;
-			else if (substituteHeight) dimensions.Height = dimensions.Width;
+			if (SubstituteWidth) dimensions.Width = dimensions.Height;
+			else if (SubstituteHeight) dimensions.Height = dimensions.Width;
 
 			dimensions.Width += MarginLeft + MarginRight;
 			dimensions.Height += MarginTop + MarginBottom;
@@ -151,6 +152,7 @@ namespace BaseLibrary.UI.Elements
 			dimensions.Y += MarginTop;
 			dimensions.Width -= MarginLeft + MarginRight;
 			dimensions.Height -= MarginTop + MarginBottom;
+			if (dimensions.Size() != GetDimensions().Size()) OnSizeChanged?.Invoke(dimensions);
 			typeof(UIElement).SetValue("_dimensions", dimensions, this);
 			dimensions.X += PaddingLeft;
 			dimensions.Y += PaddingTop;
@@ -162,8 +164,6 @@ namespace BaseLibrary.UI.Elements
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			//if (Visible && (VisibleFunc?.Invoke() ?? true))
-			//{
 			PreDraw(spriteBatch);
 
 			if (_useImmediateMode) spriteBatch.DrawImmediate(DrawSelf);
@@ -175,7 +175,6 @@ namespace BaseLibrary.UI.Elements
 			PostDraw(spriteBatch);
 
 			if (IsMouseHovering && GetHoverText != null) Utility.Utility.DrawMouseText(GetHoverText.Invoke());
-			//}
 		}
 
 		public virtual void Append(IEnumerable<BaseElement> elements)

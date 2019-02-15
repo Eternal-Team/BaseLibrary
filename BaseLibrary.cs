@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
+using BaseLibrary.InputInterceptor;
 using BaseLibrary.ModBook;
-using BaseLibrary.UI;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 using static BaseLibrary.Utility.Utility;
-using Player = On.Terraria.Player;
+using Main = On.Terraria.Main;
 
 namespace BaseLibrary
 {
@@ -16,16 +15,15 @@ namespace BaseLibrary
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
-		
-		public static List<Item> itemsCache;
+
+		public static List<Item> itemCache;
+		public static List<NPC> npcCache;
+		public static List<Projectile> projectileCache;
 
 		public static bool InUI;
+
 		private LegacyGameInterfaceLayer MouseInterface;
-		public GUI<ModBookUI> BookUI;
-
-		public static ModHotKey hotkeyOpenBook;
-
-		public static (string key, RecipeGroup group) recipeGroupT2HMBars;
+		//public GUI<ModBookUI> BookUI;
 
 		public override void Load()
 		{
@@ -33,54 +31,79 @@ namespace BaseLibrary
 
 			ModBookLoader.Load();
 
-			Player.HandleHotbar += (orig, player) =>
+			Hooking.Hooking.Initialize();
+
+			Scheduler.Load();
+			InputInterceptor.InputInterceptor.Load();
+
+			Main.DoUpdate_HandleInput += (orig, self) =>
 			{
-				if (!InUI) orig(player);
-				InUI = false;
+				if (!InputInterceptor.InputInterceptor.InterceptInput()) orig(self);
 			};
 
-			hotkeyOpenBook = RegisterHotKey("Open Mod Book", "M");
-
-			if (!Main.dedServ)
+			if (!Terraria.Main.dedServ)
 			{
 				this.LoadTextures();
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", DrawMouseText, InterfaceScaleType.UI);
-				BookUI = SetupGUI<ModBookUI>();
+				//BookUI = SetupGUI<ModBookUI>();
 			}
 		}
 
 		public override void Unload()
 		{
+			InputInterceptor.InputInterceptor.Unload();
+			Scheduler.Unload();
+
 			ModBookLoader.Unload();
 			UnloadNullableTypes();
 		}
 
 		public override void PostSetupContent()
 		{
-			itemsCache = new List<Item>();
+			itemCache = new List<Item>();
+			npcCache = new List<NPC>();
+			projectileCache = new List<Projectile>();
 
 			for (int type = 0; type < ItemLoader.ItemCount; type++)
 			{
 				Item item = new Item();
 				item.SetDefaults(type, false);
-				itemsCache.Add(item);
+				itemCache.Add(item);
 			}
-		}
 
-		public override void AddRecipeGroups()
-		{
-			recipeGroupT2HMBars = ("BaseLibrary:T2HMBars", new RecipeGroup(() => "T2HMBars", ItemID.MythrilBar, ItemID.OrichalcumBar));
-			RecipeGroup.RegisterGroup(recipeGroupT2HMBars.key, recipeGroupT2HMBars.group);
+			for (int type = 0; type < NPCLoader.NPCCount; type++)
+			{
+				NPC npc = new NPC();
+				npc.SetDefaults(type);
+				npcCache.Add(npc);
+			}
+
+			for (int type = 0; type < ProjectileLoader.ProjectileCount; type++)
+			{
+				try
+				{
+					Projectile projectile = new Projectile();
+					projectile.SetDefaults(type);
+					projectileCache.Add(projectile);
+				}
+				catch
+				{
+				}
+			}
 		}
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 		{
 			int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-			int HotbarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
+			//int HotbarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
 
 			if (MouseTextIndex != -1) layers.Insert(MouseTextIndex + 1, MouseInterface);
-			if (HotbarIndex != -1) layers.Insert(HotbarIndex + 1, BookUI.InterfaceLayer);
+			//if (HotbarIndex != -1) layers.Insert(HotbarIndex + 1, BookUI.InterfaceLayer);
+		}
+
+		public override void UpdateUI(GameTime gameTime)
+		{
 		}
 	}
 }

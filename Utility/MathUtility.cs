@@ -44,15 +44,10 @@ namespace BaseLibrary.Utility
 
 		public static T Max<T>(params T[] values) => values.Max();
 
-		public static T Clamp<T>(this T value, T min, T max)
+		public static T Clamp<T>(this T value, T min, T max) where T : IComparable<T>
 		{
-			double castValue = (double)Convert.ChangeType(value, TypeCode.Double);
-			double castMin = (double)Convert.ChangeType(min, TypeCode.Double);
-			double castMax = (double)Convert.ChangeType(max, TypeCode.Double);
-
-			if (castValue < castMin) castValue = castMin;
-			if (castValue > castMax) castValue = castMax;
-			return (T)Convert.ChangeType(castValue, value.GetType());
+			if (value.CompareTo(max) > 0) return max;
+			return value.CompareTo(min) < 0 ? min : value;
 		}
 
 		public static int ToNearest(this float value, int step)

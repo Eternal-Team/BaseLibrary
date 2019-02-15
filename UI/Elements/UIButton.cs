@@ -12,6 +12,7 @@ namespace BaseLibrary.UI.Elements
 	{
 		public Texture2D texture;
 		public ScaleMode scaleMode;
+		public bool RenderPanel;
 
 		public UIButton(Texture2D texture = null, ScaleMode scaleMode = ScaleMode.Stretch)
 		{
@@ -36,26 +37,15 @@ namespace BaseLibrary.UI.Elements
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			CalculatedStyle dimensions = GetDimensions();
+			CalculatedStyle innerDimensions = GetInnerDimensions();
+
+			if (RenderPanel) spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.Utility.ColorPanel_Selected : Utility.Utility.ColorPanel_Hovered : Utility.Utility.ColorPanel);
+
 			if (texture != null)
 			{
-				spriteBatch.End();
-				spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
-
-				switch (scaleMode)
-				{
-					case ScaleMode.Stretch:
-						spriteBatch.Draw(texture, dimensions);
-						break;
-					case ScaleMode.Zoom:
-						spriteBatch.Draw(texture, dimensions.Position(), null, Color.White, 0f, Vector2.Zero, Math.Min(dimensions.Width / texture.Width, dimensions.Height / texture.Height), SpriteEffects.None, 0f);
-						break;
-					case ScaleMode.None:
-						spriteBatch.Draw(texture, dimensions.Position());
-						break;
-				}
-
-				spriteBatch.End();
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+				if (scaleMode == ScaleMode.Stretch) spriteBatch.Draw(texture, dimensions);
+				else if (scaleMode == ScaleMode.Zoom) spriteBatch.Draw(texture, dimensions.Center(), null, Color.White, 0f, texture.Size() * 0.5f, Math.Min(innerDimensions.Width / texture.Width, innerDimensions.Height / texture.Height), SpriteEffects.None, 0f);
+				else if (scaleMode == ScaleMode.None) spriteBatch.Draw(texture, dimensions.Position());
 			}
 		}
 	}

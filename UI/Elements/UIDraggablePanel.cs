@@ -39,6 +39,7 @@ namespace BaseLibrary.UI.Elements
 				Main.LocalPlayer.mouseInterface = true;
 				Main.LocalPlayer.showItemIcon = false;
 				Main.ItemIconCacheUpdate(0);
+				Main.mouseText = false;
 			}
 
 			if (dragging)

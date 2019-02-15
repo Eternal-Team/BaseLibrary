@@ -7,6 +7,11 @@ using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
+	public interface IGridElement<T> where T : BaseElement
+	{
+		UIGrid<T> Grid { get; set; }
+	}
+
 	public class UIGrid<T> : BaseElement where T : BaseElement
 	{
 		public delegate bool ElementSearchMethod(UIElement element);
@@ -47,6 +52,10 @@ namespace BaseLibrary.UI.Elements
 			innerList.Height.Set(0f, 1f);
 			OverflowHidden = true;
 			Append(innerList);
+
+			scrollbar = new UIScrollbar();
+			scrollbar.SetView(100, 1000);
+			SetScrollbar(scrollbar);
 		}
 
 		public float GetTotalHeight() => innerListHeight;
@@ -79,6 +88,7 @@ namespace BaseLibrary.UI.Elements
 
 		public void Add(T item)
 		{
+			if (item is IGridElement<T>) ((IGridElement<T>)item).Grid = this;
 			items.Add(item);
 			innerList.Append(item);
 			UpdateOrder();
@@ -87,6 +97,7 @@ namespace BaseLibrary.UI.Elements
 
 		public bool Remove(T item)
 		{
+			if (item is IGridElement<T>) ((IGridElement<T>)item).Grid = null;
 			innerList.RemoveChild(item);
 			UpdateOrder();
 			return items.Remove(item);

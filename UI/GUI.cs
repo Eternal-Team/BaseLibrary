@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.UI;
 using TheOneLibrary.Base.UI;
@@ -37,13 +38,14 @@ namespace BaseLibrary.UI
 
 		public bool Draw()
 		{
-			if (Visible)
-			{
-				Interface.Update(Main._drawInterfaceGameTime);
-				UI.Draw(Main.spriteBatch);
-			}
+			if (Visible) UI.Draw(Main.spriteBatch);
 
 			return true;
+		}
+
+		public void Update(GameTime gameTime)
+		{
+			if (Visible) Interface.Update(gameTime);
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace TheOneLibrary.Base.UI
 		public override void OnInitialize()
 		{
 			Initialize();
-			panelMain.SetPadding(0f);
+			panelMain?.SetPadding(0f);
 			Append(panelMain);
 		}
 

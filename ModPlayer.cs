@@ -7,7 +7,7 @@ namespace BaseLibrary
 	{
 		public override void ProcessTriggers(TriggersSet triggersSet)
 		{
-			if (BaseLibrary.hotkeyOpenBook.JustPressed) BaseLibrary.Instance.BookUI.Visible = !BaseLibrary.Instance.BookUI.Visible;
+			//if (BaseLibrary.hotkeyOpenBook.JustPressed) BaseLibrary.Instance.BookUI.Visible = !BaseLibrary.Instance.BookUI.Visible;
 		}
 	}
 }
