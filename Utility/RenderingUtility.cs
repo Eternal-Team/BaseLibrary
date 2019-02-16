@@ -21,8 +21,8 @@ namespace BaseLibrary.Utility
 		public static string MouseText;
 		public static Color? colorMouseText;
 
-		public static Texture2D TexturePanelBackground = ModLoader.GetTexture("Terraria/UI/PanelBackground");
-		public static Texture2D TexturePanelBorder = ModLoader.GetTexture("Terraria/UI/PanelBorder");
+		public static Texture2D TexturePanelBackground = ModContent.GetTexture("Terraria/UI/PanelBackground");
+		public static Texture2D TexturePanelBorder = ModContent.GetTexture("Terraria/UI/PanelBorder");
 
 		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color color)
 		{
@@ -292,7 +292,7 @@ namespace BaseLibrary.Utility
 					if (propertyInfo.PropertyType.IsArray)
 					{
 						Texture2D[] array = (Texture2D[])propertyInfo.GetValue(null);
-						for (int i = 0; i < array.Length; i++) array[i] = ModLoader.GetTexture(overrideAttribute?.path ?? $"{mod.Name}/Textures/{propertyInfo.Name}_{i}");
+						for (int i = 0; i < array.Length; i++) array[i] = ModContent.GetTexture(overrideAttribute?.path ?? $"{mod.Name}/Textures/{propertyInfo.Name}_{i}");
 					}
 					else if (propertyInfo.IsEnumerable())
 					{
@@ -300,11 +300,11 @@ namespace BaseLibrary.Utility
 						int i = 0;
 						while (File.Exists(overrideAttribute?.path ?? $"{mod.File.path}/Textures/{propertyInfo.Name}_{i}"))
 						{
-							list.Add(ModLoader.GetTexture(overrideAttribute?.path ?? $"{mod.Name}/Textures/{propertyInfo.Name}_{i}"));
+							list.Add(ModContent.GetTexture(overrideAttribute?.path ?? $"{mod.Name}/Textures/{propertyInfo.Name}_{i}"));
 							i++;
 						}
 					}
-					else propertyInfo.SetValue(null, ModLoader.GetTexture(overrideAttribute?.path ?? $"{mod.Name}/Textures/{propertyInfo.Name}"));
+					else propertyInfo.SetValue(null, ModContent.GetTexture(overrideAttribute?.path ?? $"{mod.Name}/Textures/{propertyInfo.Name}"));
 				}
 			}
 		}

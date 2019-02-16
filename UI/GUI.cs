@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.UI;
-using TheOneLibrary.Base.UI;
 
 namespace BaseLibrary.UI
 {

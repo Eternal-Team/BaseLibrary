@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.InputInterceptor;
-using BaseLibrary.ModBook;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
 using static BaseLibrary.Utility.Utility;
-using Main = On.Terraria.Main;
 
 namespace BaseLibrary
 {
@@ -29,19 +27,19 @@ namespace BaseLibrary
 		{
 			Instance = this;
 
-			ModBookLoader.Load();
+			//ModBookLoader.Load();
 
 			Hooking.Hooking.Initialize();
 
 			Scheduler.Load();
 			InputInterceptor.InputInterceptor.Load();
-
-			Main.DoUpdate_HandleInput += (orig, self) =>
+			
+			On.Terraria.Main.DoUpdate_HandleInput += (orig, self) =>
 			{
 				if (!InputInterceptor.InputInterceptor.InterceptInput()) orig(self);
 			};
 
-			if (!Terraria.Main.dedServ)
+			if (!Main.dedServ)
 			{
 				this.LoadTextures();
 
@@ -50,12 +48,17 @@ namespace BaseLibrary
 			}
 		}
 
+		void HandleInput()
+		{
+
+		}
+
 		public override void Unload()
 		{
 			InputInterceptor.InputInterceptor.Unload();
 			Scheduler.Unload();
 
-			ModBookLoader.Unload();
+			//ModBookLoader.Unload();
 			UnloadNullableTypes();
 		}
 

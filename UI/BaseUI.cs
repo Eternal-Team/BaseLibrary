@@ -1,6 +1,6 @@
 ﻿using BaseLibrary.UI.Elements;
 
-namespace TheOneLibrary.Base.UI
+namespace BaseLibrary.UI
 {
 	public abstract class BaseUI : BaseState
 	{

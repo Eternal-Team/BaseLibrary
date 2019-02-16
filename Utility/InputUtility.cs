@@ -8,7 +8,7 @@ namespace BaseLibrary.Utility
 {
 	public static partial class Utility
 	{
-		public static ModHotKey Register(this Mod mod, string name, Keys key) => ModLoader.RegisterHotKey(mod, name, key.ToString());
+		public static ModHotKey Register(this Mod mod, string name, Keys key) => mod.RegisterHotKey(name, key.ToString());
 
 		public static bool IsKeyDown(this Keys key) => Main.keyState.IsKeyDown(key);
 

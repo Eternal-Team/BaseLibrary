@@ -26,7 +26,7 @@ namespace BaseLibrary.InputInterceptor
 		private static double time;
 
 		// use structs instead of nameless arguments?
-		public static Action<int, int> OnMouseMove;
+		public static Action<int, int, int> OnMouseMove;
 		public static Action<short, short> OnMouseWheel;
 
 		public static Action<int, int> OnLeftMouseDown;
@@ -74,7 +74,7 @@ namespace BaseLibrary.InputInterceptor
 			RegisterHook((msg, wParam, lParam) =>
 			{
 				(short x, short y) = lParam.ToOrder();
-				OnMouseMove?.Invoke(x, y);
+				OnMouseMove?.Invoke(x, y, wParam.ToInt32());
 				return 0;
 			}, WindowMessageFlags.WM_MOUSEMOVE);
 			RegisterHook((msg, wParam, lParam) =>
