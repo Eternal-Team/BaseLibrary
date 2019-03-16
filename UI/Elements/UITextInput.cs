@@ -17,6 +17,7 @@ namespace BaseLibrary.UI.Elements
 
 		private int selectionStart;
 		private int selectionEnd;
+		private bool selecting;
 
 		public string Text
 		{
@@ -81,6 +82,20 @@ namespace BaseLibrary.UI.Elements
 					break;
 				case Keys.Left:
 					if (selectionStart - 1 >= 0) selectionStart--;
+
+					if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
+					{
+						selecting = true;
+						selectionEnd = selectionStart + 1;
+					}
+					else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
+					{
+						selecting = false;
+
+						if (selectionEnd < selectionStart) selectionStart = selectionEnd;
+						else if (selectionStart > 0) selectionStart++;
+					}
+
 					caretVisible = true;
 					caretTimer = 0;
 
@@ -90,6 +105,20 @@ namespace BaseLibrary.UI.Elements
 					break;
 				case Keys.Right:
 					if (selectionStart + 1 <= Text.Length) selectionStart++;
+
+					if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
+					{
+						selecting = true;
+						selectionEnd = selectionStart - 1;
+					}
+					else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
+					{
+						selecting = false;
+
+						if (selectionEnd > selectionStart) selectionStart = selectionEnd;
+						else if (selectionStart < Text.Length) selectionStart--;
+					}
+
 					caretVisible = true;
 					caretTimer = 0;
 
@@ -109,10 +138,11 @@ namespace BaseLibrary.UI.Elements
 					Text = Text.Insert(selectionStart++, " ");
 					break;
 				default:
+					// if selected replace
+
 					if (args.Character != null)
 					{
-						Text = Text.Insert(selectionStart, args.Character.ToString());
-						selectionStart++;
+						Text = Text.Insert(selectionStart++, args.Character.ToString());
 					}
 
 					break;
@@ -120,7 +150,13 @@ namespace BaseLibrary.UI.Elements
 		}
 
 		// first time click - set index/select all
-		public override void Click(UIMouseEvent evt) => focused = !focused;
+		public override void Click(UIMouseEvent evt)
+		{
+			focused = !focused;
+
+			caretVisible = true;
+			caretTimer = 0;
+		}
 
 		// todo: add special cursor for text
 
@@ -136,13 +172,23 @@ namespace BaseLibrary.UI.Elements
 
 			ChatManager.DrawColorCodedString(spriteBatch, Utility.Font, Text, innerDimensions.Position(), Color.White, 0f, Vector2.Zero, Vector2.One);
 
+			if (selecting)
+			{
+				spriteBatch.Draw(Main.magicPixel, new Rectangle(
+						(int)(innerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, Math.Min(selectionStart, selectionEnd))).X),
+						(int)innerDimensions.Y,
+						(int)Utility.Font.MeasureString(Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionEnd - selectionStart))).X,
+						20
+					), new Color(51, 144, 255) * 0.25f);
+			}
+
 			if (++caretTimer > 30)
 			{
 				caretVisible = !caretVisible;
 				caretTimer = 0;
 			}
 
-			if (caretVisible)
+			if (caretVisible && focused)
 			{
 				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(innerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, selectionStart)).X) + 1, (int)innerDimensions.Y, 1, 20), caretColor);
 				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(innerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, selectionStart)).X) + 2, (int)innerDimensions.Y, 1, 20), caretColor * 0.25f);
