@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
+using ReLogic.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -29,9 +31,12 @@ namespace BaseLibrary
 			Hooking.Load();
 
 			Scheduler.Load();
-			
+
 			if (!Main.dedServ)
 			{
+				Utility.Font = Main.instance.OurLoad<DynamicSpriteFont>("Fonts" + Path.DirectorySeparatorChar + "Mouse_Text");
+				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);
+
 				ui = Utility.SetupGUI<TestUI>();
 				ui.Visible = true;
 

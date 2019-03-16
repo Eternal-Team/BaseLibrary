@@ -7,7 +7,6 @@ using Starbound.Input;
 using Terraria;
 using Terraria.UI;
 using Terraria.UI.Chat;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -15,6 +14,9 @@ namespace BaseLibrary.UI.Elements
 	{
 		private Ref<string> _text;
 		private bool focused;
+
+		private int selectionStart;
+		private int selectionEnd;
 
 		public string Text
 		{
@@ -50,58 +52,81 @@ namespace BaseLibrary.UI.Elements
 		{
 			switch (args.Key)
 			{
-                case Keys.C when KeyboardUtil.ControlDown(args.Modifiers):
-					// copy selection - Platform.Current.Clipboard
-                    break;
-                case Keys.V when KeyboardUtil.ControlDown(args.Modifiers):
-					// paste at index/override selection - Platform.Current.Clipboard
-	                break;
-                case Keys.X when KeyboardUtil.ControlDown(args.Modifiers):
-	                // copy and delete selection - Platform.Current.Clipboard
-                    break;
-                case Keys.Delete:
-                    // delete at index
-                    // delete selection
+				case Keys.C when KeyboardUtil.ControlDown(args.Modifiers):
+					// copy selection
+					break;
+				case Keys.V when KeyboardUtil.ControlDown(args.Modifiers):
+					Text = Text.Insert(selectionStart, Platform.Current.Clipboard);
+					selectionStart += Platform.Current.Clipboard.Length;
+					// override selection
+					break;
+				case Keys.X when KeyboardUtil.ControlDown(args.Modifiers):
+					// copy and delete selection
+					break;
+				case Keys.Delete:
+					if (selectionStart < Text.Length) Text = Text.Remove(selectionStart, 1);
+
+					// delete selection
 					// ctrl - delete to next word
-                    break;
-                case Keys.Back:
-	                // delete at index
-	                // delete selection
-	                // ctrl - delete to previous word
-                    break;
-                case Keys.Escape:
-					// unfocus
-	                break;
-                case Keys.Enter:
-					// unfocus, new line if UITextInputMultiline
-	                break;
-                case Keys.Left:
-                    // move index previous
-                    // ctrl - move index to previous word
-                    // shift - (un)select previous
-                    // ctrl + shift - (un)select previous word
-                    break;
-                case Keys.Right:
-                    // move index next
-                    // ctrl - move index to next word
-                    // shift - (un)select next
-                    // ctrl + shift - (un)select next word
-                    break;
-                case Keys.Up:
-                    // ctrl - move index to previous line
-                    // shift - (un)select to same column on previous line
-                    break;
-                case Keys.Down:
-                    // ctrl - move index to next line
-                    // shift - (un)select to same column on next line
-                    break;
-                default:
-	                if (args.Character != null) Text += args.Character.Value;
-	                break;
-            }
+					break;
+				case Keys.Back:
+					if (selectionStart > 0) Text = Text.Remove(--selectionStart, 1);
+
+					// delete selection
+					// ctrl - delete to previous word
+					break;
+				case Keys.Escape:
+				case Keys.Enter:
+					focused = false;
+					break;
+				case Keys.Left:
+					if (selectionStart - 1 >= 0) selectionStart--;
+					caretVisible = true;
+					caretTimer = 0;
+
+					// ctrl - move index to previous word
+					// shift - (un)select previous
+					// ctrl + shift - (un)select previous word
+					break;
+				case Keys.Right:
+					if (selectionStart + 1 <= Text.Length) selectionStart++;
+					caretVisible = true;
+					caretTimer = 0;
+
+					// ctrl - move index to next word
+					// shift - (un)select next
+					// ctrl + shift - (un)select next word
+					break;
+				case Keys.Up:
+					// ctrl - move index to previous line
+					// shift - (un)select to same column on previous line
+					break;
+				case Keys.Down:
+					// ctrl - move index to next line
+					// shift - (un)select to same column on next line
+					break;
+				case Keys.Space:
+					Text = Text.Insert(selectionStart++, " ");
+					break;
+				default:
+					if (args.Character != null)
+					{
+						Text = Text.Insert(selectionStart, args.Character.ToString());
+						selectionStart++;
+					}
+
+					break;
+			}
 		}
 
+		// first time click - set index/select all
 		public override void Click(UIMouseEvent evt) => focused = !focused;
+
+		// todo: add special cursor for text
+
+		private int caretTimer;
+		private bool caretVisible;
+		private static readonly Color caretColor = new Color(160, 160, 160);
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
@@ -109,15 +134,21 @@ namespace BaseLibrary.UI.Elements
 
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 
-			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, Text, innerDimensions.Position(), Color.White, 0f, Vector2.Zero, Vector2.One);
-			//if (blinkerState) spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(dimensions.X + dimensions.Width * 0.5f - displayString.Measure().X * 0.5f + blinkerPos * 8), (int)dimensions.Y, 1, (int)dimensions.Height), Color.LightGray);
+			ChatManager.DrawColorCodedString(spriteBatch, Utility.Font, Text, innerDimensions.Position(), Color.White, 0f, Vector2.Zero, Vector2.One);
 
-			//if (string.IsNullOrWhiteSpace(displayString) && !focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, HintText, dimensions.Center(), Color.Gray, 0f, displayString.Measure() * 0.5f, Vector2.One);
-		}
+			if (++caretTimer > 30)
+			{
+				caretVisible = !caretVisible;
+				caretTimer = 0;
+			}
 
-		public override void Update(GameTime gameTime)
-		{
-			//if (Keys.Enter.IsKeyDown() || Keys.Escape.IsKeyDown()) Unfocus();
+			if (caretVisible)
+			{
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(innerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, selectionStart)).X) + 1, (int)innerDimensions.Y, 1, 20), caretColor);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(innerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, selectionStart)).X) + 2, (int)innerDimensions.Y, 1, 20), caretColor * 0.25f);
+			}
+
+			//if (string.IsNullOrWhiteSpace(displayString) && !focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouDseText, HintText, dimensions.Center(), Color.Gray, 0f, displayString.Measure() * 0.5f, Vector2.One);
 		}
 	}
 }

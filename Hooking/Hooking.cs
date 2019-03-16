@@ -1,6 +1,8 @@
-﻿using On.Terraria;
+﻿using Terraria;
 using Terraria.GameInput;
 using OnPlayerInput = On.Terraria.GameInput.PlayerInput;
+using OnMain = On.Terraria.Main;
+using OnPlayer = On.Terraria.Player;
 
 namespace BaseLibrary
 {
@@ -10,7 +12,7 @@ namespace BaseLibrary
 
 		public static void Load()
 		{
-			Player.HandleHotbar += (orig, player) =>
+			OnPlayer.HandleHotbar += (orig, player) =>
 			{
 				// do just for scrollable elements?
 
@@ -35,13 +37,13 @@ namespace BaseLibrary
 				if (!Utility.Input.MouseHandler.Enabled) orig();
 			};
 
-			Main.DoUpdate_HandleInput += (orig, self) =>
+			OnMain.DoUpdate_HandleInput += (orig, self) =>
 			{
 				Utility.Input.Update();
 
 				orig(self);
 
-				if (Utility.Input.KeyboardHandler.Enabled) Terraria.Main.keyState = Terraria.Main.oldKeyState;
+				if (Utility.Input.KeyboardHandler.Enabled) Main.keyState = Main.oldKeyState;
 			};
 		}
 	}

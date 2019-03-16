@@ -20,6 +20,8 @@ namespace BaseLibrary
 
 			internal static void Load()
 			{
+				KeyboardEvents.RepeatDelay = 31;
+
 				MouseHandler = new MouseEvents(Main.instance);
 				Main.instance.Components.Add(MouseHandler);
 
