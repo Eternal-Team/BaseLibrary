@@ -54,26 +54,72 @@ namespace BaseLibrary.UI.Elements
 			switch (args.Key)
 			{
 				case Keys.C when KeyboardUtil.ControlDown(args.Modifiers):
-					// copy selection
-					break;
-				case Keys.V when KeyboardUtil.ControlDown(args.Modifiers):
-					Text = Text.Insert(selectionStart, Platform.Current.Clipboard);
-					selectionStart += Platform.Current.Clipboard.Length;
-					// override selection
-					break;
-				case Keys.X when KeyboardUtil.ControlDown(args.Modifiers):
-					// copy and delete selection
-					break;
-				case Keys.Delete:
-					if (selectionStart < Text.Length) Text = Text.Remove(selectionStart, 1);
+				{
+					Platform.Current.Clipboard = selecting ? Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)) : Text;
 
-					// delete selection
+					break;
+				}
+				case Keys.V when KeyboardUtil.ControlDown(args.Modifiers):
+				{
+					if (selecting)
+					{
+						selecting = false;
+
+						Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+						Text = Text.Insert(Math.Min(selectionStart, selectionEnd), Platform.Current.Clipboard);
+						selectionStart = Math.Min(selectionStart, selectionEnd) + Platform.Current.Clipboard.Length;
+					}
+					else
+					{
+						Text = Text.Insert(selectionStart, Platform.Current.Clipboard);
+
+						selectionStart += Platform.Current.Clipboard.Length;
+					}
+
+					break;
+				}
+				case Keys.X when KeyboardUtil.ControlDown(args.Modifiers):
+				{
+					if (selecting)
+					{
+						selecting = false;
+
+						Platform.Current.Clipboard = Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+						Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+
+						selectionStart = Math.Min(selectionStart, selectionEnd);
+					}
+					else
+					{
+						Platform.Current.Clipboard = Text;
+						Text = string.Empty;
+						selectionStart = 0;
+					}
+
+					break;
+				}
+				case Keys.Delete:
+					if (selecting)
+					{
+						selecting = false;
+
+						Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+						selectionStart = Math.Min(selectionStart, selectionEnd);
+					}
+					else if (selectionStart < Text.Length) Text = Text.Remove(selectionStart, 1);
+
 					// ctrl - delete to next word
 					break;
 				case Keys.Back:
-					if (selectionStart > 0) Text = Text.Remove(--selectionStart, 1);
+					if (selecting)
+					{
+						selecting = false;
 
-					// delete selection
+						Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+						selectionStart = Math.Min(selectionStart, selectionEnd);
+					}
+					else if (selectionStart > 0) Text = Text.Remove(--selectionStart, 1);
+
 					// ctrl - delete to previous word
 					break;
 				case Keys.Escape:
@@ -162,24 +208,28 @@ namespace BaseLibrary.UI.Elements
 
 		private int caretTimer;
 		private bool caretVisible;
+
 		private static readonly Color caretColor = new Color(160, 160, 160);
+		private static readonly Color selectionColor = new Color(51, 144, 255) * 0.25f;
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			base.DrawSelf(spriteBatch);
 
 			CalculatedStyle innerDimensions = GetInnerDimensions();
+			Vector2 size = Utility.Font.MeasureString(Text.Substring(0, selectionStart));
+
 
 			ChatManager.DrawColorCodedString(spriteBatch, Utility.Font, Text, innerDimensions.Position(), Color.White, 0f, Vector2.Zero, Vector2.One);
 
 			if (selecting)
 			{
 				spriteBatch.Draw(Main.magicPixel, new Rectangle(
-						(int)(innerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, Math.Min(selectionStart, selectionEnd))).X),
-						(int)innerDimensions.Y,
-						(int)Utility.Font.MeasureString(Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionEnd - selectionStart))).X,
-						20
-					), new Color(51, 144, 255) * 0.25f);
+					(int)(innerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, Math.Min(selectionStart, selectionEnd))).X),
+					(int)innerDimensions.Y,
+					(int)Utility.Font.MeasureString(Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd))).X,
+					20
+				), selectionColor);
 			}
 
 			if (++caretTimer > 30)
@@ -190,8 +240,8 @@ namespace BaseLibrary.UI.Elements
 
 			if (caretVisible && focused)
 			{
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(innerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, selectionStart)).X) + 1, (int)innerDimensions.Y, 1, 20), caretColor);
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(innerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, selectionStart)).X) + 2, (int)innerDimensions.Y, 1, 20), caretColor * 0.25f);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(innerDimensions.X + size.X) + 1, (int)innerDimensions.Y, 1, 20), caretColor);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(innerDimensions.X + size.X) + 2, (int)innerDimensions.Y, 1, 20), caretColor * 0.25f);
 			}
 
 			//if (string.IsNullOrWhiteSpace(displayString) && !focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouDseText, HintText, dimensions.Center(), Color.Gray, 0f, displayString.Measure() * 0.5f, Vector2.One);
