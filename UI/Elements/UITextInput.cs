@@ -146,7 +146,6 @@ namespace BaseLibrary.UI.Elements
 					caretTimer = 0;
 
 					// ctrl - move index to previous word
-					// shift - (un)select previous
 					// ctrl + shift - (un)select previous word
 					break;
 				case Keys.Right:
@@ -169,7 +168,6 @@ namespace BaseLibrary.UI.Elements
 					caretTimer = 0;
 
 					// ctrl - move index to next word
-					// shift - (un)select next
 					// ctrl + shift - (un)select next word
 					break;
 				case Keys.Up:
@@ -184,14 +182,23 @@ namespace BaseLibrary.UI.Elements
 					Text = Text.Insert(selectionStart++, " ");
 					break;
 				default:
-					// if selected replace
-
+				{
 					if (args.Character != null)
 					{
-						Text = Text.Insert(selectionStart++, args.Character.ToString());
+						if (selecting)
+						{
+							selecting = false;
+
+							Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+							Text = Text.Insert(Math.Min(selectionStart, selectionEnd), args.Character.ToString());
+
+							selectionStart = Math.Min(selectionStart, selectionEnd) + 1;
+						}
+						else Text = Text.Insert(selectionStart++, args.Character.ToString());
 					}
 
 					break;
+				}
 			}
 		}
 
