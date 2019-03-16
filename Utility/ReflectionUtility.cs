@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
 using System.Reflection;
 
-namespace BaseLibrary.Utility
+namespace BaseLibrary
 {
 	public static partial class Utility
 	{
 		public const BindingFlags defaultFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-
-		public static FieldInfo GetFieldInfo(this Type type, string name, BindingFlags flags = defaultFlags) => type.GetField(name, flags);
 
 		public static T GetValue<T>(this Type type, string name, object obj = null, BindingFlags flags = defaultFlags) => (T)(type.GetProperty(name, flags)?.GetValue(obj) ?? type.GetField(name, flags)?.GetValue(obj));
 
@@ -88,39 +84,12 @@ namespace BaseLibrary.Utility
 		// instance, w/o flags
 		public static T InvokeMethod<T>(this object obj, string name, params object[] args) => obj.GetType().InvokeMethod<T>(name, obj, defaultFlags, args);
 
-		public static bool HasAttribute<T>(this MemberInfo field) => field.GetCustomAttributes().Any(x => x.GetType() == typeof(T));
+		public static bool HasAttribute<T>(this MemberInfo field) where T : Attribute => field.GetCustomAttribute<T>() != null;
 
-		public static Type GetUnderlyingType(this MemberInfo member)
+		public static bool TryGetAttribute<T>(this MemberInfo field, out T attribute) where T : Attribute
 		{
-			switch (member.MemberType)
-			{
-				case MemberTypes.Event:
-					return ((EventInfo)member).EventHandlerType;
-				case MemberTypes.Field:
-					return ((FieldInfo)member).FieldType;
-				case MemberTypes.Method:
-					return ((MethodInfo)member).ReturnType;
-				case MemberTypes.Property:
-					return ((PropertyInfo)member).PropertyType;
-				default:
-					throw new ArgumentException("Input MemberInfo must be if type EventInfo, FieldInfo, MethodInfo, or PropertyInfo");
-			}
+			attribute = field.GetCustomAttribute<T>();
+			return attribute != null;
 		}
-
-		public static T MemberwiseClone<T>(this T source)
-		{
-			var clone = Activator.CreateInstance(source.GetType());
-			for (Type type = source.GetType(); type != null; type = type.BaseType)
-			{
-				FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-				foreach (FieldInfo field in fields) field.SetValue(clone, field.GetValue(source));
-			}
-
-			return (T)clone;
-		}
-
-		public static bool IsEnumerable(this PropertyInfo property) => property.PropertyType.GetInterface(typeof(IEnumerable).FullName) != null;
-
-		public static bool IsList(this PropertyInfo property) => property.PropertyType.GetInterface(typeof(IList).FullName) != null;
 	}
 }

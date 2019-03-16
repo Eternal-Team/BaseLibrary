@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader.IO;
 
-namespace BaseLibrary.Utility
+namespace BaseLibrary
 {
 	public static partial class Utility
 	{
-		public static readonly int[] CoinTypes =
+		private static readonly int[] CoinTypes =
 		{
 			ItemID.CopperCoin,
 			ItemID.SilverCoin,
@@ -106,7 +104,7 @@ namespace BaseLibrary.Utility
 
 		public static bool IsCoin(this Item item) => CoinTypes.Contains(item.type);
 
-		public static long CountCoins(this List<Item> inv) => inv.Sum(item =>
+		public static long CountCoins(this List<Item> items) => items.Sum(item =>
 		{
 			switch (item.type)
 			{
@@ -123,34 +121,26 @@ namespace BaseLibrary.Utility
 			}
 		});
 
-		public static TagCompound Save(this IList<Item> items) => new TagCompound { ["Items"] = items.Select(ItemIO.Save).ToList() };
-
-		public static List<Item> Load(TagCompound tag) => tag["Items"] is List<TagCompound> ? tag.GetList<Item>("Items").ToList() : tag.GetCompound("Items").GetList<Item>("Items").ToList();
-
-		public static void Write(this BinaryWriter writer, IList<Item> items) => TagIO.Write(items.Save(), writer);
-
-		public static List<Item> Read(this BinaryReader reader) => Load(TagIO.Read(reader));
-
 		#region Player
-		public static List<Item> Armor(this Player player) => player.armor.Where((x, i) => i > 0 && i < 3).ToList();
+		public static List<Item> Armor(this Player player) => player.armor.Where((item, i) => i > 0 && i < 3).ToList();
 
-		public static List<Item> Accessory(this Player player) => player.armor.Where((x, i) => i >= 3 && i < 8 + Main.LocalPlayer.extraAccessorySlots).ToList();
+		public static List<Item> Accessory(this Player player) => player.armor.Where((item, i) => i >= 3 && i < 8 + Main.LocalPlayer.extraAccessorySlots).ToList();
 
-		public static List<Item> Ammo(this Player player) => player.inventory.Where((x, i) => i >= 54 && i <= 57).ToList();
+		public static List<Item> Ammo(this Player player) => player.inventory.Where((item, i) => i >= 54 && i <= 57).ToList();
 
-		public static bool HasArmor(this Player player, int type) => player.Armor().Any(x => x.type == type);
+		public static bool HasArmor(this Player player, int type) => player.Armor().Any(item => item.type == type);
 
-		public static bool HasAccessory(this Player player, int type) => player.Accessory().Any(x => x.type == type);
+		public static bool HasAccessory(this Player player, int type) => player.Accessory().Any(item => item.type == type);
 
 		public static Item GetHeldItem(this Player player) => Main.mouseItem.IsAir ? Main.LocalPlayer.HeldItem : Main.mouseItem;
 
 		public static bool HasItem(this Player player, int type, int stack = -1)
 		{
-			int count = player.inventory.Where(t => type == t.type).Sum(t => t.stack);
+			int count = player.inventory.Where(item => type == item.type).Sum(item => item.stack);
 			return stack == -1 ? count > 0 : count >= stack;
 		}
 
-		public static bool HasItems(this Player player, List<Item> items) => items.All(t => player.HasItem(t.type, t.stack));
+		public static bool HasItems(this Player player, List<Item> items) => items.All(item => player.HasItem(item.type, item.stack));
 
 		public static bool ConsumeItem(this Player player, int type, int stack = 1)
 		{
@@ -191,9 +181,9 @@ namespace BaseLibrary.Utility
 			for (int i = 0; i < items.Count; i++) Item.NewItem(player.position, player.Size, items[i].type, items[i].stack, noGrabDelay: true);
 		}
 
-		public static bool IsPlayerInChest(int chestIndex) => Main.player.Any(x => x.chest == chestIndex);
+		public static bool IsPlayerInChest(int chestIndex) => Main.player.Any(player => player.chest == chestIndex);
 
-		public static bool IsPlayerInChest(this Chest chest) => Main.player.Any(x => x.chest == Main.chest.ToList().FindIndex(y => y.x == chest.x && y.y == chest.y));
+		public static bool IsPlayerInChest(this Chest chest) => Main.player.Any(player => player.chest == Array.IndexOf(Main.chest, chest));
 		#endregion
 	}
 }

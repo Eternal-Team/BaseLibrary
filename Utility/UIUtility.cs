@@ -3,18 +3,18 @@ using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using Terraria.UI;
 
-namespace BaseLibrary.Utility
+namespace BaseLibrary
 {
 	public static partial class Utility
 	{
-		public static GUI<T> SetupGUI<T>(InterfaceScaleType? scaleType = null, params object[] args) where T : BaseUI
+		public static GUI<T> SetupGUI<T>(InterfaceScaleType scaleType = InterfaceScaleType.UI, params object[] args) where T : BaseUI
 		{
 			UserInterface userInterface = new UserInterface();
 			T state = (T)Activator.CreateInstance(typeof(T), args);
 			state.Activate();
 			userInterface.SetState(state);
 
-			return new GUI<T>(state, userInterface, scaleType ?? InterfaceScaleType.UI);
+			return new GUI<T>(state, userInterface, scaleType);
 		}
 
 		public static void Center(this UIElement element)

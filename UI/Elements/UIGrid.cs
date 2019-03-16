@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -186,7 +185,7 @@ namespace BaseLibrary.UI.Elements
 			spriteBatch.End();
 			Rectangle prevRect = spriteBatch.GraphicsDevice.ScissorRectangle;
 			spriteBatch.GraphicsDevice.ScissorRectangle = Rectangle.Intersect(GetClippingRectangle(spriteBatch), spriteBatch.GraphicsDevice.ScissorRectangle);
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, null, Utility.Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, null, Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
 
 			DrawSelf(spriteBatch);
 			innerList.InvokeMethod<object>("DrawChildren", spriteBatch);

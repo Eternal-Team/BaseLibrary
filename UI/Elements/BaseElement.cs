@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -12,8 +12,24 @@ namespace BaseLibrary.UI.Elements
 	// todo: make left,right,top,left floats
 	// todo: functions for size and position?
 
+	public class ChildrenCollection<T> : IEnumerable<T> where T : BaseElement
+	{
+		private List<T> _collection = new List<T>();
+
+		public IEnumerator<T> GetEnumerator() => _collection.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => _collection.GetEnumerator();
+
+		public void Add(T element)
+		{
+			_collection.Add(element);
+		}
+	}
+
 	public class BaseElement : UIState
 	{
+		public ChildrenCollection<BaseElement> Children = new ChildrenCollection<BaseElement>();
+
 		#region Fields
 		public event Action<SpriteBatch> OnPreDraw;
 		public event Action<SpriteBatch> OnPostDraw;
@@ -162,11 +178,22 @@ namespace BaseLibrary.UI.Elements
 			RecalculateChildren();
 		}
 
+		private static readonly Utility.SpriteBatchState immediateState = new Utility.SpriteBatchState
+		{
+			spriteSortMode = SpriteSortMode.Immediate,
+			blendState = BlendState.AlphaBlend,
+			samplerState = SamplerState.AnisotropicClamp,
+			depthStencilState = DepthStencilState.None,
+			rasterizerState = Utility.OverflowHiddenState,
+			customEffect = null,
+			transformMatrix = Main.UIScaleMatrix
+		};
+
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			PreDraw(spriteBatch);
 
-			if (_useImmediateMode) spriteBatch.DrawImmediate(DrawSelf);
+			if (_useImmediateMode) spriteBatch.DrawWithState(immediateState, DrawSelf);
 			else DrawSelf(spriteBatch);
 
 			if (OverflowHidden) spriteBatch.DrawOverflowHidden(this, DrawChildren);
@@ -174,7 +201,7 @@ namespace BaseLibrary.UI.Elements
 
 			PostDraw(spriteBatch);
 
-			if (IsMouseHovering && GetHoverText != null) Utility.Utility.DrawMouseText(GetHoverText.Invoke());
+			if (IsMouseHovering && GetHoverText != null) Utility.DrawMouseText(GetHoverText.Invoke());
 		}
 
 		public virtual void Append(IEnumerable<BaseElement> elements)

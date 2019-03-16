@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
-using BaseLibrary.InputInterceptor;
+using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
-using static BaseLibrary.Utility.Utility;
 
 namespace BaseLibrary
 {
-	// todo: use caching for reflectionutility
-
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
@@ -18,48 +15,37 @@ namespace BaseLibrary
 		public static List<NPC> npcCache;
 		public static List<Projectile> projectileCache;
 
-		public static bool InUI;
-
 		private LegacyGameInterfaceLayer MouseInterface;
-		//public GUI<ModBookUI> BookUI;
+
+		private GUI<TestUI> ui;
 
 		public override void Load()
 		{
 			Instance = this;
 
-			//ModBookLoader.Load();
+			Language.Load();
 
-			Hooking.Hooking.Initialize();
+			Utility.Input.Load();
+			Hooking.Load();
 
 			Scheduler.Load();
-			InputInterceptor.InputInterceptor.Load();
 			
-			On.Terraria.Main.DoUpdate_HandleInput += (orig, self) =>
-			{
-				if (!InputInterceptor.InputInterceptor.InterceptInput()) orig(self);
-			};
-
 			if (!Main.dedServ)
 			{
-				this.LoadTextures();
+				ui = Utility.SetupGUI<TestUI>();
+				ui.Visible = true;
 
-				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", DrawMouseText, InterfaceScaleType.UI);
-				//BookUI = SetupGUI<ModBookUI>();
+				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
-		}
-
-		void HandleInput()
-		{
-
 		}
 
 		public override void Unload()
 		{
-			InputInterceptor.InputInterceptor.Unload();
+			Utility.Input.Unload();
+
 			Scheduler.Unload();
 
-			//ModBookLoader.Unload();
-			UnloadNullableTypes();
+			Utility.UnloadNullableTypes();
 		}
 
 		public override void PostSetupContent()
@@ -84,29 +70,26 @@ namespace BaseLibrary
 
 			for (int type = 0; type < ProjectileLoader.ProjectileCount; type++)
 			{
-				try
-				{
-					Projectile projectile = new Projectile();
-					projectile.SetDefaults(type);
-					projectileCache.Add(projectile);
-				}
-				catch
-				{
-				}
+				Projectile projectile = new Projectile();
+				projectile.SetDefaults(type);
+				projectileCache.Add(projectile);
 			}
 		}
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 		{
 			int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-			//int HotbarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
 
-			if (MouseTextIndex != -1) layers.Insert(MouseTextIndex + 1, MouseInterface);
-			//if (HotbarIndex != -1) layers.Insert(HotbarIndex + 1, BookUI.InterfaceLayer);
+			if (MouseTextIndex != -1)
+			{
+				layers.Insert(MouseTextIndex + 1, MouseInterface);
+				layers.Insert(MouseTextIndex + 1, ui.InterfaceLayer);
+			}
 		}
 
 		public override void UpdateUI(GameTime gameTime)
 		{
+			ui.Update(gameTime);
 		}
 	}
 }

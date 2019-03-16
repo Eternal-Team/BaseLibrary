@@ -1,5 +1,4 @@
 ﻿using System;
-using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.UI;
@@ -39,7 +38,7 @@ namespace BaseLibrary.UI.Elements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			if (texture == null) texture = Utility.Utility.CreateGrad((int)GetDimensions().Width, steps, channel);
+			if (texture == null) texture = Utility.CreateGrad((int)GetDimensions().Width, steps, channel);
 			spriteBatch.Draw(texture, GetDimensions());
 		}
 	}

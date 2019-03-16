@@ -1,5 +1,4 @@
-﻿using BaseLibrary.Utility;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -16,11 +15,11 @@ namespace BaseLibrary.UI.Elements
 		private bool isHoveringOverHandle;
 		private float dragYOffset;
 
-		[PathOverride("Terraria/UI/Scrollbar")]
-		public static Texture2D Texture { get; set; }
+		//[PathOverride("Terraria/UI/Scrollbar")]
+		//public static Texture2D Texture { get; set; }
 
-		[PathOverride("Terraria/UI/ScrollbarInner")]
-		public static Texture2D InnerTexture { get; set; }
+		//[PathOverride("Terraria/UI/ScrollbarInner")]
+		//public static Texture2D InnerTexture { get; set; }
 
 		public float ViewPosition
 		{
@@ -47,10 +46,10 @@ namespace BaseLibrary.UI.Elements
 		{
 			set
 			{
-				value.size = MathHelper.Clamp(value.size, 0f, value.maxViewSize);
-				viewPosition = MathHelper.Clamp(viewPosition, 0f, value.maxViewSize - value.size);
-				viewSize = value.size;
-				maxViewSize = value.maxViewSize;
+				//value.size = MathHelper.Clamp(value.size, 0f, value.maxViewSize);
+				//viewPosition = MathHelper.Clamp(viewPosition, 0f, value.maxViewSize - value.size);
+				//viewSize = value.size;
+				//maxViewSize = value.maxViewSize;
 			}
 		}
 
@@ -90,8 +89,8 @@ namespace BaseLibrary.UI.Elements
 			bool isHoveringOverHandle = this.isHoveringOverHandle;
 			this.isHoveringOverHandle = handleRectangle.Contains(new Point((int)mousePosition.X, (int)mousePosition.Y));
 			if (!isHoveringOverHandle && this.isHoveringOverHandle && Main.hasFocus) Main.PlaySound(SoundID.MenuTick);
-			DrawBar(spriteBatch, Texture, dimensions.ToRectangle(), Color.White);
-			DrawBar(spriteBatch, InnerTexture, handleRectangle, Color.White * (isDragging || this.isHoveringOverHandle ? 1f : 0.85f));
+			//DrawBar(spriteBatch, Texture, dimensions.ToRectangle(), Color.White);
+			//DrawBar(spriteBatch, InnerTexture, handleRectangle, Color.White * (isDragging || this.isHoveringOverHandle ? 1f : 0.85f));
 		}
 
 		public override void MouseDown(UIMouseEvent evt)

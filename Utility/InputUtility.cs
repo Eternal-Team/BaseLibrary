@@ -1,25 +1,57 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
+using Starbound.Input;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace BaseLibrary.Utility
+namespace BaseLibrary
 {
 	public static partial class Utility
 	{
-		public static ModHotKey Register(this Mod mod, string name, Keys key) => mod.RegisterHotKey(name, key.ToString());
+		public static class Input
+		{
+			public static event Func<bool> InterceptMouse = () => false;
+			public static event Func<bool> InterceptKeyboard = () => false;
 
-		public static bool IsKeyDown(this Keys key) => Main.keyState.IsKeyDown(key);
+			internal static MouseEvents MouseHandler;
+			internal static KeyboardEvents KeyboardHandler;
 
-		public static bool IsKeyDown(this int key) => IsKeyDown((Keys)key);
+			internal static void Load()
+			{
+				MouseHandler = new MouseEvents(Main.instance);
+				Main.instance.Components.Add(MouseHandler);
 
-		public static bool IsKeyPressed(this Keys key) => Main.inputText.IsKeyDown(key) && !Main.oldInputText.IsKeyDown(key);
+				KeyboardHandler = new KeyboardEvents(Main.instance);
+				Main.instance.Components.Add(KeyboardHandler);
+			}
+
+			internal static void Unload()
+			{
+				Main.instance.Components.Remove(MouseHandler);
+				Main.instance.Components.Remove(KeyboardHandler);
+			}
+
+			internal static void Update()
+			{
+				MouseHandler.Enabled = InterceptMouse();
+				KeyboardHandler.Enabled = InterceptKeyboard();
+			}
+		}
+
+		private static Dictionary<string, ModHotKey> _hotkeys;
+
+		public static Dictionary<string, ModHotKey> Hotkeys => _hotkeys ?? (_hotkeys = typeof(ModLoader).GetValue<Dictionary<string, ModHotKey>>("modHotKeys"));
+
+		public static ModHotKey RegisterHotKey(this Mod mod, string name, Keys key) => mod.RegisterHotKey(name, key.ToString());
 
 		public static string GetHotkeyValue(string hotkey)
 		{
-			Dictionary<string, ModHotKey> hotkeys = typeof(ModLoader).GetValue<Dictionary<string, ModHotKey>>("modHotKeys");
-			return hotkeys != null && hotkeys.ContainsKey(hotkey) ? hotkeys[hotkey].GetAssignedKeys().Any() ? hotkeys[hotkey].GetAssignedKeys().First() : "Unassigned" : string.Empty;
+			if (string.IsNullOrWhiteSpace(hotkey) || Hotkeys == null) throw new ArgumentNullException();
+			if (!Hotkeys.ContainsKey(hotkey)) throw new Exception("Hotkey doesn't exist");
+
+			return Hotkeys[hotkey].GetAssignedKeys().Count > 0 ? Hotkeys[hotkey].GetAssignedKeys().First() : "Unassigned";
 		}
 	}
 }

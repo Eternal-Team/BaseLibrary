@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(MSBuildExtensionsPath)$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="C:\Users\Itorius\Documents\My Games\Terraria\ModLoader\references\tModLoader.targets" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -12,19 +13,18 @@
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,85 +33,47 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.1</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria [Modded]\Microsoft.Xna.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria [Modded]\Microsoft.Xna.Framework.Game.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria [Modded]\Microsoft.Xna.Framework.Graphics.dll</HintPath>
-    </Reference>
-    <Reference Include="ReLogic">
-      <HintPath>..\..\ReLogic.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="Terraria">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>
-    </Reference>
-    <Reference Include="TerrariaHooks.Windows">
-      <HintPath>..\..\..\tModLoader\references\TerrariaHooks.Windows.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseLibrary.cs" />
     <Compile Include="Hooking\Hooking.cs" />
-    <Compile Include="Hooking\Hooking_DoDraw.cs" />
-    <Compile Include="InputInterceptor\DllImports.cs" />
-    <Compile Include="InputInterceptor\InputInterceptor.cs" />
-    <Compile Include="InputInterceptor\Scheduler.cs" />
-    <Compile Include="InputInterceptor\WindowMessageFlags.cs" />
+    <Compile Include="Language.cs" />
+    <Compile Include="Starbound.Input\Buttons.cs" />
+    <Compile Include="Starbound.Input\GamePadButtonEventArgs.cs" />
+    <Compile Include="Starbound.Input\GamePadEventArgs.cs" />
+    <Compile Include="Starbound.Input\GamePadEvents.cs" />
+    <Compile Include="Starbound.Input\GamePadThumbstickEventArgs.cs" />
+    <Compile Include="Starbound.Input\GamePadTriggerEventArgs.cs" />
+    <Compile Include="Starbound.Input\InputEventArgs.cs" />
+    <Compile Include="Starbound.Input\KeyboardEventArgs.cs" />
+    <Compile Include="Starbound.Input\KeyboardEvents.cs" />
+    <Compile Include="Starbound.Input\KeyboardUtil.cs" />
+    <Compile Include="Starbound.Input\KeySequence.cs" />
+    <Compile Include="Starbound.Input\Modifiers.cs" />
+    <Compile Include="Starbound.Input\MouseButton.cs" />
+    <Compile Include="Starbound.Input\MouseButtonEventArgs.cs" />
+    <Compile Include="Starbound.Input\MouseEventArgs.cs" />
+    <Compile Include="Starbound.Input\MouseEvents.cs" />
+    <Compile Include="Starbound.Input\MouseWheelEventArgs.cs" />
+    <Compile Include="Starbound.Input\PolarCoordinate.cs" />
+    <Compile Include="Starbound.Input\Thumbsticks.cs" />
+    <Compile Include="Starbound.Input\Triggers.cs" />
+    <Compile Include="TestUI.cs" />
+    <Compile Include="UI\BaseElement.cs" />
+    <Compile Include="Utility\Scheduler.cs" />
     <Compile Include="UI\Elements\UIColor.cs" />
     <Compile Include="UI\Elements\UIDraggablePanel.cs" />
-    <Compile Include="Items\TestItem.cs" />
     <Compile Include="ModPlayer.cs" />
     <Compile Include="Tiles\TileEntites\BaseTE.cs" />
     <Compile Include="Tiles\BaseTile.cs" />
     <Compile Include="Items\BaseItem.cs" />
     <Compile Include="Items\DevItem.cs" />
     <Compile Include="Items\LightedWall.cs" />
-    <Compile Include="ModBook\CategoryConverter.cs" />
-    <Compile Include="ModBook\ModBookCategory.cs" />
-    <Compile Include="ModBook\ModBookLoader.cs" />
-    <Compile Include="ModBook\ModBookUI.cs" />
-    <Compile Include="ModBook\ModBook.cs" />
-    <Compile Include="ModBook\TestModBook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Elements\BaseElement.cs" />
     <Compile Include="UI\BaseUI.cs" />
     <Compile Include="UI\Elements\BaseState.cs" />
     <Compile Include="UI\Elements\UIButton.cs" />
-    <Compile Include="UI\Elements\UICategory.cs" />
     <Compile Include="UI\Elements\UIColorSelection.cs" />
     <Compile Include="UI\Elements\UIGradient.cs" />
     <Compile Include="UI\Elements\UIGrid.cs" />
@@ -131,7 +93,6 @@
     <Compile Include="Utility\ReflectionUtility.cs" />
     <Compile Include="Utility\RenderingUtility.cs" />
     <Compile Include="Utility\StringUtility.cs" />
-    <Compile Include="Utility\Swapping\SwappingUtility.cs" />
     <Compile Include="Utility\TileUtility.cs" />
     <Compile Include="Utility\ColorUtility.cs" />
     <Compile Include="Utility\UIUtility.cs" />
@@ -145,9 +106,11 @@
     <Content Include="Textures\Placeholder.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Effects\BarShader.xnb" />
-    <None Include="packages.config" />
-    <None Include="TestModBook.json" />
+    <Reference Include="System" />
+    <Reference Include="Terraria, Version=1.3.5.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

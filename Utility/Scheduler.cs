@@ -1,24 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 
-namespace BaseLibrary.InputInterceptor
+namespace BaseLibrary
 {
+	/// <summary>
+	///     Allows the execution of tasks on the UI thread
+	/// </summary>
 	public static class Scheduler
 	{
 		private static Queue<Action> queue = new Queue<Action>();
 
 		public static void Load()
 		{
-			Main.OnPostDraw += gameTime => ProcessQueue();
+			Main.OnPostDraw += ProcessQueue;
 		}
 
 		public static void Unload()
 		{
-			Main.OnPostDraw += gameTime => ProcessQueue();
+			Main.OnPostDraw -= ProcessQueue;
 		}
 
-		private static void ProcessQueue()
+		private static void ProcessQueue(GameTime gameTime)
 		{
 			lock (queue)
 			{

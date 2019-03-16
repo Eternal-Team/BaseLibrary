@@ -1,5 +1,4 @@
-﻿using BaseLibrary.Utility;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.UI;
 
@@ -35,7 +34,7 @@ namespace BaseLibrary.UI.Elements
 
 			if (ContainsPoint(Main.MouseScreen))
 			{
-				BaseLibrary.InUI = true;
+				Hooking.InUI = true;
 				Main.LocalPlayer.mouseInterface = true;
 				Main.LocalPlayer.showItemIcon = false;
 				Main.ItemIconCacheUpdate(0);

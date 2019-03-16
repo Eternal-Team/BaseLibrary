@@ -1,5 +1,4 @@
 ﻿using System;
-using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -45,7 +44,7 @@ namespace BaseLibrary.UI.Elements
 			CalculatedStyle dimensions = GetDimensions();
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 
-			if (RenderPanel) spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.Utility.ColorPanel_Selected : Utility.Utility.ColorPanel_Hovered : Utility.Utility.ColorPanel);
+			if (RenderPanel) spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
 
 			float scale = Math.Min(innerDimensions.Width / text.Measure().X, innerDimensions.Height / text.Measure().Y);
 			Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, text, innerDimensions.X + innerDimensions.Width * 0.5f, innerDimensions.Y + innerDimensions.Height * 0.5f, Color.White, Color.Black, new Vector2(text.Measure().X * 0.5f, 10), scale);

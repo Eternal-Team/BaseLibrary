@@ -1,5 +1,4 @@
 ﻿using System;
-using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -51,7 +50,7 @@ namespace BaseLibrary.UI.Elements
 			spriteBatch.End();
 			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
-			spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Utility.Utility.ColorPanel_Hovered : Toggled ? Utility.Utility.ColorPanel_Selected : Utility.Utility.ColorPanel);
+			spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Utility.ColorPanel_Hovered : Toggled ? Utility.ColorPanel_Selected : Utility.ColorPanel);
 
 			if (scaleMode == ScaleMode.Stretch) spriteBatch.Draw(texture, innerDimensions);
 			else if (scaleMode == ScaleMode.Zoom) spriteBatch.Draw(texture, dimensions.Center(), null, Color.White, 0f, texture.Size() * 0.5f, Math.Min(innerDimensions.Width / texture.Width, innerDimensions.Height / texture.Height), SpriteEffects.None, 0f);

@@ -1,5 +1,4 @@
 ﻿using System;
-using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -39,7 +38,7 @@ namespace BaseLibrary.UI.Elements
 			CalculatedStyle dimensions = GetDimensions();
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 
-			if (RenderPanel) spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.Utility.ColorPanel_Selected : Utility.Utility.ColorPanel_Hovered : Utility.Utility.ColorPanel);
+			if (RenderPanel) spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
 
 			if (texture != null)
 			{

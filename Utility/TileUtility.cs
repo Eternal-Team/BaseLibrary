@@ -5,13 +5,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
-namespace BaseLibrary.Utility
+namespace BaseLibrary
 {
 	public static partial class Utility
 	{
 		public static Point16 TileTopLeft(int i, int j)
 		{
-			if (i <= Main.maxTilesX && j <= Main.maxTilesY)
+			if (i >= 0 && i <= Main.maxTilesX && j >= 0 && j <= Main.maxTilesY)
 			{
 				Tile tile = Main.tile[i, j];
 
