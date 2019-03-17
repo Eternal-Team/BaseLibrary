@@ -95,82 +95,37 @@ namespace Starbound.Input
 			MouseState current = Mouse.GetState();
 
 			// Check button press events.
-			if (current.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released)
-			{
-				OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left));
-			}
+			if (current.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released) OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left));
 
-			if (current.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released)
-			{
-				OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle));
-			}
+			if (current.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released) OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle));
 
-			if (current.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released)
-			{
-				OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right));
-			}
+			if (current.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released) OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right));
 
-			if (current.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released)
-			{
-				OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1));
-			}
+			if (current.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released) OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1));
 
-			if (current.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released)
-			{
-				OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2));
-			}
+			if (current.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released) OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2));
 
 			// Check button click events.
-			if (current.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released)
-			{
-				OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left));
-			}
+			if (current.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released) OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left));
 
-			if (current.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released)
-			{
-				OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle));
-			}
+			if (current.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released) OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle));
 
-			if (current.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released)
-			{
-				OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right));
-			}
+			if (current.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released) OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right));
 
-			if (current.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released)
-			{
-				OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1));
-			}
+			if (current.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released) OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1));
 
-			if (current.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released)
-			{
-				OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2));
-			}
+			if (current.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released) OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2));
 
 			// Check button releases.
-			if (current.LeftButton == ButtonState.Released && previous.LeftButton == ButtonState.Pressed)
-			{
-				OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left));
-			}
+			if (current.LeftButton == ButtonState.Released && previous.LeftButton == ButtonState.Pressed) OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left));
 
-			if (current.MiddleButton == ButtonState.Released && previous.MiddleButton == ButtonState.Pressed)
-			{
-				OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle));
-			}
+			if (current.MiddleButton == ButtonState.Released && previous.MiddleButton == ButtonState.Pressed) OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle));
 
-			if (current.RightButton == ButtonState.Released && previous.RightButton == ButtonState.Pressed)
-			{
-				OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right));
-			}
+			if (current.RightButton == ButtonState.Released && previous.RightButton == ButtonState.Pressed) OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right));
 
-			if (current.XButton1 == ButtonState.Released && previous.XButton1 == ButtonState.Pressed)
-			{
-				OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1));
-			}
+			if (current.XButton1 == ButtonState.Released && previous.XButton1 == ButtonState.Pressed) OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1));
 
-			if (current.XButton2 == ButtonState.Released && previous.XButton2 == ButtonState.Pressed)
-			{
-				OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2));
-			}
+			if (current.XButton2 == ButtonState.Released && previous.XButton2 == ButtonState.Pressed) OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2));
 
 			// Whether ANY button is pressed.
 			bool buttonDown = current.LeftButton == ButtonState.Pressed ||
@@ -183,15 +138,9 @@ namespace Starbound.Input
 			// otherwise it's a move.
 			if (previous.X != current.X || previous.Y != current.Y)
 			{
-				if (buttonDown)
-				{
-					OnMouseDragged(this, new MouseEventArgs(gameTime.TotalGameTime, previous, current));
-				}
+				if (buttonDown) OnMouseDragged(this, new MouseEventArgs(gameTime.TotalGameTime, previous, current));
 
-				if (MoveRaisedOnDrag || !buttonDown)
-				{
-					OnMouseMoved(this, new MouseEventArgs(gameTime.TotalGameTime, previous, current));
-				}
+				if (MoveRaisedOnDrag || !buttonDown) OnMouseMoved(this, new MouseEventArgs(gameTime.TotalGameTime, previous, current));
 			}
 
 			// Handle mouse wheel events.
@@ -213,10 +162,7 @@ namespace Starbound.Input
 		/// <param name="args"></param>
 		public static void OnButtonReleased(object sender, MouseButtonEventArgs args)
 		{
-			if (ButtonReleased != null)
-			{
-				ButtonReleased(sender, args);
-			}
+			ButtonReleased?.Invoke(sender, args);
 		}
 
 		/// <summary>
@@ -230,27 +176,24 @@ namespace Starbound.Input
 			// If this click is within the right time and position of the last double click, raise
 			// a triple-click event as well.
 			TimeSpan lastDoubleClick = lastDoubleClicks[args.Button].Time;
-			if ((args.Time - lastDoubleClick).TotalMilliseconds < DoubleClickTime &&
-			    DistanceBetween(args.Current, lastDoubleClicks[args.Button].Current) < DoubleClickMaxMove)
+			if ((args.Time - lastDoubleClick).TotalMilliseconds < DoubleClickTime && DistanceBetween(args.Current, lastDoubleClicks[args.Button].Current) < DoubleClickMaxMove)
 			{
-				OnButtonTripleClicked(sender, args);
+				ButtonTripleClicked?.Invoke(sender, args);
+				return;
 			}
 
 			// If this click is within the right time and position of the last click, raise a
 			// double-click event as well.
 			TimeSpan lastClick = lastClicks[args.Button].Time;
-			if ((args.Time - lastClick).TotalMilliseconds < DoubleClickTime &&
-			    DistanceBetween(args.Current, lastClicks[args.Button].Current) < DoubleClickMaxMove)
+			if ((args.Time - lastClick).TotalMilliseconds < DoubleClickTime && DistanceBetween(args.Current, lastClicks[args.Button].Current) < DoubleClickMaxMove)
 			{
-				OnButtonDoubleClicked(sender, args);
+				ButtonDoubleClicked?.Invoke(sender, args);
 				lastDoubleClicks[args.Button] = args;
+				return;
 			}
 
 			lastClicks[args.Button] = args;
-			if (ButtonClicked != null)
-			{
-				ButtonClicked(sender, args);
-			}
+			ButtonClicked?.Invoke(sender, args);
 		}
 
 		/// <summary>
@@ -269,38 +212,7 @@ namespace Starbound.Input
 		/// <param name="args"></param>
 		public static void OnButtonPressed(object sender, MouseButtonEventArgs args)
 		{
-			if (ButtonPressed != null)
-			{
-				ButtonPressed(sender, args);
-			}
-		}
-
-		/// <summary>
-		///     Raises the ButtonDoubleClicked event. This is done automatically by a correctly configured component,
-		///     but this is exposed publicly to allow programmatic button double-click events to occur.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		public static void OnButtonDoubleClicked(object sender, MouseButtonEventArgs args)
-		{
-			if (ButtonDoubleClicked != null)
-			{
-				ButtonDoubleClicked(sender, args);
-			}
-		}
-
-		/// <summary>
-		///     Raises the ButtonTripleClicked event. This is done automatically by a correctly configured component,
-		///     but this is exposed publicly to allow programmatic button triple-click events to occur.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		public static void OnButtonTripleClicked(object sender, MouseButtonEventArgs args)
-		{
-			if (ButtonTripleClicked != null)
-			{
-				ButtonTripleClicked(sender, args);
-			}
+			if (ButtonPressed != null) ButtonPressed(sender, args);
 		}
 
 		/// <summary>
@@ -311,10 +223,7 @@ namespace Starbound.Input
 		/// <param name="args"></param>
 		public static void OnMouseMoved(object sender, MouseEventArgs args)
 		{
-			if (MouseMoved != null)
-			{
-				MouseMoved(sender, args);
-			}
+			if (MouseMoved != null) MouseMoved(sender, args);
 		}
 
 		/// <summary>
@@ -325,10 +234,7 @@ namespace Starbound.Input
 		/// <param name="args"></param>
 		public static void OnMouseDragged(object sender, MouseEventArgs args)
 		{
-			if (MouseDragged != null)
-			{
-				MouseDragged(sender, args);
-			}
+			if (MouseDragged != null) MouseDragged(sender, args);
 		}
 
 		/// <summary>
@@ -339,10 +245,7 @@ namespace Starbound.Input
 		/// <param name="args"></param>
 		public static void OnMouseWheelMoved(object sender, MouseWheelEventArgs args)
 		{
-			if (MouseWheelMoved != null)
-			{
-				MouseWheelMoved(sender, args);
-			}
+			if (MouseWheelMoved != null) MouseWheelMoved(sender, args);
 		}
 
 		/// <summary>

@@ -25,6 +25,7 @@ namespace BaseLibrary.UI.Elements
 			set => _text.Value = value;
 		}
 
+		public bool SelectOnFirstClick;
 		public string HintText;
 		public event Action OnTextChange;
 
@@ -36,23 +37,38 @@ namespace BaseLibrary.UI.Elements
 			HintText = hintText;
 
 			Utility.Input.InterceptKeyboard += ShouldIntercept;
+
+			// intercept mouse movement and/or mouse clicks
+			Utility.Input.InterceptMouse += ShouldIntercept;
+
 			KeyboardEvents.KeyTyped += KeyTyped;
+
+			MouseEvents.ButtonClicked += SingleClick;
+			MouseEvents.ButtonDoubleClicked += DoubleClick;
+			MouseEvents.ButtonTripleClicked += TripleClick;
 		}
 
 		~UITextInput()
 		{
 			Utility.Input.InterceptKeyboard -= ShouldIntercept;
 			KeyboardEvents.KeyTyped -= KeyTyped;
+
+			MouseEvents.ButtonTripleClicked -= TripleClick;
 		}
 
 		private bool ShouldIntercept() => focused;
-
-		// mouse click (position, select word, select whole, drag)
 
 		private void KeyTyped(object sender, KeyboardEventArgs args)
 		{
 			switch (args.Key)
 			{
+				case Keys.A when KeyboardUtil.ControlDown(args.Modifiers):
+				{
+					selectionEnd = 0;
+					selectionStart = Text.Length;
+					selecting = true;
+					break;
+				}
 				case Keys.C when KeyboardUtil.ControlDown(args.Modifiers):
 				{
 					Platform.Current.Clipboard = selecting ? Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)) : Text;
@@ -99,6 +115,7 @@ namespace BaseLibrary.UI.Elements
 					break;
 				}
 				case Keys.Delete:
+				{
 					if (selecting)
 					{
 						selecting = false;
@@ -110,7 +127,9 @@ namespace BaseLibrary.UI.Elements
 
 					// ctrl - delete to next word
 					break;
+				}
 				case Keys.Back:
+				{
 					if (selecting)
 					{
 						selecting = false;
@@ -122,11 +141,17 @@ namespace BaseLibrary.UI.Elements
 
 					// ctrl - delete to previous word
 					break;
+				}
+				case Keys.Insert:
+				{
+					break;
+				}
 				case Keys.Escape:
 				case Keys.Enter:
 					focused = false;
 					break;
 				case Keys.Left:
+				{
 					if (selectionStart - 1 >= 0) selectionStart--;
 
 					if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
@@ -148,7 +173,9 @@ namespace BaseLibrary.UI.Elements
 					// ctrl - move index to previous word
 					// ctrl + shift - (un)select previous word
 					break;
+				}
 				case Keys.Right:
+				{
 					if (selectionStart + 1 <= Text.Length) selectionStart++;
 
 					if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
@@ -170,17 +197,7 @@ namespace BaseLibrary.UI.Elements
 					// ctrl - move index to next word
 					// ctrl + shift - (un)select next word
 					break;
-				case Keys.Up:
-					// ctrl - move index to previous line
-					// shift - (un)select to same column on previous line
-					break;
-				case Keys.Down:
-					// ctrl - move index to next line
-					// shift - (un)select to same column on next line
-					break;
-				case Keys.Space:
-					Text = Text.Insert(selectionStart++, " ");
-					break;
+				}
 				default:
 				{
 					if (args.Character != null)
@@ -202,15 +219,53 @@ namespace BaseLibrary.UI.Elements
 			}
 		}
 
-		// first time click - set index/select all
+		private void TripleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (e.Button != MouseButton.Left) return;
+
+			selectionEnd = 0;
+			selectionStart = Text.Length;
+			selecting = true;
+		}
+
+		private void DoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			// double click - to word boundry
+		}
+
+		private void SingleClick(object sender, MouseButtonEventArgs e)
+		{
+			// mouse click (position, select word, select whole, drag)
+		}
+
 		public override void Click(UIMouseEvent evt)
 		{
-			focused = !focused;
+			if (!focused && SelectOnFirstClick)
+			{
+				selectionEnd = 0;
+				selectionStart = Text.Length;
+				selecting = true;
+			}
+
+			focused = true;
+
+			float lenght = 0f;
+			float x = evt.MousePosition.X - GetInnerDimensions().Position().X;
+			int index = 0;
+			while (lenght < x && index < Text.Length)
+			{
+				index++;
+				lenght = Utility.Font.MeasureString(Text.Substring(0, index - 1)).X;
+			}
+
+			// figure out if you want to keep the index or subtract one from it based on which X-value is closed to target
+			selectionStart = index.Clamp(0, Text.Length);
 
 			caretVisible = true;
 			caretTimer = 0;
 		}
 
+		// todo: fix espace and enter
 		// todo: add special cursor for text
 
 		private int caretTimer;
@@ -225,7 +280,6 @@ namespace BaseLibrary.UI.Elements
 
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 			Vector2 size = Utility.Font.MeasureString(Text.Substring(0, selectionStart));
-
 
 			ChatManager.DrawColorCodedString(spriteBatch, Utility.Font, Text, innerDimensions.Position(), Color.White, 0f, Vector2.Zero, Vector2.One);
 

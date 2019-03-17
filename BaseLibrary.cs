@@ -9,6 +9,8 @@ using Terraria.UI;
 
 namespace BaseLibrary
 {
+	// todo: abstract Starbound.Input behind my own code
+
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
@@ -34,6 +36,9 @@ namespace BaseLibrary
 
 			if (!Main.dedServ)
 			{
+				Utility.TexturePanelBackground = ModContent.GetTexture("Terraria/UI/PanelBackground");
+				Utility.TexturePanelBorder = ModContent.GetTexture("Terraria/UI/PanelBorder");
+
 				Utility.Font = Main.instance.OurLoad<DynamicSpriteFont>("Fonts" + Path.DirectorySeparatorChar + "Mouse_Text");
 				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);
 

@@ -63,7 +63,6 @@
     <Compile Include="Utility\Scheduler.cs" />
     <Compile Include="UI\Elements\UIColor.cs" />
     <Compile Include="UI\Elements\UIDraggablePanel.cs" />
-    <Compile Include="ModPlayer.cs" />
     <Compile Include="Tiles\TileEntites\BaseTE.cs" />
     <Compile Include="Tiles\BaseTile.cs" />
     <Compile Include="Items\BaseItem.cs" />
@@ -107,7 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="Terraria, Version=1.3.5.1, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>

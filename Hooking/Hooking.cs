@@ -14,7 +14,7 @@ namespace BaseLibrary
 		{
 			OnPlayer.HandleHotbar += (orig, player) =>
 			{
-				// do just for scrollable elements?
+				// todo: do just for scrollable elements
 
 				if (!InUI) orig(player);
 				InUI = false;
