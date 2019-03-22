@@ -3,6 +3,8 @@ using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using ReLogic.Graphics;
 using Terraria;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace BaseLibrary
 {
@@ -24,5 +26,7 @@ namespace BaseLibrary
 			var intList = number.ToString().Select(digit => int.Parse(digit.ToString()));
 			return intList.Aggregate("", (current, i) => current + ("\\u832" + i));
 		}
+
+		public static string GetTranslation(this ModTranslation translation, GameCulture culture = null) => translation.GetTranslation(culture ?? Terraria.Localization.Language.ActiveCulture);
 	}
 }

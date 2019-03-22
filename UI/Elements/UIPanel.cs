@@ -11,6 +11,8 @@ namespace BaseLibrary.UI.Elements
 
 		public Texture2D customTexture;
 
+		public UIPanel() => SetPadding(8);
+
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			CalculatedStyle dimensions = GetDimensions();

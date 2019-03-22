@@ -45,6 +45,7 @@ namespace BaseLibrary.UI.Elements
 			CalculatedStyle innerDimensions = GetInnerDimensions();
 
 			if (RenderPanel) spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
+			else innerDimensions = dimensions;
 
 			float scale = Math.Min(innerDimensions.Width / text.Measure().X, innerDimensions.Height / text.Measure().Y);
 			Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, text, innerDimensions.X + innerDimensions.Width * 0.5f, innerDimensions.Y + innerDimensions.Height * 0.5f, Color.White, Color.Black, new Vector2(text.Measure().X * 0.5f, 10), scale);
