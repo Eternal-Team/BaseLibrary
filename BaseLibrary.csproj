@@ -38,6 +38,7 @@
     <Compile Include="BaseLibrary.cs" />
     <Compile Include="Hooking\Hooking.cs" />
     <Compile Include="Language.cs" />
+    <Compile Include="MultiValueDictionary.cs" />
     <Compile Include="Starbound.Input\Buttons.cs" />
     <Compile Include="Starbound.Input\GamePadButtonEventArgs.cs" />
     <Compile Include="Starbound.Input\GamePadEventArgs.cs" />

@@ -4,6 +4,8 @@ using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
+	// todo: use MouseEvents.MouseDragged
+
 	public class UIDraggablePanel : UIPanel
 	{
 		private Vector2 offset;

@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Starbound.Input;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
-	// todo: make left,right,top,left floats
-	// todo: functions for size and position?
+	// note: make left,right,top,left floats
+	// note: functions for size and position?
 
 	public class ChildrenCollection<T> : IEnumerable<T> where T : BaseElement
 	{
@@ -116,6 +117,7 @@ namespace BaseLibrary.UI.Elements
 			set => base.Elements = value;
 		}
 
+		// todo: use MouseEvents
 		public event MouseEvent OnClickContinuous;
 		public event MouseEvent OnRightClickContinuous;
 		#endregion

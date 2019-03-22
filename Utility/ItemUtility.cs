@@ -104,22 +104,7 @@ namespace BaseLibrary
 
 		public static bool IsCoin(this Item item) => CoinTypes.Contains(item.type);
 
-		public static long CountCoins(this List<Item> items) => items.Sum(item =>
-		{
-			switch (item.type)
-			{
-				case 71:
-					return item.stack;
-				case 72:
-					return item.stack * 100L;
-				case 73:
-					return item.stack * 10000L;
-				case 74:
-					return item.stack * 1000000L;
-				default:
-					return 0L;
-			}
-		});
+		public static long CountCoins(this List<Item> items) => items.Sum(item => item.type >= 71 && item.type <= 74 ? item.value * 2 : 0);
 
 		#region Player
 		public static List<Item> Armor(this Player player) => player.armor.Where((item, i) => i > 0 && i < 3).ToList();

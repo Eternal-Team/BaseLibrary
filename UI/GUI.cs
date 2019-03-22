@@ -5,15 +5,7 @@ using Terraria.UI;
 
 namespace BaseLibrary.UI
 {
-	public interface IGUI
-	{
-		BaseUI Interface_UI { get; set; }
-		UserInterface Interface { get; set; }
-		LegacyGameInterfaceLayer InterfaceLayer { get; set; }
-		bool Draw();
-	}
-
-	public class GUI<T> : IGUI where T : BaseUI
+	public class GUI<T> where T : BaseUI
 	{
 		public BaseUI Interface_UI { get; set; }
 

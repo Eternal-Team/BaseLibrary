@@ -14,11 +14,7 @@ namespace BaseLibrary
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
-
-		public static List<Item> itemCache;
-		public static List<NPC> npcCache;
-		public static List<Projectile> projectileCache;
-
+		
 		private LegacyGameInterfaceLayer MouseInterface;
 
 		private GUI<TestUI> ui;
@@ -58,33 +54,7 @@ namespace BaseLibrary
 			Utility.UnloadNullableTypes();
 		}
 
-		public override void PostSetupContent()
-		{
-			itemCache = new List<Item>();
-			npcCache = new List<NPC>();
-			projectileCache = new List<Projectile>();
-
-			for (int type = 0; type < ItemLoader.ItemCount; type++)
-			{
-				Item item = new Item();
-				item.SetDefaults(type, false);
-				itemCache.Add(item);
-			}
-
-			for (int type = 0; type < NPCLoader.NPCCount; type++)
-			{
-				NPC npc = new NPC();
-				npc.SetDefaults(type);
-				npcCache.Add(npc);
-			}
-
-			for (int type = 0; type < ProjectileLoader.ProjectileCount; type++)
-			{
-				Projectile projectile = new Projectile();
-				projectile.SetDefaults(type);
-				projectileCache.Add(projectile);
-			}
-		}
+		public override void PostSetupContent() => Utility.Cache.Load();
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 		{
