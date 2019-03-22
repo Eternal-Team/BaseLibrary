@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace BaseLibrary
 {
@@ -104,7 +105,15 @@ namespace BaseLibrary
 
 		public static bool IsCoin(this Item item) => CoinTypes.Contains(item.type);
 
-		public static long CountCoins(this List<Item> items) => items.Sum(item => item.type >= 71 && item.type <= 74 ? item.value * 2 : 0);
+		public static long CountCoins(this List<Item> items) => Utils.CoinsCount(out bool _, items.ToArray());
+
+		public static IEnumerable<T> OfType<T>(this IEnumerable<Item> items) where T : ModItem
+		{
+			foreach (Item item in items)
+			{
+				if (item.modItem is T modItem) yield return modItem;
+			}
+		}
 
 		#region Player
 		public static List<Item> Armor(this Player player) => player.armor.Where((item, i) => i > 0 && i < 3).ToList();
