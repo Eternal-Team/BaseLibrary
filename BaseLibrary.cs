@@ -14,7 +14,7 @@ namespace BaseLibrary
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
-		
+
 		private LegacyGameInterfaceLayer MouseInterface;
 
 		private GUI<TestUI> ui;

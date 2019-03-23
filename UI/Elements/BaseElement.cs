@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Starbound.Input;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;

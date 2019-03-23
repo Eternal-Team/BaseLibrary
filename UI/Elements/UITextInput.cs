@@ -12,6 +12,9 @@ namespace BaseLibrary.UI.Elements
 {
 	public class UITextInput : UIPanel
 	{
+		// todo: cleanup
+		// note: support for Insert?
+
 		private Ref<string> _text;
 		private bool focused;
 
@@ -142,13 +145,10 @@ namespace BaseLibrary.UI.Elements
 					// ctrl - delete to previous word
 					break;
 				}
-				case Keys.Insert:
-				{
-					break;
-				}
 				case Keys.Escape:
 				case Keys.Enter:
 					focused = false;
+					Main.keyState = Main.oldKeyState;
 					break;
 				case Keys.Left:
 				{
@@ -258,14 +258,14 @@ namespace BaseLibrary.UI.Elements
 				lenght = Utility.Font.MeasureString(Text.Substring(0, index - 1)).X;
 			}
 
-			// figure out if you want to keep the index or subtract one from it based on which X-value is closed to target
+			// todo: figure out if you want to keep the index or subtract one from it based on which X-value is closed to target
 			selectionStart = index.Clamp(0, Text.Length);
 
 			caretVisible = true;
 			caretTimer = 0;
 		}
 
-		// todo: fix espace and enter
+		// todo: fix espace and enter opening inventory/chat, possible schedule focused=false to next frame
 		// todo: add special cursor for text
 
 		private int caretTimer;
