@@ -32,6 +32,13 @@ namespace BaseLibrary.UI.Elements
 		public string HintText;
 		public event Action OnTextChange;
 
+		/*
+		 while(s[i]!=wordboundary&&s[i-1]!=APLHANUM)
+		 {
+		 select
+		 }
+		 */
+
 		public UITextInput(Ref<string> text, string hintText = "")
 		{
 			SetPadding(8);

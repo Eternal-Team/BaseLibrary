@@ -10,13 +10,15 @@ namespace BaseLibrary
 {
 	public static partial class Utility
 	{
-		private static readonly int[] CoinTypes =
+		private static int[] _coinTypes;
+
+		public static int[] CoinTypes => _coinTypes ?? (_coinTypes = new int[]
 		{
 			ItemID.CopperCoin,
 			ItemID.SilverCoin,
 			ItemID.GoldCoin,
 			ItemID.PlatinumCoin
-		};
+		});
 
 		public static Item TakeItemFromNearbyChest(Item item, Vector2 position)
 		{
