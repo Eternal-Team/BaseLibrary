@@ -27,16 +27,28 @@ namespace BaseLibrary
 
 				for (int type = 0; type < ItemLoader.ItemCount; type++)
 				{
-					Item item = new Item();
-					item.SetDefaults(type, false);
-					ItemCache.Add(item);
+					try
+					{
+						Item item = new Item();
+						item.SetDefaults(type, false);
+						ItemCache.Add(item);
+					}
+					catch
+					{
+					}
 				}
 
 				for (int type = 0; type < NPCLoader.NPCCount; type++)
 				{
-					NPC npc = new NPC();
-					npc.SetDefaults(type);
-					NPCCache.Add(npc);
+					try
+					{
+						NPC npc = new NPC();
+						npc.SetDefaults(type);
+						NPCCache.Add(npc);
+					}
+					catch
+					{
+					}
 				}
 
 				for (int type = 0; type < ProjectileLoader.ProjectileCount; type++)
