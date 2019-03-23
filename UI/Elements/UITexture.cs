@@ -12,6 +12,7 @@ namespace BaseLibrary.UI.Elements
 		private Texture2D textureBack;
 		private Texture2D textureFront;
 		private ScaleMode scaleMode;
+		public float Rotation;
 
 		public UITexture(Texture2D textureBack, ScaleMode scaleMode = ScaleMode.None)
 		{
@@ -29,6 +30,7 @@ namespace BaseLibrary.UI.Elements
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			CalculatedStyle dimensions = GetDimensions();
+			CalculatedStyle innerDimensions = GetInnerDimensions();
 
 			spriteBatch.End();
 			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Main.DefaultSamplerState, null, OverflowHiddenState, null, Main.UIScaleMatrix);
@@ -38,7 +40,8 @@ namespace BaseLibrary.UI.Elements
 			switch (scaleMode)
 			{
 				case ScaleMode.Stretch:
-					spriteBatch.Draw(textureBack, new Rectangle((int)(dimensions.X + PaddingTop), (int)(dimensions.Y + PaddingTop), (int)(dimensions.Width - PaddingTop * 2f), (int)(dimensions.Height - PaddingTop * 2f)));
+					Vector2 scale = new Vector2(innerDimensions.Width / textureBack.Width, innerDimensions.Height / textureBack.Height);
+					spriteBatch.Draw(textureBack, innerDimensions.Position() + innerDimensions.Size() * 0.5f, null, Color.White, Rotation, textureBack.Size() * 0.5f, scale, SpriteEffects.None, 0f);
 					break;
 				case ScaleMode.Zoom:
 					spriteBatch.Draw(textureBack, dimensions.Position() + dimensions.Size() * 0.5f, null, Color.White, 0f, new Vector2(textureBack.Width, textureBack.Height) * 0.5f, Math.Min((dimensions.Width - PaddingTop * 2f) / textureBack.Width, (dimensions.Height - PaddingTop * 2f) / textureBack.Height), SpriteEffects.None, 0f);
