@@ -15,15 +15,15 @@ namespace BaseLibrary
 	{
 		public static class Cache
 		{
-			public static List<Item> ItemCache { get; internal set; }
-			public static List<NPC> NPCCache { get; internal set; }
-			public static List<Projectile> ProjectileCache { get; internal set; }
+			public static Item[] ItemCache { get; internal set; }
+			public static NPC[] NPCCache { get; internal set; }
+			public static Projectile[] ProjectileCache { get; internal set; }
 
 			public static void Load()
 			{
-				ItemCache = new List<Item>();
-				NPCCache = new List<NPC>();
-				ProjectileCache = new List<Projectile>();
+				ItemCache = new Item[ItemLoader.ItemCount];
+				NPCCache = new NPC[NPCLoader.NPCCount];
+				ProjectileCache = new Projectile[ProjectileLoader.ProjectileCount];
 
 				for (int type = 0; type < ItemLoader.ItemCount; type++)
 				{
@@ -31,7 +31,7 @@ namespace BaseLibrary
 					{
 						Item item = new Item();
 						item.SetDefaults(type, false);
-						ItemCache.Add(item);
+						ItemCache[type] = item;
 					}
 					catch
 					{
@@ -44,7 +44,7 @@ namespace BaseLibrary
 					{
 						NPC npc = new NPC();
 						npc.SetDefaults(type);
-						NPCCache.Add(npc);
+						NPCCache[type] = npc;
 					}
 					catch
 					{
@@ -57,7 +57,7 @@ namespace BaseLibrary
 					{
 						Projectile projectile = new Projectile();
 						projectile.SetDefaults(type);
-						ProjectileCache.Add(projectile);
+						ProjectileCache[type] = projectile;
 					}
 					catch
 					{
