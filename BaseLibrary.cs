@@ -17,7 +17,7 @@ namespace BaseLibrary
 
 		private LegacyGameInterfaceLayer MouseInterface;
 
-		private GUI<TestUI> ui;
+		//private GUI<TestUI> ui;
 
 		public override void Load()
 		{
@@ -38,8 +38,8 @@ namespace BaseLibrary
 				Utility.Font = Main.instance.OurLoad<DynamicSpriteFont>("Fonts" + Path.DirectorySeparatorChar + "Mouse_Text");
 				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);
 
-				ui = Utility.SetupGUI<TestUI>();
-				ui.Visible = true;
+				//ui = Utility.SetupGUI<TestUI>();
+				//ui.Visible = true;
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
@@ -63,13 +63,13 @@ namespace BaseLibrary
 			if (MouseTextIndex != -1)
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
-				layers.Insert(MouseTextIndex + 1, ui.InterfaceLayer);
+				//layers.Insert(MouseTextIndex + 1, ui.InterfaceLayer);
 			}
 		}
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			ui.Update(gameTime);
+			//ui.Update(gameTime);
 		}
 	}
 }
