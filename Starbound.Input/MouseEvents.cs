@@ -49,10 +49,14 @@ namespace Starbound.Input
 		/// </summary>
 		public static bool MoveRaisedOnDrag { get; set; }
 
+		public static bool InterceptMouseWheel;
+		public static bool InterceptMouseMove;
+		public static bool InterceptMouseButton;
+
 		/// <summary>
-		///     Sets defaults for the various mouse input settings.
-		/// </summary>
-		static MouseEvents()
+        ///     Sets defaults for the various mouse input settings.
+        /// </summary>
+        static MouseEvents()
 		{
 			DoubleClickTime = 300;
 			DoubleClickMaxMove = 2;
@@ -63,8 +67,7 @@ namespace Starbound.Input
 		///     Creates a new MouseEvents object.
 		/// </summary>
 		/// <param name="game"></param>
-		public MouseEvents(Game game)
-			: base(game)
+		public MouseEvents(Game game) : base(game)
 		{
 			lastClicks = new Dictionary<MouseButton, MouseButtonEventArgs>();
 			lastClicks.Add(MouseButton.Left, new MouseButtonEventArgs(new TimeSpan(-1, 0, 0), new MouseState(), new MouseState(), MouseButton.Left));
@@ -144,7 +147,7 @@ namespace Starbound.Input
 			}
 
 			// Handle mouse wheel events.
-			if (previous.ScrollWheelValue != current.ScrollWheelValue)
+			if (InterceptMouseWheel && previous.ScrollWheelValue != current.ScrollWheelValue)
 			{
 				int value = current.ScrollWheelValue;
 				int delta = current.ScrollWheelValue - previous.ScrollWheelValue;

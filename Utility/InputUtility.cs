@@ -12,12 +12,11 @@ namespace BaseLibrary
 	{
 		public static class Input
 		{
-			public static event Func<bool> InterceptMouse = () => false;
 			public static event Func<bool> InterceptKeyboard = () => false;
 
 			internal static MouseEvents MouseHandler;
 			internal static KeyboardEvents KeyboardHandler;
-
+			
 			internal static void Load()
 			{
 				KeyboardEvents.RepeatDelay = 31;
@@ -37,7 +36,6 @@ namespace BaseLibrary
 
 			internal static void Update()
 			{
-				MouseHandler.Enabled = InterceptMouse();
 				KeyboardHandler.Enabled = InterceptKeyboard();
 			}
 		}

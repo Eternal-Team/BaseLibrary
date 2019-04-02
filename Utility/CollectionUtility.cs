@@ -31,5 +31,13 @@ namespace BaseLibrary
 				if (selector(element) is TResult result) yield return result;
 			}
 		}
-	}
+
+		public static IEnumerable<TSource> Concat<TSource>(this IEnumerable<TSource> source, TSource element)
+		{
+			if (source == null || element == null) throw new ArgumentNullException();
+
+			foreach (TSource tSource in source) yield return tSource;
+			yield return element;
+		}
+    }
 }

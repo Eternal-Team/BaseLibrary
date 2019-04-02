@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework.Input;
+using Starbound.Input;
+using Terraria;
 using Terraria.GameInput;
 using OnPlayerInput = On.Terraria.GameInput.PlayerInput;
 using OnMain = On.Terraria.Main;
@@ -34,7 +36,70 @@ namespace BaseLibrary
 
 			OnPlayerInput.MouseInput += orig =>
 			{
-				if (!Utility.Input.MouseHandler.Enabled) orig();
+				orig();
+
+				//bool changed = false;
+
+				//PlayerInput.MouseInfoOld = PlayerInput.MouseInfo;
+				//PlayerInput.MouseInfo = Mouse.GetState();
+
+				//if (!MouseEvents.InterceptMouseWheel)
+				//{
+				//	PlayerInput.ScrollWheelValue += PlayerInput.MouseInfo.ScrollWheelValue;
+				//	if (PlayerInput.MouseInfo.ScrollWheelValue != PlayerInput.MouseInfoOld.ScrollWheelValue) changed = true;
+				//}
+
+				//if (!MouseEvents.InterceptMouseMove)
+				//{
+				//	if (PlayerInput.MouseInfo.X - PlayerInput.MouseInfoOld.X != 0 || PlayerInput.MouseInfo.Y - PlayerInput.MouseInfoOld.Y != 0)
+				//	{
+				//		PlayerInput.MouseX = PlayerInput.MouseInfo.X;
+				//		PlayerInput.MouseY = PlayerInput.MouseInfo.Y;
+				//		changed = true;
+				//	}
+				//}
+
+				//PlayerInput.MouseKeys.Clear();
+				//if (MouseEvents.InterceptMouseButton && Main.instance.IsActive)
+				//{
+				//	if (PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed)
+				//	{
+				//		PlayerInput.MouseKeys.Add("Mouse1");
+				//		changed = true;
+				//	}
+
+				//	if (PlayerInput.MouseInfo.RightButton == ButtonState.Pressed)
+				//	{
+				//		PlayerInput.MouseKeys.Add("Mouse2");
+				//		changed = true;
+				//	}
+
+				//	if (PlayerInput.MouseInfo.MiddleButton == ButtonState.Pressed)
+				//	{
+				//		PlayerInput.MouseKeys.Add("Mouse3");
+				//		changed = true;
+				//	}
+
+				//	if (PlayerInput.MouseInfo.XButton1 == ButtonState.Pressed)
+				//	{
+				//		PlayerInput.MouseKeys.Add("Mouse4");
+				//		changed = true;
+				//	}
+
+				//	if (PlayerInput.MouseInfo.XButton2 == ButtonState.Pressed)
+				//	{
+				//		PlayerInput.MouseKeys.Add("Mouse5");
+				//		changed = true;
+				//	}
+				//}
+
+				//if (changed)
+				//{
+				//	PlayerInput.CurrentInputMode = InputMode.Mouse;
+				//	PlayerInput.Triggers.Current.UsedMovementKey = false;
+				//}
+
+				//MouseEvents.InterceptMouseWheel = MouseEvents.InterceptMouseButton = MouseEvents.InterceptMouseMove = false;
 			};
 
 			OnMain.DoUpdate_HandleInput += (orig, self) =>
