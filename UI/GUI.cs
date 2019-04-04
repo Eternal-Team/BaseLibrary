@@ -17,7 +17,7 @@ namespace BaseLibrary.UI
 
 		public UserInterface Interface { get; set; }
 		public LegacyGameInterfaceLayer InterfaceLayer { get; set; }
-		public bool Visible;
+		public Func<bool> Visible;
 
 		public GUI(T ui, UserInterface userInterface, InterfaceScaleType scaleType)
 		{
@@ -29,14 +29,14 @@ namespace BaseLibrary.UI
 
 		public bool Draw()
 		{
-			if (Visible) UI.Draw(Main.spriteBatch);
+			if (Visible()) Interface.Draw(Main.spriteBatch, Main._drawInterfaceGameTime);
 
 			return true;
 		}
 
 		public void Update(GameTime gameTime)
 		{
-			if (Visible) Interface.Update(gameTime);
+			if (Visible()) Interface.Update(gameTime);
 		}
 	}
 }

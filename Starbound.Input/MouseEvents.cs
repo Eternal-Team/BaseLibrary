@@ -48,11 +48,7 @@ namespace Starbound.Input
 		///     be raised.
 		/// </summary>
 		public static bool MoveRaisedOnDrag { get; set; }
-
-		public static bool InterceptMouseWheel;
-		public static bool InterceptMouseMove;
-		public static bool InterceptMouseButton;
-
+		
 		/// <summary>
         ///     Sets defaults for the various mouse input settings.
         /// </summary>
@@ -147,7 +143,7 @@ namespace Starbound.Input
 			}
 
 			// Handle mouse wheel events.
-			if (InterceptMouseWheel && previous.ScrollWheelValue != current.ScrollWheelValue)
+			if (previous.ScrollWheelValue != current.ScrollWheelValue)
 			{
 				int value = current.ScrollWheelValue;
 				int delta = current.ScrollWheelValue - previous.ScrollWheelValue;

@@ -127,6 +127,53 @@ namespace BaseLibrary.UI.Elements
 
 		public virtual void RightClickContinuous(UIMouseEvent evt) => OnRightClickContinuous?.Invoke(evt, this);
 
+		public new BaseElement Parent => base.Parent as BaseElement;
+
+		public virtual void TripleClick(UIMouseEvent evt)
+		{
+			//if (this.OnXButton1Click != null)
+			//{
+			//	this.OnXButton1Click(evt, this);
+			//}
+			Parent?.TripleClick(evt);
+		}
+
+		public virtual void RightTripleClick(UIMouseEvent evt)
+		{
+			//if (this.OnXButton1Click != null)
+			//{
+			//	this.OnXButton1Click(evt, this);
+			//}
+			Parent?.RightTripleClick(evt);
+		}
+
+		public virtual void MiddleTripleClick(UIMouseEvent evt)
+		{
+			//if (this.OnXButton1Click != null)
+			//{
+			//	this.OnXButton1Click(evt, this);
+			//}
+			Parent?.MiddleTripleClick(evt);
+		}
+
+		public virtual void XButton1TripleClick(UIMouseEvent evt)
+		{
+			//if (this.OnXButton1Click != null)
+			//{
+			//	this.OnXButton1Click(evt, this);
+			//}
+			Parent?.XButton1TripleClick(evt);
+		}
+
+		public virtual void XButton2TripleClick(UIMouseEvent evt)
+		{
+			//if (this.OnXButton1Click != null)
+			//{
+			//	this.OnXButton1Click(evt, this);
+			//}
+			Parent?.XButton2TripleClick(evt);
+		}
+
 		public override void Update(GameTime gameTime)
 		{
 			if (Main.hasFocus && IsMouseHovering)
