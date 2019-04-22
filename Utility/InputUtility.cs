@@ -15,9 +15,9 @@ namespace BaseLibrary
 			internal static MouseEvents MouseHandler;
 			internal static KeyboardEvents KeyboardHandler;
 
-            public static Func<bool> InterceptMouseButton = () => false;
+			public static Func<bool> InterceptMouseButton = () => false;
 
-            internal static void Load()
+			internal static void Load()
 			{
 				KeyboardEvents.RepeatDelay = 31;
 

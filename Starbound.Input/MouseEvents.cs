@@ -48,11 +48,11 @@ namespace Starbound.Input
 		///     be raised.
 		/// </summary>
 		public static bool MoveRaisedOnDrag { get; set; }
-		
+
 		/// <summary>
-        ///     Sets defaults for the various mouse input settings.
-        /// </summary>
-        static MouseEvents()
+		///     Sets defaults for the various mouse input settings.
+		/// </summary>
+		static MouseEvents()
 		{
 			DoubleClickTime = 300;
 			DoubleClickMaxMove = 2;

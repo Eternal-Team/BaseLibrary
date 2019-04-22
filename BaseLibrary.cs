@@ -8,9 +8,9 @@ using Terraria.UI;
 
 namespace BaseLibrary
 {
-    // todo: abstract Starbound.Input behind my own code
+	// todo: abstract Starbound.Input behind my own code
 
-    public class BaseLibrary : Mod
+	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
 

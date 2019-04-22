@@ -2,10 +2,6 @@
 
 namespace Starbound.Input
 {
-	/// <summary>
-	///     Provides a set of utility methods for keyboard input. Of particular note is the ToChar method, which
-	///     converts a key to a character.
-	/// </summary>
 	public static class KeyboardUtil
 	{
 		/// <summary>

@@ -61,6 +61,7 @@
     <Compile Include="Starbound.Input\Triggers.cs" />
     <Compile Include="TestUI.cs" />
     <Compile Include="UI\BaseElement.cs" />
+    <Compile Include="UI\Elements\UIAnimatedTexture.cs" />
     <Compile Include="Utility\Scheduler.cs" />
     <Compile Include="UI\Elements\UIColor.cs" />
     <Compile Include="UI\Elements\UIDraggablePanel.cs" />

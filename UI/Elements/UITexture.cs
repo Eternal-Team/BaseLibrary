@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.UI;
-using static BaseLibrary.Utility;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -12,7 +10,6 @@ namespace BaseLibrary.UI.Elements
 		private Texture2D textureBack;
 		private Texture2D textureFront;
 		private ScaleMode scaleMode;
-		public float Rotation;
 
 		public UITexture(Texture2D textureBack, ScaleMode scaleMode = ScaleMode.None)
 		{
@@ -29,30 +26,24 @@ namespace BaseLibrary.UI.Elements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			CalculatedStyle dimensions = GetDimensions();
-			CalculatedStyle innerDimensions = GetInnerDimensions();
+			Vector2 position = InnerDimensions.Position() + InnerDimensions.Size() * 0.5f;
+			Vector2 origin = textureBack.Size() * 0.5f;
 
-			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Main.DefaultSamplerState, null, OverflowHiddenState, null, Main.UIScaleMatrix);
-
-			if (textureFront != null) spriteBatch.Draw(textureFront, dimensions);
+			if (textureFront != null) spriteBatch.Draw(textureFront, Dimensions);
 
 			switch (scaleMode)
 			{
 				case ScaleMode.Stretch:
-					Vector2 scale = new Vector2(innerDimensions.Width / textureBack.Width, innerDimensions.Height / textureBack.Height);
-					spriteBatch.Draw(textureBack, innerDimensions.Position() + innerDimensions.Size() * 0.5f, null, Color.White, Rotation, textureBack.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+					Vector2 scale = new Vector2(InnerDimensions.Width / textureBack.Width, InnerDimensions.Height / textureBack.Height);
+					spriteBatch.Draw(textureBack, position, null, Color.White, 0f, origin, scale, SpriteEffects.None, 0f);
 					break;
 				case ScaleMode.Zoom:
-					spriteBatch.Draw(textureBack, dimensions.Position() + dimensions.Size() * 0.5f, null, Color.White, 0f, new Vector2(textureBack.Width, textureBack.Height) * 0.5f, Math.Min((dimensions.Width - PaddingTop * 2f) / textureBack.Width, (dimensions.Height - PaddingTop * 2f) / textureBack.Height), SpriteEffects.None, 0f);
+					spriteBatch.Draw(textureBack, position, null, Color.White, 0f, origin, Math.Min(InnerDimensions.Width / textureBack.Width, InnerDimensions.Height / textureBack.Height), SpriteEffects.None, 0f);
 					break;
 				case ScaleMode.None:
-					spriteBatch.Draw(textureBack, dimensions.Position());
+					spriteBatch.Draw(textureBack, position, null, Color.White, 0f, origin, Vector2.One, SpriteEffects.None, 0f);
 					break;
 			}
-
-			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, null, OverflowHiddenState, null, Main.UIScaleMatrix);
 		}
 	}
 }

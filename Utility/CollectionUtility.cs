@@ -39,5 +39,5 @@ namespace BaseLibrary
 			foreach (TSource tSource in source) yield return tSource;
 			yield return element;
 		}
-    }
+	}
 }
