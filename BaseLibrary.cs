@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using ReLogic.Graphics;
 using Terraria;
@@ -8,15 +10,14 @@ using Terraria.UI;
 
 namespace BaseLibrary
 {
-	// todo: abstract Starbound.Input behind my own code
-
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
 
 		private LegacyGameInterfaceLayer MouseInterface;
 
-		//private GUI<TestUI> ui;
+		public static GUI<PanelUI> PanelGUI;
+		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
 
 		public override void Load()
 		{
@@ -31,14 +32,10 @@ namespace BaseLibrary
 
 			if (!Main.dedServ)
 			{
-				Utility.TexturePanelBackground = ModContent.GetTexture("Terraria/UI/PanelBackground");
-				Utility.TexturePanelBorder = ModContent.GetTexture("Terraria/UI/PanelBorder");
-
 				Utility.Font = Main.instance.OurLoad<DynamicSpriteFont>("Fonts" + Path.DirectorySeparatorChar + "Mouse_Text");
 				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);
 
-				//ui = Utility.SetupGUI<TestUI>();
-				//ui.Visible = true;
+				PanelGUI = Utility.SetupGUI<PanelUI>();
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
@@ -62,13 +59,33 @@ namespace BaseLibrary
 			if (MouseTextIndex != -1)
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
-				//layers.Insert(MouseTextIndex + 1, ui.InterfaceLayer);
+				layers.Insert(MouseTextIndex + 1, PanelGUI.InterfaceLayer);
 			}
 		}
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			//ui.Update(gameTime);
+			if (!Main.playerInventory)
+			{
+				List<BaseUIPanel> bagPanels = PanelGUI.UI.Elements.Cast<BaseUIPanel>().ToList();
+				for (int i = 0; i < bagPanels.Count; i++)
+				{
+					ClosedUICache.Add(bagPanels[i].Container);
+					PanelGUI.UI.CloseUI(bagPanels[i].Container);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < ClosedUICache.Count; i++) PanelGUI.UI.OpenUI(ClosedUICache[i]);
+				ClosedUICache.Clear();
+			}
+
+			PanelGUI?.Update(gameTime);
+		}
+
+		public override void PreSaveAndQuit()
+		{
+			PanelGUI?.UI.Elements.Clear();
 		}
 	}
 }

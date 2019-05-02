@@ -49,7 +49,7 @@ namespace BaseLibrary
 
 		public static string GetHotkeyValue(string hotkey)
 		{
-			if (string.IsNullOrWhiteSpace(hotkey) || Hotkeys == null) throw new ArgumentNullException();
+			if (String.IsNullOrWhiteSpace(hotkey) || Hotkeys == null) throw new ArgumentNullException();
 			if (!Hotkeys.ContainsKey(hotkey)) throw new Exception("Hotkey doesn't exist");
 
 			return Hotkeys[hotkey].GetAssignedKeys().Count > 0 ? Hotkeys[hotkey].GetAssignedKeys().First() : "Unassigned";

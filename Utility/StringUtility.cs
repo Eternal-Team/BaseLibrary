@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using ReLogic.Graphics;
@@ -26,7 +27,7 @@ namespace BaseLibrary
 
 		public static string Subscript(this int number)
 		{
-			var intList = number.ToString().Select(digit => int.Parse(digit.ToString()));
+			var intList = number.ToString().Select(digit => Int32.Parse(digit.ToString()));
 			return intList.Aggregate("", (current, i) => current + ("\\u832" + i));
 		}
 

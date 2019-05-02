@@ -12,24 +12,8 @@ namespace BaseLibrary.UI.Elements
 	// note: make left,right,top,left floats
 	// note: functions for size and position?
 
-	public class ChildrenCollection<T> : IEnumerable<T> where T : BaseElement
-	{
-		private List<T> _collection = new List<T>();
-
-		public IEnumerator<T> GetEnumerator() => _collection.GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => _collection.GetEnumerator();
-
-		public void Add(T element)
-		{
-			_collection.Add(element);
-		}
-	}
-
 	public class BaseElement : UIState
 	{
-		public ChildrenCollection<BaseElement> Children = new ChildrenCollection<BaseElement>();
-
 		#region Fields
 		public event Action<SpriteBatch> OnPreDraw;
 		public event Action<SpriteBatch> OnPostDraw;
@@ -132,7 +116,7 @@ namespace BaseLibrary.UI.Elements
 		public virtual void RightClickContinuous(UIMouseEvent evt) => OnRightClickContinuous?.Invoke(evt, this);
 
 		public new BaseElement Parent => base.Parent as BaseElement;
-
+		
 		public virtual void TripleClick(UIMouseEvent evt)
 		{
 			//if (this.OnXButton1Click != null)
@@ -230,22 +214,11 @@ namespace BaseLibrary.UI.Elements
 			RecalculateChildren();
 		}
 
-		private static readonly Utility.SpriteBatchState immediateState = new Utility.SpriteBatchState
-		{
-			spriteSortMode = SpriteSortMode.Immediate,
-			blendState = BlendState.AlphaBlend,
-			samplerState = SamplerState.AnisotropicClamp,
-			depthStencilState = DepthStencilState.None,
-			rasterizerState = Utility.OverflowHiddenState,
-			customEffect = null,
-			transformMatrix = Main.UIScaleMatrix
-		};
-
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			PreDraw(spriteBatch);
 
-			if (_useImmediateMode) spriteBatch.DrawWithState(immediateState, DrawSelf);
+			if (_useImmediateMode) spriteBatch.Draw(Utility.ImmediateState, DrawSelf);
 			else DrawSelf(spriteBatch);
 
 			if (OverflowHidden) spriteBatch.DrawOverflowHidden(this, DrawChildren);

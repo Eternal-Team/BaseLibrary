@@ -38,7 +38,7 @@ namespace BaseLibrary.UI.Elements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			if (texture == null) texture = Utility.CreateGrad((int)GetDimensions().Width, steps, channel);
+			if (texture == null) texture = Utility.CreateGradient((int)GetDimensions().Width, steps, channel);
 			spriteBatch.Draw(texture, GetDimensions());
 		}
 	}

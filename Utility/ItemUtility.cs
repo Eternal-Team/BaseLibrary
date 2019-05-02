@@ -74,7 +74,7 @@ namespace BaseLibrary
 
 		public static bool HasSpace(this List<Item> items, Item item) => items.Any(t => t.IsAir) || items.Any(x => x.type == item.type && x.stack < x.maxStack);
 
-		public static IEnumerable<int> InsertItem(List<Item> from, List<Item> to) => from.SelectMany(x => InsertItem(x, to));
+		public static IEnumerable<int> InsertItem(List<Item> from, List<Item> to) => @from.SelectMany(x => InsertItem(x, to));
 
 		public static IEnumerable<int> InsertItem(Item item, List<Item> to)
 		{

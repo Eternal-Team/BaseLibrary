@@ -16,10 +16,68 @@ namespace BaseLibrary
 		private static string mouseText;
 		private static Color? colorMouseText;
 
-		internal static Texture2D TexturePanelBackground;
-		internal static Texture2D TexturePanelBorder;
+		internal static Texture2D TexturePanelBackground => ModContent.GetTexture("Terraria/UI/PanelBackground");
+		internal static Texture2D TexturePanelBorder => ModContent.GetTexture("Terraria/UI/PanelBorder");
 
-		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color color)
+		public static readonly RasterizerState OverflowHiddenState = new RasterizerState
+		{
+			CullMode = CullMode.None,
+			ScissorTestEnable = true
+		};
+
+		public static SpriteBatchState ImmediateState = new SpriteBatchState
+		{
+			SpriteSortMode = SpriteSortMode.Immediate,
+			BlendState = BlendState.AlphaBlend,
+			SamplerState = SamplerState.AnisotropicClamp,
+			DepthStencilState = DepthStencilState.None,
+			RasterizerState = OverflowHiddenState,
+			CustomEffect = null,
+			TransformMatrix = Main.UIScaleMatrix
+		};
+
+		private static readonly SpriteBatchState PointClampState = new SpriteBatchState
+		{
+			SpriteSortMode = SpriteSortMode.Immediate,
+			BlendState = BlendState.AlphaBlend,
+			SamplerState = SamplerState.PointClamp,
+			DepthStencilState = DepthStencilState.None,
+			RasterizerState = OverflowHiddenState,
+			CustomEffect = null,
+			TransformMatrix = Main.UIScaleMatrix,
+			ScissorRectangle = Main.instance.GraphicsDevice.ScissorRectangle
+		};
+
+		#region Draw
+		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Color? color = null)
+		{
+			spriteBatch.Draw(texture, position, color ?? Color.White);
+		}
+
+		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Rectangle rectangle, Color? color = null)
+		{
+			spriteBatch.Draw(texture, rectangle, color ?? Color.White);
+		}
+
+		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, CalculatedStyle dimensions, Color? color = null)
+		{
+			spriteBatch.Draw(texture, dimensions.ToRectangle(), color);
+		}
+
+		public static void Draw(this SpriteBatch spriteBatch, SpriteBatchState state, Action<SpriteBatch> drawAction)
+		{
+			SpriteBatchState oldState = spriteBatch.GetState();
+
+			spriteBatch.End();
+			spriteBatch.Begin(state);
+			drawAction(spriteBatch);
+			spriteBatch.End();
+			spriteBatch.Begin(oldState);
+		}
+		#endregion
+
+		#region DrawPanel
+		private static void DrawPanel(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color color)
 		{
 			Point point = new Point(dimensions.X, dimensions.Y);
 			Point point2 = new Point(point.X + dimensions.Width - 12, point.Y + dimensions.Height - 12);
@@ -42,8 +100,13 @@ namespace BaseLibrary
 			spriteBatch.DrawPanel(rectangle, TexturePanelBorder, borderColor ?? Color.Black);
 		}
 
-		public static void DrawPanel(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? bgColor = null, Color? borderColor = null) => spriteBatch.DrawPanel(dimensions.ToRectangle(), bgColor, borderColor);
+		public static void DrawPanel(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? bgColor = null, Color? borderColor = null)
+		{
+			spriteBatch.DrawPanel(dimensions.ToRectangle(), bgColor, borderColor);
+		}
+		#endregion
 
+		#region DrawSlot
 		public static void DrawSlot(this SpriteBatch spriteBatch, Rectangle dimensions, Color? color = null, Texture2D texture = null)
 		{
 			if (texture == null) texture = Main.inventoryBack13Texture;
@@ -65,8 +128,13 @@ namespace BaseLibrary
 			spriteBatch.Draw(texture, new Rectangle(point.X + 8, point.Y + 8, width, height), new Rectangle(8, 8, 36, 36), value);
 		}
 
-		public static void DrawSlot(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? color = null, Texture2D texture = null) => spriteBatch.DrawSlot(dimensions.ToRectangle(), color, texture);
+		public static void DrawSlot(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? color = null, Texture2D texture = null)
+		{
+			spriteBatch.DrawSlot(dimensions.ToRectangle(), color, texture);
+		}
+		#endregion
 
+		#region DrawLine
 		public static void DrawLine(this SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
 		{
 			float num = Vector2.Distance(start, end);
@@ -93,7 +161,9 @@ namespace BaseLibrary
 			spriteBatch.Draw(Main.magicPixel, new Rectangle(topleft.X, topleft.Y + height - lineSize, width, lineSize), color);
 			spriteBatch.Draw(Main.magicPixel, new Rectangle(topleft.X + width - lineSize, topleft.Y, lineSize, height), color);
 		}
+		#endregion
 
+		#region DrawMouseText
 		public static void DrawMouseText(object text, Color? color = null)
 		{
 			mouseText = text.ToString();
@@ -167,8 +237,110 @@ namespace BaseLibrary
 
 			return true;
 		}
+		#endregion
 
-		public static Texture2D CreateGrad(int width, int steps, Channel channel)
+		#region DrawEntity
+		public static void DrawEntity(this SpriteBatch spriteBatch, Entity entity, Vector2 position, Vector2 size)
+		{
+			switch (entity)
+			{
+				case Item item:
+					spriteBatch.DrawItem(item, position, size);
+					break;
+				case NPC npc:
+					spriteBatch.DrawNPC(npc, position, size);
+					break;
+				case Projectile projectile:
+					spriteBatch.DrawProjectile(projectile, position, size);
+					break;
+			}
+		}
+
+		public static void DrawItem(this SpriteBatch sb, Item item, Vector2 position, Vector2 size)
+		{
+			if (!item.IsAir)
+			{
+				sb.Draw(PointClampState, spriteBatch =>
+				{
+					Texture2D itemTexture = Main.itemTexture[item.type];
+					Rectangle rect = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
+					Color newColor = Color.White;
+					float pulseScale = 1f;
+					ItemSlot.GetItemLight(ref newColor, ref pulseScale, item);
+					float scale = Math.Min(size.X / rect.Width, size.Y / rect.Height);
+
+					Vector2 origin = rect.Size() * 0.5f * pulseScale;
+
+					if (ItemLoader.PreDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, scale * pulseScale))
+					{
+						spriteBatch.Draw(itemTexture, position, rect, item.GetAlpha(newColor), 0f, origin, scale * pulseScale, SpriteEffects.None, 0f);
+						if (item.color != Color.Transparent) spriteBatch.Draw(itemTexture, position, rect, item.GetColor(Color.White), 0f, origin, scale * pulseScale, SpriteEffects.None, 0f);
+					}
+
+					ItemLoader.PostDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, scale * pulseScale);
+					if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(Main.wireTexture, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
+					if (item.stack > 1) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontItemStack, item.stack.ToString(), position + new Vector2(10f, 26f) * scale, Color.White, 0f, Vector2.Zero, new Vector2(scale), -1f, scale);
+				});
+			}
+		}
+
+		public static void DrawNPC(this SpriteBatch sb, NPC npc, Vector2 position, Vector2 size)
+		{
+			sb.Draw(PointClampState, spriteBatch =>
+			{
+				Main.instance.LoadNPC(npc.type);
+
+				Color color = npc.color != Color.Transparent ? npc.color : Color.White;
+
+				if (npc.boss)
+				{
+					Texture2D npcTexture = Main.npcHeadBossTexture[npc.GetBossHeadTextureIndex()];
+					spriteBatch.Draw(npcTexture, position, null, color, 0, npcTexture.Size() * 0.5f, Math.Min(size.X / npcTexture.Width, size.Y / npcTexture.Height), SpriteEffects.None, 0);
+				}
+				else
+				{
+					Texture2D npcTexture = Main.npcTexture[npc.type];
+					Rectangle rectangle = new Rectangle(0, 0, Main.npcTexture[npc.type].Width, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type]);
+
+					spriteBatch.Draw(npcTexture, position, rectangle, color, 0, rectangle.Size() * 0.5f, Math.Min(size.X / rectangle.Width, size.Y / rectangle.Height), SpriteEffects.None, 0);
+				}
+			});
+		}
+
+		public static void DrawProjectile(this SpriteBatch sb, Projectile proj, Vector2 position, Vector2 size)
+		{
+			sb.Draw(PointClampState, spriteBatch =>
+			{
+				Main.instance.LoadProjectile(proj.type);
+
+				Texture2D projTexture = Main.projectileTexture[proj.type];
+
+				spriteBatch.Draw(projTexture, position, null, Color.White, 0, projTexture.Size() * 0.5f, Math.Min(size.X / projTexture.Width, size.Y / projTexture.Height), SpriteEffects.None, 0);
+			});
+		}
+		#endregion
+
+		#region Extensions
+		public static void Begin(this SpriteBatch spriteBatch, SpriteBatchState state)
+		{
+			spriteBatch.GraphicsDevice.ScissorRectangle = state.ScissorRectangle;
+			spriteBatch.Begin(state.SpriteSortMode, state.BlendState, state.SamplerState, state.DepthStencilState, state.RasterizerState, state.CustomEffect, state.TransformMatrix);
+		}
+
+		private static SpriteBatchState GetState(this SpriteBatch spriteBatch) => new SpriteBatchState
+		{
+			SpriteSortMode = typeof(SpriteBatch).GetValue<SpriteSortMode>("spriteSortMode", spriteBatch),
+			BlendState = typeof(SpriteBatch).GetValue<BlendState>("blendState", spriteBatch),
+			SamplerState = typeof(SpriteBatch).GetValue<SamplerState>("samplerState", spriteBatch),
+			DepthStencilState = typeof(SpriteBatch).GetValue<DepthStencilState>("depthStencilState", spriteBatch),
+			RasterizerState = typeof(SpriteBatch).GetValue<RasterizerState>("rasterizerState", spriteBatch),
+			CustomEffect = typeof(SpriteBatch).GetValue<Effect>("customEffect", spriteBatch),
+			TransformMatrix = typeof(SpriteBatch).GetValue<Matrix>("transformMatrix", spriteBatch),
+			ScissorRectangle = spriteBatch.GraphicsDevice.ScissorRectangle
+		};
+		#endregion
+
+		public static Texture2D CreateGradient(int width, int steps, Channel channel)
 		{
 			Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, width, 1);
 			Color[] data = new Color[width];
@@ -207,120 +379,44 @@ namespace BaseLibrary
 			return texture;
 		}
 
-		#region SpriteBatch
-		public static readonly RasterizerState OverflowHiddenState = new RasterizerState
-		{
-			CullMode = CullMode.None,
-			ScissorTestEnable = true
-		};
-
-		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Color? color = null) => spriteBatch.Draw(texture, position, color ?? Color.White);
-
-		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Rectangle rectangle, Color? color = null) => spriteBatch.Draw(texture, rectangle, color ?? Color.White);
-
-		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, CalculatedStyle dimensions, Color? color = null) => spriteBatch.Draw(texture, dimensions.ToRectangle(), color);
-
-		public static void Begin(this SpriteBatch spriteBatch, SpriteBatchState state) => spriteBatch.Begin(state.spriteSortMode, state.blendState, state.samplerState, state.depthStencilState, state.rasterizerState, state.customEffect, state.transformMatrix);
-
-		public struct SpriteBatchState
-		{
-			public SpriteSortMode spriteSortMode;
-			public BlendState blendState;
-			public SamplerState samplerState;
-			public DepthStencilState depthStencilState;
-			public RasterizerState rasterizerState;
-			public Effect customEffect;
-			public Matrix transformMatrix;
-		}
-
-		private static SpriteBatchState GetState(this SpriteBatch spriteBatch) => new SpriteBatchState
-		{
-			spriteSortMode = typeof(SpriteBatch).GetValue<SpriteSortMode>("spriteSortMode", spriteBatch),
-			blendState = typeof(SpriteBatch).GetValue<BlendState>("blendState", spriteBatch),
-			samplerState = typeof(SpriteBatch).GetValue<SamplerState>("samplerState", spriteBatch),
-			depthStencilState = typeof(SpriteBatch).GetValue<DepthStencilState>("depthStencilState", spriteBatch),
-			rasterizerState = typeof(SpriteBatch).GetValue<RasterizerState>("rasterizerState", spriteBatch),
-			customEffect = typeof(SpriteBatch).GetValue<Effect>("customEffect", spriteBatch),
-			transformMatrix = typeof(SpriteBatch).GetValue<Matrix>("transformMatrix", spriteBatch)
-		};
-
-		public static void DrawWithState(this SpriteBatch spriteBatch, SpriteBatchState state, Action<SpriteBatch> drawAction)
+		public static void DrawOverflowHidden(this SpriteBatch spriteBatch, UIElement element, Action<SpriteBatch> drawAction)
 		{
 			SpriteBatchState oldState = spriteBatch.GetState();
 
 			spriteBatch.End();
-			spriteBatch.Begin(state);
+
+			ImmediateState.ScissorRectangle = Rectangle.Intersect(element.GetClippingRectangle(spriteBatch), spriteBatch.GraphicsDevice.ScissorRectangle);
+			spriteBatch.Begin(ImmediateState);
+
 			drawAction(spriteBatch);
+
 			spriteBatch.End();
 			spriteBatch.Begin(oldState);
 		}
 
-		public static void DrawOverflowHidden(this SpriteBatch spriteBatch, UIElement uiElement, Action<SpriteBatch> drawAction)
+		public static Texture2D GetTexture(this Entity entity)
 		{
-			Rectangle scissorRectangle = spriteBatch.GraphicsDevice.ScissorRectangle;
-			RasterizerState rasterizerState = spriteBatch.GraphicsDevice.RasterizerState;
-			SamplerState anisotropicClamp = SamplerState.AnisotropicClamp;
+			Texture2D texture = null;
 
-			spriteBatch.End();
-			Rectangle clippingRectangle = uiElement.GetClippingRectangle(spriteBatch);
-			Rectangle adjustedClippingRectangle = Rectangle.Intersect(clippingRectangle, spriteBatch.GraphicsDevice.ScissorRectangle);
-			spriteBatch.GraphicsDevice.ScissorRectangle = adjustedClippingRectangle;
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, anisotropicClamp, DepthStencilState.None, OverflowHiddenState, null, Main.UIScaleMatrix);
-
-			drawAction.Invoke(spriteBatch);
-
-			rasterizerState = spriteBatch.GraphicsDevice.RasterizerState;
-			spriteBatch.End();
-			spriteBatch.GraphicsDevice.ScissorRectangle = scissorRectangle;
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, anisotropicClamp, DepthStencilState.None, rasterizerState, null, Main.UIScaleMatrix);
-		}
-
-		public static void DrawItem(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size)
-		{
-			if (!item.IsAir)
+			switch (entity)
 			{
-				Texture2D itemTexture = Main.itemTexture[item.type];
-				Rectangle rect = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
-				Color newColor = Color.White;
-				float pulseScale = 1f;
-				ItemSlot.GetItemLight(ref newColor, ref pulseScale, item);
-				float scale = Math.Min(size.X / rect.Width, size.Y / rect.Height);
+				case Item item:
+					Texture2D itemTexture = Main.itemTexture[item.type];
+					Rectangle rectangle = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
 
-				Vector2 origin = rect.Size() * 0.5f * pulseScale;
+					texture = new Texture2D(Main.graphics.GraphicsDevice, rectangle.Width, rectangle.Height);
+					Color[] data = new Color[rectangle.Width * rectangle.Height];
+					itemTexture.GetData(0, rectangle, data, 0, data.Length);
+					texture.SetData(data);
 
-				if (ItemLoader.PreDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, scale * pulseScale))
-				{
-					spriteBatch.Draw(itemTexture, position, rect, item.GetAlpha(newColor), 0f, origin, scale * pulseScale, SpriteEffects.None, 0f);
-					if (item.color != Color.Transparent) spriteBatch.Draw(itemTexture, position, rect, item.GetColor(Color.White), 0f, origin, scale * pulseScale, SpriteEffects.None, 0f);
-				}
+					break;
+                case NPC npc:
+					break;
+				case Projectile projectile:
+					break;
+            }
 
-				ItemLoader.PostDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, scale * pulseScale);
-				if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(Main.wireTexture, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
-				if (item.stack > 1) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontItemStack, item.stack.ToString(), position + new Vector2(10f, 26f) * scale, Color.White, 0f, Vector2.Zero, new Vector2(scale), -1f, scale);
-			}
+			return texture;
 		}
-
-		public static void DrawNPC(this SpriteBatch spriteBatch, NPC npc, Vector2 position, Vector2 size)
-		{
-			Main.instance.LoadNPC(npc.type);
-
-			Texture2D npcTexture = Main.npcTexture[npc.type];
-
-			Rectangle rectangle = new Rectangle(0, 0, Main.npcTexture[npc.type].Width, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type]);
-
-			Color color = npc.color != Color.Transparent ? new Color(npc.color.R, npc.color.G, npc.color.B, 255f) : new Color(1f, 1f, 1f);
-
-			Main.spriteBatch.Draw(npcTexture, position, rectangle, color, 0, rectangle.Size() * 0.5f, Math.Min(size.X / rectangle.Width, size.Y / rectangle.Height), SpriteEffects.None, 0);
-		}
-
-		public static void DrawProjectile(this SpriteBatch spriteBatch, Projectile proj, Vector2 position, Vector2 size)
-		{
-			Main.instance.LoadProjectile(proj.type);
-
-			Texture2D projTexture = Main.projectileTexture[proj.type];
-
-			Main.spriteBatch.Draw(projTexture, position, null, Color.White, 0, projTexture.Size() * 0.5f, Math.Min(size.X / projTexture.Width, size.Y / projTexture.Height), SpriteEffects.None, 0);
-		}
-		#endregion
 	}
 }

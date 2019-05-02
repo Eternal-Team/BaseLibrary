@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BaseLibrary.cs" />
+    <Compile Include="BLPlayer.cs" />
     <Compile Include="Hooking\Hooking.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="MultiValueDictionary.cs" />
@@ -60,8 +61,10 @@
     <Compile Include="Starbound.Input\Thumbsticks.cs" />
     <Compile Include="Starbound.Input\Triggers.cs" />
     <Compile Include="TestUI.cs" />
+    <Compile Include="UI\BaseUIPanel.cs" />
     <Compile Include="UI\BaseElement.cs" />
     <Compile Include="UI\Elements\UIAnimatedTexture.cs" />
+    <Compile Include="UI\PanelUI.cs" />
     <Compile Include="Utility\Scheduler.cs" />
     <Compile Include="UI\Elements\UIColor.cs" />
     <Compile Include="UI\Elements\UIDraggablePanel.cs" />
@@ -93,6 +96,7 @@
     <Compile Include="Utility\MathUtility.cs" />
     <Compile Include="Utility\ReflectionUtility.cs" />
     <Compile Include="Utility\RenderingUtility.cs" />
+    <Compile Include="Utility\SpriteBatchState.cs" />
     <Compile Include="Utility\StringUtility.cs" />
     <Compile Include="Utility\TileUtility.cs" />
     <Compile Include="Utility\ColorUtility.cs" />
