@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace BaseLibrary
@@ -14,7 +14,7 @@ namespace BaseLibrary
 
 			List<T> temp = source.ToList();
 
-			return temp.Count > 0 ? temp.Select(x => x.ToString()).Aggregate((x, y) => x + joinSequence + y) : String.Empty;
+			return temp.Count > 0 ? temp.Select(x => x.ToString()).Aggregate((x, y) => x + joinSequence + y) : string.Empty;
 		}
 
 		public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
@@ -41,5 +41,13 @@ namespace BaseLibrary
 			foreach (TSource tSource in source) yield return tSource;
 			yield return element;
 		}
+
+		public static Vector2[] GetCorners(this Rectangle rectangle) => new[]
+		{
+			rectangle.TopLeft(),
+			rectangle.TopRight(),
+			rectangle.BottomLeft(),
+			rectangle.BottomRight()
+		};
 	}
 }

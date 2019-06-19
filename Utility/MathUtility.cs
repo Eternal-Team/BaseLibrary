@@ -75,9 +75,13 @@ namespace BaseLibrary
 			}
 		}
 
+		public static bool InRange(this double value, double min, double max) => value >= min && value <= max;
+
 		public static float ToRadians(this float angle) => MathHelper.Pi / 180f * angle;
+		public static double ToRadians(this double angle) => Math.PI / 180.0 * angle;
 
 		public static float ToDegrees(this float angle) => angle * 180f / MathHelper.Pi;
+		public static double ToDegrees(this double angle) => angle * 180.0 / Math.PI;
 
 		public static T Remap<T>(this T value, double fromLow, double fromHigh, double toLow, double toHigh)
 		{
@@ -86,6 +90,10 @@ namespace BaseLibrary
 		}
 
 		public static Vector2 ToScreenCoordinates(this Point16 point) => point.ToVector2() * 16 - Main.screenPosition;
+
+		public static Vector2 ToScreenCoordinates(this Vector2 vector) => vector * 16 - Main.screenPosition;
+		
+        public static Vector2 ToScreenCoordinates(this Point point) => point.ToVector2() * 16 - Main.screenPosition;
 
 		public static Vector2 WithOffscreenRange(this Vector2 vector) => vector + (Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange));
 	}

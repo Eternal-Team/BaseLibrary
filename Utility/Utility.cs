@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Mono.Cecil;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +33,7 @@ namespace BaseLibrary
 					try
 					{
 						Item item = new Item();
-						item.SetDefaults(type, false);
+						item.SetDefaults(type);
 						ItemCache[type] = item;
 					}
 					catch
@@ -95,6 +98,18 @@ namespace BaseLibrary
 					else field.SetValue(null, null);
 				}
 			}
+		}
+
+		public static int AddVariable(this ILContext context, Type type)
+		{
+			context.Body.Variables.Add(new VariableDefinition(context.Import(type)));
+			return context.Body.Variables.Count - 1;
+		}
+
+		public static int GetArgumentIndex(this ILContext context, string name)
+		{
+			ParameterDefinition def = context.Method.Parameters.FirstOrDefault(parameter => parameter.Name == name);
+			return def?.Index + 1 ?? throw new Exception($"Parameter with name '{name}' does not exist!");
 		}
 	}
 }

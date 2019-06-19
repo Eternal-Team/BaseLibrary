@@ -41,11 +41,10 @@ namespace BaseLibrary.UI.Elements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			CalculatedStyle dimensions = GetDimensions();
-			CalculatedStyle innerDimensions = GetInnerDimensions();
+			CalculatedStyle innerDimensions = InnerDimensions;
 
-			if (RenderPanel) spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
-			else innerDimensions = dimensions;
+			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
+			else innerDimensions = Dimensions;
 
 			float scale = Math.Min(innerDimensions.Width / text.Measure().X, innerDimensions.Height / text.Measure().Y);
 			Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, text, innerDimensions.X + innerDimensions.Width * 0.5f, innerDimensions.Y + innerDimensions.Height * 0.5f, Color.White, Color.Black, new Vector2(text.Measure().X * 0.5f, 10), scale);

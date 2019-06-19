@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Linq;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Events;
@@ -26,6 +27,12 @@ namespace BaseLibrary
 			if (data != null) return tile.frameX % (data.Width * 18) == 0 && tile.frameY % (data.Height * 18) == 0;
 
 			return true;
+		}
+
+		public static Entity GetEntityAtPos(this Vector2 position)
+		{
+			Point point = position.ToPoint();
+			return Main.item.LastOrDefault(e => e.Hitbox.Contains(point)) ?? ((Entity)Main.npc.LastOrDefault(e => e.Hitbox.Contains(point)) ?? Main.projectile.LastOrDefault(e => e.Hitbox.Contains(point)));
 		}
 
 		#region Weather

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace BaseLibrary
@@ -50,7 +51,9 @@ namespace BaseLibrary
 		// instance, w flags
 		public static T InvokeMethod<T>(this Type type, string name, object obj, BindingFlags flags, params object[] args)
 		{
-			MethodInfo info = type.GetMethod(name, flags);
+			Type[] types = Type.EmptyTypes;
+			if (args.Length > 0) types = args.Select(x => x.GetType()).ToArray();
+			MethodInfo info = type.GetMethod(name, flags, null, types, null);
 			if (info != null)
 			{
 				if (args != null)

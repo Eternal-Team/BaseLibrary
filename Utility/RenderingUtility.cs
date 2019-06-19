@@ -1,7 +1,7 @@
-﻿using System;
-using BaseLibrary.UI.Elements;
+﻿using BaseLibrary.UI.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ID;
@@ -33,10 +33,11 @@ namespace BaseLibrary
 			DepthStencilState = DepthStencilState.None,
 			RasterizerState = OverflowHiddenState,
 			CustomEffect = null,
-			TransformMatrix = Main.UIScaleMatrix
+			TransformMatrix = Main.UIScaleMatrix,
+			ScissorRectangle = Main.instance.GraphicsDevice.ScissorRectangle
 		};
 
-		private static readonly SpriteBatchState PointClampState = new SpriteBatchState
+		public static SpriteBatchState PointClampState = new SpriteBatchState
 		{
 			SpriteSortMode = SpriteSortMode.Immediate,
 			BlendState = BlendState.AlphaBlend,
@@ -47,6 +48,19 @@ namespace BaseLibrary
 			TransformMatrix = Main.UIScaleMatrix,
 			ScissorRectangle = Main.instance.GraphicsDevice.ScissorRectangle
 		};
+
+		public static void Begin(this SpriteBatch spriteBatch, SpriteBatchState state)
+		{
+			spriteBatch.GraphicsDevice.ScissorRectangle = state.ScissorRectangle;
+			spriteBatch.Begin(state.SpriteSortMode, state.BlendState, state.SamplerState, state.DepthStencilState, state.RasterizerState, state.CustomEffect, state.TransformMatrix);
+		}
+
+		public static SpriteBatchState End(this SpriteBatch spriteBatch)
+		{
+			SpriteBatchState state = spriteBatch.GetState();
+			spriteBatch.End();
+			return state;
+		}
 
 		#region Draw
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Color? color = null)
@@ -64,13 +78,12 @@ namespace BaseLibrary
 			spriteBatch.Draw(texture, dimensions.ToRectangle(), color);
 		}
 
-		public static void Draw(this SpriteBatch spriteBatch, SpriteBatchState state, Action<SpriteBatch> drawAction)
+		public static void Draw(this SpriteBatch spriteBatch, SpriteBatchState state, Action action)
 		{
-			SpriteBatchState oldState = spriteBatch.GetState();
+			SpriteBatchState oldState = End(spriteBatch);
 
-			spriteBatch.End();
 			spriteBatch.Begin(state);
-			drawAction(spriteBatch);
+			action();
 			spriteBatch.End();
 			spriteBatch.Begin(oldState);
 		}
@@ -256,11 +269,11 @@ namespace BaseLibrary
 			}
 		}
 
-		public static void DrawItem(this SpriteBatch sb, Item item, Vector2 position, Vector2 size)
+		public static void DrawItem(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size)
 		{
 			if (!item.IsAir)
 			{
-				sb.Draw(PointClampState, spriteBatch =>
+				spriteBatch.Draw(PointClampState, () =>
 				{
 					Texture2D itemTexture = Main.itemTexture[item.type];
 					Rectangle rect = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
@@ -284,9 +297,9 @@ namespace BaseLibrary
 			}
 		}
 
-		public static void DrawNPC(this SpriteBatch sb, NPC npc, Vector2 position, Vector2 size)
+		public static void DrawNPC(this SpriteBatch spriteBatch, NPC npc, Vector2 position, Vector2 size)
 		{
-			sb.Draw(PointClampState, spriteBatch =>
+			spriteBatch.Draw(PointClampState, () =>
 			{
 				Main.instance.LoadNPC(npc.type);
 
@@ -307,9 +320,9 @@ namespace BaseLibrary
 			});
 		}
 
-		public static void DrawProjectile(this SpriteBatch sb, Projectile proj, Vector2 position, Vector2 size)
+		public static void DrawProjectile(this SpriteBatch spriteBatch, Projectile proj, Vector2 position, Vector2 size)
 		{
-			sb.Draw(PointClampState, spriteBatch =>
+			spriteBatch.Draw(PointClampState, () =>
 			{
 				Main.instance.LoadProjectile(proj.type);
 
@@ -319,13 +332,6 @@ namespace BaseLibrary
 			});
 		}
 		#endregion
-
-		#region Extensions
-		public static void Begin(this SpriteBatch spriteBatch, SpriteBatchState state)
-		{
-			spriteBatch.GraphicsDevice.ScissorRectangle = state.ScissorRectangle;
-			spriteBatch.Begin(state.SpriteSortMode, state.BlendState, state.SamplerState, state.DepthStencilState, state.RasterizerState, state.CustomEffect, state.TransformMatrix);
-		}
 
 		private static SpriteBatchState GetState(this SpriteBatch spriteBatch) => new SpriteBatchState
 		{
@@ -338,7 +344,6 @@ namespace BaseLibrary
 			TransformMatrix = typeof(SpriteBatch).GetValue<Matrix>("transformMatrix", spriteBatch),
 			ScissorRectangle = spriteBatch.GraphicsDevice.ScissorRectangle
 		};
-		#endregion
 
 		public static Texture2D CreateGradient(int width, int steps, Channel channel)
 		{
@@ -379,19 +384,17 @@ namespace BaseLibrary
 			return texture;
 		}
 
-		public static void DrawOverflowHidden(this SpriteBatch spriteBatch, UIElement element, Action<SpriteBatch> drawAction)
+		public static void DrawOverflowHidden(this SpriteBatch spriteBatch, UIElement element, Action action)
 		{
-			SpriteBatchState oldState = spriteBatch.GetState();
-
-			spriteBatch.End();
-
 			ImmediateState.ScissorRectangle = Rectangle.Intersect(element.GetClippingRectangle(spriteBatch), spriteBatch.GraphicsDevice.ScissorRectangle);
-			spriteBatch.Begin(ImmediateState);
+			spriteBatch.Draw(ImmediateState, action);
+		}
 
-			drawAction(spriteBatch);
-
-			spriteBatch.End();
-			spriteBatch.Begin(oldState);
+		public static void DrawWithEffect(this SpriteBatch spriteBatch, Effect effect, Action action)
+		{
+			ImmediateState.CustomEffect = effect;
+			spriteBatch.Draw(ImmediateState, action);
+			ImmediateState.CustomEffect = null;
 		}
 
 		public static Texture2D GetTexture(this Entity entity)
@@ -410,11 +413,11 @@ namespace BaseLibrary
 					texture.SetData(data);
 
 					break;
-                case NPC npc:
+				case NPC npc:
 					break;
 				case Projectile projectile:
 					break;
-            }
+			}
 
 			return texture;
 		}

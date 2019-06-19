@@ -13,7 +13,8 @@
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -96,6 +97,7 @@
     <Compile Include="Utility\MathUtility.cs" />
     <Compile Include="Utility\ReflectionUtility.cs" />
     <Compile Include="Utility\RenderingUtility.cs" />
+    <Compile Include="Utility\Side.cs" />
     <Compile Include="Utility\SpriteBatchState.cs" />
     <Compile Include="Utility\StringUtility.cs" />
     <Compile Include="Utility\TileUtility.cs" />

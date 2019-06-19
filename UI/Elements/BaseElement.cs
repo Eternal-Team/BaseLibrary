@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -116,7 +115,7 @@ namespace BaseLibrary.UI.Elements
 		public virtual void RightClickContinuous(UIMouseEvent evt) => OnRightClickContinuous?.Invoke(evt, this);
 
 		public new BaseElement Parent => base.Parent as BaseElement;
-		
+
 		public virtual void TripleClick(UIMouseEvent evt)
 		{
 			//if (this.OnXButton1Click != null)
@@ -218,10 +217,10 @@ namespace BaseLibrary.UI.Elements
 		{
 			PreDraw(spriteBatch);
 
-			if (_useImmediateMode) spriteBatch.Draw(Utility.ImmediateState, DrawSelf);
+			if (_useImmediateMode) spriteBatch.Draw(Utility.ImmediateState, () => DrawSelf(spriteBatch));
 			else DrawSelf(spriteBatch);
 
-			if (OverflowHidden) spriteBatch.DrawOverflowHidden(this, DrawChildren);
+			if (OverflowHidden) spriteBatch.DrawOverflowHidden(this, () => DrawChildren(spriteBatch));
 			else DrawChildren(spriteBatch);
 
 			PostDraw(spriteBatch);
