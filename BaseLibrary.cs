@@ -10,6 +10,8 @@ using Terraria.UI;
 
 namespace BaseLibrary
 {
+	// todo: intro screen - thanks for downloading, list patreons, link to patreon, link to web
+
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;

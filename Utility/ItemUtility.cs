@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -74,7 +74,7 @@ namespace BaseLibrary
 
 		public static bool HasSpace(this List<Item> items, Item item) => items.Any(t => t.IsAir) || items.Any(x => x.type == item.type && x.stack < x.maxStack);
 
-		public static IEnumerable<int> InsertItem(List<Item> from, List<Item> to) => @from.SelectMany(x => InsertItem(x, to));
+		public static IEnumerable<int> InsertItem(List<Item> from, List<Item> to) => from.SelectMany(x => InsertItem(x, to));
 
 		public static IEnumerable<int> InsertItem(Item item, List<Item> to)
 		{
@@ -109,15 +109,10 @@ namespace BaseLibrary
 
 		public static long CountCoins(this List<Item> items) => Utils.CoinsCount(out bool _, items.ToArray());
 
-		public static IEnumerable<T> OfType<T>(this IEnumerable<Item> items) where T : ModItem
-		{
-			foreach (Item item in items)
-			{
-				if (item.modItem is T modItem) yield return modItem;
-			}
-		}
+		public static IEnumerable<T> OfType<T>(this IEnumerable<Item> items) where T : class => items.Where(item => item.modItem is T).Select(item => item.modItem as T);
 
 		#region Player
+
 		public static List<Item> Armor(this Player player) => player.armor.Where((item, i) => i > 0 && i < 3).ToList();
 
 		public static List<Item> Accessory(this Player player) => player.armor.Where((item, i) => i >= 3 && i < 8 + Main.LocalPlayer.extraAccessorySlots).ToList();
@@ -180,6 +175,7 @@ namespace BaseLibrary
 		public static bool IsPlayerInChest(int chestIndex) => Main.player.Any(player => player.chest == chestIndex);
 
 		public static bool IsPlayerInChest(this Chest chest) => Main.player.Any(player => player.chest == Array.IndexOf(Main.chest, chest));
+
 		#endregion
 	}
 }
