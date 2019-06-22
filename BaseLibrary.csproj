@@ -39,6 +39,8 @@
     <Compile Include="BaseLibrary.cs" />
     <Compile Include="BLPlayer.cs" />
     <Compile Include="Hooking\Hooking.cs" />
+    <Compile Include="Hooking\Hooking_Input.cs" />
+    <Compile Include="Hooking\Hooking_UI.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="MultiValueDictionary.cs" />
     <Compile Include="Starbound.Input\Buttons.cs" />

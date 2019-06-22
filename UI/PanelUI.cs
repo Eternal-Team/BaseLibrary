@@ -42,13 +42,7 @@ namespace BaseLibrary.UI
 		{
 			BaseElement element = bag.UI;
 			if (element == null) return;
-			//if (ModLoader.GetMod("ContainerLibrary") != null&&bag is IItemHandler)
-			//{
-			//	ModLoader.GetMod("ContainerLibrary")
-			//}
-
-			//ContainerLibrary.ContainerLibrary.ItemHandlerUI.Remove((IItemHandlerUI)element);
-
+			
 			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[bag.ID] = element.Position;
 			Elements.Remove(element);
 			bag.UI = null;
@@ -72,7 +66,6 @@ namespace BaseLibrary.UI
 			}
 
 			Append(bag.UI);
-			//ContainerLibrary.ContainerLibrary.ItemHandlerUI.Add((IItemHandlerUI)element);
 
 			Main.PlaySound(bag.OpenSound);
 		}

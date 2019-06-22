@@ -11,6 +11,8 @@ namespace BaseLibrary.UI.Elements
 		All
 	}
 
+	// todo: create Texture2D on GPU and send it to CPU
+
 	public class UIColorSelection : BaseElement
 	{
 		public UIColorSelection(int steps, Channel channel = Channel.All)

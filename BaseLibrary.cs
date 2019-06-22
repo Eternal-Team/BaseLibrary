@@ -27,7 +27,6 @@ namespace BaseLibrary
 
 			Utility.Input.Load();
 			Hooking.Load();
-
 			Scheduler.Load();
 
 			if (!Main.dedServ)
@@ -68,15 +67,16 @@ namespace BaseLibrary
 			if (!Main.playerInventory)
 			{
 				List<BaseUIPanel> bagPanels = PanelGUI.UI.Elements.Cast<BaseUIPanel>().ToList();
-				for (int i = 0; i < bagPanels.Count; i++)
+				foreach (BaseUIPanel ui in bagPanels)
 				{
-					ClosedUICache.Add(bagPanels[i].Container);
-					PanelGUI.UI.CloseUI(bagPanels[i].Container);
+					ClosedUICache.Add(ui.Container);
+					PanelGUI.UI.CloseUI(ui.Container);
 				}
 			}
 			else
 			{
-				for (int i = 0; i < ClosedUICache.Count; i++) PanelGUI.UI.OpenUI(ClosedUICache[i]);
+				foreach (IHasUI ui in ClosedUICache)PanelGUI.UI.OpenUI(ui);
+
 				ClosedUICache.Clear();
 			}
 

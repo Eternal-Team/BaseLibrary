@@ -63,6 +63,7 @@ namespace BaseLibrary
 		}
 
 		#region Draw
+
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Color? color = null)
 		{
 			spriteBatch.Draw(texture, position, color ?? Color.White);
@@ -87,9 +88,11 @@ namespace BaseLibrary
 			spriteBatch.End();
 			spriteBatch.Begin(oldState);
 		}
+
 		#endregion
 
 		#region DrawPanel
+
 		private static void DrawPanel(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color color)
 		{
 			Point point = new Point(dimensions.X, dimensions.Y);
@@ -117,9 +120,11 @@ namespace BaseLibrary
 		{
 			spriteBatch.DrawPanel(dimensions.ToRectangle(), bgColor, borderColor);
 		}
+
 		#endregion
 
 		#region DrawSlot
+
 		public static void DrawSlot(this SpriteBatch spriteBatch, Rectangle dimensions, Color? color = null, Texture2D texture = null)
 		{
 			if (texture == null) texture = Main.inventoryBack13Texture;
@@ -145,9 +150,11 @@ namespace BaseLibrary
 		{
 			spriteBatch.DrawSlot(dimensions.ToRectangle(), color, texture);
 		}
+
 		#endregion
 
 		#region DrawLine
+
 		public static void DrawLine(this SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
 		{
 			float num = Vector2.Distance(start, end);
@@ -174,9 +181,11 @@ namespace BaseLibrary
 			spriteBatch.Draw(Main.magicPixel, new Rectangle(topleft.X, topleft.Y + height - lineSize, width, lineSize), color);
 			spriteBatch.Draw(Main.magicPixel, new Rectangle(topleft.X + width - lineSize, topleft.Y, lineSize, height), color);
 		}
+
 		#endregion
 
 		#region DrawMouseText
+
 		public static void DrawMouseText(object text, Color? color = null)
 		{
 			mouseText = text.ToString();
@@ -250,15 +259,17 @@ namespace BaseLibrary
 
 			return true;
 		}
+
 		#endregion
 
 		#region DrawEntity
+
 		public static void DrawEntity(this SpriteBatch spriteBatch, Entity entity, Vector2 position, Vector2 size)
 		{
 			switch (entity)
 			{
 				case Item item:
-					spriteBatch.DrawItem(item, position, size);
+					spriteBatch.DrawItemInInventory(item, position, size);
 					break;
 				case NPC npc:
 					spriteBatch.DrawNPC(npc, position, size);
@@ -269,7 +280,7 @@ namespace BaseLibrary
 			}
 		}
 
-		public static void DrawItem(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size)
+		public static void DrawItemInInventory(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size, bool drawStackSize = true)
 		{
 			if (!item.IsAir)
 			{
@@ -292,7 +303,36 @@ namespace BaseLibrary
 
 					ItemLoader.PostDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, scale * pulseScale);
 					if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(Main.wireTexture, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
-					if (item.stack > 1) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontItemStack, item.stack.ToString(), position + new Vector2(10f, 26f) * scale, Color.White, 0f, Vector2.Zero, new Vector2(scale), -1f, scale);
+					if (drawStackSize && item.stack > 1) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontItemStack, item.stack.ToString(), position + new Vector2(10f, 26f) * scale, Color.White, 0f, Vector2.Zero, new Vector2(scale), -1f, scale);
+				});
+			}
+		}
+
+		public static void DrawItem(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size, float rotation, float drawScale, Color color)
+		{
+			if (!item.IsAir)
+			{
+				spriteBatch.Draw(PointClampState, () =>
+				{
+					Texture2D itemTexture = Main.itemTexture[item.type];
+					Rectangle rect = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
+					Color newColor = Color.White;
+					float pulseScale = 1f;
+					ItemSlot.GetItemLight(ref newColor, ref pulseScale, item);
+					float scale = Math.Min(size.X / rect.Width, size.Y / rect.Height);
+
+					Vector2 origin = rect.Size() * 0.5f * pulseScale;
+
+					float totalScale = scale * pulseScale * drawScale;
+
+					if (ItemLoader.PreDrawInWorld(item, spriteBatch, item.GetColor(Color.White), item.GetAlpha(newColor), ref rotation, ref totalScale, item.whoAmI))
+					{
+						spriteBatch.Draw(itemTexture, position, rect, item.GetAlpha(newColor), rotation, origin, totalScale, SpriteEffects.None, 0f);
+						if (item.color != Color.Transparent) spriteBatch.Draw(itemTexture, position, rect, item.GetColor(Color.White), rotation, origin, totalScale, SpriteEffects.None, 0f);
+					}
+
+					ItemLoader.PostDrawInWorld(item, spriteBatch, item.GetColor(Color.White), item.GetAlpha(newColor), rotation, totalScale, item.whoAmI);
+					if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(Main.wireTexture, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
 				});
 			}
 		}
@@ -331,6 +371,7 @@ namespace BaseLibrary
 				spriteBatch.Draw(projTexture, position, null, Color.White, 0, projTexture.Size() * 0.5f, Math.Min(size.X / projTexture.Width, size.Y / projTexture.Height), SpriteEffects.None, 0);
 			});
 		}
+
 		#endregion
 
 		private static SpriteBatchState GetState(this SpriteBatch spriteBatch) => new SpriteBatchState
