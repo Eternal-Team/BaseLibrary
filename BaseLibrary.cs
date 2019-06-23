@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using BaseLibrary.UI;
+﻿using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using ReLogic.Graphics;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -77,7 +77,7 @@ namespace BaseLibrary
 			}
 			else
 			{
-				foreach (IHasUI ui in ClosedUICache)PanelGUI.UI.OpenUI(ui);
+				foreach (IHasUI ui in ClosedUICache) PanelGUI.UI.OpenUI(ui);
 
 				ClosedUICache.Clear();
 			}

@@ -5,6 +5,7 @@
 		public BaseState()
 		{
 			Width = Height = (0, 1);
+			Recalculate();
 		}
 	}
 }
