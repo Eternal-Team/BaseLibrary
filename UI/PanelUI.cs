@@ -1,8 +1,8 @@
+using BaseLibrary.UI.Elements;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BaseLibrary.UI.Elements;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -42,7 +42,7 @@ namespace BaseLibrary.UI
 		{
 			BaseElement element = bag.UI;
 			if (element == null) return;
-			
+
 			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[bag.ID] = element.Position;
 			Elements.Remove(element);
 			bag.UI = null;
@@ -64,6 +64,12 @@ namespace BaseLibrary.UI
 				bag.UI.HAlign = bag.UI.VAlign = 0;
 				bag.UI.Position = position;
 			}
+
+			bag.UI.OnMouseDown += (evt, element) =>
+			{
+				RemoveChild(bag.UI);
+				Append(bag.UI);
+			};
 
 			Append(bag.UI);
 

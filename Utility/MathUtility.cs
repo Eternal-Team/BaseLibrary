@@ -9,8 +9,8 @@ namespace BaseLibrary
 {
 	public static partial class Utility
 	{
-		private static readonly char[] incPrefixes = { 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' };
-		private static readonly char[] decPrefixes = { 'm', '\u03bc', 'n', 'p', 'f', 'a', 'z', 'y' };
+		private static readonly char[] incSuffixes = { 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' };
+		private static readonly char[] decSuffixes = { 'm', '\u03bc', 'n', 'p', 'f', 'a', 'z', 'y' };
 
 		public static string ToSI<T>(this T value, string format = null)
 		{
@@ -23,18 +23,18 @@ namespace BaseLibrary
 				int degree = (int)Math.Floor(Math.Log10(Math.Abs(castValue)) / 3);
 				double scaled = castValue * Math.Pow(1000, -degree);
 
-				char? prefix = null;
+				char? suffix = null;
 				switch (Math.Sign(degree))
 				{
 					case 1:
-						prefix = incPrefixes[degree - 1];
+						suffix = incSuffixes[degree - 1];
 						break;
 					case -1:
-						prefix = decPrefixes[-degree - 1];
+						suffix = decSuffixes[-degree - 1];
 						break;
 				}
 
-				return scaled.ToString(format) + prefix;
+				return scaled.ToString(format) + suffix;
 			}
 
 			return castValue.ToString(format);
