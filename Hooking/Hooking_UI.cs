@@ -13,7 +13,7 @@ namespace BaseLibrary
 {
 	public static partial class Hooking
 	{
-		private const int ShiftClickIconOverride = 1000;
+		private const int CustomCursorOverride = 1000;
 		private static string CurrrentShiftClickIcon;
 
 		private static UIElement UIElement_GetElementAt(On.Terraria.UI.UIElement.orig_GetElementAt orig, UIElement self, Vector2 point)
@@ -59,7 +59,7 @@ namespace BaseLibrary
 
 					if (!string.IsNullOrWhiteSpace(texture))
 					{
-						Main.cursorOverride = ShiftClickIconOverride;
+						Main.cursorOverride = CustomCursorOverride;
 						CurrrentShiftClickIcon = texture;
 						return true;
 					}
@@ -81,7 +81,7 @@ namespace BaseLibrary
 			if (cursor.TryGotoNext(i => i.MatchLdsfld(typeof(Main).GetField("cursorOverride", Utility.defaultFlags))))
 			{
 				cursor.Emit(OpCodes.Ldsfld, typeof(Main).GetField("cursorOverride", Utility.defaultFlags));
-				cursor.Emit(OpCodes.Ldc_I4, ShiftClickIconOverride);
+				cursor.Emit(OpCodes.Ldc_I4, CustomCursorOverride);
 				cursor.Emit(OpCodes.Ceq);
 				cursor.Emit(OpCodes.Brfalse, label);
 
@@ -101,6 +101,12 @@ namespace BaseLibrary
 
 				cursor.MarkLabel(label);
 			}
+		}
+
+		public static void SetCursor(string texture)
+		{
+			Main.cursorOverride = CustomCursorOverride;
+			CurrrentShiftClickIcon = texture;
 		}
 	}
 

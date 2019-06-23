@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using MonoMod.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using MonoMod.Utils;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
