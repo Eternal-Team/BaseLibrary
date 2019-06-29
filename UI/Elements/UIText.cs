@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using Terraria;
 using Terraria.Localization;
-using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -51,12 +50,11 @@ namespace BaseLibrary.UI.Elements
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			base.DrawSelf(spriteBatch);
-			CalculatedStyle innerDimensions = GetInnerDimensions();
-			Vector2 pos = innerDimensions.Position();
+			Vector2 pos = InnerDimensions.Position();
 			if (isLarge) pos.Y -= 10f * textScale;
 			else pos.Y -= 2f * textScale;
 
-			pos.X += (innerDimensions.Width - textSize.X) * 0.5f;
+			pos.X += (InnerDimensions.Width - textSize.X) * 0.5f;
 
 			if (isLarge) Utils.DrawBorderStringBig(spriteBatch, Text, pos, TextColor, textScale);
 			else Utils.DrawBorderString(spriteBatch, Text, pos, TextColor, textScale);

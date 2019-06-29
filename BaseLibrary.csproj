@@ -40,6 +40,7 @@
     <Compile Include="BLPlayer.cs" />
     <Compile Include="Hooking\Hooking.cs" />
     <Compile Include="Hooking\Hooking_Input.cs" />
+    <Compile Include="Hooking\Hooking_IntroMessage.cs" />
     <Compile Include="Hooking\Hooking_UI.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="MultiValueDictionary.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="UI\BaseElement.cs" />
     <Compile Include="UI\Elements\UIAnimatedTexture.cs" />
     <Compile Include="UI\PanelUI.cs" />
+    <Compile Include="UI\UIIntroMessage.cs" />
     <Compile Include="Utility\Scheduler.cs" />
     <Compile Include="UI\Elements\UIColor.cs" />
     <Compile Include="UI\Elements\UIDraggablePanel.cs" />

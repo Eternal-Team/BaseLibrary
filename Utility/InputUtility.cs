@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Starbound.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -15,7 +16,7 @@ namespace BaseLibrary
 			internal static MouseEvents MouseHandler;
 			internal static KeyboardEvents KeyboardHandler;
 
-			public static Func<bool> InterceptMouseButton = () => false;
+			public static Func<bool> InterceptKeyboard = () => false;
 
 			internal static void Load()
 			{
@@ -34,10 +35,17 @@ namespace BaseLibrary
 				Main.instance.Components.Remove(KeyboardHandler);
 			}
 
-			internal static void Update()
+			internal static void Update(GameTime time)
 			{
+				if (InterceptKeyboard?.Invoke() ?? false)
+				{
+					KeyboardHandler.Enabled = true;
+					KeyboardHandler.Update(time);
+				}
+				else KeyboardHandler.Enabled = false;
+
 				MouseHandler.Enabled = true;
-				KeyboardHandler.Enabled = true;
+				MouseHandler.Update(time);
 			}
 		}
 
@@ -49,7 +57,7 @@ namespace BaseLibrary
 
 		public static string GetHotkeyValue(string hotkey)
 		{
-			if (String.IsNullOrWhiteSpace(hotkey) || Hotkeys == null) throw new ArgumentNullException();
+			if (string.IsNullOrWhiteSpace(hotkey) || Hotkeys == null) throw new ArgumentNullException();
 			if (!Hotkeys.ContainsKey(hotkey)) throw new Exception("Hotkey doesn't exist");
 
 			return Hotkeys[hotkey].GetAssignedKeys().Count > 0 ? Hotkeys[hotkey].GetAssignedKeys().First() : "Unassigned";

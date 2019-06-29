@@ -31,8 +31,7 @@ namespace BaseLibrary
 					}
 				}
 
-				if (uiElement != null) return uiElement.GetElementAt(point);
-				return self.ContainsPoint(point) ? self : null;
+				return uiElement?.GetElementAt(point);
 			}
 
 			return orig(self, point);

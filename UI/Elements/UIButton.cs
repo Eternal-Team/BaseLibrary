@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.UI;
@@ -35,16 +35,13 @@ namespace BaseLibrary.UI.Elements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			CalculatedStyle dimensions = GetDimensions();
-			CalculatedStyle innerDimensions = GetInnerDimensions();
-
-			if (RenderPanel) spriteBatch.DrawPanel(dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
+			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
 
 			if (texture != null)
 			{
-				if (scaleMode == ScaleMode.Stretch) spriteBatch.Draw(texture, dimensions);
-				else if (scaleMode == ScaleMode.Zoom) spriteBatch.Draw(texture, dimensions.Center(), null, Color.White, 0f, texture.Size() * 0.5f, Math.Min(innerDimensions.Width / texture.Width, innerDimensions.Height / texture.Height), SpriteEffects.None, 0f);
-				else if (scaleMode == ScaleMode.None) spriteBatch.Draw(texture, dimensions.Position());
+				if (scaleMode == ScaleMode.Stretch) spriteBatch.Draw(texture, Dimensions);
+				else if (scaleMode == ScaleMode.Zoom) spriteBatch.Draw(texture, Dimensions.Center(), null, Color.White, 0f, texture.Size() * 0.5f, Math.Min(InnerDimensions.Width / texture.Width, InnerDimensions.Height / texture.Height), SpriteEffects.None, 0f);
+				else if (scaleMode == ScaleMode.None) spriteBatch.Draw(texture, Dimensions.Position());
 			}
 		}
 	}

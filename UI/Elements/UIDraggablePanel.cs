@@ -4,8 +4,6 @@ using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
-	// todo: use MouseEvents.MouseDragged
-
 	public class UIDraggablePanel : UIPanel
 	{
 		private Vector2 offset;
@@ -45,10 +43,8 @@ namespace BaseLibrary.UI.Elements
 
 			if (dragging)
 			{
-				CalculatedStyle dimensions = GetDimensions();
-
-				Left = ((Main.MouseScreen.X - offset.X).Clamp(0, Main.screenWidth - dimensions.Width), 0);
-				Top = ((Main.MouseScreen.Y - offset.Y).Clamp(0, Main.screenHeight - dimensions.Height), 0);
+				Left = ((Main.MouseScreen.X - offset.X).Clamp(0, Main.screenWidth - Dimensions.Width), 0);
+				Top = ((Main.MouseScreen.Y - offset.Y).Clamp(0, Main.screenHeight - Dimensions.Height), 0);
 
 				Recalculate();
 			}

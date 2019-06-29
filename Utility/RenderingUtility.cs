@@ -51,7 +51,7 @@ namespace BaseLibrary
 
 		public static void Begin(this SpriteBatch spriteBatch, SpriteBatchState state)
 		{
-			spriteBatch.GraphicsDevice.ScissorRectangle = state.ScissorRectangle;
+			spriteBatch.GraphicsDevice.ScissorRectangle = new Rectangle(state.ScissorRectangle.X, state.ScissorRectangle.Y, Clamp(state.ScissorRectangle.Width, 0, Main.screenWidth), Clamp(state.ScissorRectangle.Height, 0, Main.screenHeight));
 			spriteBatch.Begin(state.SpriteSortMode, state.BlendState, state.SamplerState, state.DepthStencilState, state.RasterizerState, state.CustomEffect, state.TransformMatrix);
 		}
 

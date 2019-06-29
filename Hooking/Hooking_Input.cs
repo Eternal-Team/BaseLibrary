@@ -1,17 +1,56 @@
 ﻿using BaseLibrary.UI.Elements;
 using Microsoft.Xna.Framework;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 using Starbound.Input;
+using System;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.UI;
+using PlayerInput = On.Terraria.GameInput.PlayerInput;
 
 namespace BaseLibrary
 {
 	public static partial class Hooking
 	{
+		private static UIElement UIElement => Main.hasFocus ? UserInterface.ActiveInstance.CurrentState?.GetElementAt(UserInterface.ActiveInstance.MousePosition) : null;
+
+		private static UIElement LastElementHover
+		{
+			get => UserInterface.ActiveInstance.GetValue<UIElement>("_lastElementHover");
+			set => UserInterface.ActiveInstance.SetValue("_lastElementHover", value);
+		}
+
+		private static GameTime gameTime;
+
 		public static void Initialize()
 		{
-			Utility.Input.InterceptMouseButton += () => UserInterface.ActiveInstance.CurrentState != null;
+			IL.Terraria.Main.DoUpdate += il =>
+			{
+				ILCursor cursor = new ILCursor(il);
+
+				if (cursor.TryGotoNext(i => i.MatchCall(typeof(Main).GetMethod("DoUpdate_HandleInput", Utility.defaultFlags))))
+				{
+					cursor.Emit(OpCodes.Ldarg, 1);
+					cursor.EmitDelegate<Action<GameTime>>(time => { gameTime = time; });
+				}
+			};
+
+			On.Terraria.UI.UserInterface.Update += (orig, self, time) => { UserInterface.ActiveInstance.CurrentState?.Update(time); };
+
+			PlayerInput.UpdateInput += orig =>
+			{
+				Utility.Input.Update(gameTime);
+
+				orig();
+			};
+
+			PlayerInput.MouseInput += orig => { };
+
+			PlayerInput.KeyboardInput += orig =>
+			{
+				if (!Utility.Input.InterceptKeyboard()) orig();
+			};
 
 			MouseEvents.ButtonClicked += (sender, args) =>
 			{
@@ -138,11 +177,11 @@ namespace BaseLibrary
 			{
 				UIElement?.ScrollWheel(new UIScrollWheelEvent(UIElement, UserInterface.ActiveInstance.MousePosition, args.Delta));
 
-				PlayerInput.ScrollWheelDelta = 0;
-				PlayerInput.ScrollWheelValue += args.Delta;
+				Terraria.GameInput.PlayerInput.ScrollWheelDelta = 0;
+				Terraria.GameInput.PlayerInput.ScrollWheelValue -= args.Delta;
 
-				PlayerInput.CurrentInputMode = InputMode.Mouse;
-				PlayerInput.Triggers.Current.UsedMovementKey = false;
+				Terraria.GameInput.PlayerInput.CurrentInputMode = InputMode.Mouse;
+				Terraria.GameInput.PlayerInput.Triggers.Current.UsedMovementKey = false;
 			};
 
 			MouseEvents.MouseMoved += (sender, args) =>
@@ -158,14 +197,57 @@ namespace BaseLibrary
 					LastElementHover = UIElement;
 				}
 			};
-		}
 
-		private static UIElement UIElement => Main.hasFocus ? UserInterface.ActiveInstance.CurrentState?.GetElementAt(UserInterface.ActiveInstance.MousePosition) : null;
+			MouseEvents.MouseMoved += (sender, args) =>
+			{
+				Terraria.GameInput.PlayerInput.MouseX = args.Current.X;
+				Terraria.GameInput.PlayerInput.MouseY = args.Current.Y;
 
-		private static UIElement LastElementHover
-		{
-			get => UserInterface.ActiveInstance.GetValue<UIElement>("_lastElementHover");
-			set => UserInterface.ActiveInstance.SetValue("_lastElementHover", value);
+				Terraria.GameInput.PlayerInput.CurrentInputMode = InputMode.Mouse;
+				Terraria.GameInput.PlayerInput.Triggers.Current.UsedMovementKey = false;
+			};
+
+			MouseEvents.ButtonPressed += (sender, args) =>
+			{
+				Terraria.GameInput.PlayerInput.MouseKeys.Clear();
+
+				if (Main.instance.IsActive)
+				{
+					switch (args.Button)
+					{
+						case MouseButton.Left:
+							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse1");
+							Main.mouseLeft = true;
+							break;
+						case MouseButton.Right:
+							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse2");
+							Main.mouseRight = true;
+							break;
+						case MouseButton.Middle:
+							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse3");
+							Main.mouseMiddle = true;
+							break;
+						case MouseButton.XButton1:
+							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse4");
+							Main.mouseXButton1 = true;
+							break;
+						case MouseButton.XButton2:
+							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse5");
+							Main.mouseXButton2 = true;
+							break;
+					}
+
+					Terraria.GameInput.PlayerInput.CurrentInputMode = InputMode.Mouse;
+					Terraria.GameInput.PlayerInput.Triggers.Current.UsedMovementKey = false;
+				}
+			};
+
+			MouseEvents.ButtonReleased += (sender, args) => Terraria.GameInput.PlayerInput.MouseKeys.Clear();
+
+			MouseEvents.MouseDragged += (sender, args) =>
+			{
+				if (UIElement is BaseElement cast) cast.MouseDragged(args);
+			};
 		}
 	}
 }

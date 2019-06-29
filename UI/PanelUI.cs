@@ -43,7 +43,7 @@ namespace BaseLibrary.UI
 			BaseElement element = bag.UI;
 			if (element == null) return;
 
-			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[bag.ID] = element.Position;
+			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[bag.ID] = element.Position / Dimensions.Size();
 			Elements.Remove(element);
 			bag.UI = null;
 
@@ -62,7 +62,7 @@ namespace BaseLibrary.UI
 			if (Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions.TryGetValue(bag.ID, out Vector2 position))
 			{
 				bag.UI.HAlign = bag.UI.VAlign = 0;
-				bag.UI.Position = position;
+				bag.UI.Position = position * Dimensions.Size();
 			}
 
 			bag.UI.OnMouseDown += (evt, element) =>

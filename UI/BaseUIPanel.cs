@@ -1,5 +1,5 @@
-﻿using System;
-using BaseLibrary.UI.Elements;
+﻿using BaseLibrary.UI.Elements;
+using System;
 using Terraria.Audio;
 
 namespace BaseLibrary.UI

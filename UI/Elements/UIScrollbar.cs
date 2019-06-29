@@ -57,14 +57,13 @@ namespace BaseLibrary.UI.Elements
 
 		private Rectangle GetHandleRectangle()
 		{
-			CalculatedStyle innerDimensions = GetInnerDimensions();
 			if (maxViewSize == 0f && viewSize == 0f)
 			{
 				viewSize = 1f;
 				maxViewSize = 1f;
 			}
 
-			return new Rectangle((int)innerDimensions.X, (int)(innerDimensions.Y + innerDimensions.Height * (viewPosition / maxViewSize)) - 3, 20, (int)(innerDimensions.Height * (viewSize / maxViewSize)) + 7);
+			return new Rectangle((int)InnerDimensions.X, (int)(InnerDimensions.Y + InnerDimensions.Height * (viewPosition / maxViewSize)) - 3, 20, (int)(InnerDimensions.Height * (viewSize / maxViewSize)) + 7);
 		}
 
 		private void DrawBar(SpriteBatch spriteBatch, Texture2D texture, Rectangle dimensions, Color color)
@@ -76,12 +75,10 @@ namespace BaseLibrary.UI.Elements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			CalculatedStyle dimensions = GetDimensions();
-			CalculatedStyle innerDimensions = GetInnerDimensions();
 			if (isDragging)
 			{
-				float num = UserInterface.ActiveInstance.MousePosition.Y - innerDimensions.Y - dragYOffset;
-				viewPosition = MathHelper.Clamp(num / innerDimensions.Height * maxViewSize, 0f, maxViewSize - viewSize);
+				float num = UserInterface.ActiveInstance.MousePosition.Y - InnerDimensions.Y - dragYOffset;
+				viewPosition = MathHelper.Clamp(num / InnerDimensions.Height * maxViewSize, 0f, maxViewSize - viewSize);
 			}
 
 			Rectangle handleRectangle = GetHandleRectangle();
@@ -106,9 +103,8 @@ namespace BaseLibrary.UI.Elements
 					return;
 				}
 
-				CalculatedStyle innerDimensions = GetInnerDimensions();
-				float num = UserInterface.ActiveInstance.MousePosition.Y - innerDimensions.Y - (handleRectangle.Height >> 1);
-				viewPosition = MathHelper.Clamp(num / innerDimensions.Height * maxViewSize, 0f, maxViewSize - viewSize);
+				float num = UserInterface.ActiveInstance.MousePosition.Y - InnerDimensions.Y - (handleRectangle.Height >> 1);
+				viewPosition = MathHelper.Clamp(num / InnerDimensions.Height * maxViewSize, 0f, maxViewSize - viewSize);
 			}
 		}
 

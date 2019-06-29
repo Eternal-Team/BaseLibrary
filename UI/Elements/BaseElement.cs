@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Starbound.Input;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
@@ -14,6 +15,7 @@ namespace BaseLibrary.UI.Elements
 	public class BaseElement : UIState
 	{
 		#region Fields
+
 		public event Action<SpriteBatch> OnPreDraw;
 		public event Action<SpriteBatch> OnPostDraw;
 		public event Func<string> GetHoverText;
@@ -43,7 +45,7 @@ namespace BaseLibrary.UI.Elements
 
 		public Vector2 Size
 		{
-			get => GetDimensions().Size();
+			get => Dimensions.Size();
 			set
 			{
 				base.Width.Pixels = value.X;
@@ -73,7 +75,7 @@ namespace BaseLibrary.UI.Elements
 
 		public Vector2 Position
 		{
-			get => GetDimensions().Position();
+			get => Dimensions.Position();
 			set
 			{
 				base.Left.Pixels = value.X;
@@ -99,9 +101,9 @@ namespace BaseLibrary.UI.Elements
 			set => base.Elements = value;
 		}
 
-		// todo: use MouseEvents
 		public event MouseEvent OnClickContinuous;
 		public event MouseEvent OnRightClickContinuous;
+
 		#endregion
 
 		public CalculatedStyle Dimensions => GetDimensions();
@@ -176,8 +178,8 @@ namespace BaseLibrary.UI.Elements
 
 		public override void Recalculate()
 		{
-			CalculatedStyle parentDimensions = Parent?.GetInnerDimensions() ?? UserInterface.ActiveInstance.GetDimensions();
-			if (Parent is UIList) parentDimensions.Height = float.MaxValue;
+			CalculatedStyle parentDimensions = Parent?.InnerDimensions ?? UserInterface.ActiveInstance.GetDimensions();
+			if ((UIElement)Parent is UIList) parentDimensions.Height = float.MaxValue;
 
 			CalculatedStyle dimensions;
 			dimensions.X = base.Left.GetValue(parentDimensions.Width) + parentDimensions.X;
@@ -203,7 +205,7 @@ namespace BaseLibrary.UI.Elements
 			dimensions.Y += MarginTop;
 			dimensions.Width -= MarginLeft + MarginRight;
 			dimensions.Height -= MarginTop + MarginBottom;
-			if (dimensions.Size() != GetDimensions().Size()) OnSizeChanged?.Invoke(dimensions);
+			if (dimensions.Size() != Dimensions.Size()) OnSizeChanged?.Invoke(dimensions);
 			typeof(UIElement).SetValue("_dimensions", dimensions, this);
 			dimensions.X += PaddingLeft;
 			dimensions.Y += PaddingTop;
@@ -246,6 +248,10 @@ namespace BaseLibrary.UI.Elements
 		public virtual void PostDraw(SpriteBatch spriteBatch)
 		{
 			OnPostDraw?.Invoke(spriteBatch);
+		}
+
+		public virtual void MouseDragged(MouseEventArgs args)
+		{
 		}
 	}
 }

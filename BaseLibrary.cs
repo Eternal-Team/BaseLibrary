@@ -10,16 +10,15 @@ using Terraria.UI;
 
 namespace BaseLibrary
 {
-	// todo: intro screen - thanks for downloading, list patreons, link to patreon, link to web
-
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
+		public static GUI<PanelUI> PanelGUI;
+		internal static GUI<TestUI> TestGUI;
+
+		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
 
 		private LegacyGameInterfaceLayer MouseInterface;
-
-		public static GUI<PanelUI> PanelGUI;
-		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
 
 		public override void Load()
 		{
@@ -37,6 +36,7 @@ namespace BaseLibrary
 				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);
 
 				PanelGUI = Utility.SetupGUI<PanelUI>();
+				TestGUI = Utility.SetupGUI<TestUI>();
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
@@ -44,6 +44,8 @@ namespace BaseLibrary
 
 		public override void Unload()
 		{
+			Scheduler.EnqueueMessage(() => Main.OnPostDraw -= Hooking.OnPostDraw);
+
 			Utility.Input.Unload();
 
 			Scheduler.Unload();
@@ -60,6 +62,7 @@ namespace BaseLibrary
 			if (MouseTextIndex != -1)
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
+				//layers.Insert(MouseTextIndex + 1, TestGUI.InterfaceLayer);
 				layers.Insert(MouseTextIndex + 1, PanelGUI.InterfaceLayer);
 			}
 		}
@@ -82,12 +85,16 @@ namespace BaseLibrary
 				ClosedUICache.Clear();
 			}
 
+			//TestGUI?.Update(gameTime);
 			PanelGUI?.Update(gameTime);
 		}
 
 		public override void PreSaveAndQuit()
 		{
-			PanelGUI?.UI.Elements.Clear();
+			foreach (UIElement element in PanelGUI.UI.Elements)
+			{
+				if (element is BaseUIPanel panel) PanelGUI.UI.CloseUI(panel.Container);
+			}
 		}
 	}
 }

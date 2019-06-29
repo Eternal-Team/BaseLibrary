@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.UI;
 
@@ -21,14 +21,12 @@ namespace BaseLibrary.UI.Elements
 
 			protected override void DrawChildren(SpriteBatch spriteBatch)
 			{
-				Vector2 position = Parent.GetDimensions().Position();
-				Vector2 dimensions = new Vector2(Parent.GetDimensions().Width, Parent.GetDimensions().Height);
+				Vector2 position = Parent.Dimensions.Position();
 				for (int i = 0; i < Elements.Count; i++)
 				{
 					UIElement current = Elements[i];
 					Vector2 position2 = current.GetDimensions().Position();
-					Vector2 dimensions2 = new Vector2(current.GetDimensions().Width, current.GetDimensions().Height);
-					if (Collision.CheckAABBvAABBCollision(position, dimensions, position2, dimensions2)) current.Draw(spriteBatch);
+					if (Collision.CheckAABBvAABBCollision(position, Parent.Dimensions.Size(), position2, current.GetDimensions().Size())) current.Draw(spriteBatch);
 				}
 			}
 		}
@@ -67,7 +65,7 @@ namespace BaseLibrary.UI.Elements
 				{
 					scrollbar.ViewPosition = items[i].Top.pixels;
 					if (bottom) scrollbar.ViewPosition = items[i].Top.pixels + items[i].GetOuterDimensions().Height;
-					if (center) scrollbar.ViewPosition = items[i].Top.pixels - GetInnerDimensions().Height / 2 + items[i].GetOuterDimensions().Height / 2;
+					if (center) scrollbar.ViewPosition = items[i].Top.pixels - InnerDimensions.Height / 2 + items[i].GetOuterDimensions().Height / 2;
 					return;
 				}
 			}
@@ -124,8 +122,6 @@ namespace BaseLibrary.UI.Elements
 
 		public override void RecalculateChildren()
 		{
-			CalculatedStyle gridDimensions = GetDimensions();
-
 			float top = 0f;
 			float left = 0f;
 
@@ -135,7 +131,7 @@ namespace BaseLibrary.UI.Elements
 				CalculatedStyle dimensions = item.GetDimensions();
 				item.Top.Set(top, 0f);
 				item.Left.Set(left, 0f);
-				if (item.Width.Precent > 0f) item.Width.Set((gridDimensions.Width - (columns - 1) * ListPadding) * item.Width.Precent, 0f);
+				if (item.Width.Precent > 0f) item.Width.Set((Dimensions.Width - (columns - 1) * ListPadding) * item.Width.Precent, 0f);
 				item.Recalculate();
 				if (i % columns == columns - 1 || i == items.Count - 1)
 				{
@@ -150,7 +146,7 @@ namespace BaseLibrary.UI.Elements
 
 		private void UpdateScrollbar()
 		{
-			scrollbar?.SetView(GetInnerDimensions().Height, innerListHeight);
+			scrollbar?.SetView(InnerDimensions.Height, innerListHeight);
 		}
 
 		public void SetScrollbar(UIScrollbar scrollbar)

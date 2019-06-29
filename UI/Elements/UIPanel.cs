@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -15,9 +14,8 @@ namespace BaseLibrary.UI.Elements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			CalculatedStyle dimensions = GetDimensions();
-			if (customTexture != null) spriteBatch.Draw(customTexture, dimensions);
-			else spriteBatch.DrawPanel(dimensions, BackgroundColor, BorderColor);
+			if (customTexture != null) spriteBatch.Draw(customTexture, Dimensions);
+			else spriteBatch.DrawPanel(Dimensions, BackgroundColor, BorderColor);
 		}
 	}
 }

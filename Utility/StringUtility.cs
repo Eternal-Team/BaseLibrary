@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using ReLogic.Graphics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
-using ReLogic.Graphics;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -27,7 +26,7 @@ namespace BaseLibrary
 
 		public static string Subscript(this int number)
 		{
-			var intList = number.ToString().Select(digit => Int32.Parse(digit.ToString()));
+			var intList = number.ToString().Select(digit => int.Parse(digit.ToString()));
 			return intList.Aggregate("", (current, i) => current + ("\\u832" + i));
 		}
 

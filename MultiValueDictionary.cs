@@ -9,6 +9,7 @@ namespace BaseLibrary
 	public class MultiValueDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, IReadOnlyCollection<TValue>>
 	{
 		#region Variables
+
 		/*======================================================================
 		** Variables
 		======================================================================*/
@@ -29,9 +30,11 @@ namespace BaseLibrary
 		///     during enumeration
 		/// </summary>
 		private int _version;
+
 		#endregion
 
 		#region Constructors
+
 		/*======================================================================
 		** Constructors
 		======================================================================*/
@@ -133,9 +136,11 @@ namespace BaseLibrary
 			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable)
 				AddRange(pair.Key, pair.Value);
 		}
+
 		#endregion
 
 		#region Static Factories
+
 		/*======================================================================
 		** Static Factories
 		======================================================================*/
@@ -360,9 +365,11 @@ namespace BaseLibrary
 				multiValueDictionary.AddRange(pair.Key, pair.Value);
 			return multiValueDictionary;
 		}
+
 		#endregion
 
 		#region Static Factories with Func parameters
+
 		/*======================================================================
 		** Static Factories with Func parameters
 		======================================================================*/
@@ -611,9 +618,11 @@ namespace BaseLibrary
 				multiValueDictionary.AddRange(pair.Key, pair.Value);
 			return multiValueDictionary;
 		}
+
 		#endregion
 
 		#region Concrete Methods
+
 		/*======================================================================
 		** Concrete Methods
 		======================================================================*/
@@ -774,9 +783,11 @@ namespace BaseLibrary
 			_dictionary.Clear();
 			_version++;
 		}
+
 		#endregion
 
 		#region Members implemented from IReadOnlyDictionary<TKey, IReadOnlyCollection<TValue>>
+
 		/*======================================================================
 		** Members implemented from IReadOnlyDictionary<TKey, IReadOnlyCollection<TValue>>
 		======================================================================*/
@@ -905,6 +916,7 @@ namespace BaseLibrary
 		{
 			return new Enumerator(this);
 		}
+
 		#endregion
 
 		/// <summary>
@@ -1013,6 +1025,7 @@ namespace BaseLibrary
 			private readonly ICollection<TValue> _collection;
 
 			#region Private Concrete API
+
 			/*======================================================================
 			** Private Concrete API
 			======================================================================*/
@@ -1032,9 +1045,11 @@ namespace BaseLibrary
 			{
 				return _collection.Remove(item);
 			}
+
 			#endregion
 
 			#region Shared API
+
 			/*======================================================================
 			** Shared API
 			======================================================================*/
@@ -1070,9 +1085,11 @@ namespace BaseLibrary
 			}
 
 			public TKey Key { get; }
+
 			#endregion
 
 			#region Public-Facing API
+
 			/*======================================================================
 			** Public-Facing API
 			======================================================================*/
@@ -1091,6 +1108,7 @@ namespace BaseLibrary
 			{
 				throw new NotSupportedException();
 			}
+
 			#endregion
 		}
 	}

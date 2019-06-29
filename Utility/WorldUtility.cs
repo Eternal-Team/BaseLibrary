@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Events;
@@ -15,7 +15,7 @@ namespace BaseLibrary
 
 		public static bool AnyTowerLiving => NPC.TowerActiveNebula || NPC.TowerActiveSolar || NPC.TowerActiveStardust || NPC.TowerActiveVortex;
 
-		public static Rectangle GetRectangle(this Item item) => Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(Main.itemTexture[item.type]) : Main.itemTexture[item.type].Frame(1, 1, 0, 0);
+		public static Rectangle GetRectangle(this Item item) => Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(Main.itemTexture[item.type]) : Main.itemTexture[item.type].Frame();
 
 		public static bool IsTopLeft(this Tile tile)
 		{
@@ -36,6 +36,7 @@ namespace BaseLibrary
 		}
 
 		#region Weather
+
 		public static void StartRain() => typeof(Main).InvokeMethod<object>("StartRain");
 
 		public static void StopRain() => typeof(Main).InvokeMethod<object>("StopRain");
@@ -43,6 +44,7 @@ namespace BaseLibrary
 		public static void StartSandstorm() => typeof(Sandstorm).InvokeMethod<object>("StartSandstorm");
 
 		public static void StopSandstorm() => typeof(Sandstorm).InvokeMethod<object>("StopSandstorm");
+
 		#endregion
 	}
 }

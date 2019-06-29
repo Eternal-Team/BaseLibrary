@@ -10,6 +10,6 @@ namespace BaseLibrary.UI.Elements
 
 		public UIColor(Color color) => this.color = color;
 
-		protected override void DrawSelf(SpriteBatch spriteBatch) => spriteBatch.Draw(Main.magicPixel, GetDimensions().ToRectangle(), color);
+		protected override void DrawSelf(SpriteBatch spriteBatch) => spriteBatch.Draw(Main.magicPixel, Dimensions.ToRectangle(), color);
 	}
 }
