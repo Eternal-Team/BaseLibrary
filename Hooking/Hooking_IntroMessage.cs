@@ -30,7 +30,8 @@ namespace BaseLibrary
 				if (File.Exists(LastVersionsPath)) previousVersions = JsonConvert.DeserializeObject<Dictionary<string, Version>>(File.ReadAllText(LastVersionsPath));
 
 				newOrUpdated = ModLoader.Mods.Where(mod => previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name)).ToList();
-				if (newOrUpdated.Count > 0) Main.menuMode = 4040;
+				//if (newOrUpdated.Count > 0)
+					Main.menuMode = 4040;
 
 				File.WriteAllText(LastVersionsPath, JsonConvert.SerializeObject(ModLoader.Mods.Select(mod => new {Key = mod.Name, Value = mod.Version.ToString()}).ToDictionary(x => x.Key, x => x.Value)));
 			});
