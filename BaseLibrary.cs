@@ -61,7 +61,7 @@ namespace BaseLibrary
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
 				//layers.Insert(MouseTextIndex + 1, TestGUI.InterfaceLayer);
-				layers.Insert(MouseTextIndex + 1, PanelGUI.InterfaceLayer);
+				layers.Insert(MouseTextIndex , PanelGUI.InterfaceLayer);
 			}
 		}
 
