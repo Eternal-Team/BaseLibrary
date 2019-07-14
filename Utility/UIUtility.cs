@@ -7,14 +7,14 @@ namespace BaseLibrary
 {
 	public static partial class Utility
 	{
-		public static GUI<T> SetupGUI<T>(InterfaceScaleType scaleType = InterfaceScaleType.UI, params object[] args) where T : BaseUI
+		public static GUI<T> SetupGUI<T>() where T : BaseUI
 		{
 			UserInterface userInterface = new UserInterface();
-			T state = (T)Activator.CreateInstance(typeof(T), args);
+			T state = (T)Activator.CreateInstance(typeof(T));
 			state.Activate();
 			userInterface.SetState(state);
 
-			return new GUI<T>(state, userInterface, scaleType);
+			return new GUI<T>(state, userInterface, InterfaceScaleType.UI);
 		}
 
 		public static void Center(this UIElement element)

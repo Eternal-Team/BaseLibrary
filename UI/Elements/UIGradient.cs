@@ -28,12 +28,6 @@ namespace BaseLibrary.UI.Elements
 			OnChangeColor?.Invoke(data[(int)(evt.MousePosition.X - Dimensions.X)]);
 		}
 
-		public override void Recalculate()
-		{
-			base.Recalculate();
-			texture = null;
-		}
-
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			if (texture == null) texture = Utility.CreateGradient((int)Dimensions.Width, steps, channel);

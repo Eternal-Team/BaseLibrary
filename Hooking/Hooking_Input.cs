@@ -1,253 +1,258 @@
-﻿using BaseLibrary.UI.Elements;
-using Microsoft.Xna.Framework;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
-using Starbound.Input;
-using System;
-using Terraria;
-using Terraria.GameInput;
-using Terraria.UI;
-using PlayerInput = On.Terraria.GameInput.PlayerInput;
-
-namespace BaseLibrary
+﻿namespace BaseLibrary
 {
 	public static partial class Hooking
 	{
-		private static UIElement UIElement => Main.hasFocus ? UserInterface.ActiveInstance.CurrentState?.GetElementAt(UserInterface.ActiveInstance.MousePosition) : null;
+		//private static UIElement UIElement => Main.hasFocus ? UserInterface.ActiveInstance.CurrentState?.GetElementAt(UserInterface.ActiveInstance.MousePosition) : null;
 
-		private static UIElement LastElementHover
-		{
-			get => UserInterface.ActiveInstance.GetValue<UIElement>("_lastElementHover");
-			set => UserInterface.ActiveInstance.SetValue("_lastElementHover", value);
-		}
+		//private static UIElement LastElementHover
+		//{
+		//	get => UserInterface.ActiveInstance.GetValue<UIElement>("_lastElementHover");
+		//	set => UserInterface.ActiveInstance.SetValue("_lastElementHover", value);
+		//}
 
-		private static GameTime gameTime;
+		//private static GameTime gameTime;
 
 		public static void Initialize()
 		{
-			IL.Terraria.Main.DoUpdate += il =>
-			{
-				ILCursor cursor = new ILCursor(il);
+			//Utility.Input.InterceptMouse += () => UIElement is BaseElement;
 
-				if (cursor.TryGotoNext(i => i.MatchCall(typeof(Main).GetMethod("DoUpdate_HandleInput", Utility.defaultFlags))))
-				{
-					cursor.Emit(OpCodes.Ldarg, 1);
-					cursor.EmitDelegate<Action<GameTime>>(time => { gameTime = time; });
-				}
-			};
+			//IL.Terraria.Main.DoUpdate += il =>
+			//{
+			//	ILCursor cursor = new ILCursor(il);
 
-			On.Terraria.UI.UserInterface.Update += (orig, self, time) => { UserInterface.ActiveInstance.CurrentState?.Update(time); };
+			//	if (cursor.TryGotoNext(i => i.MatchCall(typeof(Main).GetMethod("DoUpdate_HandleInput", Utility.defaultFlags))))
+			//	{
+			//		cursor.Emit(OpCodes.Ldarg, 1);
+			//		cursor.EmitDelegate<Action<GameTime>>(time => gameTime = time);
+			//	}
+			//};
 
-			PlayerInput.UpdateInput += orig =>
-			{
-				Utility.Input.Update(gameTime);
+			//On.Terraria.UI.UserInterface.Update += (orig, self, time) =>
+			//{
+			//	//if (Utility.Input.InterceptMouse()) self.CurrentState?.Update(time);
+			//	//else
+			//		orig(self, time);
+			//};
 
-				orig();
-			};
+			//PlayerInput.UpdateInput += orig =>
+			//{
+			//	Utility.Input.Update(gameTime);
 
-			PlayerInput.MouseInput += orig => { };
+			//	orig();
+			//};
 
-			PlayerInput.KeyboardInput += orig =>
-			{
-				if (!Utility.Input.InterceptKeyboard()) orig();
-			};
+			//PlayerInput.MouseInput += orig =>
+			//{
+			//	//if (!Utility.Input.InterceptMouse())
+			//		orig();
+			//};
 
-			MouseEvents.ButtonClicked += (sender, args) =>
-			{
-				if (UIElement == null) return;
+			//PlayerInput.KeyboardInput += orig =>
+			//{
+			//	if (!Utility.Input.InterceptKeyboard()) orig();
+			//};
 
-				switch (args.Button)
-				{
-					case MouseButton.Left:
-						UIElement.Click(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.Right:
-						UIElement.RightClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.Middle:
-						UIElement.MiddleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.XButton1:
-						UIElement.XButton1Click(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.XButton2:
-						UIElement.XButton2Click(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-				}
-			};
+			//MouseEvents.ButtonClicked += ButtonClicked;
 
-			MouseEvents.ButtonDoubleClicked += (sender, args) =>
-			{
-				if (UIElement == null) return;
+			//MouseEvents.ButtonDoubleClicked += ButtonDoubleClicked;
 
-				switch (args.Button)
-				{
-					case MouseButton.Left:
-						UIElement.DoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.Right:
-						UIElement.RightDoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.Middle:
-						UIElement.MiddleDoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.XButton1:
-						UIElement.XButton1DoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.XButton2:
-						UIElement.XButton2DoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-				}
-			};
+			//MouseEvents.ButtonTripleClicked += ButtonTripleClicked;
 
-			MouseEvents.ButtonTripleClicked += (sender, args) =>
-			{
-				if (UIElement is BaseElement cast)
-				{
-					switch (args.Button)
-					{
-						case MouseButton.Left:
-							cast.TripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-							break;
-						case MouseButton.Right:
-							cast.RightTripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-							break;
-						case MouseButton.Middle:
-							cast.MiddleTripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-							break;
-						case MouseButton.XButton1:
-							cast.XButton1TripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-							break;
-						case MouseButton.XButton2:
-							cast.XButton2TripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-							break;
-					}
-				}
-			};
+			//MouseEvents.ButtonPressed += ButtonPressed;
 
-			MouseEvents.ButtonPressed += (sender, args) =>
-			{
-				if (UIElement == null) return;
+			//MouseEvents.ButtonReleased += ButtonReleased;
 
-				switch (args.Button)
-				{
-					case MouseButton.Left:
-						UIElement.MouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.Right:
-						UIElement.RightMouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.Middle:
-						UIElement.MiddleMouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.XButton1:
-						UIElement.XButton1MouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.XButton2:
-						UIElement.XButton2MouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-				}
-			};
+			//MouseEvents.MouseWheelMoved += MouseWheelMoved;
 
-			MouseEvents.ButtonReleased += (sender, args) =>
-			{
-				if (UIElement == null) return;
+			//MouseEvents.MouseMoved += MouseMoved;
 
-				switch (args.Button)
-				{
-					case MouseButton.Left:
-						UIElement?.MouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.Right:
-						UIElement.RightMouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.Middle:
-						UIElement.MiddleMouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.XButton1:
-						UIElement.XButton1MouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-					case MouseButton.XButton2:
-						UIElement.XButton2MouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-						break;
-				}
-			};
-
-			MouseEvents.MouseWheelMoved += (sender, args) =>
-			{
-				UIElement?.ScrollWheel(new UIScrollWheelEvent(UIElement, UserInterface.ActiveInstance.MousePosition, args.Delta));
-
-				Terraria.GameInput.PlayerInput.ScrollWheelDelta = 0;
-				Terraria.GameInput.PlayerInput.ScrollWheelValue -= args.Delta;
-
-				Terraria.GameInput.PlayerInput.CurrentInputMode = InputMode.Mouse;
-				Terraria.GameInput.PlayerInput.Triggers.Current.UsedMovementKey = false;
-			};
-
-			MouseEvents.MouseMoved += (sender, args) =>
-			{
-				UserInterface.ActiveInstance.MousePosition = new Vector2(args.Current.X, args.Current.Y);
-
-				if (UIElement != LastElementHover)
-				{
-					LastElementHover?.MouseOut(new UIMouseEvent(LastElementHover, UserInterface.ActiveInstance.MousePosition));
-
-					UIElement?.MouseOver(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
-
-					LastElementHover = UIElement;
-				}
-			};
-
-			MouseEvents.MouseMoved += (sender, args) =>
-			{
-				Terraria.GameInput.PlayerInput.MouseX = args.Current.X;
-				Terraria.GameInput.PlayerInput.MouseY = args.Current.Y;
-
-				Terraria.GameInput.PlayerInput.CurrentInputMode = InputMode.Mouse;
-				Terraria.GameInput.PlayerInput.Triggers.Current.UsedMovementKey = false;
-			};
-
-			MouseEvents.ButtonPressed += (sender, args) =>
-			{
-				Terraria.GameInput.PlayerInput.MouseKeys.Clear();
-
-				if (Main.instance.IsActive)
-				{
-					switch (args.Button)
-					{
-						case MouseButton.Left:
-							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse1");
-							Main.mouseLeft = true;
-							break;
-						case MouseButton.Right:
-							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse2");
-							Main.mouseRight = true;
-							break;
-						case MouseButton.Middle:
-							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse3");
-							Main.mouseMiddle = true;
-							break;
-						case MouseButton.XButton1:
-							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse4");
-							Main.mouseXButton1 = true;
-							break;
-						case MouseButton.XButton2:
-							Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse5");
-							Main.mouseXButton2 = true;
-							break;
-					}
-
-					Terraria.GameInput.PlayerInput.CurrentInputMode = InputMode.Mouse;
-					Terraria.GameInput.PlayerInput.Triggers.Current.UsedMovementKey = false;
-				}
-			};
-
-			MouseEvents.ButtonReleased += (sender, args) => Terraria.GameInput.PlayerInput.MouseKeys.Clear();
-
-			MouseEvents.MouseDragged += (sender, args) =>
-			{
-				if (UIElement is BaseElement cast) cast.MouseDragged(args);
-			};
+			//MouseEvents.MouseDragged += MouseDragged;
 		}
+
+		public static void Uninitialize()
+		{
+			//MouseEvents.ButtonClicked -= ButtonClicked;
+
+			//MouseEvents.ButtonDoubleClicked -= ButtonDoubleClicked;
+
+			//MouseEvents.ButtonTripleClicked -= ButtonTripleClicked;
+
+			//MouseEvents.ButtonPressed -= ButtonPressed;
+
+			//MouseEvents.ButtonReleased -= ButtonReleased;
+
+			//MouseEvents.MouseWheelMoved -= MouseWheelMoved;
+
+			//MouseEvents.MouseMoved -= MouseMoved;
+
+			//MouseEvents.MouseDragged -= MouseDragged;
+		}
+
+		//private static void MouseDragged(object sender, MouseEventArgs args)
+		//{
+		//	if (UIElement is BaseElement cast) cast.MouseDragged(args);
+		//}
+
+		//private static void MouseMoved(object sender, MouseEventArgs args)
+		//{
+		//	UserInterface.ActiveInstance.MousePosition = new Vector2(args.Current.X, args.Current.Y);
+
+		//	Terraria.GameInput.PlayerInput.MouseX = args.Current.X;
+		//	Terraria.GameInput.PlayerInput.MouseY = args.Current.Y;
+
+		//	Terraria.GameInput.PlayerInput.CurrentInputMode = InputMode.Mouse;
+		//	Terraria.GameInput.PlayerInput.Triggers.Current.UsedMovementKey = false;
+
+		//	if (UIElement != LastElementHover)
+		//	{
+		//		LastElementHover?.MouseOut(new UIMouseEvent(LastElementHover, UserInterface.ActiveInstance.MousePosition));
+
+		//		UIElement?.MouseOver(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+
+		//		LastElementHover = UIElement;
+		//	}
+		//}
+
+		//private static void MouseWheelMoved(object sender, MouseWheelEventArgs args)
+		//{
+		//	UIElement?.ScrollWheel(new UIScrollWheelEvent(UIElement, UserInterface.ActiveInstance.MousePosition, args.Delta));
+
+		//	//if (InUI)
+		//	//{
+		//	//	InUI = false;
+		//	//	return;
+		//	//}
+
+		//	//Terraria.GameInput.PlayerInput.ScrollWheelDelta = 0;
+		//	//Terraria.GameInput.PlayerInput.ScrollWheelValue -= args.Delta;
+
+		//	//Terraria.GameInput.PlayerInput.CurrentInputMode = InputMode.Mouse;
+		//	//Terraria.GameInput.PlayerInput.Triggers.Current.UsedMovementKey = false;
+		//}
+
+		//private static void ButtonReleased(object sender, MouseButtonEventArgs args)
+		//{
+		//	if (UIElement == null) return;
+
+		//	if (BaseElement.PressedButtons.Contains(args.Button)) BaseElement.PressedButtons.Remove(args.Button);
+
+		//	switch (args.Button)
+		//	{
+		//		case MouseButton.Left:
+		//			UIElement.MouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.Right:
+		//			UIElement.RightMouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.Middle:
+		//			UIElement.MiddleMouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.XButton1:
+		//			UIElement.XButton1MouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.XButton2:
+		//			UIElement.XButton2MouseUp(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//	}
+		//}
+
+		//private static void ButtonPressed(object sender, MouseButtonEventArgs args)
+		//{
+		//	if (UIElement == null) return;
+
+		//	if (!BaseElement.PressedButtons.Contains(args.Button)) BaseElement.PressedButtons.Add(args.Button);
+
+		//	switch (args.Button)
+		//	{
+		//		case MouseButton.Left:
+		//			UIElement.MouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.Right:
+		//			UIElement.RightMouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.Middle:
+		//			UIElement.MiddleMouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.XButton1:
+		//			UIElement.XButton1MouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.XButton2:
+		//			UIElement.XButton2MouseDown(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//	}
+		//}
+
+		//private static void ButtonTripleClicked(object sender, MouseButtonEventArgs args)
+		//{
+		//	if (UIElement is BaseElement cast)
+		//	{
+		//		switch (args.Button)
+		//		{
+		//			case MouseButton.Left:
+		//				cast.TripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//				break;
+		//			case MouseButton.Right:
+		//				cast.RightTripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//				break;
+		//			case MouseButton.Middle:
+		//				cast.MiddleTripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//				break;
+		//			case MouseButton.XButton1:
+		//				cast.XButton1TripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//				break;
+		//			case MouseButton.XButton2:
+		//				cast.XButton2TripleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//				break;
+		//		}
+		//	}
+		//}
+
+		//private static void ButtonDoubleClicked(object sender, MouseButtonEventArgs args)
+		//{
+		//	if (UIElement == null) return;
+
+		//	switch (args.Button)
+		//	{
+		//		case MouseButton.Left:
+		//			UIElement.DoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.Right:
+		//			UIElement.RightDoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.Middle:
+		//			UIElement.MiddleDoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.XButton1:
+		//			UIElement.XButton1DoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.XButton2:
+		//			UIElement.XButton2DoubleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//	}
+		//}
+
+		//private static void ButtonClicked(object sender, MouseButtonEventArgs args)
+		//{
+		//	if (UIElement == null) return;
+
+		//	switch (args.Button)
+		//	{
+		//		case MouseButton.Left:
+		//			UIElement.Click(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.Right:
+		//			UIElement.RightClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.Middle:
+		//			UIElement.MiddleClick(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.XButton1:
+		//			UIElement.XButton1Click(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//		case MouseButton.XButton2:
+		//			UIElement.XButton2Click(new UIMouseEvent(UIElement, UserInterface.ActiveInstance.MousePosition));
+		//			break;
+		//	}
+		//}
 	}
 }

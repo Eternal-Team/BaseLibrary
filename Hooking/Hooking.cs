@@ -1,7 +1,7 @@
 ﻿using IL.Terraria;
-using IL.Terraria.UI;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
+using On.Terraria.UI;
 using System;
 using Terraria.ModLoader;
 
@@ -13,9 +13,8 @@ namespace BaseLibrary
 
 		internal static void Load()
 		{
-			On.Terraria.UI.UIElement.GetElementAt += UIElement_GetElementAt;
+			UIElement.GetElementAt += UIElement_GetElementAt;
 
-			ItemSlot.OverrideHover += ItemSlot_OverrideHover;
 			Main.DrawInterface_36_Cursor += Main_DrawInterface_36_Cursor;
 
 			Type uiLoadMods = typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.UILoadMods");
@@ -24,6 +23,13 @@ namespace BaseLibrary
 			Scheduler.EnqueueMessage(() => Terraria.Main.OnPostDraw += OnPostDraw);
 
 			Initialize();
+		}
+
+		internal static void Unload()
+		{
+			Uninitialize();
+
+			Scheduler.EnqueueMessage(() => Terraria.Main.OnPostDraw -= OnPostDraw);
 		}
 	}
 }

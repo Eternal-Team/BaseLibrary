@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Terraria;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -15,16 +16,16 @@ namespace BaseLibrary.UI.Elements
 
 	public class UIColorSelection : BaseElement
 	{
-		public UIColorSelection(int steps, Channel channel = Channel.All)
+		public UIColorSelection(Ref<Color> color, int steps, Channel channel = Channel.All)
 		{
-			UIColor uiColor = new UIColor(Color.Black);
+			UIColor uiColor = new UIColor(color.Value);
 			uiColor.Width = uiColor.Height = (0, 1);
 			Append(uiColor);
 
 			UIGradient gradient = new UIGradient(steps, channel);
 			gradient.Width = gradient.Height = (-4, 1);
 			gradient.Position = new Vector2(2);
-			gradient.OnChangeColor += newColor => uiColor.color = newColor;
+			gradient.OnChangeColor += newColor => color.Value = uiColor.color = newColor;
 			uiColor.Append(gradient);
 		}
 	}

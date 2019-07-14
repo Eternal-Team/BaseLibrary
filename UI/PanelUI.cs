@@ -26,54 +26,54 @@ namespace BaseLibrary.UI
 		{
 		}
 
-		public void HandleUI(IHasUI bag)
+		public void HandleUI(IHasUI entity)
 		{
-			if (bag.UI != null) CloseUI(bag);
+			if (entity.UI != null) CloseUI(entity);
 			else
 			{
 				Main.playerInventory = true;
 
-				if (BaseLibrary.Instance.ClosedUICache.Contains(bag)) BaseLibrary.Instance.ClosedUICache.Remove(bag);
-				OpenUI(bag);
+				if (BaseLibrary.Instance.ClosedUICache.Contains(entity)) BaseLibrary.Instance.ClosedUICache.Remove(entity);
+				OpenUI(entity);
 			}
 		}
 
-		public void CloseUI(IHasUI bag)
+		public void CloseUI(IHasUI entity)
 		{
-			BaseElement element = bag.UI;
+			BaseElement element = entity.UI;
 			if (element == null) return;
 
-			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[bag.ID] = element.Position / Dimensions.Size();
+			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.ID] = element.Position / Dimensions.Size();
 			Elements.Remove(element);
-			bag.UI = null;
+			entity.UI = null;
 
-			Main.PlaySound(bag.CloseSound);
+			Main.PlaySound(entity.CloseSound);
 		}
 
-		public void OpenUI(IHasUI bag)
+		public void OpenUI(IHasUI entity)
 		{
-			Type bagType = UICache.ContainsKey(bag.GetType()) ? bag.GetType() : bag.GetType().BaseType;
+			Type entityType = UICache.ContainsKey(entity.GetType()) ? entity.GetType() : entity.GetType().BaseType;
 
-			bag.UI = (BaseUIPanel)Activator.CreateInstance(UICache[bagType]);
-			bag.UI.Container = bag;
+			entity.UI = (BaseUIPanel)Activator.CreateInstance(UICache[entityType]);
+			entity.UI.Container = entity;
 
-			bag.UI.Activate();
+			entity.UI.Activate();
 
-			if (Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions.TryGetValue(bag.ID, out Vector2 position))
+			if (Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions.TryGetValue(entity.ID, out Vector2 position))
 			{
-				bag.UI.HAlign = bag.UI.VAlign = 0;
-				bag.UI.Position = position * Dimensions.Size();
+				entity.UI.HAlign = entity.UI.VAlign = 0;
+				entity.UI.Position = position * Dimensions.Size();
 			}
 
-			bag.UI.OnMouseDown += (evt, element) =>
+			entity.UI.OnMouseDown += (evt, element) =>
 			{
-				RemoveChild(bag.UI);
-				Append(bag.UI);
+				RemoveChild(entity.UI);
+				Append(entity.UI);
 			};
 
-			Append(bag.UI);
+			Append(entity.UI);
 
-			Main.PlaySound(bag.OpenSound);
+			Main.PlaySound(entity.OpenSound);
 		}
 	}
 }

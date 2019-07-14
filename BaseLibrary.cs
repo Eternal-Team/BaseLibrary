@@ -24,8 +24,6 @@ namespace BaseLibrary
 		{
 			Instance = this;
 
-			Language.Load();
-
 			Utility.Input.Load();
 			Hooking.Load();
 			Scheduler.Load();
@@ -44,7 +42,7 @@ namespace BaseLibrary
 
 		public override void Unload()
 		{
-			Scheduler.EnqueueMessage(() => Main.OnPostDraw -= Hooking.OnPostDraw);
+			Hooking.Unload();
 
 			Utility.Input.Unload();
 

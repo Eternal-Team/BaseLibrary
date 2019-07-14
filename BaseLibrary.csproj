@@ -1,133 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="C:\Users\Itorius\Documents\My Games\Terraria\ModLoader\references\tModLoader.targets" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0387FE69-7E77-4DC7-9867-EC3994E946D2}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BaseLibrary</RootNamespace>
     <AssemblyName>BaseLibrary</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <TargetFramework>net45</TargetFramework>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>7.3</LangVersion>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+  <Target Name="BuildMod" AfterTargets="Build">
+    <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -define $(DefineConstants) -unsafe $(AllowUnsafeBlocks)" />
+  </Target>
   <ItemGroup>
-    <Compile Include="BaseLibrary.cs" />
-    <Compile Include="BLPlayer.cs" />
-    <Compile Include="Hooking\Hooking.cs" />
-    <Compile Include="Hooking\Hooking_Input.cs" />
-    <Compile Include="Hooking\Hooking_IntroMessage.cs" />
-    <Compile Include="Hooking\Hooking_UI.cs" />
-    <Compile Include="Language.cs" />
-    <Compile Include="MultiValueDictionary.cs" />
-    <Compile Include="Starbound.Input\Buttons.cs" />
-    <Compile Include="Starbound.Input\GamePadButtonEventArgs.cs" />
-    <Compile Include="Starbound.Input\GamePadEventArgs.cs" />
-    <Compile Include="Starbound.Input\GamePadEvents.cs" />
-    <Compile Include="Starbound.Input\GamePadThumbstickEventArgs.cs" />
-    <Compile Include="Starbound.Input\GamePadTriggerEventArgs.cs" />
-    <Compile Include="Starbound.Input\InputEventArgs.cs" />
-    <Compile Include="Starbound.Input\KeyboardEventArgs.cs" />
-    <Compile Include="Starbound.Input\KeyboardEvents.cs" />
-    <Compile Include="Starbound.Input\KeyboardUtil.cs" />
-    <Compile Include="Starbound.Input\KeySequence.cs" />
-    <Compile Include="Starbound.Input\Modifiers.cs" />
-    <Compile Include="Starbound.Input\MouseButton.cs" />
-    <Compile Include="Starbound.Input\MouseButtonEventArgs.cs" />
-    <Compile Include="Starbound.Input\MouseEventArgs.cs" />
-    <Compile Include="Starbound.Input\MouseEvents.cs" />
-    <Compile Include="Starbound.Input\MouseWheelEventArgs.cs" />
-    <Compile Include="Starbound.Input\PolarCoordinate.cs" />
-    <Compile Include="Starbound.Input\Thumbsticks.cs" />
-    <Compile Include="Starbound.Input\Triggers.cs" />
-    <Compile Include="TestUI.cs" />
-    <Compile Include="UI\BaseUIPanel.cs" />
-    <Compile Include="UI\BaseElement.cs" />
-    <Compile Include="UI\Elements\UIAnimatedTexture.cs" />
-    <Compile Include="UI\PanelUI.cs" />
-    <Compile Include="UI\UIIntroMessage.cs" />
-    <Compile Include="Utility\Scheduler.cs" />
-    <Compile Include="UI\Elements\UIColor.cs" />
-    <Compile Include="UI\Elements\UIDraggablePanel.cs" />
-    <Compile Include="Tiles\TileEntites\BaseTE.cs" />
-    <Compile Include="Tiles\BaseTile.cs" />
-    <Compile Include="Items\BaseItem.cs" />
-    <Compile Include="Items\DevItem.cs" />
-    <Compile Include="Items\LightedWall.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Elements\BaseElement.cs" />
-    <Compile Include="UI\BaseUI.cs" />
-    <Compile Include="UI\Elements\BaseState.cs" />
-    <Compile Include="UI\Elements\UIButton.cs" />
-    <Compile Include="UI\Elements\UIColorSelection.cs" />
-    <Compile Include="UI\Elements\UIGradient.cs" />
-    <Compile Include="UI\Elements\UIGrid.cs" />
-    <Compile Include="UI\Elements\UIPanel.cs" />
-    <Compile Include="UI\Elements\UIScrollbar.cs" />
-    <Compile Include="UI\Elements\UIText.cs" />
-    <Compile Include="UI\Elements\UITextButton.cs" />
-    <Compile Include="UI\Elements\UITextInput.cs" />
-    <Compile Include="UI\Elements\UITexture.cs" />
-    <Compile Include="UI\Elements\UIToggleButton.cs" />
-    <Compile Include="UI\GUI.cs" />
-    <Compile Include="UI\ScaleMode.cs" />
-    <Compile Include="Utility\CollectionUtility.cs" />
-    <Compile Include="Utility\InputUtility.cs" />
-    <Compile Include="Utility\ItemUtility.cs" />
-    <Compile Include="Utility\MathUtility.cs" />
-    <Compile Include="Utility\ReflectionUtility.cs" />
-    <Compile Include="Utility\RenderingUtility.cs" />
-    <Compile Include="Utility\Side.cs" />
-    <Compile Include="Utility\SpriteBatchState.cs" />
-    <Compile Include="Utility\StringUtility.cs" />
-    <Compile Include="Utility\TileUtility.cs" />
-    <Compile Include="Utility\ColorUtility.cs" />
-    <Compile Include="Utility\UIUtility.cs" />
-    <Compile Include="Utility\Utility.cs" />
-    <Compile Include="Utility\WorldUtility.cs" />
-    <Compile Include="Walls\LightedWall.cs" />
+    <None Remove=".gitignore" />
+    <None Remove="BaseLibrary.csproj.DotSettings" />
+    <None Remove="EternalMods.sln.DotSettings" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="build.txt" />
-    <Content Include="description.txt" />
-    <Content Include="Textures\Placeholder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline">
-      <HintPath>..\..\..\..\..\Tools\XNAFormatter\Microsoft.Xna.Framework.Content.Pipeline.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="Terraria, Version=1.3.5.1, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>
-    </Reference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files (x86)\Steam\steamapps\common\Terraria\TerrariaServer.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
-  </PropertyGroup>
 </Project>

@@ -17,6 +17,7 @@ namespace BaseLibrary
 			internal static KeyboardEvents KeyboardHandler;
 
 			public static Func<bool> InterceptKeyboard = () => false;
+			public static Func<bool> InterceptMouse = () => false;
 
 			internal static void Load()
 			{
@@ -37,15 +38,19 @@ namespace BaseLibrary
 
 			internal static void Update(GameTime time)
 			{
-				if (InterceptKeyboard?.Invoke() ?? false)
+				if (InterceptKeyboard())
 				{
 					KeyboardHandler.Enabled = true;
 					KeyboardHandler.Update(time);
 				}
 				else KeyboardHandler.Enabled = false;
 
-				MouseHandler.Enabled = true;
-				MouseHandler.Update(time);
+				if (InterceptMouse())
+				{
+					MouseHandler.Enabled = true;
+					MouseHandler.Update(time);
+				}
+				else MouseHandler.Enabled = false;
 			}
 		}
 

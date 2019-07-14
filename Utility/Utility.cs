@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace BaseLibrary
@@ -111,5 +112,13 @@ namespace BaseLibrary
 			ParameterDefinition def = context.Method.Parameters.FirstOrDefault(parameter => parameter.Name == name);
 			return def?.Index + 1 ?? throw new Exception($"Parameter with name '{name}' does not exist!");
 		}
+
+		public static void Write(this BinaryWriter writer, Point16 point)
+		{
+			writer.Write(point.X);
+			writer.Write(point.Y);
+		}
+
+		public static Point16 ReadPoint16(this BinaryReader reader) => new Point16(reader.ReadInt16(), reader.ReadInt16());
 	}
 }

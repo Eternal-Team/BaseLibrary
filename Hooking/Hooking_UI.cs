@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
-using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -35,41 +34,6 @@ namespace BaseLibrary
 			}
 
 			return orig(self, point);
-		}
-
-		private static void ItemSlot_OverrideHover(ILContext il)
-		{
-			ILCursor cursor = new ILCursor(il);
-			ILLabel label = cursor.DefineLabel();
-			ILLabel caseStart = cursor.DefineLabel();
-
-			ILLabel[] targets = null;
-			if (cursor.TryGotoNext(i => i.MatchSwitch(out targets))) targets[0] = caseStart;
-
-			if (cursor.TryGotoNext(i => i.MatchLdsfld(typeof(Main).GetField("npcShop", Utility.defaultFlags))))
-			{
-				cursor.MarkLabel(caseStart);
-
-				cursor.Emit(OpCodes.Ldloc, 0);
-				cursor.EmitDelegate<Func<Item, bool>>(item =>
-				{
-					UIElement uiElement = BaseLibrary.PanelGUI.UI.Elements.FirstOrDefault(element => element is IHasCursorOverride);
-					string texture = (uiElement as IHasCursorOverride)?.GetTexture(item);
-
-					if (!string.IsNullOrWhiteSpace(texture))
-					{
-						Main.cursorOverride = CustomCursorOverride;
-						CurrrentShiftClickIcon = texture;
-						return true;
-					}
-
-					CurrrentShiftClickIcon = "";
-					return false;
-				});
-				cursor.Emit(OpCodes.Brtrue, label);
-			}
-
-			if (cursor.TryGotoNext(i => i.MatchLdsflda(typeof(Main).GetField("keyState", Utility.defaultFlags)))) cursor.MarkLabel(label);
 		}
 
 		private static void Main_DrawInterface_36_Cursor(ILContext il)
@@ -107,10 +71,5 @@ namespace BaseLibrary
 			Main.cursorOverride = CustomCursorOverride;
 			CurrrentShiftClickIcon = texture;
 		}
-	}
-
-	public interface IHasCursorOverride
-	{
-		string GetTexture(Item item);
 	}
 }

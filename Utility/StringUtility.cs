@@ -30,6 +30,6 @@ namespace BaseLibrary
 			return intList.Aggregate("", (current, i) => current + ("\\u832" + i));
 		}
 
-		public static string GetTranslation(this ModTranslation translation, GameCulture culture = null) => translation.GetTranslation(culture ?? Terraria.Localization.Language.ActiveCulture);
+		public static string GetTranslation(this ModTranslation translation, GameCulture culture = null) => translation.GetTranslation(culture ?? Language.ActiveCulture);
 	}
 }
