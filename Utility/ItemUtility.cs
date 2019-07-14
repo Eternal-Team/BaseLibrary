@@ -19,6 +19,33 @@ namespace BaseLibrary
 			ItemID.PlatinumCoin
 		});
 
+		public static Item PutItemInInventory(Item toExtract, int stack = 0)
+		{
+			if (toExtract.maxStack == 1) return Main.LocalPlayer.GetItem(Main.LocalPlayer.whoAmI, toExtract);
+
+			int count = stack > 0 ? stack : toExtract.maxStack;
+
+			foreach (Item item in Main.LocalPlayer.inventory)
+			{
+				if (item.type == toExtract.type && item.stack < item.maxStack)
+				{
+					int diff = Math.Min(count, item.maxStack - item.stack);
+					item.stack += diff;
+					count -= diff;
+					if (count <= 0) return new Item();
+				}
+			}
+
+			Item item2 = new Item();
+			item2.SetDefaults(toExtract.type);
+			int c = Math.Min(count, item2.maxStack);
+			item2.stack = c;
+			count -= c;
+			Item item3 = Main.LocalPlayer.GetItem(Main.LocalPlayer.whoAmI, item2);
+			item3.stack += count;
+			return item3;
+		}
+
 		public static Item TakeItemFromNearbyChest(Item item, Vector2 position)
 		{
 			if (Main.netMode == 1) return item;
