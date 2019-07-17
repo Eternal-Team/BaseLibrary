@@ -17,7 +17,7 @@ namespace BaseLibrary
 
 			Main.DrawInterface_36_Cursor += Main_DrawInterface_36_Cursor;
 
-			Type uiLoadMods = typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.UILoadMods");
+			Type uiLoadMods = typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.DownloadManager.UILoadModsProgress");
 			HookEndpointManager.Modify(uiLoadMods.GetMethod("OnDeactivate", Utility.defaultFlags), new Action<ILContext>(OnLoadedMods));
 
 			Scheduler.EnqueueMessage(() => Terraria.Main.OnPostDraw += OnPostDraw);

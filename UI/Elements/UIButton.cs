@@ -10,13 +10,16 @@ namespace BaseLibrary.UI.Elements
 	public class UIButton : BaseElement
 	{
 		public Texture2D texture;
-		public ScaleMode scaleMode;
 		public bool RenderPanel;
 
-		public UIButton(Texture2D texture = null, ScaleMode scaleMode = ScaleMode.Stretch)
+		private ScaleMode scaleMode;
+		public Rectangle? sourceRectangle;
+
+		public UIButton(Texture2D texture = null, Rectangle? sourceRectangle = null, ScaleMode scaleMode = ScaleMode.Stretch)
 		{
 			this.texture = texture;
 			this.scaleMode = scaleMode;
+			this.sourceRectangle = sourceRectangle;
 		}
 
 		public override void MouseOver(UIMouseEvent evt)
@@ -39,9 +42,12 @@ namespace BaseLibrary.UI.Elements
 
 			if (texture != null)
 			{
-				if (scaleMode == ScaleMode.Stretch) spriteBatch.Draw(texture, Dimensions);
-				else if (scaleMode == ScaleMode.Zoom) spriteBatch.Draw(texture, Dimensions.Center(), null, Color.White, 0f, texture.Size() * 0.5f, Math.Min(InnerDimensions.Width / texture.Width, InnerDimensions.Height / texture.Height), SpriteEffects.None, 0f);
-				else if (scaleMode == ScaleMode.None) spriteBatch.Draw(texture, Dimensions.Position());
+				if (scaleMode == ScaleMode.Stretch)
+					spriteBatch.Draw(texture, Dimensions.ToRectangle(), sourceRectangle, Color.White);
+				else if (scaleMode == ScaleMode.Zoom)
+					spriteBatch.Draw(texture, Dimensions.Center(), sourceRectangle, Color.White, 0f, texture.Size() * 0.5f, Math.Min(InnerDimensions.Width / texture.Width, InnerDimensions.Height / texture.Height), SpriteEffects.None, 0f);
+				else if (scaleMode == ScaleMode.None)
+					spriteBatch.Draw(texture, Dimensions.Position(), sourceRectangle, Color.White);
 			}
 		}
 	}
