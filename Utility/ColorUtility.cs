@@ -10,6 +10,7 @@ namespace BaseLibrary
 		public static readonly Color ColorPanel_Selected = new Color(51, 65, 119);
 		public static readonly Color ColorPanel_Hovered = new Color(94, 120, 221);
 		public static readonly Color ColorSlot = new Color(63, 65, 151);
+		public static readonly Color ColorOutline = new Color(18, 18, 38);
 
 		public static readonly Color[] ColorCoins =
 		{

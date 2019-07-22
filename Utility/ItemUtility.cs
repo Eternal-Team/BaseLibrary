@@ -145,6 +145,13 @@ namespace BaseLibrary
 
 		public static List<Item> Ammo(this Player player) => player.inventory.Where((item, i) => i >= 54 && i <= 57).ToList();
 
+		public static Item[] Inventory(this Player player)
+		{
+			Item[] inv = new Item[58];
+			Array.Copy(player.inventory, inv, inv.Length);
+			return inv;
+		}
+
 		public static bool HasArmor(this Player player, int type) => player.Armor().Any(item => item.type == type);
 
 		public static bool HasAccessory(this Player player, int type) => player.Accessory().Any(item => item.type == type);
