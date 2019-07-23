@@ -1,4 +1,5 @@
-﻿using BaseLibrary.UI;
+﻿using BaseLibrary.Tiles.TileEntites;
+using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using ReLogic.Graphics;
 using System.Collections.Generic;
@@ -61,12 +62,23 @@ namespace BaseLibrary
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
 				//layers.Insert(MouseTextIndex + 1, TestGUI.InterfaceLayer);
-				layers.Insert(MouseTextIndex , PanelGUI.InterfaceLayer);
+				layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
 			}
 		}
 
 		public override void UpdateUI(GameTime gameTime)
 		{
+			// ReSharper disable once ForCanBeConvertedToForeach
+			for (var i = 0; i < PanelGUI.UI.Elements.Count; i++)
+			{
+				UIElement element = PanelGUI.UI.Elements[i];
+				if (element is BaseUIPanel panel && panel.Container is BaseTE tileEntity)
+				{
+					// todo: calculate from the center of the tile
+					if (Vector2.DistanceSquared(tileEntity.Position.ToWorldCoordinates(0, 0), Main.LocalPlayer.Center) > 160 * 160) PanelGUI.UI.CloseUI(panel.Container);
+				}
+			}
+
 			if (!Main.playerInventory)
 			{
 				List<BaseUIPanel> bagPanels = PanelGUI.UI.Elements.Cast<BaseUIPanel>().ToList();

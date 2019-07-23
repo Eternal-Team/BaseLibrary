@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace BaseLibrary
@@ -120,5 +121,7 @@ namespace BaseLibrary
 		}
 
 		public static Point16 ReadPoint16(this BinaryReader reader) => new Point16(reader.ReadInt16(), reader.ReadInt16());
+
+		public static string GetTranslation(this ModTranslation translation) => translation.GetTranslation(Language.ActiveCulture);
 	}
 }
