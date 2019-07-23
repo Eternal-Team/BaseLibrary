@@ -1,6 +1,7 @@
 ﻿using BaseLibrary.Tiles.TileEntites;
 using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,7 @@ namespace BaseLibrary
 		internal static BaseLibrary Instance;
 		public static GUI<PanelUI> PanelGUI;
 		internal static GUI<TestUI> TestGUI;
+		internal static Effect ColorSelectionShader;
 
 		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
 
@@ -33,6 +35,8 @@ namespace BaseLibrary
 			{
 				Utility.Font = Main.instance.OurLoad<DynamicSpriteFont>("Fonts" + Path.DirectorySeparatorChar + "Mouse_Text");
 				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);
+
+				ColorSelectionShader = GetEffect("Effects/ColorSelectionShader");
 
 				PanelGUI = Utility.SetupGUI<PanelUI>();
 				TestGUI = Utility.SetupGUI<TestUI>();

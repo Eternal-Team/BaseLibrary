@@ -90,5 +90,34 @@ namespace BaseLibrary
 
 			return new Color(r, g, b);
 		}
+		
+		public static Vector3 HSV2RGB(Vector3 HSV)
+		{
+			Vector3 RGB = new Vector3(HSV.Z);
+
+			float h = HSV.X / 60f;
+			float s = HSV.Y;
+			float v = HSV.Z;
+
+			int i = (int)Math.Floor(h);
+			float f = h - i;
+
+			float p = 1f - s;
+			float q = 1f - s * f;
+			float t = 1f - s * (1 - f);
+
+			if (i == 0) RGB = new Vector3(1, t, p);
+			else if (i == 1) RGB = new Vector3(q, 1, p);
+			else if (i == 2) RGB = new Vector3(p, 1, t);
+			else if (i == 3) RGB = new Vector3(p, q, 1);
+			else if (i == 4) RGB = new Vector3(t, p, 1);
+			else RGB = new Vector3(1, p, q);
+
+			RGB *= v;
+
+			return RGB;
+		}
+
+		public static Color Invert(this Color color) => new Color(255-color.R, 255-color.G,255-color.B);
 	}
 }

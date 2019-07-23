@@ -12,8 +12,6 @@ namespace BaseLibrary.UI.Elements
 		All
 	}
 
-	// todo: create Texture2D on GPU and send it to CPU
-
 	public class UIColorSelection : BaseElement
 	{
 		public UIColorSelection(Ref<Color> color, int steps, Channel channel = Channel.All)
@@ -22,10 +20,14 @@ namespace BaseLibrary.UI.Elements
 			uiColor.Width = uiColor.Height = (0, 1);
 			Append(uiColor);
 
-			UIGradient gradient = new UIGradient(steps, channel);
+			UIGradient gradient = new UIGradient();
 			gradient.Width = gradient.Height = (-4, 1);
 			gradient.Position = new Vector2(2);
-			gradient.OnChangeColor += newColor => color.Value = uiColor.color = newColor;
+			gradient.OnChangeColor += newColor =>
+			{
+				color.Value = uiColor.color = newColor;
+				Main.NewText(color.Value);
+			};
 			uiColor.Append(gradient);
 		}
 	}
