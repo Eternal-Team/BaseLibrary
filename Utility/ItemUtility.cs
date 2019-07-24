@@ -133,7 +133,7 @@ namespace BaseLibrary
 
 		public static bool IsCoin(this Item item) => CoinTypes.Contains(item.type);
 
-		public static long CountCoins(this List<Item> items) => Utils.CoinsCount(out bool _, items.ToArray());
+		public static long CountCoins(this Item[] items) => Utils.CoinsCount(out bool _, items);
 
 		public static IEnumerable<T> OfType<T>(this IEnumerable<Item> items) where T : class => items.Where(item => item.modItem is T).Select(item => item.modItem as T);
 

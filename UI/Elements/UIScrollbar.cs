@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
@@ -15,11 +16,8 @@ namespace BaseLibrary.UI.Elements
 		private bool isHoveringOverHandle;
 		private float dragYOffset;
 
-		//[PathOverride("Terraria/UI/Scrollbar")]
-		//public static Texture2D Texture { get; set; }
-
-		//[PathOverride("Terraria/UI/ScrollbarInner")]
-		//public static Texture2D InnerTexture { get; set; }
+		public static Texture2D Texture { get; set; }
+		public static Texture2D InnerTexture { get; set; }
 
 		public float ViewPosition
 		{
@@ -29,6 +27,9 @@ namespace BaseLibrary.UI.Elements
 
 		public UIScrollbar()
 		{
+			if (Texture == null) Texture = ModContent.GetTexture("Terraria/UI/Scrollbar");
+			if (InnerTexture == null) InnerTexture = ModContent.GetTexture("Terraria/UI/ScrollbarInner");
+
 			Width = (20, 0);
 			MaxWidth.Set(20f, 0f);
 			Padding = (5, 0, 0, 5);
@@ -86,8 +87,8 @@ namespace BaseLibrary.UI.Elements
 			bool isHoveringOverHandle = this.isHoveringOverHandle;
 			this.isHoveringOverHandle = handleRectangle.Contains(new Point((int)mousePosition.X, (int)mousePosition.Y));
 			if (!isHoveringOverHandle && this.isHoveringOverHandle && Main.hasFocus) Main.PlaySound(SoundID.MenuTick);
-			//DrawBar(spriteBatch, Texture, dimensions.ToRectangle(), Color.White);
-			//DrawBar(spriteBatch, InnerTexture, handleRectangle, Color.White * (isDragging || this.isHoveringOverHandle ? 1f : 0.85f));
+			DrawBar(spriteBatch, Texture, Dimensions.ToRectangle(), Color.White);
+			DrawBar(spriteBatch, InnerTexture, handleRectangle, Color.White * (isDragging || this.isHoveringOverHandle ? 1f : 0.85f));
 		}
 
 		public override void MouseDown(UIMouseEvent evt)

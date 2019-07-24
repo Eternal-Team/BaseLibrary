@@ -73,6 +73,8 @@ namespace BaseLibrary.UI.Elements
 
 		public override void Update(GameTime gameTime)
 		{
+			if (IsMouseHovering && innerListHeight > InnerDimensions.Height) Hooking.BlockScrolling = true;
+
 			for (int i = 0; i < items.Count; i++) items[i].Update(gameTime);
 
 			base.Update(gameTime);
@@ -85,7 +87,7 @@ namespace BaseLibrary.UI.Elements
 
 		public void Add(T item)
 		{
-			if (item is IGridElement<T>) ((IGridElement<T>)item).Grid = this;
+			if (item is IGridElement<T> element) element.Grid = this;
 			items.Add(item);
 			innerList.Append(item);
 			UpdateOrder();
@@ -94,7 +96,7 @@ namespace BaseLibrary.UI.Elements
 
 		public bool Remove(T item)
 		{
-			if (item is IGridElement<T>) ((IGridElement<T>)item).Grid = null;
+			if (item is IGridElement<T> element) element.Grid = this;
 			innerList.RemoveChild(item);
 			UpdateOrder();
 			return items.Remove(item);
@@ -117,6 +119,7 @@ namespace BaseLibrary.UI.Elements
 		public override void ScrollWheel(UIScrollWheelEvent evt)
 		{
 			base.ScrollWheel(evt);
+			Hooking.BlockScrolling = true;
 			if (scrollbar != null) scrollbar.ViewPosition -= evt.ScrollWheelValue;
 		}
 

@@ -34,7 +34,6 @@ namespace BaseLibrary.UI.Elements
 
 			if (ContainsPoint(Main.MouseScreen))
 			{
-				Hooking.InUI = true;
 				Main.LocalPlayer.mouseInterface = true;
 				Main.LocalPlayer.showItemIcon = false;
 				Main.ItemIconCacheUpdate(0);

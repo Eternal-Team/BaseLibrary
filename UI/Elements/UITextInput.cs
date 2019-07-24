@@ -4,13 +4,17 @@ using Microsoft.Xna.Framework.Input;
 using ReLogic.OS;
 using Starbound.Input;
 using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Terraria;
+using Terraria.GameInput;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
 namespace BaseLibrary.UI.Elements
 {
-	public class UITextInput : UIPanel
+	public class UITextInput : BaseElement
 	{
 		// todo: cleanup
 		// note: support for Insert?
@@ -22,6 +26,12 @@ namespace BaseLibrary.UI.Elements
 		private int selectionEnd;
 		private bool selecting;
 
+		private int caretTimer;
+		private bool caretVisible;
+
+		private static readonly Color CaretColor = new Color(160, 160, 160);
+		private static readonly Color SelectionColor = new Color(51, 144, 255) * 0.25f;
+
 		public string Text
 		{
 			get => _text.Value;
@@ -31,6 +41,11 @@ namespace BaseLibrary.UI.Elements
 		public bool SelectOnFirstClick;
 		public string HintText;
 		public event Action OnTextChange;
+		private bool RenderPanel;
+		public bool AllowMultiline;
+
+		// todo: max lenght
+		// todo: center text
 
 		/*
 		 while(s[i]!=wordboundary&&s[i-1]!=APLHANUM)
@@ -39,9 +54,10 @@ namespace BaseLibrary.UI.Elements
 		 }
 		 */
 
-		public UITextInput(Ref<string> text, string hintText = "")
+		public UITextInput(Ref<string> text, string hintText = "", bool renderPanel = true)
 		{
-			SetPadding(8);
+			RenderPanel = renderPanel;
+			SetPadding(RenderPanel ? 8 : 0);
 
 			_text = text;
 			HintText = hintText;
@@ -51,7 +67,7 @@ namespace BaseLibrary.UI.Elements
 			KeyboardEvents.KeyTyped += KeyTyped;
 		}
 
-		~UITextInput()
+		public override void OnDeactivate()
 		{
 			Utility.Input.InterceptKeyboard -= ShouldIntercept;
 			KeyboardEvents.KeyTyped -= KeyTyped;
@@ -150,10 +166,22 @@ namespace BaseLibrary.UI.Elements
 				}
 
 				case Keys.Escape:
-				case Keys.Enter:
-					focused = false;
+				{
+					Task.Run(() =>
+					{
+						Thread.Sleep(20);
+
+						focused = false;
+						Main.blockInput = false;
+						Main.editSign = false;
+						Main.chatRelease = false;
+						PlayerInput.WritingText = false;
+					});
+
 					Main.keyState = Main.oldKeyState;
 					break;
+				}
+
 				case Keys.Left:
 				{
 					if (selectionStart - 1 >= 0) selectionStart--;
@@ -208,16 +236,40 @@ namespace BaseLibrary.UI.Elements
 				{
 					if (args.Character != null)
 					{
+						string charValue;
+						if (args.Key == Keys.Enter)
+						{
+							if (AllowMultiline) charValue = "\n";
+							else
+							{
+								Task.Run(() =>
+								{
+									Thread.Sleep(20);
+
+									focused = false;
+									Main.blockInput = false;
+									Main.editSign = false;
+									Main.chatRelease = false;
+									PlayerInput.WritingText = false;
+								});
+
+								Main.keyState = Main.oldKeyState;
+
+								return;
+							}
+						}
+						else charValue = args.Character.Value.ToString();
+
 						if (selecting)
 						{
 							selecting = false;
 
 							Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
-							Text = Text.Insert(Math.Min(selectionStart, selectionEnd), args.Character.Value.ToString());
+							Text = Text.Insert(Math.Min(selectionStart, selectionEnd), charValue);
 
 							selectionStart = Math.Min(selectionStart, selectionEnd) + 1;
 						}
-						else Text = Text.Insert(selectionStart++, args.Character.Value.ToString());
+						else Text = Text.Insert(selectionStart++, charValue);
 					}
 
 					break;
@@ -234,7 +286,14 @@ namespace BaseLibrary.UI.Elements
 				selecting = true;
 			}
 
+			selecting = false;
+
 			focused = true;
+			Main.clrInput();
+			Main.blockInput = true;
+			Main.editSign = true;
+			Main.chatRelease = true;
+			PlayerInput.WritingText = true;
 
 			float lenght = 0f;
 			float x = evt.MousePosition.X - InnerDimensions.Position().X;
@@ -244,6 +303,7 @@ namespace BaseLibrary.UI.Elements
 				index++;
 				lenght = Utility.Font.MeasureString(Text.Substring(0, index - 1)).X;
 			}
+			// bad selection calculation
 
 			selectionStart = index.Clamp(0, Text.Length);
 
@@ -253,6 +313,7 @@ namespace BaseLibrary.UI.Elements
 
 		public override void DoubleClick(UIMouseEvent evt)
 		{
+			// select current word
 		}
 
 		public override void TripleClick(UIMouseEvent evt)
@@ -262,31 +323,26 @@ namespace BaseLibrary.UI.Elements
 			selecting = true;
 		}
 
-		// todo: fix espace and enter opening inventory/chat, possible schedule focused=false to next frame
 		// todo: add special cursor for text
 
-		private int caretTimer;
-		private bool caretVisible;
-
-		private static readonly Color caretColor = new Color(160, 160, 160);
-		private static readonly Color selectionColor = new Color(51, 144, 255) * 0.25f;
+		private Vector2 MeasureString(string s) => Utility.Font.MeasureString(s) - new Vector2(s.Count(x => x == ' ') * 2, 0);
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			base.DrawSelf(spriteBatch);
+			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, Utility.ColorPanel, Color.Black);
 
-			float size = Utility.Font.MeasureString(Text.Substring(0, selectionStart)).X;
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, Text, InnerDimensions.Position(), Color.White, 0f, Vector2.Zero, Vector2.One);
 
-			ChatManager.DrawColorCodedString(spriteBatch, Utility.Font, Text, InnerDimensions.Position(), Color.White, 0f, Vector2.Zero, Vector2.One);
+			float size = MeasureString(Text.Substring(0, selectionStart)).X;
 
 			if (selecting)
 			{
 				spriteBatch.Draw(Main.magicPixel, new Rectangle(
-					(int)(InnerDimensions.X + Utility.Font.MeasureString(Text.Substring(0, Math.Min(selectionStart, selectionEnd))).X),
+					(int)(InnerDimensions.X + MeasureString(Text.Substring(0, Math.Min(selectionStart, selectionEnd))).X),
 					(int)InnerDimensions.Y,
-					(int)Utility.Font.MeasureString(Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd))).X,
+					(int)MeasureString(Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd))).X,
 					20
-				), selectionColor);
+				), SelectionColor);
 			}
 
 			if (++caretTimer > 30)
@@ -297,11 +353,11 @@ namespace BaseLibrary.UI.Elements
 
 			if (caretVisible && focused)
 			{
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(InnerDimensions.X + size) + 1, (int)InnerDimensions.Y, 1, 20), caretColor);
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(InnerDimensions.X + size) + 2, (int)InnerDimensions.Y, 1, 20), caretColor * 0.25f);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(InnerDimensions.X + size) + 1, (int)InnerDimensions.Y, 1, 20), CaretColor);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(InnerDimensions.X + size) + 2, (int)InnerDimensions.Y, 1, 20), CaretColor * 0.25f);
 			}
 
-			//if (string.IsNullOrWhiteSpace(displayString) && !focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouDseText, HintText, dimensions.Center(), Color.Gray, 0f, displayString.Measure() * 0.5f, Vector2.One);
+			if (string.IsNullOrWhiteSpace(Text) && !focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, InnerDimensions.Position(), Color.Gray, 0f, Vector2.Zero, Vector2.One);
 		}
 	}
 }

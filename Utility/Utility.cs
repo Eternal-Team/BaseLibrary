@@ -108,7 +108,7 @@ namespace BaseLibrary
 			return context.Body.Variables.Count - 1;
 		}
 
-		public static int GetArgumentIndex(this ILContext context, string name)
+		public static int GetParameterIndex(this ILContext context, string name)
 		{
 			ParameterDefinition def = context.Method.Parameters.FirstOrDefault(parameter => parameter.Name == name);
 			return def?.Index + 1 ?? throw new Exception($"Parameter with name '{name}' does not exist!");

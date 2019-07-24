@@ -83,9 +83,12 @@ namespace BaseLibrary
 		{
 			SpriteBatchState oldState = End(spriteBatch);
 
+			Rectangle oldScissor = oldState.ScissorRectangle;
+			state.ScissorRectangle = oldState.ScissorRectangle;
 			spriteBatch.Begin(state);
 			action();
 			spriteBatch.End();
+			state.ScissorRectangle = oldScissor;
 			spriteBatch.Begin(oldState);
 		}
 

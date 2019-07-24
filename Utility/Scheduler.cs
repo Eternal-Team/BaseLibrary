@@ -14,12 +14,12 @@ namespace BaseLibrary
 
 		public static void Load()
 		{
-			Main.OnPostDraw += ProcessQueue;
+			Main.OnPreDraw += ProcessQueue;
 		}
 
 		public static void Unload()
 		{
-			Main.OnPostDraw -= ProcessQueue;
+			Main.OnPreDraw -= ProcessQueue;
 		}
 
 		private static void ProcessQueue(GameTime gameTime)

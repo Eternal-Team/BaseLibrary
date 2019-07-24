@@ -44,7 +44,8 @@ namespace BaseLibrary.UI
 			if (element == null) return;
 
 			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.ID] = element.Position / Dimensions.Size();
-			Elements.Remove(element);
+			element.Deactivate();
+			RemoveChild(element);
 			entity.UI = null;
 
 			Main.PlaySound(entity.CloseSound);

@@ -1,7 +1,10 @@
 ﻿using BaseLibrary.UI;
+using Microsoft.Xna.Framework;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
 using Newtonsoft.Json;
+using On.Terraria;
 using On.Terraria.UI;
 using System;
 using System.Collections.Generic;
@@ -9,16 +12,17 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Terraria;
+using Terraria.GameInput;
 using Terraria.ModLoader;
-using Main = IL.Terraria.Main;
-using Player = On.Terraria.Player;
+using Item = Terraria.Item;
+using PlayerInput = On.Terraria.GameInput.PlayerInput;
+using Utils = Terraria.Utils;
 
 namespace BaseLibrary
 {
 	public static partial class Hooking
 	{
-		public static bool InUI;
+		public static bool BlockScrolling;
 
 		internal static void Load()
 		{
@@ -26,9 +30,17 @@ namespace BaseLibrary
 			Player.DropSelectedItem += Player_DropSelectedItem;
 			UIElement.GetElementAt += UIElement_GetElementAt;
 
-			Main.DrawInterface_36_Cursor += Main_DrawInterface_36_Cursor;
+			UserInterface.Update += UserInterface_Update;
 
-			do_worldGenCallBack_Hook += Hooking_do_worldGenCallBack_Hook;
+			IL.Terraria.Main.DrawInterface_36_Cursor += Main_DrawInterface_36_Cursor;
+			PlayerInput.KeyboardInput += PlayerInput_KeyboardInput;
+
+			Main.DoUpdate_Enter_ToggleChat += Main_DoUpdate_Enter_ToggleChat;
+
+			Player.ToggleInv += Player_ToggleInv;
+
+			IL.Terraria.Player.Update += Player_Update;
+			SetupRecipes += ModContent_SetupRecipes;
 
 			Type uiLoadMods = typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.DownloadManager.UILoadModsProgress");
 			HookEndpointManager.Modify(uiLoadMods.GetMethod("OnDeactivate", Utility.defaultFlags), new Action<ILContext>(OnLoadedMods));
@@ -38,7 +50,99 @@ namespace BaseLibrary
 			Initialize();
 		}
 
-		private static void Hooking_do_worldGenCallBack_Hook(orig_do_worldGenCallBack orig, CancellationToken token)
+		private static void Player_Update(ILContext il)
+		{
+			ILCursor cursor = new ILCursor(il);
+
+			if (cursor.TryGotoNext(i => i.MatchLdloc(28), i => i.MatchBrtrue(out _)))
+			{
+				cursor.Index += 2;
+
+				cursor.RemoveRange(113);
+
+				cursor.Emit(OpCodes.Ldarg, 0);
+				cursor.EmitDelegate<Action<Terraria.Player>>(player =>
+				{
+					if (BlockScrolling)
+					{
+						BlockScrolling = false;
+						return;
+					}
+
+					if (!Terraria.Main.playerInventory) player.InvokeMethod<object>("HandleHotbar");
+					else
+					{
+						int delta = Terraria.GameInput.PlayerInput.ScrollWheelDelta / 120;
+						if (Terraria.Main.recBigList)
+						{
+							const int height = 42;
+							const int y = 340;
+							const int x = 310;
+							Terraria.GameInput.PlayerInput.SetZoom_UI();
+							int mulX = (Terraria.Main.screenWidth - x - 280) / height;
+							int mulY = (Terraria.Main.screenHeight - y - 20) / height;
+							if (new Rectangle(x, y, mulX * height, mulY * height).Contains(Utils.ToPoint(Terraria.Main.MouseScreen)))
+							{
+								delta *= -1;
+								int sign = Math.Sign(delta);
+								while (delta != 0)
+								{
+									if (delta < 0)
+									{
+										Terraria.Main.recStart -= mulX;
+										if (Terraria.Main.recStart < 0) Terraria.Main.recStart = 0;
+									}
+									else
+									{
+										Terraria.Main.recStart += mulX;
+										if (Terraria.Main.recStart > Terraria.Main.numAvailableRecipes - mulX) Terraria.Main.recStart = Terraria.Main.numAvailableRecipes - mulX;
+									}
+
+									delta -= sign;
+								}
+							}
+
+							Terraria.GameInput.PlayerInput.SetZoom_World();
+						}
+
+						Terraria.Main.focusRecipe += delta;
+						if (Terraria.Main.focusRecipe > Terraria.Main.numAvailableRecipes - 1) Terraria.Main.focusRecipe = Terraria.Main.numAvailableRecipes - 1;
+						if (Terraria.Main.focusRecipe < 0) Terraria.Main.focusRecipe = 0;
+					}
+				});
+			}
+		}
+
+		private static void Player_ToggleInv(Player.orig_ToggleInv orig, Terraria.Player self)
+		{
+			if (!Utility.Input.KeyboardHandler.Enabled) orig(self);
+		}
+
+		private static void Main_DoUpdate_Enter_ToggleChat(Main.orig_DoUpdate_Enter_ToggleChat orig)
+		{
+			if (!Utility.Input.KeyboardHandler.Enabled) orig();
+		}
+
+		private static void PlayerInput_KeyboardInput(PlayerInput.orig_KeyboardInput orig)
+		{
+			if (!Utility.Input.InterceptKeyboard()) orig();
+			else
+			{
+				foreach (string key in Terraria.GameInput.PlayerInput.MouseKeys)
+				{
+					Terraria.GameInput.PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard].Processkey(Terraria.GameInput.PlayerInput.Triggers.Current, key);
+				}
+			}
+		}
+
+		private static void UserInterface_Update(UserInterface.orig_Update orig, Terraria.UI.UserInterface self, GameTime time)
+		{
+			Utility.Input.Update(time);
+
+			orig(self, time);
+		}
+
+		private static void ModContent_SetupRecipes(orig_SetupRecipes orig, CancellationToken token)
 		{
 			Dictionary<string, Version> previousVersions = new Dictionary<string, Version>();
 			if (File.Exists(LastVersionsPath)) previousVersions = JsonConvert.DeserializeObject<Dictionary<string, Version>>(File.ReadAllText(LastVersionsPath));
@@ -60,13 +164,13 @@ namespace BaseLibrary
 			orig(token);
 		}
 
-		public delegate void orig_do_worldGenCallBack(CancellationToken token);
+		public delegate void orig_SetupRecipes(CancellationToken token);
 
-		public delegate void hook_do_worldGenCallBack(orig_do_worldGenCallBack orig, CancellationToken token);
+		public delegate void hook_SetupRecipes(orig_SetupRecipes orig, CancellationToken token);
 
 		public static MethodBase method => typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.ModContent").GetMethod("SetupRecipes", Utility.defaultFlags, null, new[] {typeof(CancellationToken)}, null);
 
-		public static event hook_do_worldGenCallBack do_worldGenCallBack_Hook
+		public static event hook_SetupRecipes SetupRecipes
 		{
 			add => HookEndpointManager.Add(method, value);
 			remove => HookEndpointManager.Remove(method, value);

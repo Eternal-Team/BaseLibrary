@@ -90,7 +90,7 @@ namespace BaseLibrary
 
 			return new Color(r, g, b);
 		}
-		
+
 		public static Vector3 HSV2RGB(Vector3 HSV)
 		{
 			Vector3 RGB = new Vector3(HSV.Z);
@@ -118,6 +118,6 @@ namespace BaseLibrary
 			return RGB;
 		}
 
-		public static Color Invert(this Color color) => new Color(255-color.R, 255-color.G,255-color.B);
+		public static Color Invert(this Color color) => new Color(255 - color.R, 255 - color.G, 255 - color.B);
 	}
 }
