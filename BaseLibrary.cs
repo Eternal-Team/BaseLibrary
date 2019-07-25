@@ -16,7 +16,6 @@ namespace BaseLibrary
 	{
 		internal static BaseLibrary Instance;
 		public static GUI<PanelUI> PanelGUI;
-		internal static GUI<TestUI> TestGUI;
 		internal static Effect ColorSelectionShader;
 
 		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
@@ -39,7 +38,6 @@ namespace BaseLibrary
 				ColorSelectionShader = GetEffect("Effects/ColorSelectionShader");
 
 				PanelGUI = Utility.SetupGUI<PanelUI>();
-				TestGUI = Utility.SetupGUI<TestUI>();
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
@@ -65,7 +63,6 @@ namespace BaseLibrary
 			if (MouseTextIndex != -1)
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
-				//layers.Insert(MouseTextIndex + 1, TestGUI.InterfaceLayer);
 				layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
 			}
 		}
@@ -99,7 +96,6 @@ namespace BaseLibrary
 				ClosedUICache.Clear();
 			}
 
-			//TestGUI?.Update(gameTime);
 			PanelGUI?.Update(gameTime);
 		}
 

@@ -43,8 +43,8 @@ namespace BaseLibrary.UI.Elements
 		public event Action OnTextChange;
 		private bool RenderPanel;
 		public bool AllowMultiline;
+		public int MaxLength;
 
-		// todo: max lenght
 		// todo: center text
 
 		/*
@@ -54,7 +54,7 @@ namespace BaseLibrary.UI.Elements
 		 }
 		 */
 
-		public UITextInput(Ref<string> text, string hintText = "", bool renderPanel = true)
+		public UITextInput(ref Ref<string> text, string hintText = "", bool renderPanel = true)
 		{
 			RenderPanel = renderPanel;
 			SetPadding(RenderPanel ? 8 : 0);
@@ -69,6 +69,12 @@ namespace BaseLibrary.UI.Elements
 
 		public override void OnDeactivate()
 		{
+			focused = false;
+			Main.blockInput = false;
+			Main.editSign = false;
+			Main.chatRelease = false;
+			PlayerInput.WritingText = false;
+
 			Utility.Input.InterceptKeyboard -= ShouldIntercept;
 			KeyboardEvents.KeyTyped -= KeyTyped;
 		}
@@ -99,7 +105,7 @@ namespace BaseLibrary.UI.Elements
 					if (selecting)
 					{
 						selecting = false;
-
+						// todo: implement maxlength - trunctuate or prevent paste?
 						Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
 						Text = Text.Insert(Math.Min(selectionStart, selectionEnd), Platform.Current.Clipboard);
 						selectionStart = Math.Min(selectionStart, selectionEnd) + Platform.Current.Clipboard.Length;
@@ -232,33 +238,29 @@ namespace BaseLibrary.UI.Elements
 					break;
 				}
 
+				case Keys.Enter when !AllowMultiline:
+				{
+					Task.Run(() =>
+					{
+						Thread.Sleep(20);
+
+						focused = false;
+						Main.blockInput = false;
+						Main.editSign = false;
+						Main.chatRelease = false;
+						PlayerInput.WritingText = false;
+					});
+
+					Main.keyState = Main.oldKeyState;
+
+					break;
+				}
+
 				default:
 				{
 					if (args.Character != null)
 					{
-						string charValue;
-						if (args.Key == Keys.Enter)
-						{
-							if (AllowMultiline) charValue = "\n";
-							else
-							{
-								Task.Run(() =>
-								{
-									Thread.Sleep(20);
-
-									focused = false;
-									Main.blockInput = false;
-									Main.editSign = false;
-									Main.chatRelease = false;
-									PlayerInput.WritingText = false;
-								});
-
-								Main.keyState = Main.oldKeyState;
-
-								return;
-							}
-						}
-						else charValue = args.Character.Value.ToString();
+						string charValue = args.Character.Value.ToString();
 
 						if (selecting)
 						{
@@ -268,8 +270,13 @@ namespace BaseLibrary.UI.Elements
 							Text = Text.Insert(Math.Min(selectionStart, selectionEnd), charValue);
 
 							selectionStart = Math.Min(selectionStart, selectionEnd) + 1;
+							selectionEnd = selectionStart;
 						}
-						else Text = Text.Insert(selectionStart++, charValue);
+						else
+						{
+							if (Text.Length + 1 > MaxLength) return;
+							Text = Text.Insert(selectionStart++, charValue);
+						}
 					}
 
 					break;
@@ -303,6 +310,7 @@ namespace BaseLibrary.UI.Elements
 				index++;
 				lenght = Utility.Font.MeasureString(Text.Substring(0, index - 1)).X;
 			}
+
 			// todo: bad selection calculation, when clicking it should always grab before the clicked latter
 			index--;
 			selectionStart = index.Clamp(0, Text.Length);
