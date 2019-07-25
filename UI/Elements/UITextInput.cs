@@ -303,8 +303,8 @@ namespace BaseLibrary.UI.Elements
 				index++;
 				lenght = Utility.Font.MeasureString(Text.Substring(0, index - 1)).X;
 			}
-			// bad selection calculation
-
+			// todo: bad selection calculation, when clicking it should always grab before the clicked latter
+			index--;
 			selectionStart = index.Clamp(0, Text.Length);
 
 			caretVisible = true;
@@ -322,8 +322,6 @@ namespace BaseLibrary.UI.Elements
 			selectionStart = Text.Length;
 			selecting = true;
 		}
-
-		// todo: add special cursor for text
 
 		private Vector2 MeasureString(string s) => Utility.Font.MeasureString(s) - new Vector2(s.Count(x => x == ' ') * 2, 0);
 
@@ -358,6 +356,8 @@ namespace BaseLibrary.UI.Elements
 			}
 
 			if (string.IsNullOrWhiteSpace(Text) && !focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, InnerDimensions.Position(), Color.Gray, 0f, Vector2.Zero, Vector2.One);
+
+			if (IsMouseHovering) Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor");
 		}
 	}
 }
