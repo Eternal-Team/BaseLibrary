@@ -66,6 +66,7 @@ namespace BaseLibrary.UI.Elements
 		private bool selecting;
 		private int selectionStart;
 		private int selectionEnd;
+		private bool doubleClicked;
 
 		private int caretTimer;
 		private bool caretVisible;
@@ -105,13 +106,6 @@ namespace BaseLibrary.UI.Elements
 				SetPadding(value ? 8 : 0);
 			}
 		}
-
-		/*
-		 while(s[i]!=wordboundary&&s[i-1]!=APLHANUM)
-		 {
-		 select
-		 }
-		 */
 
 		public UITextInput(ref Ref<string> text)
 		{
@@ -156,7 +150,8 @@ namespace BaseLibrary.UI.Elements
 					if (selecting)
 					{
 						selecting = false;
-						// todo: implement maxlength - trunctuate or prevent paste?
+
+						if (Text.Length + Platform.Current.Clipboard.Length > MaxLength) return;
 
 						SelectedText = Platform.Current.Clipboard;
 						selectionStart = Math.Min(selectionStart, selectionEnd) + Platform.Current.Clipboard.Length;
@@ -368,8 +363,6 @@ namespace BaseLibrary.UI.Elements
 			caretTimer = 0;
 		}
 
-		private bool doubleClicked;
-
 		public override void DoubleClick(UIMouseEvent evt)
 		{
 			string[] split = Regex.Split(Text, "\\b");
@@ -448,7 +441,10 @@ namespace BaseLibrary.UI.Elements
 
 			if (string.IsNullOrWhiteSpace(Text) && !Focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, textPosition, Color.Gray, 0f, Vector2.Zero, Vector2.One);
 
-			if (IsMouseHovering) Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor");
+			if (IsMouseHovering)
+			{
+				Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor", new Vector2(3.5f, 8.5f));
+			}
 		}
 	}
 }

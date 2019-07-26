@@ -29,8 +29,6 @@ namespace BaseLibrary
 			};
 		}
 
-		// todo: store opened states?
-
 		public override void Load(TagCompound tag)
 		{
 			UIPositions = new Dictionary<Guid, Vector2>();

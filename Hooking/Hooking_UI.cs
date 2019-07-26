@@ -14,6 +14,7 @@ namespace BaseLibrary
 	{
 		private const int CustomCursorOverride = 1000;
 		private static string CurrrentShiftClickIcon;
+		private static Vector2 CursorOffset;
 
 		private static UIElement UIElement_GetElementAt(On.Terraria.UI.UIElement.orig_GetElementAt orig, UIElement self, Vector2 point)
 		{
@@ -58,7 +59,7 @@ namespace BaseLibrary
 					Texture2D texture = ModContent.GetTexture(CurrrentShiftClickIcon);
 
 					float texScale = Math.Min(20f / texture.Width, 20f / texture.Height);
-					Main.spriteBatch.Draw(texture, new Vector2(Main.mouseX, Main.mouseY), null, Color.White, rotation, Vector2.Zero, Main.cursorScale * texScale, SpriteEffects.None, 0f);
+					Main.spriteBatch.Draw(texture, new Vector2(Main.mouseX, Main.mouseY), null, Color.White, rotation, CursorOffset, Main.cursorScale * texScale, SpriteEffects.None, 0f);
 				});
 				cursor.Emit(OpCodes.Ret);
 
@@ -66,12 +67,11 @@ namespace BaseLibrary
 			}
 		}
 
-		public static void SetCursor(string texture)
+		public static void SetCursor(string texture, Vector2? offset = null)
 		{
-			// todo: also allow for an offset
-
 			Main.cursorOverride = CustomCursorOverride;
 			CurrrentShiftClickIcon = texture;
+			CursorOffset = offset ?? Vector2.Zero;
 		}
 	}
 }

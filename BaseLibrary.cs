@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 using Terraria.UI;
 
 namespace BaseLibrary
@@ -66,7 +68,7 @@ namespace BaseLibrary
 				layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
 			}
 		}
-
+		
 		public override void UpdateUI(GameTime gameTime)
 		{
 			// ReSharper disable once ForCanBeConvertedToForeach
@@ -75,8 +77,10 @@ namespace BaseLibrary
 				UIElement element = PanelGUI.UI.Elements[i];
 				if (element is BaseUIPanel panel && panel.Container is BaseTE tileEntity)
 				{
-					// todo: calculate from the center of the tile
-					if (Vector2.DistanceSquared(tileEntity.Position.ToWorldCoordinates(0, 0), Main.LocalPlayer.Center) > 160 * 160) PanelGUI.UI.CloseUI(panel.Container);
+					TileObjectData data = TileObjectData.GetTileData(tileEntity.mod.GetTile(tileEntity.TileType.Name).Type, 0);
+					Vector2 offset = data != null ? new Vector2(data.Width * 8f, data.Height * 8f) : Vector2.Zero;
+
+					if (Vector2.DistanceSquared(tileEntity.Position.ToWorldCoordinates(offset), Main.LocalPlayer.Center) > 160 * 160) PanelGUI.UI.CloseUI(panel.Container);
 				}
 			}
 
