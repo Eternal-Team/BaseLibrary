@@ -5,6 +5,7 @@ using ReLogic.OS;
 using Starbound.Input;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Terraria;
@@ -76,8 +77,8 @@ namespace BaseLibrary.UI.Elements
 		public string HintText;
 		public event Action OnTextChange;
 
-		public HorizontalAlignment HorizontalAlignment=HorizontalAlignment.Left;
-		public VerticalAlignment VerticalAlignment=VerticalAlignment.Top;
+		public HorizontalAlignment HorizontalAlignment = HorizontalAlignment.Left;
+		public VerticalAlignment VerticalAlignment = VerticalAlignment.Top;
 
 		public string Text
 		{
@@ -243,7 +244,7 @@ namespace BaseLibrary.UI.Elements
 					Main.keyState = Main.oldKeyState;
 					break;
 				}
-				
+
 				case Keys.Left:
 				{
 					if (selectionStart - 1 >= 0) selectionStart--;
@@ -339,6 +340,12 @@ namespace BaseLibrary.UI.Elements
 
 		public override void Click(UIMouseEvent evt)
 		{
+			if (doubleClicked)
+			{
+				doubleClicked = false;
+				return;
+			}
+
 			if (!Focused && SelectOnFirstClick)
 			{
 				selectionEnd = 0;
@@ -361,9 +368,26 @@ namespace BaseLibrary.UI.Elements
 			caretTimer = 0;
 		}
 
+		private bool doubleClicked;
+
 		public override void DoubleClick(UIMouseEvent evt)
 		{
-			// select current word
+			string[] split = Regex.Split(Text, "\\b");
+
+			int stringStart = 0;
+			foreach (string s in split)
+			{
+				if (selectionStart >= stringStart && selectionStart <= stringStart + s.Length && !string.IsNullOrWhiteSpace(s))
+				{
+					selecting = true;
+					selectionEnd = stringStart;
+					selectionStart = stringStart + s.Length;
+
+					doubleClicked = true;
+				}
+
+				stringStart += s.Length;
+			}
 		}
 
 		public override void TripleClick(UIMouseEvent evt)
