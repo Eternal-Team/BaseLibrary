@@ -12,7 +12,7 @@ namespace BaseLibrary
 
 		public override Guid Deserialize(TagCompound tag)
 		{
-			return Guid.Parse(tag.GetString("Value"));
+			return tag.ContainsKey("Value")? Guid.Parse(tag.GetString("Value")):Guid.NewGuid();
 		}
 	}
 }

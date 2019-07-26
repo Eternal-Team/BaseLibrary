@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -16,6 +17,12 @@ namespace BaseLibrary.UI.Elements
 		{
 			if (customTexture != null) spriteBatch.Draw(customTexture, Dimensions);
 			else spriteBatch.DrawPanel(Dimensions, BackgroundColor, BorderColor);
+
+			if (IsMouseHovering)
+			{
+				Main.LocalPlayer.showItemIcon = false;
+				Main.ItemIconCacheUpdate(0);
+			}
 		}
 	}
 }

@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
@@ -15,6 +17,12 @@ namespace BaseLibrary.UI.Elements
 		public UITextButton(string text)
 		{
 			this.text = text;
+			SetPadding(8);
+		}
+
+		public UITextButton(LocalizedText text)
+		{
+			this.text = text.ToString();
 			SetPadding(8);
 		}
 
