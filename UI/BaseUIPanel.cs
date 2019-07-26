@@ -6,7 +6,7 @@ namespace BaseLibrary.UI
 {
 	public interface IHasUI
 	{
-		Guid ID { get; set; }
+		Guid UUID { get; set; }
 
 		BaseUIPanel UI { get; set; }
 

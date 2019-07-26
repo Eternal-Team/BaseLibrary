@@ -43,7 +43,7 @@ namespace BaseLibrary.UI
 			BaseElement element = entity.UI;
 			if (element == null) return;
 
-			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.ID] = element.Position / Dimensions.Size();
+			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.UUID] = element.Position / Dimensions.Size();
 			element.Deactivate();
 			RemoveChild(element);
 			entity.UI = null;
@@ -60,7 +60,7 @@ namespace BaseLibrary.UI
 
 			entity.UI.Activate();
 
-			if (Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions.TryGetValue(entity.ID, out Vector2 position))
+			if (Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions.TryGetValue(entity.UUID, out Vector2 position))
 			{
 				entity.UI.HAlign = entity.UI.VAlign = 0;
 				entity.UI.Position = position * Dimensions.Size();

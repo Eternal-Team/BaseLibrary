@@ -122,6 +122,13 @@ namespace BaseLibrary
 
 		public static Point16 ReadPoint16(this BinaryReader reader) => new Point16(reader.ReadInt16(), reader.ReadInt16());
 
+		public static void Write(this BinaryWriter writer, Guid guid)
+		{
+			writer.Write(guid.ToString());
+		}
+
+		public static Guid ReadGUID(this BinaryReader reader) => Guid.Parse(reader.ReadString());
+
 		public static string GetTranslation(this ModTranslation translation) => translation.GetTranslation(Language.ActiveCulture);
 	}
 }

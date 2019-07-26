@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using Terraria.ObjectData;
 using Terraria.UI;
 
@@ -26,6 +27,8 @@ namespace BaseLibrary
 		public override void Load()
 		{
 			Instance = this;
+
+			TagSerializer.AddSerializer(new GUIDSerializer());
 
 			Utility.Input.Load();
 			Hooking.Load();
