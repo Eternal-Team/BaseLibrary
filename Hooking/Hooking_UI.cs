@@ -68,6 +68,8 @@ namespace BaseLibrary
 
 		public static void SetCursor(string texture)
 		{
+			// todo: also allow for an offset
+
 			Main.cursorOverride = CustomCursorOverride;
 			CurrrentShiftClickIcon = texture;
 		}

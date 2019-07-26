@@ -14,23 +14,70 @@ using Terraria.UI.Chat;
 
 namespace BaseLibrary.UI.Elements
 {
+	public enum HorizontalAlignment
+	{
+		Left,
+		Center,
+		Right
+	}
+
+	public enum VerticalAlignment
+	{
+		Top,
+		Center,
+		Bottom
+	}
+
 	public class UITextInput : BaseElement
 	{
-		// todo: cleanup
-		// note: support for Insert?
+		private static readonly Color CaretColor = new Color(160, 160, 160);
+		private static readonly Color SelectionColor = new Color(51, 144, 255) * 0.25f;
 
 		private Ref<string> _text;
-		private bool focused;
+		private bool _renderPanel;
+		private bool _focused;
 
+		private bool Focused
+		{
+			get => _focused;
+			set
+			{
+				if (value)
+				{
+					_focused = true;
+					Main.clrInput();
+					Main.blockInput = true;
+					Main.editSign = true;
+					Main.chatRelease = true;
+					PlayerInput.WritingText = true;
+				}
+				else
+				{
+					_focused = false;
+					Main.blockInput = false;
+					Main.editSign = false;
+					Main.chatRelease = false;
+					PlayerInput.WritingText = false;
+				}
+			}
+		}
+
+		private bool selecting;
 		private int selectionStart;
 		private int selectionEnd;
-		private bool selecting;
 
 		private int caretTimer;
 		private bool caretVisible;
 
-		private static readonly Color CaretColor = new Color(160, 160, 160);
-		private static readonly Color SelectionColor = new Color(51, 144, 255) * 0.25f;
+		public bool SelectOnFirstClick;
+		public bool AllowMultiline;
+
+		public int MaxLength;
+		public string HintText;
+		public event Action OnTextChange;
+
+		public HorizontalAlignment HorizontalAlignment=HorizontalAlignment.Left;
+		public VerticalAlignment VerticalAlignment=VerticalAlignment.Top;
 
 		public string Text
 		{
@@ -38,14 +85,25 @@ namespace BaseLibrary.UI.Elements
 			set => _text.Value = value;
 		}
 
-		public bool SelectOnFirstClick;
-		public string HintText;
-		public event Action OnTextChange;
-		private bool RenderPanel;
-		public bool AllowMultiline;
-		public int MaxLength;
+		public string SelectedText
+		{
+			get => Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+			set
+			{
+				Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+				Text = Text.Insert(Math.Min(selectionStart, selectionEnd), value);
+			}
+		}
 
-		// todo: center text
+		public bool RenderPanel
+		{
+			get => _renderPanel;
+			set
+			{
+				_renderPanel = value;
+				SetPadding(value ? 8 : 0);
+			}
+		}
 
 		/*
 		 while(s[i]!=wordboundary&&s[i-1]!=APLHANUM)
@@ -54,13 +112,9 @@ namespace BaseLibrary.UI.Elements
 		 }
 		 */
 
-		public UITextInput(ref Ref<string> text, string hintText = "", bool renderPanel = true)
+		public UITextInput(ref Ref<string> text)
 		{
-			RenderPanel = renderPanel;
-			SetPadding(RenderPanel ? 8 : 0);
-
 			_text = text;
-			HintText = hintText;
 
 			Utility.Input.InterceptKeyboard += ShouldIntercept;
 
@@ -69,17 +123,13 @@ namespace BaseLibrary.UI.Elements
 
 		public override void OnDeactivate()
 		{
-			focused = false;
-			Main.blockInput = false;
-			Main.editSign = false;
-			Main.chatRelease = false;
-			PlayerInput.WritingText = false;
+			Focused = false;
 
 			Utility.Input.InterceptKeyboard -= ShouldIntercept;
 			KeyboardEvents.KeyTyped -= KeyTyped;
 		}
 
-		private bool ShouldIntercept() => focused;
+		private bool ShouldIntercept() => Focused;
 
 		private void KeyTyped(object sender, KeyboardEventArgs args)
 		{
@@ -95,7 +145,7 @@ namespace BaseLibrary.UI.Elements
 
 				case Keys.C when KeyboardUtil.ControlDown(args.Modifiers):
 				{
-					Platform.Current.Clipboard = selecting ? Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)) : Text;
+					Platform.Current.Clipboard = selecting ? SelectedText : Text;
 
 					break;
 				}
@@ -106,8 +156,8 @@ namespace BaseLibrary.UI.Elements
 					{
 						selecting = false;
 						// todo: implement maxlength - trunctuate or prevent paste?
-						Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
-						Text = Text.Insert(Math.Min(selectionStart, selectionEnd), Platform.Current.Clipboard);
+
+						SelectedText = Platform.Current.Clipboard;
 						selectionStart = Math.Min(selectionStart, selectionEnd) + Platform.Current.Clipboard.Length;
 					}
 					else
@@ -116,6 +166,8 @@ namespace BaseLibrary.UI.Elements
 
 						selectionStart += Platform.Current.Clipboard.Length;
 					}
+
+					OnTextChange?.Invoke();
 
 					break;
 				}
@@ -126,8 +178,8 @@ namespace BaseLibrary.UI.Elements
 					{
 						selecting = false;
 
-						Platform.Current.Clipboard = Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
-						Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+						Platform.Current.Clipboard = SelectedText;
+						SelectedText = "";
 
 						selectionStart = Math.Min(selectionStart, selectionEnd);
 					}
@@ -138,6 +190,8 @@ namespace BaseLibrary.UI.Elements
 						selectionStart = 0;
 					}
 
+					OnTextChange?.Invoke();
+
 					break;
 				}
 
@@ -147,10 +201,13 @@ namespace BaseLibrary.UI.Elements
 					{
 						selecting = false;
 
-						Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+						SelectedText = "";
+
 						selectionStart = Math.Min(selectionStart, selectionEnd);
 					}
 					else if (selectionStart < Text.Length) Text = Text.Remove(selectionStart, 1);
+
+					OnTextChange?.Invoke();
 
 					// ctrl - delete to next word
 					break;
@@ -162,10 +219,13 @@ namespace BaseLibrary.UI.Elements
 					{
 						selecting = false;
 
-						Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+						SelectedText = "";
+
 						selectionStart = Math.Min(selectionStart, selectionEnd);
 					}
 					else if (selectionStart > 0) Text = Text.Remove(--selectionStart, 1);
+
+					OnTextChange?.Invoke();
 
 					// ctrl - delete to previous word
 					break;
@@ -177,17 +237,13 @@ namespace BaseLibrary.UI.Elements
 					{
 						Thread.Sleep(20);
 
-						focused = false;
-						Main.blockInput = false;
-						Main.editSign = false;
-						Main.chatRelease = false;
-						PlayerInput.WritingText = false;
+						Focused = false;
 					});
 
 					Main.keyState = Main.oldKeyState;
 					break;
 				}
-
+				
 				case Keys.Left:
 				{
 					if (selectionStart - 1 >= 0) selectionStart--;
@@ -244,11 +300,7 @@ namespace BaseLibrary.UI.Elements
 					{
 						Thread.Sleep(20);
 
-						focused = false;
-						Main.blockInput = false;
-						Main.editSign = false;
-						Main.chatRelease = false;
-						PlayerInput.WritingText = false;
+						Focused = false;
 					});
 
 					Main.keyState = Main.oldKeyState;
@@ -266,8 +318,7 @@ namespace BaseLibrary.UI.Elements
 						{
 							selecting = false;
 
-							Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
-							Text = Text.Insert(Math.Min(selectionStart, selectionEnd), charValue);
+							SelectedText = charValue;
 
 							selectionStart = Math.Min(selectionStart, selectionEnd) + 1;
 							selectionEnd = selectionStart;
@@ -277,6 +328,8 @@ namespace BaseLibrary.UI.Elements
 							if (Text.Length + 1 > MaxLength) return;
 							Text = Text.Insert(selectionStart++, charValue);
 						}
+
+						OnTextChange?.Invoke();
 					}
 
 					break;
@@ -286,7 +339,7 @@ namespace BaseLibrary.UI.Elements
 
 		public override void Click(UIMouseEvent evt)
 		{
-			if (!focused && SelectOnFirstClick)
+			if (!Focused && SelectOnFirstClick)
 			{
 				selectionEnd = 0;
 				selectionStart = Text.Length;
@@ -295,25 +348,14 @@ namespace BaseLibrary.UI.Elements
 
 			selecting = false;
 
-			focused = true;
-			Main.clrInput();
-			Main.blockInput = true;
-			Main.editSign = true;
-			Main.chatRelease = true;
-			PlayerInput.WritingText = true;
+			Focused = true;
 
-			float lenght = 0f;
-			float x = evt.MousePosition.X - InnerDimensions.Position().X;
-			int index = 0;
-			while (lenght < x && index < Text.Length)
+			float clickedX = evt.MousePosition.X - GetTextPosition().X;
+
+			for (int i = 0; i <= Text.Length; i++)
 			{
-				index++;
-				lenght = Utility.Font.MeasureString(Text.Substring(0, index - 1)).X;
+				if (MeasureString(Text.Substring(0, i)).X < clickedX) selectionStart = i;
 			}
-
-			// todo: bad selection calculation, when clicking it should always grab before the clicked latter
-			index--;
-			selectionStart = index.Clamp(0, Text.Length);
 
 			caretVisible = true;
 			caretTimer = 0;
@@ -333,19 +375,36 @@ namespace BaseLibrary.UI.Elements
 
 		private Vector2 MeasureString(string s) => Utility.Font.MeasureString(s) - new Vector2(s.Count(x => x == ' ') * 2, 0);
 
+		private Vector2 GetTextPosition()
+		{
+			Vector2 textSize = MeasureString(Text);
+			Vector2 vec = Vector2.Zero;
+			if (HorizontalAlignment == HorizontalAlignment.Left) vec.X = InnerDimensions.X;
+			else if (HorizontalAlignment == HorizontalAlignment.Center) vec.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
+			else if (HorizontalAlignment == HorizontalAlignment.Right) vec.X = InnerDimensions.X + InnerDimensions.Width - textSize.X;
+
+			if (VerticalAlignment == VerticalAlignment.Top) vec.Y = InnerDimensions.Y;
+			else if (VerticalAlignment == VerticalAlignment.Center) vec.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f;
+			else if (VerticalAlignment == VerticalAlignment.Bottom) vec.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
+
+			return vec;
+		}
+
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, Utility.ColorPanel, Color.Black);
 
-			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, Text, InnerDimensions.Position(), Color.White, 0f, Vector2.Zero, Vector2.One);
+			Vector2 textPosition = GetTextPosition();
+
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, Text, textPosition, Color.White, 0f, Vector2.Zero, Vector2.One);
 
 			float size = MeasureString(Text.Substring(0, selectionStart)).X;
 
 			if (selecting)
 			{
 				spriteBatch.Draw(Main.magicPixel, new Rectangle(
-					(int)(InnerDimensions.X + MeasureString(Text.Substring(0, Math.Min(selectionStart, selectionEnd))).X),
-					(int)InnerDimensions.Y,
+					(int)(textPosition.X + MeasureString(Text.Substring(0, Math.Min(selectionStart, selectionEnd))).X),
+					(int)textPosition.Y,
 					(int)MeasureString(Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd))).X,
 					20
 				), SelectionColor);
@@ -357,13 +416,13 @@ namespace BaseLibrary.UI.Elements
 				caretTimer = 0;
 			}
 
-			if (caretVisible && focused)
+			if (caretVisible && Focused)
 			{
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(InnerDimensions.X + size) + 1, (int)InnerDimensions.Y, 1, 20), CaretColor);
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(InnerDimensions.X + size) + 2, (int)InnerDimensions.Y, 1, 20), CaretColor * 0.25f);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 1, (int)textPosition.Y, 1, 20), CaretColor);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 2, (int)textPosition.Y, 1, 20), CaretColor * 0.25f);
 			}
 
-			if (string.IsNullOrWhiteSpace(Text) && !focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, InnerDimensions.Position(), Color.Gray, 0f, Vector2.Zero, Vector2.One);
+			if (string.IsNullOrWhiteSpace(Text) && !Focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, textPosition, Color.Gray, 0f, Vector2.Zero, Vector2.One);
 
 			if (IsMouseHovering) Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor");
 		}
