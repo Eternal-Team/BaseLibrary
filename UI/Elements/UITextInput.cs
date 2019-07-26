@@ -112,7 +112,6 @@ namespace BaseLibrary.UI.Elements
 			_text = text;
 
 			Utility.Input.InterceptKeyboard += ShouldIntercept;
-
 			KeyboardEvents.KeyTyped += KeyTyped;
 		}
 
@@ -128,6 +127,8 @@ namespace BaseLibrary.UI.Elements
 
 		private void KeyTyped(object sender, KeyboardEventArgs args)
 		{
+			if (!Focused) return;
+
 			switch (args.Key)
 			{
 				case Keys.A when KeyboardUtil.ControlDown(args.Modifiers):
@@ -405,6 +406,11 @@ namespace BaseLibrary.UI.Elements
 			else if (VerticalAlignment == VerticalAlignment.Bottom) vec.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
 
 			return vec;
+		}
+
+		public override void Update(GameTime gameTime)
+		{
+			if ((Main.mouseLeft|| Main.mouseRight||Main.mouseMiddle) && !IsMouseHovering) Focused = false;
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
