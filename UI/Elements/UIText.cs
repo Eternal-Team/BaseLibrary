@@ -21,27 +21,21 @@ namespace BaseLibrary.UI.Elements
 
 		public UIText(LocalizedText text, float textScale = 1f, bool large = false) => InternalSetText(text, textScale, large);
 
+		public UIText(Ref<string> text, float textScale = 1f, bool large = false) => InternalSetText(text, textScale, large);
+		
 		public override void Recalculate()
 		{
 			InternalSetText(text, textScale, isLarge);
 			base.Recalculate();
 		}
 
-		public void SetText(string text) => InternalSetText(text, textScale, isLarge);
-
-		public void SetText(LocalizedText text) => InternalSetText(text, textScale, isLarge);
-
-		public void SetText(string text, float textScale, bool large) => InternalSetText(text, textScale, large);
-
-		public void SetText(LocalizedText text, float textScale, bool large) => InternalSetText(text, textScale, large);
-
 		private void InternalSetText(object text, float textScale, bool large)
 		{
-			DynamicSpriteFont dynamicSpriteFont = large ? Main.fontDeathText : Main.fontMouseText;
-			Vector2 textSize = new Vector2(dynamicSpriteFont.MeasureString(text.ToString()).X, large ? 32f : 16f) * textScale;
 			this.text = text;
+
+			DynamicSpriteFont dynamicSpriteFont = large ? Main.fontDeathText : Main.fontMouseText;
+			textSize = new Vector2(dynamicSpriteFont.MeasureString(Text).X, large ? 32f : 16f) * textScale;
 			this.textScale = textScale;
-			this.textSize = textSize;
 			isLarge = large;
 			MinWidth.Set(textSize.X + PaddingLeft + PaddingRight, 0f);
 			MinHeight.Set(textSize.Y + PaddingTop + PaddingBottom, 0f);
