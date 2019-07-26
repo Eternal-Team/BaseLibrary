@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace BaseLibrary
@@ -119,5 +120,19 @@ namespace BaseLibrary
 		}
 
 		public static Color Invert(this Color color) => new Color(255 - color.R, 255 - color.G, 255 - color.B);
+
+		public static Color AverageColor(this IEnumerable<Color> colors)
+		{
+			int r = 0, g = 0, b = 0, a = 0;
+			foreach (Color color in colors)
+			{
+				r += color.R;
+				g += color.G;
+				b += color.B;
+				a += color.A;
+			}
+
+			return new Color(r / 4, g / 4, b / 4, a / 4);
+		}
 	}
 }
