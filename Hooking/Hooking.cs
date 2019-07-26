@@ -125,7 +125,7 @@ namespace BaseLibrary
 
 		private static void PlayerInput_KeyboardInput(PlayerInput.orig_KeyboardInput orig)
 		{
-			if (!Utility.Input.KeyboardHandler.Enabled)orig();
+			if (!Utility.Input.KeyboardHandler.Enabled) orig();
 			else
 			{
 				foreach (string key in Terraria.GameInput.PlayerInput.MouseKeys)

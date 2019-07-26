@@ -38,14 +38,14 @@ namespace BaseLibrary
 
 			internal static void Update(GameTime time)
 			{
-				if (InterceptKeyboard())
+				if (InterceptKeyboard.GetInvocationList().Any(del => (bool)del.DynamicInvoke()))
 				{
 					KeyboardHandler.Enabled = true;
 					KeyboardHandler.Update(time);
 				}
 				else KeyboardHandler.Enabled = false;
 
-				if (InterceptMouse())
+				if (InterceptMouse.GetInvocationList().Any(del => (bool)del.DynamicInvoke()))
 				{
 					MouseHandler.Enabled = true;
 					MouseHandler.Update(time);

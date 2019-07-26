@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Terraria.UI;
@@ -68,7 +67,7 @@ namespace BaseLibrary
 				layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
 			}
 		}
-		
+
 		public override void UpdateUI(GameTime gameTime)
 		{
 			// ReSharper disable once ForCanBeConvertedToForeach
