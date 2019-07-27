@@ -10,11 +10,14 @@ namespace BaseLibrary.UI.Elements
 	{
 		public Action<Color> OnChangeColor;
 
-		public override void Click(UIMouseEvent evt)
+		public override void Update(GameTime gameTime)
 		{
-			Vector2 coords = (evt.MousePosition - Dimensions.Position()) / Dimensions.Size();
+			if (IsMouseHovering && Main.mouseLeft)
+			{
+				Vector2 coords = (UserInterface.ActiveInstance.MousePosition - Dimensions.Position()) / Dimensions.Size();
 
-			OnChangeColor(coords.Y < 0.5 ? new Color(Utility.HSV2RGB(new Vector3(coords.X * 360f, coords.Y * 2f, 1f))) : new Color(Utility.HSV2RGB(new Vector3(coords.X * 360f, 1f, 1f - (coords.Y * 2f - 1f)))));
+				OnChangeColor(coords.Y < 0.5 ? new Color(Utility.HSV2RGB(new Vector3(coords.X * 360f, coords.Y * 2f, 1f))) : new Color(Utility.HSV2RGB(new Vector3(coords.X * 360f, 1f, 1f - (coords.Y * 2f - 1f)))));
+			}
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
