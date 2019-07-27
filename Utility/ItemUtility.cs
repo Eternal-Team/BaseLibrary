@@ -18,35 +18,8 @@ namespace BaseLibrary
 			ItemID.GoldCoin,
 			ItemID.PlatinumCoin
 		});
-
-		public static Item PutItemInInventory(Item toExtract, int stack = 0)
-		{
-			if (toExtract.maxStack == 1) return Main.LocalPlayer.GetItem(Main.LocalPlayer.whoAmI, toExtract);
-
-			int count = stack > 0 ? stack : toExtract.stack;
-
-			foreach (Item item in Main.LocalPlayer.inventory)
-			{
-				if (item.type == toExtract.type && item.stack < item.maxStack)
-				{
-					int diff = Math.Min(count, item.maxStack - item.stack);
-					item.stack += diff;
-					count -= diff;
-					if (count <= 0) return new Item();
-				}
-			}
-
-			Item item2 = new Item();
-			item2.SetDefaults(toExtract.type);
-			int c = Math.Min(count, item2.maxStack);
-			item2.stack = c;
-			count -= c;
-			Item item3 = Main.LocalPlayer.GetItem(Main.LocalPlayer.whoAmI, item2);
-			item3.stack += count;
-			return item3;
-		}
-
-		public static Item TakeItemFromNearbyChest(Item item, Vector2 position)
+		
+		/*	public static Item TakeItemFromNearbyChest(Item item, Vector2 position)
 		{
 			if (Main.netMode == 1) return item;
 			for (int i = 0; i < Main.chest.Length; i++)
@@ -129,7 +102,7 @@ namespace BaseLibrary
 					yield return to.IndexOf(next);
 				}
 			}
-		}
+		}*/
 
 		public static bool IsCoin(this Item item) => CoinTypes.Contains(item.type);
 
@@ -138,13 +111,6 @@ namespace BaseLibrary
 		public static IEnumerable<T> OfType<T>(this IEnumerable<Item> items) where T : class => items.Where(item => item.modItem is T).Select(item => item.modItem as T);
 
 		#region Player
-
-		public static List<Item> Armor(this Player player) => player.armor.Where((item, i) => i > 0 && i < 3).ToList();
-
-		public static List<Item> Accessory(this Player player) => player.armor.Where((item, i) => i >= 3 && i < 8 + Main.LocalPlayer.extraAccessorySlots).ToList();
-
-		public static List<Item> Ammo(this Player player) => player.inventory.Where((item, i) => i >= 54 && i <= 57).ToList();
-
 		public static Item[] Inventory(this Player player)
 		{
 			Item[] inv = new Item[58];
@@ -152,63 +118,7 @@ namespace BaseLibrary
 			return inv;
 		}
 
-		public static bool HasArmor(this Player player, int type) => player.Armor().Any(item => item.type == type);
-
-		public static bool HasAccessory(this Player player, int type) => player.Accessory().Any(item => item.type == type);
-
 		public static Item GetHeldItem(this Player player) => Main.mouseItem.IsAir ? Main.LocalPlayer.HeldItem : Main.mouseItem;
-
-		public static bool HasItem(this Player player, int type, int stack = -1)
-		{
-			int count = player.inventory.Where(item => type == item.type).Sum(item => item.stack);
-			return stack == -1 ? count > 0 : count >= stack;
-		}
-
-		public static bool HasItems(this Player player, List<Item> items) => items.All(item => player.HasItem(item.type, item.stack));
-
-		public static bool ConsumeItem(this Player player, int type, int stack = 1)
-		{
-			if (player.HasItem(type, stack))
-			{
-				int remaining = stack;
-
-				for (int i = 0; i < player.inventory.Length; i++)
-				{
-					if (player.inventory[i].type == type)
-					{
-						int removed = Math.Min(player.inventory[i].stack, remaining);
-						player.inventory[i].stack = remaining -= removed;
-						if (player.inventory[i].stack <= 0) player.inventory[i].SetDefaults();
-						if (remaining == 0) return true;
-					}
-				}
-
-				return true;
-			}
-
-			return false;
-		}
-
-		public static bool ConsumeItems(this Player player, List<Item> items)
-		{
-			if (player.HasItems(items))
-			{
-				for (int i = 0; i < items.Count; i++) player.ConsumeItem(items[i].type, items[i].stack);
-				return true;
-			}
-
-			return false;
-		}
-
-		public static void SpawnItems(this Player player, List<Item> items)
-		{
-			for (int i = 0; i < items.Count; i++) Item.NewItem(player.position, player.Size, items[i].type, items[i].stack, noGrabDelay: true);
-		}
-
-		public static bool IsPlayerInChest(int chestIndex) => Main.player.Any(player => player.chest == chestIndex);
-
-		public static bool IsPlayerInChest(this Chest chest) => Main.player.Any(player => player.chest == Array.IndexOf(Main.chest, chest));
-
 		#endregion
 	}
 }
