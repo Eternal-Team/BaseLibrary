@@ -15,7 +15,7 @@ namespace BaseLibrary
 	{
 		private static string mouseText;
 		private static Color? colorMouseText;
-
+		// todo: cache
 		internal static Texture2D TexturePanelBackground => ModContent.GetTexture("Terraria/UI/PanelBackground");
 		internal static Texture2D TexturePanelBorder => ModContent.GetTexture("Terraria/UI/PanelBorder");
 

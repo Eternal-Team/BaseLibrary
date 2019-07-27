@@ -55,7 +55,7 @@ namespace BaseLibrary
 				cursor.EmitDelegate<Action<float, float>>((rotation, scale) =>
 				{
 					if (string.IsNullOrWhiteSpace(CurrrentShiftClickIcon)) return;
-
+					// todo: cache texture
 					Texture2D texture = ModContent.GetTexture(CurrrentShiftClickIcon);
 
 					float texScale = Math.Min(20f / texture.Width, 20f / texture.Height);

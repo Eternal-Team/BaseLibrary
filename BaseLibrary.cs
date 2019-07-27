@@ -108,6 +108,7 @@ namespace BaseLibrary
 
 		public override void PreSaveAndQuit()
 		{
+			ClosedUICache.Clear();
 			foreach (UIElement element in PanelGUI.UI.Elements)
 			{
 				if (element is BaseUIPanel panel) PanelGUI.UI.CloseUI(panel.Container);
