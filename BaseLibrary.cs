@@ -19,6 +19,7 @@ namespace BaseLibrary
 		internal static BaseLibrary Instance;
 		public static GUI<PanelUI> PanelGUI;
 		internal static Effect ColorSelectionShader;
+		public static Effect DesaturateShader;
 
 		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
 
@@ -40,6 +41,7 @@ namespace BaseLibrary
 				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);
 
 				ColorSelectionShader = GetEffect("Effects/ColorSelectionShader");
+				DesaturateShader = GetEffect("Effects/DesaturateShader");
 
 				PanelGUI = Utility.SetupGUI<PanelUI>();
 
