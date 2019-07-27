@@ -410,7 +410,7 @@ namespace BaseLibrary.UI.Elements
 
 		public override void Update(GameTime gameTime)
 		{
-			if ((Main.mouseLeft|| Main.mouseRight||Main.mouseMiddle) && !IsMouseHovering) Focused = false;
+			if ((Main.mouseLeft || Main.mouseRight || Main.mouseMiddle) && !IsMouseHovering) Focused = false;
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)

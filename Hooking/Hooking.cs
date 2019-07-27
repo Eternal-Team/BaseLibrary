@@ -42,9 +42,6 @@ namespace BaseLibrary
 			IL.Terraria.Player.Update += Player_Update;
 			SetupRecipes += ModContent_SetupRecipes;
 
-			Type uiLoadMods = typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.DownloadManager.UILoadModsProgress");
-			HookEndpointManager.Modify(uiLoadMods.GetMethod("OnDeactivate", Utility.defaultFlags), new Action<ILContext>(OnLoadedMods));
-
 			Scheduler.EnqueueMessage(() => Terraria.Main.OnPostDraw += OnPostDraw);
 
 			Initialize();

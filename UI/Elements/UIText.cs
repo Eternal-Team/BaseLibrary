@@ -22,7 +22,7 @@ namespace BaseLibrary.UI.Elements
 		public UIText(LocalizedText text, float textScale = 1f, bool large = false) => InternalSetText(text, textScale, large);
 
 		public UIText(Ref<string> text, float textScale = 1f, bool large = false) => InternalSetText(text, textScale, large);
-		
+
 		public override void Recalculate()
 		{
 			InternalSetText(text, textScale, isLarge);

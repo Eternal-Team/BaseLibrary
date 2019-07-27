@@ -23,7 +23,7 @@ namespace BaseLibrary
 		{
 			if (toExtract.maxStack == 1) return Main.LocalPlayer.GetItem(Main.LocalPlayer.whoAmI, toExtract);
 
-			int count = stack > 0 ? stack : toExtract.maxStack;
+			int count = stack > 0 ? stack : toExtract.stack;
 
 			foreach (Item item in Main.LocalPlayer.inventory)
 			{

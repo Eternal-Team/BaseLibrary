@@ -73,7 +73,6 @@ namespace BaseLibrary
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			// ReSharper disable once ForCanBeConvertedToForeach
 			for (var i = 0; i < PanelGUI.UI.Elements.Count; i++)
 			{
 				UIElement element = PanelGUI.UI.Elements[i];

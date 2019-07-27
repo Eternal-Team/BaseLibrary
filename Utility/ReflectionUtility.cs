@@ -8,6 +8,10 @@ namespace BaseLibrary
 	{
 		public const BindingFlags defaultFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
+		public static FieldInfo GetField(this Type type, string name, BindingFlags flags = defaultFlags) => type.GetField(name, flags);
+
+		public static PropertyInfo GetProperty(this Type type, string name, BindingFlags flags = defaultFlags) => type.GetProperty(name, flags);
+
 		public static T GetValue<T>(this Type type, string name, object obj = null, BindingFlags flags = defaultFlags) => (T)(type.GetProperty(name, flags)?.GetValue(obj) ?? type.GetField(name, flags)?.GetValue(obj));
 
 		public static T GetValue<T>(this object obj, string name, BindingFlags flags = defaultFlags) => obj.GetType().GetValue<T>(name, obj, flags);

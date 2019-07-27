@@ -9,9 +9,6 @@ using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
-	// note: make left,right,top,left floats
-	// note: functions for size and position?
-
 	public class BaseElement : UIState
 	{
 		#region Fields

@@ -32,7 +32,7 @@ namespace BaseLibrary
 		public override void Load(TagCompound tag)
 		{
 			UIPositions = new Dictionary<Guid, Vector2>();
-			UIPositions.AddRange(tag.GetList<TagCompound>("UIPositions").ToDictionary(c => tag.Get<Guid>("UUID"), c => c.Get<Vector2>("Position")));
+			UIPositions.AddRange(tag.GetList<TagCompound>("UIPositions").ToDictionary(c => c.Get<Guid>("UUID"), c => c.Get<Vector2>("Position")));
 		}
 	}
 }

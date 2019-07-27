@@ -43,11 +43,11 @@ namespace BaseLibrary.UI.Elements
 			if (texture != null)
 			{
 				if (scaleMode == ScaleMode.Stretch)
-					spriteBatch.Draw(texture, Dimensions.ToRectangle(), sourceRectangle, Color.White);
+					spriteBatch.Draw(texture, InnerDimensions.ToRectangle(), sourceRectangle, Color.White);
 				else if (scaleMode == ScaleMode.Zoom)
-					spriteBatch.Draw(texture, Dimensions.Center(), sourceRectangle, Color.White, 0f, texture.Size() * 0.5f, Math.Min(InnerDimensions.Width / texture.Width, InnerDimensions.Height / texture.Height), SpriteEffects.None, 0f);
+					spriteBatch.Draw(texture, InnerDimensions.Center(), sourceRectangle, Color.White, 0f, texture.Size() * 0.5f, Math.Min(InnerDimensions.Width / texture.Width, InnerDimensions.Height / texture.Height), SpriteEffects.None, 0f);
 				else if (scaleMode == ScaleMode.None)
-					spriteBatch.Draw(texture, Dimensions.Position(), sourceRectangle, Color.White);
+					spriteBatch.Draw(texture, InnerDimensions.Position(), sourceRectangle, Color.White);
 			}
 		}
 	}
