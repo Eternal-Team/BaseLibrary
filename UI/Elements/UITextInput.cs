@@ -357,7 +357,7 @@ namespace BaseLibrary.UI.Elements
 
 			for (int i = 0; i <= Text.Length; i++)
 			{
-				if (MeasureString(Text.Substring(0, i)).X < clickedX) selectionStart = i;
+				if (Text.Substring(0, i).Measure(Utility.Font).X < clickedX) selectionStart = i;
 			}
 
 			caretVisible = true;
@@ -391,11 +391,10 @@ namespace BaseLibrary.UI.Elements
 			selecting = true;
 		}
 
-		private Vector2 MeasureString(string s) => Utility.Font.MeasureString(s) - new Vector2(s.Count(x => x == ' ') * 2, 0);
 
 		private Vector2 GetTextPosition()
 		{
-			Vector2 textSize = MeasureString(Text);
+			Vector2 textSize = Text.Measure(Utility.Font);
 			Vector2 vec = Vector2.Zero;
 			if (HorizontalAlignment == HorizontalAlignment.Left) vec.X = InnerDimensions.X;
 			else if (HorizontalAlignment == HorizontalAlignment.Center) vec.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
@@ -421,14 +420,14 @@ namespace BaseLibrary.UI.Elements
 
 			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, Text, textPosition, Color.White, 0f, Vector2.Zero, Vector2.One);
 
-			float size = MeasureString(Text.Substring(0, selectionStart)).X;
+			float size = Text.Substring(0, selectionStart).Measure(Utility.Font).X;
 
 			if (selecting)
 			{
 				spriteBatch.Draw(Main.magicPixel, new Rectangle(
-					(int)(textPosition.X + MeasureString(Text.Substring(0, Math.Min(selectionStart, selectionEnd))).X),
+					(int)(textPosition.X + Text.Substring(0, Math.Min(selectionStart, selectionEnd)).Measure(Utility.Font).X),
 					(int)textPosition.Y,
-					(int)MeasureString(Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd))).X,
+					(int)Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)).Measure(Utility.Font).X,
 					20
 				), SelectionColor);
 			}
