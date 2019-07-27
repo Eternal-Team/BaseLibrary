@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Input;
 using ReLogic.OS;
 using Starbound.Input;
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -391,7 +390,7 @@ namespace BaseLibrary.UI.Elements
 			selecting = true;
 		}
 
-
+		// todo: cache text size and text position
 		private Vector2 GetTextPosition()
 		{
 			Vector2 textSize = Text.Measure(Utility.Font);

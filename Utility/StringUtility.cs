@@ -22,7 +22,7 @@ namespace BaseLibrary
 
 		public static string ExtractText(string withTag) => ColorGetTag.Replace(withTag, ReplaceTagWithText);
 
-		public static Vector2 Measure(this string text, DynamicSpriteFont font = null) => (font??Main.fontMouseText).MeasureString(text) - new Vector2(text.Count(x => x == ' ') * 2, 0);
+		public static Vector2 Measure(this string text, DynamicSpriteFont font = null) => (font ?? Main.fontMouseText).MeasureString(text) - new Vector2(text.Count(x => x == ' ') * 2, 0);
 
 		public static string Subscript(this int number)
 		{

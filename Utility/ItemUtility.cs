@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -11,14 +10,15 @@ namespace BaseLibrary
 	{
 		private static int[] _coinTypes;
 
-		public static int[] CoinTypes => _coinTypes ?? (_coinTypes = new int[]
-		{
-			ItemID.CopperCoin,
-			ItemID.SilverCoin,
-			ItemID.GoldCoin,
-			ItemID.PlatinumCoin
-		});
-		
+		public static int[] CoinTypes =>
+			_coinTypes ?? (_coinTypes = new int[]
+			{
+				ItemID.CopperCoin,
+				ItemID.SilverCoin,
+				ItemID.GoldCoin,
+				ItemID.PlatinumCoin
+			});
+
 		/*	public static Item TakeItemFromNearbyChest(Item item, Vector2 position)
 		{
 			if (Main.netMode == 1) return item;
@@ -111,6 +111,7 @@ namespace BaseLibrary
 		public static IEnumerable<T> OfType<T>(this IEnumerable<Item> items) where T : class => items.Where(item => item.modItem is T).Select(item => item.modItem as T);
 
 		#region Player
+
 		public static Item[] Inventory(this Player player)
 		{
 			Item[] inv = new Item[58];
@@ -119,6 +120,7 @@ namespace BaseLibrary
 		}
 
 		public static Item GetHeldItem(this Player player) => Main.mouseItem.IsAir ? Main.LocalPlayer.HeldItem : Main.mouseItem;
+
 		#endregion
 	}
 }

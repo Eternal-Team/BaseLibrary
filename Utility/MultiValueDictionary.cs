@@ -129,12 +129,10 @@ namespace BaseLibrary
 		/// </remarks>
 		public MultiValueDictionary(IEnumerable<KeyValuePair<TKey, IReadOnlyCollection<TValue>>> enumerable, IEqualityComparer<TKey> comparer)
 		{
-			if (enumerable == null)
-				throw new ArgumentNullException(nameof(enumerable));
+			if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
 
 			_dictionary = new Dictionary<TKey, InnerCollectionView>(comparer);
-			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable)
-				AddRange(pair.Key, pair.Value);
+			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable) AddRange(pair.Key, pair.Value);
 		}
 
 		#endregion
@@ -311,16 +309,14 @@ namespace BaseLibrary
 		public static MultiValueDictionary<TKey, TValue> Create<TValueCollection>(IEnumerable<KeyValuePair<TKey, IReadOnlyCollection<TValue>>> enumerable)
 			where TValueCollection : ICollection<TValue>, new()
 		{
-			if (enumerable == null)
-				throw new ArgumentNullException(nameof(enumerable));
+			if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
 			//if (new TValueCollection().IsReadOnly) throw new InvalidOperationException(Strings.Create_TValueCollectionReadOnly);
 
 			MultiValueDictionary<TKey, TValue> multiValueDictionary = new MultiValueDictionary<TKey, TValue>
 			{
 				NewCollectionFactory = () => new TValueCollection()
 			};
-			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable)
-				multiValueDictionary.AddRange(pair.Key, pair.Value);
+			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable) multiValueDictionary.AddRange(pair.Key, pair.Value);
 			return multiValueDictionary;
 		}
 
@@ -353,16 +349,14 @@ namespace BaseLibrary
 		public static MultiValueDictionary<TKey, TValue> Create<TValueCollection>(IEnumerable<KeyValuePair<TKey, IReadOnlyCollection<TValue>>> enumerable, IEqualityComparer<TKey> comparer)
 			where TValueCollection : ICollection<TValue>, new()
 		{
-			if (enumerable == null)
-				throw new ArgumentNullException(nameof(enumerable));
+			if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
 			//if (new TValueCollection().IsReadOnly) throw new InvalidOperationException(Strings.Create_TValueCollectionReadOnly);
 
 			MultiValueDictionary<TKey, TValue> multiValueDictionary = new MultiValueDictionary<TKey, TValue>(comparer)
 			{
 				NewCollectionFactory = () => new TValueCollection()
 			};
-			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable)
-				multiValueDictionary.AddRange(pair.Key, pair.Value);
+			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable) multiValueDictionary.AddRange(pair.Key, pair.Value);
 			return multiValueDictionary;
 		}
 
@@ -560,16 +554,14 @@ namespace BaseLibrary
 		public static MultiValueDictionary<TKey, TValue> Create<TValueCollection>(IEnumerable<KeyValuePair<TKey, IReadOnlyCollection<TValue>>> enumerable, Func<TValueCollection> collectionFactory)
 			where TValueCollection : ICollection<TValue>
 		{
-			if (enumerable == null)
-				throw new ArgumentNullException(nameof(enumerable));
+			if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
 			//if (collectionFactory().IsReadOnly) throw new InvalidOperationException(Strings.Create_TValueCollectionReadOnly);
 
 			MultiValueDictionary<TKey, TValue> multiValueDictionary = new MultiValueDictionary<TKey, TValue>
 			{
 				NewCollectionFactory = (Func<ICollection<TValue>>)(Delegate)collectionFactory
 			};
-			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable)
-				multiValueDictionary.AddRange(pair.Key, pair.Value);
+			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable) multiValueDictionary.AddRange(pair.Key, pair.Value);
 			return multiValueDictionary;
 		}
 
@@ -606,16 +598,14 @@ namespace BaseLibrary
 		public static MultiValueDictionary<TKey, TValue> Create<TValueCollection>(IEnumerable<KeyValuePair<TKey, IReadOnlyCollection<TValue>>> enumerable, IEqualityComparer<TKey> comparer, Func<TValueCollection> collectionFactory)
 			where TValueCollection : ICollection<TValue>
 		{
-			if (enumerable == null)
-				throw new ArgumentNullException(nameof(enumerable));
+			if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
 			//if (collectionFactory().IsReadOnly) throw new InvalidOperationException(Strings.Create_TValueCollectionReadOnly);
 
 			MultiValueDictionary<TKey, TValue> multiValueDictionary = new MultiValueDictionary<TKey, TValue>(comparer)
 			{
 				NewCollectionFactory = (Func<ICollection<TValue>>)(Delegate)collectionFactory
 			};
-			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable)
-				multiValueDictionary.AddRange(pair.Key, pair.Value);
+			foreach (KeyValuePair<TKey, IReadOnlyCollection<TValue>> pair in enumerable) multiValueDictionary.AddRange(pair.Key, pair.Value);
 			return multiValueDictionary;
 		}
 
@@ -647,8 +637,7 @@ namespace BaseLibrary
 		/// </remarks>
 		public void Add(TKey key, TValue value)
 		{
-			if (key == null)
-				throw new ArgumentNullException(nameof(key));
+			if (key == null) throw new ArgumentNullException(nameof(key));
 			if (!_dictionary.TryGetValue(key, out InnerCollectionView collection))
 			{
 				collection = new InnerCollectionView(key, NewCollectionFactory());
@@ -673,10 +662,8 @@ namespace BaseLibrary
 		/// </remarks>
 		public void AddRange(TKey key, IEnumerable<TValue> values)
 		{
-			if (key == null)
-				throw new ArgumentNullException(nameof(key));
-			if (values == null)
-				throw new ArgumentNullException(nameof(values));
+			if (key == null) throw new ArgumentNullException(nameof(key));
+			if (values == null) throw new ArgumentNullException(nameof(values));
 
 			if (!_dictionary.TryGetValue(key, out InnerCollectionView collection))
 			{
@@ -698,8 +685,7 @@ namespace BaseLibrary
 		/// <exception cref="ArgumentNullException"><paramref name="key" /> is <c>null</c>.</exception>
 		public bool Remove(TKey key)
 		{
-			if (key == null)
-				throw new ArgumentNullException(nameof(key));
+			if (key == null) throw new ArgumentNullException(nameof(key));
 
 			if (_dictionary.TryGetValue(key, out InnerCollectionView _) && _dictionary.Remove(key))
 			{
@@ -727,13 +713,11 @@ namespace BaseLibrary
 		/// </remarks>
 		public bool Remove(TKey key, TValue value)
 		{
-			if (key == null)
-				throw new ArgumentNullException(nameof(key));
+			if (key == null) throw new ArgumentNullException(nameof(key));
 
 			if (_dictionary.TryGetValue(key, out InnerCollectionView collection) && collection.RemoveValue(value))
 			{
-				if (collection.Count == 0)
-					_dictionary.Remove(key);
+				if (collection.Count == 0) _dictionary.Remove(key);
 				_version++;
 				return true;
 			}
@@ -751,8 +735,7 @@ namespace BaseLibrary
 		/// <exception cref="ArgumentNullException"><paramref name="key" /> must be non-null</exception>
 		public bool Contains(TKey key, TValue value)
 		{
-			if (key == null)
-				throw new ArgumentNullException(nameof(key));
+			if (key == null) throw new ArgumentNullException(nameof(key));
 
 			return _dictionary.TryGetValue(key, out InnerCollectionView collection) && collection.Contains(value);
 		}
@@ -806,8 +789,7 @@ namespace BaseLibrary
 		/// <exception cref="ArgumentNullException"><paramref name="key" /> must be non-null</exception>
 		public bool ContainsKey(TKey key)
 		{
-			if (key == null)
-				throw new ArgumentNullException(nameof(key));
+			if (key == null) throw new ArgumentNullException(nameof(key));
 			// Since modification to the MultiValueDictionary is only allowed through its own API, we
 			// can ensure that if a collection is in the internal dictionary then it must have at least one
 			// associated TValue, or else it would have been removed whenever its final TValue was removed.
@@ -842,8 +824,7 @@ namespace BaseLibrary
 		/// <exception cref="ArgumentNullException"><paramref name="key" /> must be non-null</exception>
 		public bool TryGetValue(TKey key, out IReadOnlyCollection<TValue> value)
 		{
-			if (key == null)
-				throw new ArgumentNullException(nameof(key));
+			if (key == null) throw new ArgumentNullException(nameof(key));
 
 			bool success = _dictionary.TryGetValue(key, out InnerCollectionView collection);
 			value = collection;
@@ -882,11 +863,9 @@ namespace BaseLibrary
 		{
 			get
 			{
-				if (key == null)
-					throw new ArgumentNullException(nameof(key));
+				if (key == null) throw new ArgumentNullException(nameof(key));
 
-				if (_dictionary.TryGetValue(key, out InnerCollectionView collection))
-					return collection;
+				if (_dictionary.TryGetValue(key, out InnerCollectionView collection)) return collection;
 
 				throw new KeyNotFoundException();
 			}
@@ -1061,8 +1040,7 @@ namespace BaseLibrary
 
 			public void CopyTo(TValue[] array, int arrayIndex)
 			{
-				if (array == null)
-					throw new ArgumentNullException(nameof(array));
+				if (array == null) throw new ArgumentNullException(nameof(array));
 				//if (arrayIndex < 0) throw new ArgumentOutOfRangeException(nameof(arrayIndex), Strings.ArgumentOutOfRange_NeedNonNegNum);
 				//if (arrayIndex > array.Length) throw new ArgumentOutOfRangeException(nameof(arrayIndex), Strings.ArgumentOutOfRange_Index);
 				//if (array.Length - arrayIndex < _collection.Count) throw new ArgumentException(Strings.CopyTo_ArgumentsTooSmall, nameof(arrayIndex));
