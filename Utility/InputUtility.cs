@@ -21,6 +21,8 @@ namespace BaseLibrary
 
 			internal static void Load()
 			{
+				if (Main.dedServ) return;
+
 				KeyboardEvents.RepeatDelay = 31;
 
 				MouseHandler = new MouseEvents(Main.instance);
@@ -32,6 +34,8 @@ namespace BaseLibrary
 
 			internal static void Unload()
 			{
+				if (Main.dedServ) return;
+
 				Main.instance.Components.Remove(MouseHandler);
 				Main.instance.Components.Remove(KeyboardHandler);
 			}

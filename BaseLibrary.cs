@@ -30,11 +30,11 @@ namespace BaseLibrary
 
 			TagSerializer.AddSerializer(new GUIDSerializer());
 
+			Utility.Input.Load();
 			Hooking.Load();
 
 			if (!Main.dedServ)
 			{
-				Utility.Input.Load();
 				Scheduler.Load();
 
 				Utility.Font = GetFont("Fonts/Mouse_Text");
