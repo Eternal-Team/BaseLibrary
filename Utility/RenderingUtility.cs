@@ -14,12 +14,7 @@ namespace BaseLibrary
 	public static partial class Utility
 	{
 		private static string mouseText;
-
 		private static Color? colorMouseText;
-
-		// todo: cache
-		internal static Texture2D TexturePanelBackground => ModContent.GetTexture("Terraria/UI/PanelBackground");
-		internal static Texture2D TexturePanelBorder => ModContent.GetTexture("Terraria/UI/PanelBorder");
 
 		public static readonly RasterizerState OverflowHiddenState = new RasterizerState
 		{
@@ -27,29 +22,41 @@ namespace BaseLibrary
 			ScissorTestEnable = true
 		};
 
-		public static SpriteBatchState ImmediateState = new SpriteBatchState
-		{
-			SpriteSortMode = SpriteSortMode.Immediate,
-			BlendState = BlendState.AlphaBlend,
-			SamplerState = SamplerState.AnisotropicClamp,
-			DepthStencilState = DepthStencilState.None,
-			RasterizerState = OverflowHiddenState,
-			CustomEffect = null,
-			TransformMatrix = Main.UIScaleMatrix,
-			ScissorRectangle = Main.instance.GraphicsDevice.ScissorRectangle
-		};
+		private static SpriteBatchState _immediateState;
 
-		public static SpriteBatchState PointClampState = new SpriteBatchState
+		public static SpriteBatchState ImmediateState
 		{
-			SpriteSortMode = SpriteSortMode.Immediate,
-			BlendState = BlendState.AlphaBlend,
-			SamplerState = SamplerState.PointClamp,
-			DepthStencilState = DepthStencilState.None,
-			RasterizerState = OverflowHiddenState,
-			CustomEffect = null,
-			TransformMatrix = Main.UIScaleMatrix,
-			ScissorRectangle = Main.instance.GraphicsDevice.ScissorRectangle
-		};
+			get => _immediateState ?? (_immediateState = new SpriteBatchState
+			{
+				SpriteSortMode = SpriteSortMode.Immediate,
+				BlendState = BlendState.AlphaBlend,
+				SamplerState = SamplerState.AnisotropicClamp,
+				DepthStencilState = DepthStencilState.None,
+				RasterizerState = OverflowHiddenState,
+				CustomEffect = null,
+				TransformMatrix = Main.UIScaleMatrix,
+				ScissorRectangle = Main.instance.GraphicsDevice.ScissorRectangle
+			});
+			set => _immediateState = value;
+		}
+
+		private static SpriteBatchState _pointClampState;
+
+		public static SpriteBatchState PointClampState
+		{
+			get => _pointClampState ?? (_pointClampState = new SpriteBatchState
+			{
+				SpriteSortMode = SpriteSortMode.Immediate,
+				BlendState = BlendState.AlphaBlend,
+				SamplerState = SamplerState.PointClamp,
+				DepthStencilState = DepthStencilState.None,
+				RasterizerState = OverflowHiddenState,
+				CustomEffect = null,
+				TransformMatrix = Main.UIScaleMatrix,
+				ScissorRectangle = Main.instance.GraphicsDevice.ScissorRectangle
+			});
+			set => _pointClampState = value;
+		}
 
 		public static void Begin(this SpriteBatch spriteBatch, SpriteBatchState state)
 		{
@@ -117,8 +124,8 @@ namespace BaseLibrary
 
 		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle rectangle, Color? bgColor = null, Color? borderColor = null)
 		{
-			spriteBatch.DrawPanel(rectangle, TexturePanelBackground, bgColor ?? ColorPanel);
-			spriteBatch.DrawPanel(rectangle, TexturePanelBorder, borderColor ?? Color.Black);
+			spriteBatch.DrawPanel(rectangle, BaseLibrary.texturePanelBackground, bgColor ?? ColorPanel);
+			spriteBatch.DrawPanel(rectangle, BaseLibrary.texturePanelBorder, borderColor ?? Color.Black);
 		}
 
 		public static void DrawPanel(this SpriteBatch spriteBatch, CalculatedStyle dimensions, Color? bgColor = null, Color? borderColor = null)

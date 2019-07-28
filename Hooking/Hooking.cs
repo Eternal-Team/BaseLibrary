@@ -1,4 +1,6 @@
 ﻿using BaseLibrary.UI;
+using log4net.Core;
+using log4net.Repository.Hierarchy;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -40,9 +42,11 @@ namespace BaseLibrary
 			Player.ToggleInv += Player_ToggleInv;
 
 			IL.Terraria.Player.Update += Player_Update;
+
+			// bug: this is borked, it needs to get run after all mods are fully loaded
 			SetupRecipes += ModContent_SetupRecipes;
 
-			Scheduler.EnqueueMessage(() => Terraria.Main.OnPostDraw += OnPostDraw);
+			Dispatcher.EnqueueMessage(() => Terraria.Main.OnPostDraw += OnPostDraw);
 
 			Initialize();
 		}
@@ -141,6 +145,13 @@ namespace BaseLibrary
 
 		private static void ModContent_SetupRecipes(orig_SetupRecipes orig, CancellationToken token)
 		{
+			if (Terraria.Main.dedServ)
+			{
+				BaseLibrary.Instance.Logger.Info("Please support my mods on Patreon https://www.patreon.com/Itorius.");
+				orig(token);
+				return;
+			}
+
 			Dictionary<string, Version> previousVersions = new Dictionary<string, Version>();
 			if (File.Exists(LastVersionsPath)) previousVersions = JsonConvert.DeserializeObject<Dictionary<string, Version>>(File.ReadAllText(LastVersionsPath));
 
@@ -154,7 +165,11 @@ namespace BaseLibrary
 
 				return previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name);
 			}).ToList();
-			if (newOrUpdated.Count > 0) Terraria.Main.menuMode = 4040;
+			if (newOrUpdated.Count > 0)
+			{
+				// note: could probably dispatch the SetState directly
+				Terraria.Main.menuMode = 4040;
+			}
 
 			File.WriteAllText(LastVersionsPath, JsonConvert.SerializeObject(ModLoader.Mods.Select(mod => new {Key = mod.Name, Value = mod.Version.ToString()}).ToDictionary(x => x.Key, x => x.Value)));
 
@@ -177,7 +192,7 @@ namespace BaseLibrary
 		{
 			Uninitialize();
 
-			Scheduler.EnqueueMessage(() => Terraria.Main.OnPostDraw -= OnPostDraw);
+			Dispatcher.EnqueueMessage(() => Terraria.Main.OnPostDraw -= OnPostDraw);
 		}
 
 		private static void ItemSlot_LeftClick(ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)

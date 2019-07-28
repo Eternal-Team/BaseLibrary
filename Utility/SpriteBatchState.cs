@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace BaseLibrary
 {
-	public struct SpriteBatchState
+	public class SpriteBatchState
 	{
 		private BlendState blendState;
 		private SamplerState samplerState;

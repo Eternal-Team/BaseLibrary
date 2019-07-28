@@ -10,6 +10,7 @@
   <PropertyGroup>
     <ProjectView>ProjectFiles</ProjectView>
     <ShowAllFiles>false</ShowAllFiles>
+    <ActiveDebugProfile>Terraria</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartProgram>C:\Program Files %28x86%29\Steam\steamapps\content\app_105600\depot_105601\tModLoader.exe</StartProgram>
@@ -23,5 +24,6 @@
     <StartProgram>C:\Program Files %28x86%29\Steam\steamapps\content\app_105600\depot_105601\tModLoader.exe</StartProgram>
     <StartWorkingDirectory>C:\Program Files %28x86%29\Steam\steamapps\content\app_105600\depot_105601</StartWorkingDirectory>
     <StartArguments>-skipselect Itorius:TestWorld</StartArguments>
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

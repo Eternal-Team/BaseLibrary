@@ -13,7 +13,7 @@ namespace BaseLibrary
 	public static partial class Hooking
 	{
 		private const int CustomCursorOverride = 1000;
-		private static string CurrrentShiftClickIcon;
+		private static Texture2D CursorTexture;
 		private static Vector2 CursorOffset;
 
 		private static UIElement UIElement_GetElementAt(On.Terraria.UI.UIElement.orig_GetElementAt orig, UIElement self, Vector2 point)
@@ -54,12 +54,10 @@ namespace BaseLibrary
 
 				cursor.EmitDelegate<Action<float, float>>((rotation, scale) =>
 				{
-					if (string.IsNullOrWhiteSpace(CurrrentShiftClickIcon)) return;
-					// todo: cache texture
-					Texture2D texture = ModContent.GetTexture(CurrrentShiftClickIcon);
+					if (CursorTexture == null) return;
 
-					float texScale = Math.Min(20f / texture.Width, 20f / texture.Height);
-					Main.spriteBatch.Draw(texture, new Vector2(Main.mouseX, Main.mouseY), null, Color.White, rotation, CursorOffset, Main.cursorScale * texScale, SpriteEffects.None, 0f);
+					float texScale = Math.Min(20f / CursorTexture.Width, 20f / CursorTexture.Height);
+					Main.spriteBatch.Draw(CursorTexture, new Vector2(Main.mouseX, Main.mouseY), null, Color.White, rotation, CursorOffset, Main.cursorScale * texScale, SpriteEffects.None, 0f);
 				});
 				cursor.Emit(OpCodes.Ret);
 
@@ -70,7 +68,7 @@ namespace BaseLibrary
 		public static void SetCursor(string texture, Vector2? offset = null)
 		{
 			Main.cursorOverride = CustomCursorOverride;
-			CurrrentShiftClickIcon = texture;
+			CursorTexture = ModContent.GetTexture(texture);
 			CursorOffset = offset ?? Vector2.Zero;
 		}
 	}

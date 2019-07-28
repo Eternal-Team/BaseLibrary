@@ -18,6 +18,7 @@ namespace BaseLibrary.UI
 			panel.Center();
 			Append(panel);
 
+			// todo: pull changelogs from github commit history
 			UIText introText = new UIText("A message from Itorius...\n\nHi, thanks for downloading my mods!\nIn the future this window will include changelogs\nand credits but for now please consider supporting\nme over at Patreon :)");
 			panel.Append(introText);
 
@@ -33,7 +34,7 @@ namespace BaseLibrary.UI
 				Process.Start("https://www.patreon.com/Itorius");
 				Main.menuMode = 0;
 			};
-			texture.GetHoverText += () => "https://www.patreon.com/Itorius";
+			texture.HoverText = "https://www.patreon.com/Itorius";
 			panel.Append(texture);
 
 			UITextButton button = new UITextButton("Return to main menu")

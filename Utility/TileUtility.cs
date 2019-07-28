@@ -44,6 +44,7 @@ namespace BaseLibrary
 
 		public static T GetTileEntity<T>(this Mod mod, int i, int j) where T : ModTileEntity
 		{
+			// todo: could just use position instead, with trygetvalue
 			int ID = mod.GetID<T>(i, j);
 			if (ID >= 0) return (T)TileEntity.ByID[ID];
 			return null;

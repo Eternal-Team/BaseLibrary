@@ -1,23 +1,26 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Starbound.Input;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
 	public class BaseElement : UIState
 	{
-		#region Fields
-
 		public event Action<SpriteBatch> OnPreDraw;
 		public event Action<SpriteBatch> OnPostDraw;
 
-		// todo: make this use localized text
-		public event Func<string> GetHoverText;
+		private string _hoverText = string.Empty;
+
+		public object HoverText
+		{
+			get => _hoverText;
+			set => _hoverText = value.ToString();
+		}
+
+		public event Func<object> GetHoverText;
 
 		public bool SubstituteWidth;
 		public bool SubstituteHeight;
@@ -103,62 +106,59 @@ namespace BaseLibrary.UI.Elements
 		public event MouseEvent OnClickContinuous;
 		public event MouseEvent OnRightClickContinuous;
 
-		#endregion
+		public event MouseEvent OnTripleClick;
+		public event MouseEvent OnRightTripleClick;
+		public event MouseEvent OnMiddleTripleClick;
+		public event MouseEvent OnXButton1TripleClick;
+		public event MouseEvent OnXButton2TripleClick;
 
 		public CalculatedStyle Dimensions => GetDimensions();
 		public CalculatedStyle InnerDimensions => GetInnerDimensions();
 		public CalculatedStyle OuterDimensions => GetOuterDimensions();
 
+		public new BaseElement Parent => base.Parent as BaseElement;
+
 		public BaseElement() => base.Width.Precent = base.Height.Precent = 0;
 
-		public virtual void ClickContinuous(UIMouseEvent evt) => OnClickContinuous?.Invoke(evt, this);
+		public virtual void ClickContinuous(UIMouseEvent evt)
+		{
+			OnClickContinuous?.Invoke(evt, this);
+			Parent?.ClickContinuous(evt);
+		}
 
-		public virtual void RightClickContinuous(UIMouseEvent evt) => OnRightClickContinuous?.Invoke(evt, this);
-
-		public new BaseElement Parent => base.Parent as BaseElement;
+		public virtual void RightClickContinuous(UIMouseEvent evt)
+		{
+			OnRightClickContinuous?.Invoke(evt, this);
+			Parent?.RightClickContinuous(evt);
+		}
 
 		public virtual void TripleClick(UIMouseEvent evt)
 		{
-			//if (this.OnXButton1Click != null)
-			//{
-			//	this.OnXButton1Click(evt, this);
-			//}
+			OnTripleClick?.Invoke(evt, this);
 			Parent?.TripleClick(evt);
 		}
 
 		public virtual void RightTripleClick(UIMouseEvent evt)
 		{
-			//if (this.OnXButton1Click != null)
-			//{
-			//	this.OnXButton1Click(evt, this);
-			//}
+			OnRightTripleClick?.Invoke(evt, this);
 			Parent?.RightTripleClick(evt);
 		}
 
 		public virtual void MiddleTripleClick(UIMouseEvent evt)
 		{
-			//if (this.OnXButton1Click != null)
-			//{
-			//	this.OnXButton1Click(evt, this);
-			//}
+			OnMiddleTripleClick?.Invoke(evt, this);
 			Parent?.MiddleTripleClick(evt);
 		}
 
 		public virtual void XButton1TripleClick(UIMouseEvent evt)
 		{
-			//if (this.OnXButton1Click != null)
-			//{
-			//	this.OnXButton1Click(evt, this);
-			//}
+			OnXButton1TripleClick?.Invoke(evt, this);
 			Parent?.XButton1TripleClick(evt);
 		}
 
 		public virtual void XButton2TripleClick(UIMouseEvent evt)
 		{
-			//if (this.OnXButton1Click != null)
-			//{
-			//	this.OnXButton1Click(evt, this);
-			//}
+			OnXButton2TripleClick?.Invoke(evt, this);
 			Parent?.XButton2TripleClick(evt);
 		}
 
@@ -173,12 +173,9 @@ namespace BaseLibrary.UI.Elements
 			base.Update(gameTime);
 		}
 
-		public event Action<CalculatedStyle> OnSizeChanged;
-
 		public override void Recalculate()
 		{
 			CalculatedStyle parentDimensions = Parent?.InnerDimensions ?? UserInterface.ActiveInstance.GetDimensions();
-			if ((UIElement)Parent is UIList) parentDimensions.Height = float.MaxValue;
 
 			CalculatedStyle dimensions;
 			dimensions.X = base.Left.GetValue(parentDimensions.Width) + parentDimensions.X;
@@ -204,13 +201,13 @@ namespace BaseLibrary.UI.Elements
 			dimensions.Y += MarginTop;
 			dimensions.Width -= MarginLeft + MarginRight;
 			dimensions.Height -= MarginTop + MarginBottom;
-			if (dimensions.Size() != Dimensions.Size()) OnSizeChanged?.Invoke(dimensions);
 			typeof(UIElement).SetValue("_dimensions", dimensions, this);
 			dimensions.X += PaddingLeft;
 			dimensions.Y += PaddingTop;
 			dimensions.Width -= PaddingLeft + PaddingRight;
 			dimensions.Height -= PaddingTop + PaddingBottom;
 			typeof(UIElement).SetValue("_innerDimensions", dimensions, this);
+
 			RecalculateChildren();
 		}
 
@@ -226,17 +223,16 @@ namespace BaseLibrary.UI.Elements
 
 			PostDraw(spriteBatch);
 
-			if (IsMouseHovering && GetHoverText != null) Utility.DrawMouseText(GetHoverText.Invoke());
-		}
+			if (IsMouseHovering)
+			{
+				if (GetHoverText != null)
+				{
+					if (!string.IsNullOrWhiteSpace(_hoverText)) _hoverText += "\n";
+					_hoverText += GetHoverText.Invoke().ToString();
+				}
 
-		public virtual void Append(IEnumerable<BaseElement> elements)
-		{
-			foreach (BaseElement element in elements) Append(element);
-		}
-
-		public virtual void RemoveChildren(IEnumerable<BaseElement> elements)
-		{
-			foreach (BaseElement element in elements) RemoveChild(element);
+				Utility.DrawMouseText(_hoverText);
+			}
 		}
 
 		public virtual void PreDraw(SpriteBatch spriteBatch)
@@ -247,10 +243,6 @@ namespace BaseLibrary.UI.Elements
 		public virtual void PostDraw(SpriteBatch spriteBatch)
 		{
 			OnPostDraw?.Invoke(spriteBatch);
-		}
-
-		public virtual void MouseDragged(MouseEventArgs args)
-		{
 		}
 	}
 }

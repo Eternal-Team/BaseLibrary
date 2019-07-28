@@ -16,12 +16,14 @@ namespace BaseLibrary
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
-		public static GUI<PanelUI> PanelGUI;
-		internal static Effect ColorSelectionShader;
-		public static Effect DesaturateShader;
 
+		public static Effect ColorSelectionShader { get; private set; }
+		public static Effect DesaturateShader { get; private set; }
+		internal static Texture2D texturePanelBackground;
+		internal static Texture2D texturePanelBorder;
+
+		public static GUI<PanelUI> PanelGUI { get; private set; }
 		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
-
 		private LegacyGameInterfaceLayer MouseInterface;
 
 		public override void Load()
@@ -30,12 +32,14 @@ namespace BaseLibrary
 
 			TagSerializer.AddSerializer(new GUIDSerializer());
 
+			Dispatcher.Load();
 			Utility.Input.Load();
 			Hooking.Load();
 
 			if (!Main.dedServ)
 			{
-				Scheduler.Load();
+				texturePanelBackground = ModContent.GetTexture("Terraria/UI/PanelBackground");
+				texturePanelBorder = ModContent.GetTexture("Terraria/UI/PanelBorder");
 
 				Utility.Font = GetFont("Fonts/Mouse_Text");
 				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);
@@ -52,12 +56,8 @@ namespace BaseLibrary
 		public override void Unload()
 		{
 			Hooking.Unload();
-
-			if (!Main.dedServ)
-			{
-				Utility.Input.Unload();
-				Scheduler.Unload();
-			}
+			Utility.Input.Unload();
+			Dispatcher.Unload();
 
 			Utility.UnloadNullableTypes();
 		}
@@ -77,9 +77,8 @@ namespace BaseLibrary
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			for (var i = 0; i < PanelGUI.UI.Elements.Count; i++)
+			foreach (UIElement element in PanelGUI.UI.Elements)
 			{
-				UIElement element = PanelGUI.UI.Elements[i];
 				if (element is BaseUIPanel panel && panel.Container is BaseTE tileEntity)
 				{
 					TileObjectData data = TileObjectData.GetTileData(tileEntity.mod.GetTile(tileEntity.TileType.Name).Type, 0);

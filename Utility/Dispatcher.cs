@@ -8,17 +8,21 @@ namespace BaseLibrary
 	/// <summary>
 	///     Allows the execution of tasks on the UI thread
 	/// </summary>
-	public static class Scheduler
+	public static class Dispatcher
 	{
 		private static Queue<Action> queue = new Queue<Action>();
 
 		public static void Load()
 		{
+			if (Main.dedServ) return;
+
 			Main.OnPreDraw += ProcessQueue;
 		}
 
 		public static void Unload()
 		{
+			if (Main.dedServ) return;
+
 			Main.OnPreDraw -= ProcessQueue;
 		}
 
@@ -35,6 +39,8 @@ namespace BaseLibrary
 
 		public static void EnqueueMessage(Action action)
 		{
+			if (Main.dedServ) return;
+
 			lock (queue) queue.Enqueue(action);
 		}
 	}
