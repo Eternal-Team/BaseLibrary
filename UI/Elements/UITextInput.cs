@@ -50,6 +50,7 @@ namespace BaseLibrary.UI.Elements
 
 		public bool SelectOnFirstClick;
 		public bool AllowMultiline;
+		public bool SizeToText;
 
 		public int MaxLength;
 		public string HintText;
@@ -65,15 +66,7 @@ namespace BaseLibrary.UI.Elements
 			{
 				_text.Value = value;
 
-				textSize = Text.Measure(Utility.Font);
-
-				if (HorizontalAlignment == HorizontalAlignment.Left) textPosition.X = InnerDimensions.X;
-				else if (HorizontalAlignment == HorizontalAlignment.Center) textPosition.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
-				else if (HorizontalAlignment == HorizontalAlignment.Right) textPosition.X = InnerDimensions.X + InnerDimensions.Width - textSize.X;
-
-				if (VerticalAlignment == VerticalAlignment.Top) textPosition.Y = InnerDimensions.Y;
-				else if (VerticalAlignment == VerticalAlignment.Center) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f;
-				else if (VerticalAlignment == VerticalAlignment.Bottom) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
+				CalculateTextMetrics();
 
 				OnTextChange?.Invoke();
 			}
@@ -142,6 +135,29 @@ namespace BaseLibrary.UI.Elements
 		}
 
 		private bool ShouldIntercept() => Focused;
+
+		private void CalculateTextMetrics()
+		{
+			if (_text == null || Text == null) return;
+
+			textSize = Text.Measure(Utility.Font);
+			if (SizeToText) Size = textSize;
+
+			if (HorizontalAlignment == HorizontalAlignment.Left) textPosition.X = InnerDimensions.X;
+			else if (HorizontalAlignment == HorizontalAlignment.Center) textPosition.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
+			else if (HorizontalAlignment == HorizontalAlignment.Right) textPosition.X = InnerDimensions.X + InnerDimensions.Width - textSize.X;
+
+			if (VerticalAlignment == VerticalAlignment.Top) textPosition.Y = InnerDimensions.Y;
+			else if (VerticalAlignment == VerticalAlignment.Center) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f;
+			else if (VerticalAlignment == VerticalAlignment.Bottom) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
+		}
+
+		public override void Recalculate()
+		{
+			base.Recalculate();
+
+			CalculateTextMetrics();
+		}
 
 		private void KeyTyped(object sender, KeyboardEventArgs args)
 		{
@@ -315,6 +331,9 @@ namespace BaseLibrary.UI.Elements
 					break;
 				}
 
+				case Keys.LeftAlt:
+				case Keys.Tab:
+					break;
 				default:
 				{
 					if (args.Character != null)
@@ -410,8 +429,8 @@ namespace BaseLibrary.UI.Elements
 
 			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, Text, textPosition, Color.White, 0f, Vector2.Zero, Vector2.One);
 
-			float selectionX = Text.Substring(0, selectionStart).Measure(Utility.Font).X;
-
+			float selectionX = Text.Substring(0, selectionEnd).Measure(Utility.Font).X;
+			// bug: wrong drawing due to selectionStart not being lower than selectionEnd
 			if (selecting) spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + selectionX), (int)textPosition.Y, (int)SelectedText.Measure(Utility.Font).X, 20), SelectionColor);
 
 			if (++caretTimer > 30)
