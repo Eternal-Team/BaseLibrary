@@ -37,6 +37,59 @@ namespace BaseLibrary.UI.Elements
 		private bool _renderPanel;
 		private bool _focused;
 
+		private bool selecting;
+		private int selectionStart;
+		private int selectionEnd;
+		private bool doubleClicked;
+
+		private Vector2 textPosition;
+		private Vector2 textSize;
+
+		private int caretTimer;
+		private bool caretVisible;
+
+		public bool SelectOnFirstClick;
+		public bool AllowMultiline;
+
+		public int MaxLength;
+		public string HintText;
+		public event Action OnTextChange;
+
+		public HorizontalAlignment HorizontalAlignment = HorizontalAlignment.Left;
+		public VerticalAlignment VerticalAlignment = VerticalAlignment.Top;
+
+		public string Text
+		{
+			get => _text.Value;
+			set
+			{
+				_text.Value = value;
+
+				textSize = Text.Measure(Utility.Font);
+
+				if (HorizontalAlignment == HorizontalAlignment.Left) textPosition.X = InnerDimensions.X;
+				else if (HorizontalAlignment == HorizontalAlignment.Center) textPosition.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
+				else if (HorizontalAlignment == HorizontalAlignment.Right) textPosition.X = InnerDimensions.X + InnerDimensions.Width - textSize.X;
+
+				if (VerticalAlignment == VerticalAlignment.Top) textPosition.Y = InnerDimensions.Y;
+				else if (VerticalAlignment == VerticalAlignment.Center) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f;
+				else if (VerticalAlignment == VerticalAlignment.Bottom) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
+
+				OnTextChange?.Invoke();
+			}
+		}
+
+		// todo: this should automatically update selecting, selectionStart and selectionEnd
+		public string SelectedText
+		{
+			get => Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+			set
+			{
+				Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
+				Text = Text.Insert(Math.Min(selectionStart, selectionEnd), value);
+			}
+		}
+
 		private bool Focused
 		{
 			get => _focused;
@@ -59,40 +112,6 @@ namespace BaseLibrary.UI.Elements
 					Main.chatRelease = false;
 					PlayerInput.WritingText = false;
 				}
-			}
-		}
-
-		private bool selecting;
-		private int selectionStart;
-		private int selectionEnd;
-		private bool doubleClicked;
-
-		private int caretTimer;
-		private bool caretVisible;
-
-		public bool SelectOnFirstClick;
-		public bool AllowMultiline;
-
-		public int MaxLength;
-		public string HintText;
-		public event Action OnTextChange;
-
-		public HorizontalAlignment HorizontalAlignment = HorizontalAlignment.Left;
-		public VerticalAlignment VerticalAlignment = VerticalAlignment.Top;
-
-		public string Text
-		{
-			get => _text.Value;
-			set => _text.Value = value;
-		}
-
-		public string SelectedText
-		{
-			get => Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
-			set
-			{
-				Text = Text.Remove(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
-				Text = Text.Insert(Math.Min(selectionStart, selectionEnd), value);
 			}
 		}
 
@@ -163,8 +182,6 @@ namespace BaseLibrary.UI.Elements
 						selectionStart += Platform.Current.Clipboard.Length;
 					}
 
-					OnTextChange?.Invoke();
-
 					break;
 				}
 
@@ -186,8 +203,6 @@ namespace BaseLibrary.UI.Elements
 						selectionStart = 0;
 					}
 
-					OnTextChange?.Invoke();
-
 					break;
 				}
 
@@ -202,8 +217,6 @@ namespace BaseLibrary.UI.Elements
 						selectionStart = Math.Min(selectionStart, selectionEnd);
 					}
 					else if (selectionStart < Text.Length) Text = Text.Remove(selectionStart, 1);
-
-					OnTextChange?.Invoke();
 
 					// ctrl - delete to next word
 					break;
@@ -220,8 +233,6 @@ namespace BaseLibrary.UI.Elements
 						selectionStart = Math.Min(selectionStart, selectionEnd);
 					}
 					else if (selectionStart > 0) Text = Text.Remove(--selectionStart, 1);
-
-					OnTextChange?.Invoke();
 
 					// ctrl - delete to previous word
 					break;
@@ -324,8 +335,6 @@ namespace BaseLibrary.UI.Elements
 							if (Text.Length + 1 > MaxLength) return;
 							Text = Text.Insert(selectionStart++, charValue);
 						}
-
-						OnTextChange?.Invoke();
 					}
 
 					break;
@@ -352,7 +361,7 @@ namespace BaseLibrary.UI.Elements
 
 			Focused = true;
 
-			float clickedX = evt.MousePosition.X - GetTextPosition().X;
+			float clickedX = evt.MousePosition.X - textPosition.X;
 
 			for (int i = 0; i <= Text.Length; i++)
 			{
@@ -390,46 +399,20 @@ namespace BaseLibrary.UI.Elements
 			selecting = true;
 		}
 
-		// todo: cache text size and text position
-		private Vector2 GetTextPosition()
-		{
-			Vector2 textSize = Text.Measure(Utility.Font);
-			Vector2 vec = Vector2.Zero;
-			if (HorizontalAlignment == HorizontalAlignment.Left) vec.X = InnerDimensions.X;
-			else if (HorizontalAlignment == HorizontalAlignment.Center) vec.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
-			else if (HorizontalAlignment == HorizontalAlignment.Right) vec.X = InnerDimensions.X + InnerDimensions.Width - textSize.X;
-
-			if (VerticalAlignment == VerticalAlignment.Top) vec.Y = InnerDimensions.Y;
-			else if (VerticalAlignment == VerticalAlignment.Center) vec.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f;
-			else if (VerticalAlignment == VerticalAlignment.Bottom) vec.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
-
-			return vec;
-		}
-
 		public override void Update(GameTime gameTime)
 		{
-			if ((Main.mouseLeft || Main.mouseRight || Main.mouseMiddle) && !IsMouseHovering) Focused = false;
+			if ((Main.mouseLeft || Main.mouseRight || Main.mouseMiddle || Main.mouseXButton1 || Main.mouseXButton2) && !IsMouseHovering) Focused = false;
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, Utility.ColorPanel, Color.Black);
 
-			Vector2 textPosition = GetTextPosition();
-
 			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, Text, textPosition, Color.White, 0f, Vector2.Zero, Vector2.One);
 
-			float size = Text.Substring(0, selectionStart).Measure(Utility.Font).X;
+			float selectionX = Text.Substring(0, selectionStart).Measure(Utility.Font).X;
 
-			if (selecting)
-			{
-				spriteBatch.Draw(Main.magicPixel, new Rectangle(
-					(int)(textPosition.X + Text.Substring(0, Math.Min(selectionStart, selectionEnd)).Measure(Utility.Font).X),
-					(int)textPosition.Y,
-					(int)Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)).Measure(Utility.Font).X,
-					20
-				), SelectionColor);
-			}
+			if (selecting) spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + selectionX), (int)textPosition.Y, (int)SelectedText.Measure(Utility.Font).X, 20), SelectionColor);
 
 			if (++caretTimer > 30)
 			{
@@ -439,16 +422,13 @@ namespace BaseLibrary.UI.Elements
 
 			if (caretVisible && Focused)
 			{
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 1, (int)textPosition.Y, 1, 20), CaretColor);
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 2, (int)textPosition.Y, 1, 20), CaretColor * 0.25f);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + selectionX) + 1, (int)textPosition.Y, 1, 20), CaretColor);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + selectionX) + 2, (int)textPosition.Y, 1, 20), CaretColor * 0.25f);
 			}
 
-			if (string.IsNullOrWhiteSpace(Text) && !Focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, textPosition, Color.Gray, 0f, Vector2.Zero, Vector2.One);
+			if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(HintText) && !Focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, textPosition, Color.Gray, 0f, Vector2.Zero, Vector2.One);
 
-			if (IsMouseHovering)
-			{
-				Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor", new Vector2(3.5f, 8.5f));
-			}
+			if (IsMouseHovering) Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor", new Vector2(3.5f, 8.5f));
 		}
 	}
 }
