@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
@@ -31,13 +30,14 @@ namespace BaseLibrary
 
 			TagSerializer.AddSerializer(new GUIDSerializer());
 
-			Utility.Input.Load();
 			Hooking.Load();
-			Scheduler.Load();
 
 			if (!Main.dedServ)
 			{
-				Utility.Font = Main.instance.OurLoad<DynamicSpriteFont>("Fonts" + Path.DirectorySeparatorChar + "Mouse_Text");
+				Utility.Input.Load();
+				Scheduler.Load();
+
+				Utility.Font = GetFont("Fonts/Mouse_Text");
 				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);
 
 				ColorSelectionShader = GetEffect("Effects/ColorSelectionShader");
@@ -53,9 +53,11 @@ namespace BaseLibrary
 		{
 			Hooking.Unload();
 
-			Utility.Input.Unload();
-
-			Scheduler.Unload();
+			if (!Main.dedServ)
+			{
+				Utility.Input.Unload();
+				Scheduler.Unload();
+			}
 
 			Utility.UnloadNullableTypes();
 		}

@@ -15,6 +15,8 @@ namespace BaseLibrary.UI.Elements
 
 		public event Action<SpriteBatch> OnPreDraw;
 		public event Action<SpriteBatch> OnPostDraw;
+
+		// todo: make this use localized text
 		public event Func<string> GetHoverText;
 
 		public bool SubstituteWidth;
