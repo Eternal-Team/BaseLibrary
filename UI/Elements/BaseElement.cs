@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Terraria;
 using Terraria.UI;
 
@@ -12,15 +13,19 @@ namespace BaseLibrary.UI.Elements
 		public event Action<SpriteBatch> OnPreDraw;
 		public event Action<SpriteBatch> OnPostDraw;
 
-		private string _hoverText = string.Empty;
-
-		public object HoverText
-		{
-			get => _hoverText;
-			set => _hoverText = value.ToString();
-		}
-
+		public object HoverText = null;
 		public event Func<object> GetHoverText;
+
+		private string hoverText
+		{
+			get
+			{
+				StringBuilder builder = new StringBuilder();
+				if (HoverText != null) builder.AppendLine(HoverText.ToString());
+				if (GetHoverText != null) builder.Append(GetHoverText.Invoke());
+				return builder.ToString();
+			}
+		}
 
 		public bool SubstituteWidth;
 		public bool SubstituteHeight;
@@ -223,16 +228,7 @@ namespace BaseLibrary.UI.Elements
 
 			PostDraw(spriteBatch);
 
-			if (IsMouseHovering)
-			{
-				if (GetHoverText != null)
-				{
-					if (!string.IsNullOrWhiteSpace(_hoverText)) _hoverText += "\n";
-					_hoverText += GetHoverText.Invoke().ToString();
-				}
-
-				Utility.DrawMouseText(_hoverText);
-			}
+			if (IsMouseHovering && !string.IsNullOrWhiteSpace(hoverText)) Utility.DrawMouseText(hoverText);
 		}
 
 		public virtual void PreDraw(SpriteBatch spriteBatch)
