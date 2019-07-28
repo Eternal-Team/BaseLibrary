@@ -23,6 +23,7 @@ namespace BaseLibrary
 		internal static Texture2D texturePanelBorder;
 
 		public static GUI<PanelUI> PanelGUI { get; private set; }
+
 		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
 		private LegacyGameInterfaceLayer MouseInterface;
 
@@ -77,8 +78,9 @@ namespace BaseLibrary
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			foreach (UIElement element in PanelGUI.UI.Elements)
+			for (int i = 0; i < PanelGUI.UI.Elements.Count; i++)
 			{
+				UIElement element = PanelGUI.UI.Elements[i];
 				if (element is BaseUIPanel panel && panel.Container is BaseTE tileEntity)
 				{
 					TileObjectData data = TileObjectData.GetTileData(tileEntity.mod.GetTile(tileEntity.TileType.Name).Type, 0);
