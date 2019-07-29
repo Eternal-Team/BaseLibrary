@@ -7,41 +7,36 @@ namespace BaseLibrary.UI.Elements
 {
 	public class UITexture : BaseElement
 	{
-		private Texture2D textureBack;
-		private Texture2D textureFront;
+		public Texture2D texture;
 		private ScaleMode scaleMode;
 
-		public UITexture(Texture2D textureBack, ScaleMode scaleMode = ScaleMode.None)
-		{
-			this.textureBack = textureBack;
-			this.scaleMode = scaleMode;
-		}
+		public SpriteEffects SpriteEffects = SpriteEffects.None;
+		public float Rotation;
 
-		public UITexture(Texture2D textureBack, Texture2D textureFront, ScaleMode scaleMode = ScaleMode.None)
+		public UITexture(Texture2D texture, ScaleMode scaleMode = ScaleMode.None)
 		{
-			this.textureBack = textureBack;
-			this.textureFront = textureFront;
+			this.texture = texture;
 			this.scaleMode = scaleMode;
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			Vector2 position = InnerDimensions.Position() + InnerDimensions.Size() * 0.5f;
-			Vector2 origin = textureBack.Size() * 0.5f;
+			if (texture == null) return;
 
-			if (textureFront != null) spriteBatch.Draw(textureFront, Dimensions);
+			Vector2 position = InnerDimensions.Position() + InnerDimensions.Size() * 0.5f;
+			Vector2 origin = texture.Size() * 0.5f;
 
 			switch (scaleMode)
 			{
 				case ScaleMode.Stretch:
-					Vector2 scale = new Vector2(InnerDimensions.Width / textureBack.Width, InnerDimensions.Height / textureBack.Height);
-					spriteBatch.Draw(textureBack, position, null, Color.White, 0f, origin, scale, SpriteEffects.None, 0f);
+					Vector2 scale = new Vector2(InnerDimensions.Width / texture.Width, InnerDimensions.Height / texture.Height);
+					spriteBatch.Draw(texture, position, null, Color.White, Rotation.ToRadians(), origin, scale, SpriteEffects, 0f);
 					break;
 				case ScaleMode.Zoom:
-					spriteBatch.Draw(textureBack, position, null, Color.White, 0f, origin, Math.Min(InnerDimensions.Width / textureBack.Width, InnerDimensions.Height / textureBack.Height), SpriteEffects.None, 0f);
+					spriteBatch.Draw(texture, position, null, Color.White, Rotation.ToRadians(), origin, Math.Min(InnerDimensions.Width / texture.Width, InnerDimensions.Height / texture.Height), SpriteEffects, 0f);
 					break;
 				case ScaleMode.None:
-					spriteBatch.Draw(textureBack, position, null, Color.White, 0f, origin, Vector2.One, SpriteEffects.None, 0f);
+					spriteBatch.Draw(texture, position, null, Color.White, Rotation.ToRadians(), origin, Vector2.One, SpriteEffects, 0f);
 					break;
 			}
 		}
