@@ -1,19 +1,11 @@
 ﻿using BaseLibrary.UI;
-using log4net.Core;
-using log4net.Repository.Hierarchy;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
-using Newtonsoft.Json;
 using On.Terraria;
 using On.Terraria.UI;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 using Item = Terraria.Item;
@@ -43,12 +35,7 @@ namespace BaseLibrary
 
 			IL.Terraria.Player.Update += Player_Update;
 
-			// bug: this is borked, it needs to get run after all mods are fully loaded
-			SetupRecipes += ModContent_SetupRecipes;
-
-			Dispatcher.EnqueueMessage(() => Terraria.Main.OnPostDraw += OnPostDraw);
-
-			Initialize();
+			HookEndpointManager.Modify(typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.DownloadManager.UILoadModsProgress").GetMethod("OnDeactivate", Utility.defaultFlags), new Action<ILContext>(ShowIntroMessage));
 		}
 
 		private static void Player_Update(ILContext il)
@@ -141,58 +128,6 @@ namespace BaseLibrary
 			Utility.Input.Update(time);
 
 			orig(self, time);
-		}
-
-		private static void ModContent_SetupRecipes(orig_SetupRecipes orig, CancellationToken token)
-		{
-			if (Terraria.Main.dedServ)
-			{
-				BaseLibrary.Instance.Logger.Info("Please support my mods on Patreon https://www.patreon.com/Itorius.");
-				orig(token);
-				return;
-			}
-
-			Dictionary<string, Version> previousVersions = new Dictionary<string, Version>();
-			if (File.Exists(LastVersionsPath)) previousVersions = JsonConvert.DeserializeObject<Dictionary<string, Version>>(File.ReadAllText(LastVersionsPath));
-
-			Type type = typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.Core.ModOrganizer");
-			object[] arr = type.InvokeMethod<object[]>("FindMods");
-
-			newOrUpdated = ModLoader.Mods.Where(mod =>
-			{
-				object o = arr.FirstOrDefault(x => x.GetValue<string>("Name") == mod.Name);
-				if (o != null && !o.GetValue<object>("properties").GetValue<string>("author").Contains("Itorius")) return false;
-
-				return previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name);
-			}).ToList();
-			if (newOrUpdated.Count > 0)
-			{
-				// note: could probably dispatch the SetState directly
-				Terraria.Main.menuMode = 4040;
-			}
-
-			File.WriteAllText(LastVersionsPath, JsonConvert.SerializeObject(ModLoader.Mods.Select(mod => new {Key = mod.Name, Value = mod.Version.ToString()}).ToDictionary(x => x.Key, x => x.Value)));
-
-			orig(token);
-		}
-
-		public delegate void orig_SetupRecipes(CancellationToken token);
-
-		public delegate void hook_SetupRecipes(orig_SetupRecipes orig, CancellationToken token);
-
-		public static MethodBase method => typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.ModContent").GetMethod("SetupRecipes", Utility.defaultFlags, null, new[] {typeof(CancellationToken)}, null);
-
-		public static event hook_SetupRecipes SetupRecipes
-		{
-			add => HookEndpointManager.Add(method, value);
-			remove => HookEndpointManager.Remove(method, value);
-		}
-
-		internal static void Unload()
-		{
-			Uninitialize();
-
-			Dispatcher.EnqueueMessage(() => Terraria.Main.OnPostDraw -= OnPostDraw);
 		}
 
 		private static void ItemSlot_LeftClick(ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)

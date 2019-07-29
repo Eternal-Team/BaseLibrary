@@ -6,4 +6,5 @@ UI.Players=Players
 UI.NPCs=NPCs
 UI.Items=Items
 UI.Projectiles=Projectiles
+UI.Bosses=Bosses
 UI.Icon=Icon

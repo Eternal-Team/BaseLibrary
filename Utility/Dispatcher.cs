@@ -37,7 +37,7 @@ namespace BaseLibrary
 			}
 		}
 
-		public static void EnqueueMessage(Action action)
+		public static void Dispatch(Action action)
 		{
 			if (Main.dedServ) return;
 
