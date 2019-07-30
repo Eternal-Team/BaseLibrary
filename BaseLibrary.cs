@@ -56,7 +56,6 @@ namespace BaseLibrary
 
 		public override void Unload()
 		{
-			Hooking.Unload();
 			Utility.Input.Unload();
 			Dispatcher.Unload();
 

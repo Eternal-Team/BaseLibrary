@@ -37,7 +37,11 @@ namespace BaseLibrary
 						object o = arr.FirstOrDefault(x => x.GetValue<string>("Name") == mod.Name);
 						if (o != null && !o.GetValue<object>("properties").GetValue<string>("author").Contains("Itorius")) return false;
 
-						return previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name);
+#if DEBUG
+						return true;
+#elif RELEASE
+						return previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name); 
+#endif
 					}).ToList();
 					if (newOrUpdated.Count > 0)
 					{

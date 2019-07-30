@@ -39,3 +39,5 @@ lib/*
 
 .vs/
 Utility/Swapping/*
+
+secret.txt
