@@ -72,7 +72,6 @@ namespace BaseLibrary.UI.Elements
 			}
 		}
 
-		// todo: this should automatically update selecting, selectionStart and selectionEnd
 		public string SelectedText
 		{
 			get => Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd));
@@ -429,9 +428,15 @@ namespace BaseLibrary.UI.Elements
 
 			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, Text, textPosition, Color.White, 0f, Vector2.Zero, Vector2.One);
 
-			float selectionX = Text.Substring(0, selectionEnd).Measure(Utility.Font).X;
-			// bug: wrong drawing due to selectionStart not being lower than selectionEnd
-			if (selecting) spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + selectionX), (int)textPosition.Y, (int)SelectedText.Measure(Utility.Font).X, 20), SelectionColor);
+			if (selecting)
+			{
+				spriteBatch.Draw(Main.magicPixel, new Rectangle(
+					(int)(textPosition.X + Text.Substring(0, Math.Min(selectionStart, selectionEnd)).Measure(Utility.Font).X),
+					(int)textPosition.Y,
+					(int)Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)).Measure(Utility.Font).X,
+					20
+				), SelectionColor);
+			}
 
 			if (++caretTimer > 30)
 			{
@@ -441,11 +446,12 @@ namespace BaseLibrary.UI.Elements
 
 			if (caretVisible && Focused)
 			{
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + selectionX) + 1, (int)textPosition.Y, 1, 20), CaretColor);
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + selectionX) + 2, (int)textPosition.Y, 1, 20), CaretColor * 0.25f);
+				float size = Text.Substring(0, selectionStart).Measure(Utility.Font).X;
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 1, (int)textPosition.Y, 1, 20), CaretColor);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 2, (int)textPosition.Y, 1, 20), CaretColor * 0.25f);
 			}
 
-			if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(HintText) && !Focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, textPosition, Color.Gray, 0f, Vector2.Zero, Vector2.One);
+			if (string.IsNullOrWhiteSpace(Text) && !Focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, textPosition, Color.Gray, 0f, Vector2.Zero, Vector2.One);
 
 			if (IsMouseHovering) Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor", new Vector2(3.5f, 8.5f));
 		}
