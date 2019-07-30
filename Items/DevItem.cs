@@ -1,6 +1,5 @@
 ﻿using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace BaseLibrary.Items
 {
@@ -23,7 +22,7 @@ namespace BaseLibrary.Items
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
-			if (typeof(ModLoader).GetValue<string>("SteamID64") == "76561198126875987")
+			if (player.name.Contains("Itorius"))
 			{
 				player.AddBuff(BuffID.Spelunker, 1);
 				player.statLife = player.statLifeMax2;

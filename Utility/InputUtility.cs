@@ -42,6 +42,8 @@ namespace BaseLibrary
 
 			internal static void Update(GameTime time)
 			{
+				if (Main.dedServ) return;
+
 				if (InterceptKeyboard.GetInvocationList().Any(del => (bool)del.DynamicInvoke()))
 				{
 					KeyboardHandler.Enabled = true;

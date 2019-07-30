@@ -13,6 +13,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace BaseLibrary
 {
@@ -38,8 +39,9 @@ namespace BaseLibrary
 						item.SetDefaults(type);
 						ItemCache[type] = item;
 					}
-					catch
+					catch (Exception e)
 					{
+						BaseLibrary.Instance.Logger.Info("Item is null, this is fine", e);
 					}
 				}
 
@@ -51,8 +53,9 @@ namespace BaseLibrary
 						npc.SetDefaults(type);
 						NPCCache[type] = npc;
 					}
-					catch
+					catch (Exception e)
 					{
+						BaseLibrary.Instance.Logger.Info("Item is null, this is fine", e);
 					}
 				}
 
@@ -64,8 +67,9 @@ namespace BaseLibrary
 						projectile.SetDefaults(type);
 						ProjectileCache[type] = projectile;
 					}
-					catch
+					catch (Exception e)
 					{
+						BaseLibrary.Instance.Logger.Info("Item is null, this is fine", e);
 					}
 				}
 			}
@@ -149,6 +153,28 @@ namespace BaseLibrary
 		{
 			int count = reader.ReadInt32();
 			return count > 0 ? reader.ReadBytes(count) : null;
+		}
+
+		public static void Send(this BinaryWriter writer, Item item, bool writeStack = false, bool writeFavourite = false)
+		{
+			writer.Write((short)item.netID);
+			writer.Write(item.prefix);
+			if (writeStack) writer.Write(item.stack);
+			if (writeFavourite) writer.Write(item.favorited);
+			ItemIO.SendModData(item, writer);
+		}
+
+		public static Item Receive(this BinaryReader reader, bool readStack = false, bool readFavorite = false)
+		{
+			var item = new Item();
+
+			item.netDefaults(reader.ReadInt16());
+			item.Prefix(reader.ReadByte());
+			if (readStack) item.stack = reader.ReadInt32();
+			if (readFavorite) item.favorited = reader.ReadBoolean();
+			ItemIO.ReceiveModData(item, reader);
+
+			return item;
 		}
 	}
 }
