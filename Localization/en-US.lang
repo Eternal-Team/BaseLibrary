@@ -1,0 +1,10 @@
+UI.Close=Close
+UI.Options=Options
+UI.ClickToChangeName=Click to change name
+UI.Whitelist=Whitelist
+UI.Icon=Icon
+UI.IntroMessage=A message from Itorius...\n\nHi, thanks for downloading my mods! You can access the changelogs (which are automatically pulled from GitHub commits) but it is an experimental feature. In order to get the Credits section working I need to rent a VPS, so please consider donating over at Patreon :)
+UI.Main=Main
+UI.Changelogs=Changelogs
+UI.Credits=Credits
+UI.ReturnToMenu=Return to main menu
