@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
+using System;
 using Terraria;
 using Terraria.Localization;
 
@@ -8,50 +9,90 @@ namespace BaseLibrary.UI.Elements
 {
 	public class UIText : BaseElement
 	{
-		private object text = "";
-		private float textScale = 1f;
-		private Vector2 textSize = Vector2.Zero;
-		private bool isLarge;
+		public object Text
+		{
+			get => text;
+			set
+			{
+				text = value;
+				CalculateTextMetrics();
+			}
+		}
 
-		public string Text => text.ToString();
+		private object text;
+
+		private float textScale;
+		private DynamicSpriteFont font;
+		private Vector2 textSize;
+		private Vector2 textPosition;
 
 		public Color TextColor = Color.White;
+		public Color BorderColor = Color.Black;
 
-		public UIText(string text, float textScale = 1f, bool large = false) => InternalSetText(text, textScale, large);
+		public HorizontalAlignment HorizontalAlignment = HorizontalAlignment.Left;
+		public VerticalAlignment VerticalAlignment = VerticalAlignment.Top;
 
-		public UIText(LocalizedText text, float textScale = 1f, bool large = false) => InternalSetText(text, textScale, large);
+		public bool ScaleToFit;
 
-		public UIText(Ref<string> text, float textScale = 1f, bool large = false) => InternalSetText(text, textScale, large);
+		public UIText(string text, float scale = 1f)
+		{
+			Padding = (0, 2, 2, 0);
+
+			this.text = text;
+			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
+			textScale = scale > 1f ? scale * 0.5f : scale;
+		}
+
+		public UIText(LocalizedText text, float scale = 1f)
+		{
+			Padding = (0, 2, 2, 0);
+
+			this.text = text;
+			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
+			textScale = scale > 1f ? scale * 0.5f : scale;
+		}
+
+		public UIText(Ref<string> text, float scale = 1f)
+		{
+			Padding = (0, 2, 2, 0);
+
+			this.text = text;
+			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
+			textScale = scale > 1f ? scale * 0.5f : scale;
+		}
 
 		public override void Recalculate()
 		{
-			InternalSetText(text, textScale, isLarge);
 			base.Recalculate();
+
+			CalculateTextMetrics();
 		}
 
-		private void InternalSetText(object text, float textScale, bool large)
+		private void CalculateTextMetrics()
 		{
-			this.text = text;
+			if (text == null || string.IsNullOrWhiteSpace(text.ToString()))
+			{
+				textSize = Vector2.Zero;
+				textPosition = Vector2.Zero;
+				return;
+			}
 
-			DynamicSpriteFont dynamicSpriteFont = large ? Main.fontDeathText : Main.fontMouseText;
-			textSize = new Vector2(dynamicSpriteFont.MeasureString(Text).X, large ? 32f : 16f) * textScale;
-			this.textScale = textScale;
-			isLarge = large;
-			MinWidth.Set(textSize.X + PaddingLeft + PaddingRight, 0f);
-			MinHeight.Set(textSize.Y + PaddingTop + PaddingBottom, 0f);
+			textSize = font.MeasureString(text.ToString());
+			if (ScaleToFit) textScale = Math.Min(InnerDimensions.Width / textSize.X, InnerDimensions.Height / textSize.Y);
+			textSize *= textScale;
+
+			if (HorizontalAlignment == HorizontalAlignment.Left) textPosition.X = InnerDimensions.X;
+			else if (HorizontalAlignment == HorizontalAlignment.Center) textPosition.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
+			else if (HorizontalAlignment == HorizontalAlignment.Right) textPosition.X = InnerDimensions.X + InnerDimensions.Width - textSize.X;
+
+			if (VerticalAlignment == VerticalAlignment.Top) textPosition.Y = InnerDimensions.Y;
+			else if (VerticalAlignment == VerticalAlignment.Center) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f + 8f * textScale;
+			else if (VerticalAlignment == VerticalAlignment.Bottom) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y + 8f * textScale;
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			base.DrawSelf(spriteBatch);
-			Vector2 pos = InnerDimensions.Position();
-			if (isLarge) pos.Y -= 10f * textScale;
-			else pos.Y -= 2f * textScale;
-
-			pos.X += (InnerDimensions.Width - textSize.X) * 0.5f;
-
-			if (isLarge) Utils.DrawBorderStringBig(spriteBatch, Text, pos, TextColor, textScale);
-			else Utils.DrawBorderString(spriteBatch, Text, pos, TextColor, textScale);
+			Utils.DrawBorderStringFourWay(spriteBatch, font, text.ToString(), textPosition.X, textPosition.Y, TextColor, BorderColor, Vector2.Zero, textScale);
 		}
 	}
 }

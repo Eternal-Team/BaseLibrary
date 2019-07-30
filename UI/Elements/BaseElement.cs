@@ -121,9 +121,35 @@ namespace BaseLibrary.UI.Elements
 		public CalculatedStyle InnerDimensions => GetInnerDimensions();
 		public CalculatedStyle OuterDimensions => GetOuterDimensions();
 
-		public new BaseElement Parent => base.Parent as BaseElement;
+		public new BaseElement Parent
+		{
+			get => base.Parent as BaseElement;
+			set => base.Parent = value;
+		}
 
 		public BaseElement() => base.Width.Precent = base.Height.Precent = 0;
+
+		public void Insert(int index, BaseElement element)
+		{
+			element.Remove();
+			element.Parent = this;
+			Elements.Insert(index, element);
+			element.Recalculate();
+		}
+
+		public void Append(IEnumerable<BaseElement> elements)
+		{
+			foreach (BaseElement element in elements)
+			{
+				element.Activate();
+				Append(element);
+			}
+		}
+
+		public void Remove(IEnumerable<BaseElement> elements)
+		{
+			foreach (BaseElement element in elements) RemoveChild(element);
+		}
 
 		public virtual void ClickContinuous(UIMouseEvent evt)
 		{
@@ -229,6 +255,11 @@ namespace BaseLibrary.UI.Elements
 			PostDraw(spriteBatch);
 
 			if (IsMouseHovering && !string.IsNullOrWhiteSpace(hoverText)) Utility.DrawMouseText(hoverText);
+		}
+
+		protected override void DrawChildren(SpriteBatch spriteBatch)
+		{
+			foreach (UIElement current in Elements) current.Draw(spriteBatch);
 		}
 
 		public virtual void PreDraw(SpriteBatch spriteBatch)

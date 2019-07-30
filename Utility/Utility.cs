@@ -130,5 +130,25 @@ namespace BaseLibrary
 		public static Guid ReadGUID(this BinaryReader reader) => Guid.Parse(reader.ReadString());
 
 		public static string GetTranslation(this ModTranslation translation) => translation.GetTranslation(Language.ActiveCulture);
+
+		public static void WriteFile(this BinaryWriter writer, string path)
+		{
+			int count = 0;
+			byte[] array = new byte[0];
+			if (File.Exists(path))
+			{
+				array = File.ReadAllBytes(path);
+				count = array.Length;
+			}
+
+			writer.Write(count);
+			writer.Write(array);
+		}
+
+		public static byte[] ReadFile(this BinaryReader reader)
+		{
+			int count = reader.ReadInt32();
+			return count > 0 ? reader.ReadBytes(count) : null;
+		}
 	}
 }

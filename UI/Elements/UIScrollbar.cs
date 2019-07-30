@@ -31,6 +31,7 @@ namespace BaseLibrary.UI.Elements
 			if (InnerTexture == null) InnerTexture = ModContent.GetTexture("Terraria/UI/ScrollbarInner");
 
 			Width = (20, 0);
+			// todo: remove use dynamic rendering
 			MaxWidth.Set(20f, 0f);
 			Padding = (5, 0, 0, 5);
 		}
@@ -43,22 +44,11 @@ namespace BaseLibrary.UI.Elements
 			this.maxViewSize = maxViewSize;
 		}
 
-		public (float size, float maxViewSize) View
-		{
-			set
-			{
-				//value.size = MathHelper.Clamp(value.size, 0f, value.maxViewSize);
-				//viewPosition = MathHelper.Clamp(viewPosition, 0f, value.maxViewSize - value.size);
-				//viewSize = value.size;
-				//maxViewSize = value.maxViewSize;
-			}
-		}
-
 		public float GetValue() => viewPosition;
 
 		private Rectangle GetHandleRectangle()
 		{
-			if (maxViewSize == 0f && viewSize == 0f)
+			if (maxViewSize <= 0f && viewSize <= 0f)
 			{
 				viewSize = 1f;
 				maxViewSize = 1f;
@@ -84,16 +74,20 @@ namespace BaseLibrary.UI.Elements
 
 			Rectangle handleRectangle = GetHandleRectangle();
 			Vector2 mousePosition = UserInterface.ActiveInstance.MousePosition;
-			bool isHoveringOverHandle = this.isHoveringOverHandle;
-			this.isHoveringOverHandle = handleRectangle.Contains(new Point((int)mousePosition.X, (int)mousePosition.Y));
-			if (!isHoveringOverHandle && this.isHoveringOverHandle && Main.hasFocus) Main.PlaySound(SoundID.MenuTick);
+
+			// todo: make an actual slider element
+			bool wasHovering = isHoveringOverHandle;
+			isHoveringOverHandle = handleRectangle.Contains(new Point((int)mousePosition.X, (int)mousePosition.Y));
+			if (!wasHovering && isHoveringOverHandle && Main.hasFocus) Main.PlaySound(SoundID.MenuTick);
+
 			DrawBar(spriteBatch, Texture, Dimensions.ToRectangle(), Color.White);
-			DrawBar(spriteBatch, InnerTexture, handleRectangle, Color.White * (isDragging || this.isHoveringOverHandle ? 1f : 0.85f));
+			DrawBar(spriteBatch, InnerTexture, handleRectangle, Color.White * (isDragging || isHoveringOverHandle ? 1f : 0.85f));
 		}
 
 		public override void MouseDown(UIMouseEvent evt)
 		{
 			base.MouseDown(evt);
+
 			if (evt.Target == this)
 			{
 				Rectangle handleRectangle = GetHandleRectangle();

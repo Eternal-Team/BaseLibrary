@@ -1,5 +1,4 @@
-﻿using BaseLibrary.UI.Elements;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -92,8 +91,9 @@ namespace BaseLibrary
 		{
 			SpriteBatchState oldState = End(spriteBatch);
 
-			Rectangle oldScissor = oldState.ScissorRectangle;
+			Rectangle oldScissor = state.ScissorRectangle;
 			state.ScissorRectangle = oldState.ScissorRectangle;
+
 			spriteBatch.Begin(state);
 			action();
 			spriteBatch.End();
@@ -101,11 +101,25 @@ namespace BaseLibrary
 			spriteBatch.Begin(oldState);
 		}
 
+		public static void Draw(this SpriteBatch spriteBatch, SpriteBatchState state, Rectangle scissorRectangle, Action action)
+		{
+			SpriteBatchState oldState = End(spriteBatch);
+
+			Rectangle prevRect = state.ScissorRectangle;
+			state.ScissorRectangle = Rectangle.Intersect(scissorRectangle, oldState.ScissorRectangle);
+
+			spriteBatch.Begin(state);
+			action();
+			spriteBatch.End();
+			state.ScissorRectangle = prevRect;
+			spriteBatch.Begin(oldState);
+		}
+
 		#endregion
 
 		#region DrawPanel
 
-		private static void DrawPanel(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color color)
+		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color color)
 		{
 			Point point = new Point(dimensions.X, dimensions.Y);
 			Point point2 = new Point(point.X + dimensions.Width - 12, point.Y + dimensions.Height - 12);
@@ -397,45 +411,6 @@ namespace BaseLibrary
 			TransformMatrix = typeof(SpriteBatch).GetValue<Matrix>("transformMatrix", spriteBatch),
 			ScissorRectangle = spriteBatch.GraphicsDevice.ScissorRectangle
 		};
-
-		public static Texture2D CreateGradient(int width, int steps, Channel channel)
-		{
-			Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, width, 1);
-			Color[] data = new Color[width];
-
-			int nextX = 0;
-			int step = 0;
-			foreach (int i in DistributeInteger(width, steps))
-			{
-				Color c = Color.White;
-				switch (channel)
-				{
-					case Channel.R:
-						c = new Color(255 * step / steps, 0, 0);
-						break;
-					case Channel.G:
-						c = new Color(0, 255 * step / steps, 0);
-						break;
-					case Channel.B:
-						c = new Color(0, 0, 255 * step / steps);
-						break;
-					case Channel.A:
-						c = new Color(0, 0, 0, 255 * step / steps);
-						break;
-					default:
-						c = HSL2RGB(step / (float)steps, 1.0f, 0.5f);
-						break;
-				}
-
-				for (int x = nextX; x < nextX + i; x++) data[x] = c;
-
-				nextX += i;
-				step++;
-			}
-
-			texture.SetData(data);
-			return texture;
-		}
 
 		public static void DrawOverflowHidden(this SpriteBatch spriteBatch, UIElement element, Action action)
 		{

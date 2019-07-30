@@ -34,7 +34,7 @@ namespace BaseLibrary
 			return Point16.NegativeOne;
 		}
 
-		public static T GetTileEntity<T>(int i, int j) where T : ModTileEntity => GetTileEntity<T>(new Point16(i,j));
+		public static T GetTileEntity<T>(int i, int j) where T : ModTileEntity => GetTileEntity<T>(new Point16(i, j));
 
 		public static T GetTileEntity<T>(Point16 position) where T : ModTileEntity
 		{

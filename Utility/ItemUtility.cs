@@ -10,14 +10,13 @@ namespace BaseLibrary
 	{
 		private static int[] _coinTypes;
 
-		public static int[] CoinTypes =>
-			_coinTypes ?? (_coinTypes = new int[]
-			{
-				ItemID.CopperCoin,
-				ItemID.SilverCoin,
-				ItemID.GoldCoin,
-				ItemID.PlatinumCoin
-			});
+		public static int[] CoinTypes => _coinTypes ?? (_coinTypes = new int[]
+		{
+			ItemID.CopperCoin,
+			ItemID.SilverCoin,
+			ItemID.GoldCoin,
+			ItemID.PlatinumCoin
+		});
 
 		/*	public static Item TakeItemFromNearbyChest(Item item, Vector2 position)
 		{
@@ -71,7 +70,7 @@ namespace BaseLibrary
 			return item;
 		}
 
-		public static bool HasSpace(this List<Item> items, Item item) => items.Any(t => t.IsAir) || items.Any(x => x.type == item.type && x.stack < x.maxStack);
+		public static bool HasSpace(this List<Item> Items, Item item) => Items.Any(t => t.IsAir) || Items.Any(x => x.type == item.type && x.stack < x.maxStack);
 
 		public static IEnumerable<int> InsertItem(List<Item> from, List<Item> to) => from.SelectMany(x => InsertItem(x, to));
 

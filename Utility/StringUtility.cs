@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using ReLogic.Graphics;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
-using Terraria.Localization;
-using Terraria.ModLoader;
 
 namespace BaseLibrary
 {
@@ -24,12 +24,38 @@ namespace BaseLibrary
 
 		public static Vector2 Measure(this string text, DynamicSpriteFont font = null) => (font ?? Main.fontMouseText).MeasureString(text) - new Vector2(text.Count(x => x == ' ') * 2, 0);
 
-		public static string Subscript(this int number)
+		public static IEnumerable<string> WrapText(string text, float width, DynamicSpriteFont font = null)
 		{
-			var intList = number.ToString().Select(digit => int.Parse(digit.ToString()));
-			return intList.Aggregate("", (current, i) => current + ("\\u832" + i));
-		}
+			if (font == null) font = Main.fontMouseText;
+			StringBuilder actualLine = new StringBuilder();
+			float actualWidth = 0;
 
-		public static string GetTranslation(this ModTranslation translation, GameCulture culture = null) => translation.GetTranslation(culture ?? Language.ActiveCulture);
+			foreach (string newLine in text.Split('\n'))
+			{
+				string[] split = newLine.Split(' ');
+				for (var i = 0; i < split.Length; i++)
+				{
+					string item = split[i];
+					if (i != split.Length - 1) item += " ";
+
+					float itemWidth = font.MeasureString(item).X;
+					if (actualWidth + itemWidth > width && actualLine.Length > 0)
+					{
+						yield return actualLine.ToString();
+						actualLine.Clear();
+						actualWidth = 0;
+					}
+
+					actualLine.Append(item);
+					actualWidth += itemWidth;
+				}
+
+				yield return actualLine.ToString();
+				actualLine.Clear();
+				actualWidth = 0;
+			}
+
+			if (actualLine.Length > 0) yield return actualLine.ToString();
+		}
 	}
 }
