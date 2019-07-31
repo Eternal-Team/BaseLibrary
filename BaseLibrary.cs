@@ -77,9 +77,9 @@ namespace BaseLibrary
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			for (int i = 0; i < PanelGUI.UI.Elements.Count; i++)
+			for (int i = 0; i < PanelGUI.Elements.Count; i++)
 			{
-				UIElement element = PanelGUI.UI.Elements[i];
+				UIElement element = PanelGUI.Elements[i];
 				if (element is BaseUIPanel panel && panel.Container is BaseTE tileEntity)
 				{
 					TileObjectData data = TileObjectData.GetTileData(tileEntity.mod.GetTile(tileEntity.TileType.Name).Type, 0);
@@ -91,7 +91,7 @@ namespace BaseLibrary
 
 			if (!Main.playerInventory)
 			{
-				List<BaseUIPanel> bagPanels = PanelGUI.UI.Elements.Cast<BaseUIPanel>().ToList();
+				List<BaseUIPanel> bagPanels = PanelGUI.Elements.Cast<BaseUIPanel>().ToList();
 				foreach (BaseUIPanel ui in bagPanels)
 				{
 					ClosedUICache.Add(ui.Container);
@@ -111,7 +111,7 @@ namespace BaseLibrary
 		public override void PreSaveAndQuit()
 		{
 			ClosedUICache.Clear();
-			foreach (UIElement element in PanelGUI.UI.Elements)
+			foreach (UIElement element in PanelGUI.Elements)
 			{
 				if (element is BaseUIPanel panel) PanelGUI.UI.CloseUI(panel.Container);
 			}

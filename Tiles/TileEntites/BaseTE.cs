@@ -23,8 +23,8 @@ namespace BaseLibrary.Tiles.TileEntites
 
 			if (Main.netMode != NetmodeID.MultiplayerClient) return Place(i - data.Origin.X, j - data.Origin.Y);
 
-			NetMessage.SendTileSquare(Main.myPlayer, i - data.Origin.X, j - data.Origin.Y, Math.Max(data.Width, data.Height));
-			NetMessage.SendData(MessageID.TileEntityPlacement, number: i - data.Origin.X, number2: j - data.Origin.Y, number3: Type);
+			NetMessage.SendTileRange(Main.myPlayer, i - data.Origin.X, j - data.Origin.Y, data.Width, data.Height);
+			NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i - data.Origin.X, j - data.Origin.Y, Type);
 
 			return -1;
 		}

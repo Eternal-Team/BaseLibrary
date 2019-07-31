@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.UI;
 
@@ -8,6 +9,8 @@ namespace BaseLibrary.UI
 	public class GUI<T> where T : BaseUI
 	{
 		public T UI;
+
+		public List<UIElement> Elements => UI.Elements;
 
 		public UserInterface Interface { get; set; }
 
