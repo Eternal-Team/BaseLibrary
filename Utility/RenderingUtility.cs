@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.OS;
 using System;
 using Terraria;
 using Terraria.GameInput;
@@ -402,7 +403,7 @@ namespace BaseLibrary
 
 		private static SpriteBatchState GetState(this SpriteBatch spriteBatch) => new SpriteBatchState
 		{
-			SpriteSortMode = typeof(SpriteBatch).GetValue<SpriteSortMode>("spriteSortMode", spriteBatch),
+			SpriteSortMode = Platform.IsWindows ? typeof(SpriteBatch).GetValue<SpriteSortMode>("spriteSortMode", spriteBatch) : typeof(SpriteBatch).GetValue<SpriteSortMode>("sortMode", spriteBatch),
 			BlendState = typeof(SpriteBatch).GetValue<BlendState>("blendState", spriteBatch),
 			SamplerState = typeof(SpriteBatch).GetValue<SamplerState>("samplerState", spriteBatch),
 			DepthStencilState = typeof(SpriteBatch).GetValue<DepthStencilState>("depthStencilState", spriteBatch),

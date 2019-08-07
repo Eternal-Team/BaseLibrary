@@ -22,21 +22,7 @@ namespace BaseLibrary.UI.Elements
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			spriteBatch.End();
-
-			spriteBatch.Begin(
-				SpriteSortMode.Immediate,
-				BlendState.AlphaBlend,
-				SamplerState.AnisotropicClamp,
-				DepthStencilState.None,
-				Utility.OverflowHiddenState,
-				BaseLibrary.ColorSelectionShader,
-				Main.UIScaleMatrix);
-
-			spriteBatch.Draw(Main.magicPixel, Dimensions);
-
-			spriteBatch.End();
-			spriteBatch.Begin();
+			spriteBatch.DrawWithEffect(BaseLibrary.ColorSelectionShader, () => spriteBatch.Draw(Main.magicPixel, Dimensions));
 		}
 	}
 }
