@@ -118,7 +118,11 @@ namespace BaseLibrary
 			return inv;
 		}
 
-		public static Item GetHeldItem(this Player player) => Main.mouseItem.IsAir ? Main.LocalPlayer.HeldItem : Main.mouseItem;
+		public static ref Item GetHeldItem(this Player player)
+		{
+			if (!Main.mouseItem.IsAir) return ref Main.mouseItem;
+			return ref player.inventory[player.selectedItem];
+		}
 
 		#endregion
 	}
