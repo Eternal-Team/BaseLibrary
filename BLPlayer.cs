@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.Tiles;
+using Microsoft.Xna.Framework;
 using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -15,6 +17,21 @@ namespace BaseLibrary
 		public override void Initialize()
 		{
 			UIPositions = new Dictionary<Guid, Vector2>();
+		}
+
+		public override void PostUpdate()
+		{
+			if (player.mouseInterface) return;
+
+			if (player.GetHeldItem().IsAir && Main.mouseLeft && Main.mouseLeftRelease)
+			{
+				int type = Main.tile[Player.tileTargetX, Player.tileTargetY].type;
+				ModTile modTile = TileLoader.GetTile(type);
+				if (modTile != null && modTile is BaseTile baseTile)
+				{
+					baseTile.LeftClick(Player.tileTargetX, Player.tileTargetY);
+				}
+			}
 		}
 
 		public override TagCompound Save()
