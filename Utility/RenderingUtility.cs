@@ -311,56 +311,69 @@ namespace BaseLibrary
 		{
 			if (!item.IsAir)
 			{
-				spriteBatch.Draw(PointClampState, () =>
+				Texture2D itemTexture = Main.itemTexture[item.type];
+				Rectangle rect = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
+				Color newColor = Color.White;
+				float pulseScale = 1f;
+				ItemSlot.GetItemLight(ref newColor, ref pulseScale, item);
+
+				float availableWidth = size.X;
+				int width = rect.Width;
+				int height = rect.Height;
+				float scale = 1f;
+				if (width > availableWidth || height > availableWidth)
 				{
-					Texture2D itemTexture = Main.itemTexture[item.type];
-					Rectangle rect = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
-					Color newColor = Color.White;
-					float pulseScale = 1f;
-					ItemSlot.GetItemLight(ref newColor, ref pulseScale, item);
-					float scale = Math.Min(size.X / rect.Width, size.Y / rect.Height);
+					if (width > height) scale = availableWidth / width;
+					else scale = availableWidth / height;
+				}
 
-					Vector2 origin = rect.Size() * 0.5f * pulseScale;
+				Vector2 origin = rect.Size() * 0.5f;
+				float totalScale = pulseScale * scale;
 
-					if (ItemLoader.PreDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, scale * pulseScale))
-					{
-						spriteBatch.Draw(itemTexture, position, rect, item.GetAlpha(newColor), 0f, origin, scale * pulseScale, SpriteEffects.None, 0f);
-						if (item.color != Color.Transparent) spriteBatch.Draw(itemTexture, position, rect, item.GetColor(Color.White), 0f, origin, scale * pulseScale, SpriteEffects.None, 0f);
-					}
+				if (ItemLoader.PreDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, totalScale))
+				{
+					spriteBatch.Draw(itemTexture, position, rect, item.GetAlpha(newColor), 0f, origin, totalScale, SpriteEffects.None, 0f);
+					if (item.color != Color.Transparent) spriteBatch.Draw(itemTexture, position, rect, item.GetColor(Color.White), 0f, origin, totalScale, SpriteEffects.None, 0f);
+				}
 
-					ItemLoader.PostDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, scale * pulseScale);
-					if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(Main.wireTexture, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
-					if (drawStackSize && item.stack > 1) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontItemStack, item.stack.ToString(), position + new Vector2(10f, 26f) * scale, Color.White, 0f, Vector2.Zero, new Vector2(scale), -1f, scale);
-				});
+				ItemLoader.PostDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, totalScale);
+				if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(Main.wireTexture, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
+				if (drawStackSize && item.stack > 1) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontItemStack, item.stack.ToString(), position + new Vector2(10f, 26f) * scale, Color.White, 0f, Vector2.Zero, new Vector2(scale), -1f, scale);
 			}
 		}
 
-		public static void DrawItem(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size, float rotation, float drawScale, Color color)
+		public static void DrawItemInWorld(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size, float rotation=0f)
 		{
 			if (!item.IsAir)
 			{
-				spriteBatch.Draw(PointClampState, () =>
+				Texture2D itemTexture = Main.itemTexture[item.type];
+				Rectangle rect = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
+				Color newColor = Color.White;
+				float pulseScale = 1f;
+				ItemSlot.GetItemLight(ref newColor, ref pulseScale, item);
+
+				float availableWidth = size.X;
+				int width = rect.Width;
+				int height = rect.Height;
+				float drawScale = 1f;
+				if (width > availableWidth || height > availableWidth)
 				{
-					Texture2D itemTexture = Main.itemTexture[item.type];
-					Rectangle rect = Main.itemAnimations[item.type] != null ? Main.itemAnimations[item.type].GetFrame(itemTexture) : itemTexture.Frame();
-					Color newColor = Color.White;
-					float pulseScale = 1f;
-					ItemSlot.GetItemLight(ref newColor, ref pulseScale, item);
-					float scale = Math.Min(size.X / rect.Width, size.Y / rect.Height);
+					if (width > height) drawScale = availableWidth / width;
+					else drawScale = availableWidth / height;
+				}
 
-					Vector2 origin = rect.Size() * 0.5f * pulseScale;
+				Vector2 origin = rect.Size() * 0.5f;
 
-					float totalScale = scale * pulseScale * drawScale;
+				float totalScale = pulseScale * drawScale;
 
-					if (ItemLoader.PreDrawInWorld(item, spriteBatch, item.GetColor(Color.White), item.GetAlpha(newColor), ref rotation, ref totalScale, item.whoAmI))
-					{
-						spriteBatch.Draw(itemTexture, position, rect, item.GetAlpha(newColor), rotation, origin, totalScale, SpriteEffects.None, 0f);
-						if (item.color != Color.Transparent) spriteBatch.Draw(itemTexture, position, rect, item.GetColor(Color.White), rotation, origin, totalScale, SpriteEffects.None, 0f);
-					}
+				if (ItemLoader.PreDrawInWorld(item, spriteBatch, item.GetColor(Color.White), item.GetAlpha(newColor), ref rotation, ref totalScale, item.whoAmI))
+				{
+					spriteBatch.Draw(itemTexture, position, rect, item.GetAlpha(newColor), rotation, origin, totalScale, SpriteEffects.None, 0f);
+					if (item.color != Color.Transparent) spriteBatch.Draw(itemTexture, position, rect, item.GetColor(Color.White), rotation, origin, totalScale, SpriteEffects.None, 0f);
+				}
 
-					ItemLoader.PostDrawInWorld(item, spriteBatch, item.GetColor(Color.White), item.GetAlpha(newColor), rotation, totalScale, item.whoAmI);
-					if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(Main.wireTexture, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
-				});
+				ItemLoader.PostDrawInWorld(item, spriteBatch, item.GetColor(Color.White), item.GetAlpha(newColor), rotation, totalScale, item.whoAmI);
+				if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(Main.wireTexture, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
 			}
 		}
 
