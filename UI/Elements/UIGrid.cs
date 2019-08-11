@@ -48,22 +48,14 @@ namespace BaseLibrary.UI.Elements
 			Append(innerList);
 
 			scrollbar = new UIScrollbar();
-			scrollbar.SetView(100, 1000);
+			scrollbar.OnScroll += () =>
+			{
+				innerList.Top.Set(-scrollbar.ViewPosition, 0f);
+				innerList.Recalculate();
+			};
 		}
-
-		//public void Goto(ElementSearchMethod searchMethod, bool center = false, bool bottom = false)
-		//{
-		//	for (int i = 0; i < Items.Count; i++)
-		//	{
-		//		if (searchMethod(Items[i]))
-		//		{
-		//			scrollbar.ViewPosition = Items[i].Top.pixels;
-		//			if (bottom) scrollbar.ViewPosition = Items[i].Top.pixels + Items[i].GetOuterDimensions().Height;
-		//			if (center) scrollbar.ViewPosition = Items[i].Top.pixels - InnerDimensions.Height / 2 + Items[i].GetOuterDimensions().Height / 2;
-		//			return;
-		//		}
-		//	}
-		//}
+		
+		public override void ScrollWheel(UIScrollWheelEvent evt) => scrollbar.ViewPosition -= evt.ScrollWheelValue;
 
 		public override void Update(GameTime gameTime)
 		{
@@ -122,18 +114,6 @@ namespace BaseLibrary.UI.Elements
 			innerList.Recalculate();
 		}
 
-		public override void ScrollWheel(UIScrollWheelEvent evt)
-		{
-			base.ScrollWheel(evt);
-
-			if (scrollbar != null)
-			{
-				scrollbar.ViewPosition -= evt.ScrollWheelValue;
-				innerList.Top.Set(-scrollbar.GetValue(), 0f);
-				innerList.Recalculate();
-			}
-		}
-
 		public override void RecalculateChildren()
 		{
 			float top = 0f;
@@ -162,15 +142,7 @@ namespace BaseLibrary.UI.Elements
 		}
 
 		public int SortMethod(UIElement item1, UIElement item2) => item1.CompareTo(item2);
-
-		public override List<SnapPoint> GetSnapPoints()
-		{
-			List<SnapPoint> list = new List<SnapPoint>();
-			if (GetSnapPoint(out SnapPoint item)) list.Add(item);
-			foreach (T current in Items) list.AddRange(current.GetSnapPoints());
-			return list;
-		}
-
+		
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			spriteBatch.End();

@@ -19,10 +19,11 @@ namespace BaseLibrary
 
 		public static Effect ColorSelectionShader { get; private set; }
 		public static Effect DesaturateShader { get; private set; }
-		internal static Texture2D texturePanelBackground;
-		internal static Texture2D texturePanelBorder;
+		public static Texture2D texturePanelBackground;
+		public static Texture2D texturePanelBorder;
 
 		public static GUI<PanelUI> PanelGUI { get; private set; }
+		internal static GUI<TestUI> TestGUI { get; private set; }
 
 		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
 		private LegacyGameInterfaceLayer MouseInterface;
@@ -49,6 +50,7 @@ namespace BaseLibrary
 				DesaturateShader = GetEffect("Effects/DesaturateShader");
 
 				PanelGUI = Utility.SetupGUI<PanelUI>();
+				TestGUI = Utility.SetupGUI<TestUI>();
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
@@ -72,6 +74,7 @@ namespace BaseLibrary
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
 				layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
+				//layers.Insert(MouseTextIndex, TestGUI.InterfaceLayer);
 			}
 		}
 
@@ -106,6 +109,7 @@ namespace BaseLibrary
 			}
 
 			PanelGUI?.Update(gameTime);
+			//TestGUI?.Update(gameTime);
 		}
 
 		public override void PreSaveAndQuit()

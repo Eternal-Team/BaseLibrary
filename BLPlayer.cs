@@ -27,10 +27,7 @@ namespace BaseLibrary
 			{
 				int type = Main.tile[Player.tileTargetX, Player.tileTargetY].type;
 				ModTile modTile = TileLoader.GetTile(type);
-				if (modTile != null && modTile is BaseTile baseTile)
-				{
-					baseTile.LeftClick(Player.tileTargetX, Player.tileTargetY);
-				}
+				if (modTile != null && modTile is BaseTile baseTile) baseTile.LeftClick(Player.tileTargetX, Player.tileTargetY);
 			}
 		}
 

@@ -1,4 +1,5 @@
-﻿using Mono.Cecil;
+﻿using Microsoft.Xna.Framework;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
@@ -176,5 +177,7 @@ namespace BaseLibrary
 
 			return item;
 		}
+
+		public static bool Contains(this Rectangle rectangle, Vector2 position) => rectangle.Contains(position.ToPoint());
 	}
 }

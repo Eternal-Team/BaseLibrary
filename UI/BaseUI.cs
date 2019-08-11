@@ -9,7 +9,6 @@ namespace BaseLibrary.UI
 		public override void OnInitialize()
 		{
 			Initialize();
-			panelMain?.SetPadding(0f);
 			Append(panelMain);
 		}
 

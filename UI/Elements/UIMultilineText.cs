@@ -126,7 +126,7 @@ namespace BaseLibrary.UI.Elements
 		{
 			if (DrawBackground) spriteBatch.DrawPanel(Dimensions.ToRectangle(), BaseLibrary.texturePanelBackground, Utility.ColorPanel_Selected * 0.75f);
 
-			spriteBatch.Draw(Utility.ImmediateState, GetClippingRectangle(spriteBatch), () => Utils.DrawBorderStringFourWay(spriteBatch, font, actualText, textPosition.X, textPosition.Y - scrollbar.GetValue(), TextColor, BorderColor, Vector2.Zero, textScale));
+			spriteBatch.Draw(Utility.ImmediateState, GetClippingRectangle(spriteBatch), () => Utils.DrawBorderStringFourWay(spriteBatch, font, actualText, textPosition.X, textPosition.Y - scrollbar.ViewPosition, TextColor, BorderColor, Vector2.Zero, textScale));
 		}
 	}
 }

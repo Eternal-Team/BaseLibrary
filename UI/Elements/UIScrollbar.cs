@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -14,26 +15,30 @@ namespace BaseLibrary.UI.Elements
 		private float maxViewSize = 20f;
 		private bool isDragging;
 		private bool isHoveringOverHandle;
-		private float dragYOffset;
+		private float offset;
 
-		public static Texture2D Texture { get; set; }
-		public static Texture2D InnerTexture { get; set; }
+		private static Texture2D Texture { get; set; }
+		private static Texture2D BarSliderTexture { get; set; }
+
+		public event Action OnScroll;
 
 		public float ViewPosition
 		{
 			get => viewPosition;
-			set => viewPosition = MathHelper.Clamp(value, 0f, maxViewSize - viewSize);
+			set
+			{
+				viewPosition = MathHelper.Clamp(value, 0f, maxViewSize - viewSize);
+				OnScroll?.Invoke();
+			}
 		}
 
 		public UIScrollbar()
 		{
 			if (Texture == null) Texture = ModContent.GetTexture("Terraria/UI/Scrollbar");
-			if (InnerTexture == null) InnerTexture = ModContent.GetTexture("Terraria/UI/ScrollbarInner");
+			if (BarSliderTexture == null) BarSliderTexture = ModContent.GetTexture("BaseLibrary/Textures/UI/BarSlider");
 
 			Width = (20, 0);
-			// todo: remove use dynamic rendering
-			MaxWidth.Set(20f, 0f);
-			Padding = (5, 0, 0, 5);
+			Padding = (2, 4, 4, 2);
 		}
 
 		public void SetView(float viewSize, float maxViewSize)
@@ -44,44 +49,53 @@ namespace BaseLibrary.UI.Elements
 			this.maxViewSize = maxViewSize;
 		}
 
-		public float GetValue() => viewPosition;
+		private Rectangle HandleRectangle => new Rectangle((int)InnerDimensions.X, (int)(InnerDimensions.Y + InnerDimensions.Height * (viewPosition / maxViewSize)), (int)InnerDimensions.Width, (int)(InnerDimensions.Height * (viewSize / maxViewSize)) - 6);
 
-		private Rectangle GetHandleRectangle()
-		{
-			if (maxViewSize <= 0f && viewSize <= 0f)
-			{
-				viewSize = 1f;
-				maxViewSize = 1f;
-			}
-
-			return new Rectangle((int)InnerDimensions.X, (int)(InnerDimensions.Y + InnerDimensions.Height * (viewPosition / maxViewSize)) - 3, 20, (int)(InnerDimensions.Height * (viewSize / maxViewSize)) + 7);
-		}
-
-		private void DrawBar(SpriteBatch spriteBatch, Texture2D texture, Rectangle dimensions, Color color)
-		{
-			spriteBatch.Draw(texture, new Rectangle(dimensions.X, dimensions.Y - 6, dimensions.Width, 6), new Rectangle(0, 0, texture.Width, 6), color);
-			spriteBatch.Draw(texture, new Rectangle(dimensions.X, dimensions.Y, dimensions.Width, dimensions.Height), new Rectangle(0, 6, texture.Width, 4), color);
-			spriteBatch.Draw(texture, new Rectangle(dimensions.X, dimensions.Y + dimensions.Height, dimensions.Width, 6), new Rectangle(0, texture.Height - 6, texture.Width, 6), color);
-		}
+		public override void ScrollWheel(UIScrollWheelEvent evt) => ViewPosition -= evt.ScrollWheelValue;
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			if (isDragging)
 			{
-				float num = UserInterface.ActiveInstance.MousePosition.Y - InnerDimensions.Y - dragYOffset;
-				viewPosition = MathHelper.Clamp(num / InnerDimensions.Height * maxViewSize, 0f, maxViewSize - viewSize);
+				float num = UserInterface.ActiveInstance.MousePosition.Y - InnerDimensions.Y - offset;
+				ViewPosition = num / InnerDimensions.Height * maxViewSize;
 			}
 
-			Rectangle handleRectangle = GetHandleRectangle();
 			Vector2 mousePosition = UserInterface.ActiveInstance.MousePosition;
 
-			// todo: make an actual slider element
 			bool wasHovering = isHoveringOverHandle;
-			isHoveringOverHandle = handleRectangle.Contains(new Point((int)mousePosition.X, (int)mousePosition.Y));
+			isHoveringOverHandle = HandleRectangle.Contains(mousePosition);
 			if (!wasHovering && isHoveringOverHandle && Main.hasFocus) Main.PlaySound(SoundID.MenuTick);
 
-			DrawBar(spriteBatch, Texture, Dimensions.ToRectangle(), Color.White);
-			DrawBar(spriteBatch, InnerTexture, handleRectangle, Color.White * (isDragging || isHoveringOverHandle ? 1f : 0.85f));
+			{
+				Rectangle dimensions = Dimensions.ToRectangle();
+				spriteBatch.Draw(Texture, dimensions.TopLeft(), new Rectangle(0, 0, 8, 8), Color.White);
+				spriteBatch.Draw(Texture, dimensions.TopRight() - new Vector2(8, 0), new Rectangle(12, 0, 8, 8), Color.White);
+				spriteBatch.Draw(Texture, dimensions.BottomLeft() - new Vector2(0, 8), new Rectangle(0, 8, 8, 8), Color.White);
+				spriteBatch.Draw(Texture, dimensions.BottomRight() - new Vector2(8, 8), new Rectangle(12, 8, 8, 8), Color.White);
+
+				spriteBatch.Draw(Texture, new Rectangle(dimensions.X + 8, dimensions.Y, dimensions.Width - 16, 8), new Rectangle(8, 0, 1, 8), Color.White);
+				spriteBatch.Draw(Texture, new Rectangle(dimensions.X + 8, dimensions.Y + dimensions.Height - 8, dimensions.Width - 16, 8), new Rectangle(8, 8, 1, 8), Color.White);
+				spriteBatch.Draw(Texture, new Rectangle(dimensions.X, dimensions.Y + 8, 8, dimensions.Height - 16), new Rectangle(0, 8, 8, 1), Color.White);
+				spriteBatch.Draw(Texture, new Rectangle(dimensions.X + dimensions.Width - 8, dimensions.Y + 8, 8, dimensions.Height - 16), new Rectangle(12, 8, 8, 1), Color.White);
+
+				spriteBatch.Draw(Texture, new Rectangle(dimensions.X + 8, dimensions.Y + 8, dimensions.Width - 16, dimensions.Height - 16), new Rectangle(8, 8, 1, 1), Color.White);
+			}
+
+			{
+				Color color = Color.White * (isDragging || isHoveringOverHandle ? 1f : 0.85f);
+				spriteBatch.Draw(BarSliderTexture, HandleRectangle.TopLeft(), new Rectangle(0, 0, 6, 6), color);
+				spriteBatch.Draw(BarSliderTexture, HandleRectangle.TopRight() - new Vector2(6, 0), new Rectangle(6, 0, 6, 6), color);
+				spriteBatch.Draw(BarSliderTexture, HandleRectangle.BottomLeft(), new Rectangle(0, 10, 6, 6), color);
+				spriteBatch.Draw(BarSliderTexture, HandleRectangle.BottomRight() - new Vector2(6, 0), new Rectangle(6, 10, 6, 6), color);
+
+				spriteBatch.Draw(BarSliderTexture, new Rectangle(HandleRectangle.X + 6, HandleRectangle.Y, HandleRectangle.Width - 12, 6), new Rectangle(5, 0, 1, 6), color);
+				spriteBatch.Draw(BarSliderTexture, new Rectangle(HandleRectangle.X + 6, HandleRectangle.Y + HandleRectangle.Height, HandleRectangle.Width - 12, 6), new Rectangle(5, 10, 1, 6), color);
+				spriteBatch.Draw(BarSliderTexture, new Rectangle(HandleRectangle.X, HandleRectangle.Y + 6, 6, HandleRectangle.Height - 6), new Rectangle(0, 5, 6, 1), color);
+				spriteBatch.Draw(BarSliderTexture, new Rectangle(HandleRectangle.X + HandleRectangle.Width - 6, HandleRectangle.Y + 6, 6, HandleRectangle.Height - 6), new Rectangle(6, 5, 6, 1), color);
+
+				spriteBatch.Draw(BarSliderTexture, new Rectangle(HandleRectangle.X + 6, HandleRectangle.Y + 6, HandleRectangle.Width - 12, HandleRectangle.Height - 6), new Rectangle(6, 6, 1, 1), color);
+			}
 		}
 
 		public override void MouseDown(UIMouseEvent evt)
@@ -90,22 +104,18 @@ namespace BaseLibrary.UI.Elements
 
 			if (evt.Target == this)
 			{
-				Rectangle handleRectangle = GetHandleRectangle();
-				if (handleRectangle.Contains(new Point((int)evt.MousePosition.X, (int)evt.MousePosition.Y)))
+				if (HandleRectangle.Contains(evt.MousePosition))
 				{
 					isDragging = true;
-					dragYOffset = evt.MousePosition.Y - handleRectangle.Y;
-					return;
+					offset = evt.MousePosition.Y - HandleRectangle.Y;
 				}
-
-				float num = UserInterface.ActiveInstance.MousePosition.Y - InnerDimensions.Y - (handleRectangle.Height >> 1);
-				viewPosition = MathHelper.Clamp(num / InnerDimensions.Height * maxViewSize, 0f, maxViewSize - viewSize);
 			}
 		}
 
 		public override void MouseUp(UIMouseEvent evt)
 		{
 			base.MouseUp(evt);
+
 			isDragging = false;
 		}
 	}
