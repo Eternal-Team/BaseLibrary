@@ -342,7 +342,7 @@ namespace BaseLibrary
 			}
 		}
 
-		public static void DrawItemInWorld(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size, float rotation=0f)
+		public static void DrawItemInWorld(this SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size, float rotation = 0f)
 		{
 			if (!item.IsAir)
 			{

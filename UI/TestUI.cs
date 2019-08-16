@@ -32,7 +32,7 @@ namespace BaseLibrary.UI
 				Height = (-36, 1),
 				Top = (36, 0)
 			};
-			scrollbar.SetView(1000f,1000f);
+			scrollbar.SetView(1000f, 1000f);
 			panelMain.Append(scrollbar);
 		}
 	}

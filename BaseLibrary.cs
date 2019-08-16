@@ -92,6 +92,8 @@ namespace BaseLibrary
 				}
 			}
 
+			// todo: use On.Terraria.Player.ToggleInv
+
 			if (!Main.playerInventory)
 			{
 				List<BaseUIPanel> bagPanels = PanelGUI.Elements.Cast<BaseUIPanel>().ToList();

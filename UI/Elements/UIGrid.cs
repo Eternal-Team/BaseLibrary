@@ -54,7 +54,7 @@ namespace BaseLibrary.UI.Elements
 				innerList.Recalculate();
 			};
 		}
-		
+
 		public override void ScrollWheel(UIScrollWheelEvent evt) => scrollbar.ViewPosition -= evt.ScrollWheelValue;
 
 		public override void Update(GameTime gameTime)
@@ -142,7 +142,7 @@ namespace BaseLibrary.UI.Elements
 		}
 
 		public int SortMethod(UIElement item1, UIElement item2) => item1.CompareTo(item2);
-		
+
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			spriteBatch.End();

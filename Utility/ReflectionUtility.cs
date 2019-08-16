@@ -73,7 +73,7 @@ namespace BaseLibrary
 				return (T)info.Invoke(obj, args);
 			}
 
-			return default(T);
+			return default;
 		}
 
 		// instance object, w/o flags

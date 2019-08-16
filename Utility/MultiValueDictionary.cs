@@ -920,7 +920,7 @@ namespace BaseLibrary
 				_version = multiValueDictionary._version;
 				_enumerator = multiValueDictionary._dictionary.GetEnumerator();
 				_state = EnumerationState.BeforeFirst;
-				Current = default(KeyValuePair<TKey, IReadOnlyCollection<TValue>>);
+				Current = default;
 			}
 
 			public KeyValuePair<TKey, IReadOnlyCollection<TValue>> Current { get; private set; }
@@ -962,7 +962,7 @@ namespace BaseLibrary
 					return true;
 				}
 
-				Current = default(KeyValuePair<TKey, IReadOnlyCollection<TValue>>);
+				Current = default;
 				_state = EnumerationState.AfterLast;
 				return false;
 			}
@@ -976,7 +976,7 @@ namespace BaseLibrary
 				//if (_version != _multiValueDictionary._version) throw new InvalidOperationException(Strings.InvalidOperation_EnumFailedVersion);
 				_enumerator.Dispose();
 				_enumerator = _multiValueDictionary._dictionary.GetEnumerator();
-				Current = default(KeyValuePair<TKey, IReadOnlyCollection<TValue>>);
+				Current = default;
 				_state = EnumerationState.BeforeFirst;
 			}
 
