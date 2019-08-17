@@ -31,10 +31,9 @@ namespace BaseLibrary.UI
 			if (entity.UI != null) CloseUI(entity);
 			else
 			{
-				Main.playerInventory = true;
+				if (!Hooking.ClosedUICache.Contains(entity)) OpenUI(entity);
 
-				if (BaseLibrary.Instance.ClosedUICache.Contains(entity)) BaseLibrary.Instance.ClosedUICache.Remove(entity);
-				OpenUI(entity);
+				if (!Main.playerInventory) Main.LocalPlayer.ToggleInv();
 			}
 		}
 

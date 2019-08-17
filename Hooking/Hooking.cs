@@ -6,17 +6,17 @@ using MonoMod.RuntimeDetour.HookGen;
 using On.Terraria;
 using On.Terraria.UI;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria.GameInput;
 using Terraria.ModLoader;
-using Item = Terraria.Item;
-using PlayerInput = On.Terraria.GameInput.PlayerInput;
-using Utils = Terraria.Utils;
 
 namespace BaseLibrary
 {
 	public static partial class Hooking
 	{
 		public static bool BlockScrolling;
+		internal static List<IHasUI> ClosedUICache = new List<IHasUI>();
 
 		internal static void Load()
 		{
@@ -27,7 +27,7 @@ namespace BaseLibrary
 			UserInterface.Update += UserInterface_Update;
 
 			IL.Terraria.Main.DrawInterface_36_Cursor += Main_DrawInterface_36_Cursor;
-			PlayerInput.KeyboardInput += PlayerInput_KeyboardInput;
+			On.Terraria.GameInput.PlayerInput.KeyboardInput += PlayerInput_KeyboardInput;
 
 			Main.DoUpdate_Enter_ToggleChat += Main_DoUpdate_Enter_ToggleChat;
 
@@ -69,7 +69,7 @@ namespace BaseLibrary
 							Terraria.GameInput.PlayerInput.SetZoom_UI();
 							int mulX = (Terraria.Main.screenWidth - x - 280) / height;
 							int mulY = (Terraria.Main.screenHeight - y - 20) / height;
-							if (new Rectangle(x, y, mulX * height, mulY * height).Contains(Utils.ToPoint(Terraria.Main.MouseScreen)))
+							if (new Rectangle(x, y, mulX * height, mulY * height).Contains(Terraria.Utils.ToPoint(Terraria.Main.MouseScreen)))
 							{
 								delta *= -1;
 								int sign = Math.Sign(delta);
@@ -103,7 +103,26 @@ namespace BaseLibrary
 
 		private static void Player_ToggleInv(Player.orig_ToggleInv orig, Terraria.Player self)
 		{
-			if (!Utility.Input.KeyboardHandler.Enabled) orig(self);
+			if (!Utility.Input.KeyboardHandler.Enabled)
+			{
+				orig(self);
+
+				if (!Terraria.Main.playerInventory)
+				{
+					List<BaseUIPanel> panels = BaseLibrary.PanelGUI.Elements.Cast<BaseUIPanel>().ToList();
+					foreach (BaseUIPanel ui in panels)
+					{
+						ClosedUICache.Add(ui.Container);
+						BaseLibrary.PanelGUI.UI.CloseUI(ui.Container);
+					}
+				}
+				else
+				{
+					foreach (IHasUI ui in ClosedUICache) BaseLibrary.PanelGUI.UI.OpenUI(ui);
+
+					ClosedUICache.Clear();
+				}
+			}
 		}
 
 		private static void Main_DoUpdate_Enter_ToggleChat(Main.orig_DoUpdate_Enter_ToggleChat orig)
@@ -111,14 +130,14 @@ namespace BaseLibrary
 			if (!Utility.Input.KeyboardHandler.Enabled) orig();
 		}
 
-		private static void PlayerInput_KeyboardInput(PlayerInput.orig_KeyboardInput orig)
+		private static void PlayerInput_KeyboardInput(On.Terraria.GameInput.PlayerInput.orig_KeyboardInput orig)
 		{
 			if (!Utility.Input.KeyboardHandler.Enabled) orig();
 			else
 			{
 				foreach (string key in Terraria.GameInput.PlayerInput.MouseKeys)
 				{
-					Terraria.GameInput.PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard].Processkey(Terraria.GameInput.PlayerInput.Triggers.Current, key);
+					PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard].Processkey(PlayerInput.Triggers.Current, key);
 				}
 			}
 		}
@@ -130,7 +149,7 @@ namespace BaseLibrary
 			orig(self, time);
 		}
 
-		private static void ItemSlot_LeftClick(ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)
+		private static void ItemSlot_LeftClick(ItemSlot.orig_LeftClick_ItemArray_int_int orig, Terraria.Item[] inv, int context, int slot)
 		{
 			if (Terraria.Main.mouseItem.modItem is IHasUI mouse) BaseLibrary.PanelGUI.UI.CloseUI(mouse);
 			if (inv[slot].modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);

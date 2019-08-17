@@ -92,8 +92,8 @@ namespace BaseLibrary
 			return (T)Convert.ChangeType(toLow + (castValue - fromLow) * (toHigh - toLow) / (fromHigh - fromLow), value.GetType());
 		}
 
-		public static Vector2 ToScreenCoordinates(this Point point) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange));
+		public static Vector2 ToScreenCoordinates(this Point point, bool addOffscreenRange = true) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen || !addOffscreenRange ? Vector2.Zero : new Vector2(Main.offScreenRange));
 
-		public static Vector2 ToScreenCoordinates(this Point16 point) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange));
+		public static Vector2 ToScreenCoordinates(this Point16 point, bool addOffscreenRange = true) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen || !addOffscreenRange ? Vector2.Zero : new Vector2(Main.offScreenRange));
 	}
 }

@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
-using Language = Terraria.Localization.Language;
 
 namespace BaseLibrary.UI
 {
@@ -53,7 +52,7 @@ namespace BaseLibrary.UI
 			Append(panelMain);
 
 			float width = panelMain.Dimensions.Width * 0.31f;
-			buttonMain = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Main"))
+			buttonMain = new UITextButton(Terraria.Localization.Language.GetText("Mods.BaseLibrary.UI.Main"))
 			{
 				Width = (width, 0),
 				Height = (40, 0),
@@ -72,7 +71,7 @@ namespace BaseLibrary.UI
 			};
 			Insert(0, buttonMain);
 
-			buttonChangelogs = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Changelogs"))
+			buttonChangelogs = new UITextButton(Terraria.Localization.Language.GetText("Mods.BaseLibrary.UI.Changelogs"))
 			{
 				Width = (width, 0),
 				Height = (40, 0),
@@ -95,7 +94,7 @@ namespace BaseLibrary.UI
 			};
 			Insert(1, buttonChangelogs);
 
-			buttonCredits = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Credits"))
+			buttonCredits = new UITextButton(Terraria.Localization.Language.GetText("Mods.BaseLibrary.UI.Credits"))
 			{
 				Width = (width, 0),
 				Height = (40, 0),
@@ -113,7 +112,7 @@ namespace BaseLibrary.UI
 			};
 			Insert(2, buttonCredits);
 
-			buttonReturnToMenu = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.ReturnToMenu"))
+			buttonReturnToMenu = new UITextButton(Terraria.Localization.Language.GetText("Mods.BaseLibrary.UI.ReturnToMenu"))
 			{
 				Width = (0, 0.2f),
 				Height = (40, 0),
@@ -125,7 +124,7 @@ namespace BaseLibrary.UI
 
 			tabMain = new List<BaseElement>();
 			{
-				UIMultilineText introText = new UIMultilineText(Language.GetText("Mods.BaseLibrary.UI.IntroMessage"))
+				UIMultilineText introText = new UIMultilineText(Terraria.Localization.Language.GetText("Mods.BaseLibrary.UI.IntroMessage"))
 				{
 					Width = (0, 1),
 					Height = (-68, 1),

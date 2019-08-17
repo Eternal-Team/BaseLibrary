@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -25,7 +24,6 @@ namespace BaseLibrary
 		public static GUI<PanelUI> PanelGUI { get; private set; }
 		internal static GUI<TestUI> TestGUI { get; private set; }
 
-		internal List<IHasUI> ClosedUICache = new List<IHasUI>();
 		private LegacyGameInterfaceLayer MouseInterface;
 
 		public override void Load()
@@ -92,31 +90,13 @@ namespace BaseLibrary
 				}
 			}
 
-			// todo: use On.Terraria.Player.ToggleInv
-
-			if (!Main.playerInventory)
-			{
-				List<BaseUIPanel> bagPanels = PanelGUI.Elements.Cast<BaseUIPanel>().ToList();
-				foreach (BaseUIPanel ui in bagPanels)
-				{
-					ClosedUICache.Add(ui.Container);
-					PanelGUI.UI.CloseUI(ui.Container);
-				}
-			}
-			else
-			{
-				foreach (IHasUI ui in ClosedUICache) PanelGUI.UI.OpenUI(ui);
-
-				ClosedUICache.Clear();
-			}
-
 			PanelGUI?.Update(gameTime);
 			//TestGUI?.Update(gameTime);
 		}
 
 		public override void PreSaveAndQuit()
 		{
-			ClosedUICache.Clear();
+			Hooking.ClosedUICache.Clear();
 			foreach (UIElement element in PanelGUI.Elements)
 			{
 				if (element is BaseUIPanel panel) PanelGUI.UI.CloseUI(panel.Container);
