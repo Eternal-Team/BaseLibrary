@@ -92,6 +92,29 @@ namespace BaseLibrary
 			return (T)Convert.ChangeType(toLow + (castValue - fromLow) * (toHigh - toLow) / (fromHigh - fromLow), value.GetType());
 		}
 
+		public static float SmoothDamp(float current, float target, ref float currentVelocity, float smoothTime, float maxSpeed, float deltaTime)
+		{
+			smoothTime = MathHelper.Max(0.0001f, smoothTime);
+			float omega = 2.0f / smoothTime;
+			float x = omega * deltaTime;
+			float exp = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+			float deltaX = current - target;
+			float maxDelta = maxSpeed * smoothTime;
+
+			deltaX = MathHelper.Clamp(deltaX, -maxDelta, maxDelta);
+			float temp = (currentVelocity + omega * deltaX) * deltaTime;
+			float result = current - deltaX + (deltaX + temp) * exp;
+			currentVelocity = (currentVelocity - omega * temp) * exp;
+
+			if (target - current > 0.0f == result > target)
+			{
+				result = target;
+				currentVelocity = 0.0f;
+			}
+
+			return result;
+		}
+
 		public static Vector2 ToScreenCoordinates(this Point point, bool addOffscreenRange = true) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen || !addOffscreenRange ? Vector2.Zero : new Vector2(Main.offScreenRange));
 
 		public static Vector2 ToScreenCoordinates(this Point16 point, bool addOffscreenRange = true) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen || !addOffscreenRange ? Vector2.Zero : new Vector2(Main.offScreenRange));
