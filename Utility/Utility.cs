@@ -40,9 +40,8 @@ namespace BaseLibrary
 						item.SetDefaults(type);
 						ItemCache[type] = item;
 					}
-					catch (Exception e)
+					catch
 					{
-						BaseLibrary.Instance.Logger.Info("Item is null, this is fine", e);
 					}
 				}
 
@@ -54,9 +53,8 @@ namespace BaseLibrary
 						npc.SetDefaults(type);
 						NPCCache[type] = npc;
 					}
-					catch (Exception e)
+					catch 
 					{
-						BaseLibrary.Instance.Logger.Info("Item is null, this is fine", e);
 					}
 				}
 
@@ -68,9 +66,8 @@ namespace BaseLibrary
 						projectile.SetDefaults(type);
 						ProjectileCache[type] = projectile;
 					}
-					catch (Exception e)
+					catch
 					{
-						BaseLibrary.Instance.Logger.Info("Item is null, this is fine", e);
 					}
 				}
 			}
@@ -107,9 +104,9 @@ namespace BaseLibrary
 			}
 		}
 
-		public static int AddVariable(this ILContext context, Type type)
+		public static int AddVariable<T>(this ILContext context)
 		{
-			context.Body.Variables.Add(new VariableDefinition(context.Import(type)));
+			context.Body.Variables.Add(new VariableDefinition(context.Import(typeof(T))));
 			return context.Body.Variables.Count - 1;
 		}
 
