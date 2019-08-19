@@ -9,15 +9,15 @@ namespace BaseLibrary
 {
 	public static partial class Utility
 	{
-		private static Lazy<char[]> incSuffixes = new Lazy<char[]>(() => new[] { 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' });
-		private static readonly char[] IncSuffixes = incSuffixes.Value;
-
-		private static Lazy<char[]> decSuffixes = new Lazy<char[]>(() => new[] { 'm', '\u03bc', 'n', 'p', 'f', 'a', 'z', 'y' });
-		private static readonly char[] DecSuffixes = decSuffixes.Value;
+		private static char[] IncSuffixes;
+		private static char[] DecSuffixes;
 
 		public static string ToSI<T>(this T value, string format = null)
 		{
 			if (value == null) throw new ArgumentNullException();
+
+			if (IncSuffixes == null) IncSuffixes = new[] { 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' };
+			if (DecSuffixes == null) DecSuffixes = new[] { 'm', '\u03bc', 'n', 'p', 'f', 'a', 'z', 'y' };
 
 			double castValue = (double)Convert.ChangeType(value, TypeCode.Double);
 
