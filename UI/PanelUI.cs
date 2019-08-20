@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace BaseLibrary.UI
 {
@@ -42,7 +43,7 @@ namespace BaseLibrary.UI
 			BaseElement element = entity.UI;
 			if (element == null) return;
 
-			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.UUID] = element.Position / Dimensions.Size();
+			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.UUID] = element.Position / Size;
 			element.Deactivate();
 			RemoveChild(element);
 			entity.UI = null;
@@ -74,6 +75,22 @@ namespace BaseLibrary.UI
 			Append(entity.UI);
 
 			Main.PlaySound(entity.OpenSound);
+		}
+
+		public void CloseAllUIs()
+		{
+			for (int i = 0; i < Elements.Count; i++)
+			{
+				UIElement element = Elements[i];
+				if (element is BaseUIPanel panel)
+				{
+					Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[panel.Container.UUID] = panel.Position / Size;
+					element.Deactivate();
+					panel.Container.UI = null;
+				}
+			}
+
+			BaseLibrary.PanelGUI.UI.RemoveAllChildren();
 		}
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using BaseLibrary.Tiles.TileEntites;
 using BaseLibrary.UI;
-using BaseLibrary.UI.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
@@ -98,18 +97,7 @@ namespace BaseLibrary
 		public override void PreSaveAndQuit()
 		{
 			Hooking.ClosedUICache.Clear();
-
-			for (int i = 0; i < PanelGUI.Elements.Count; i++)
-			{
-				UIElement element = PanelGUI.Elements[i];
-				if (element is BaseUIPanel panel)
-				{
-					Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[panel.Container.UUID] = panel.Position / PanelGUI.UI.Size;
-					element.Deactivate();
-					PanelGUI.UI.RemoveChild(element);
-					panel.Container.UI = null;
-				}
-			}
+			PanelGUI.UI.CloseAllUIs();
 		}
 	}
 }

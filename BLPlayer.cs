@@ -1,12 +1,15 @@
 ﻿using BaseLibrary.Tiles;
+using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.UI;
 
 namespace BaseLibrary
 {
@@ -47,6 +50,12 @@ namespace BaseLibrary
 		{
 			UIPositions = new Dictionary<Guid, Vector2>();
 			UIPositions.AddRange(tag.GetList<TagCompound>("UIPositions").ToDictionary(c => c.Get<Guid>("UUID"), c => c.Get<Vector2>("Position")));
+		}
+
+		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+		{
+			Hooking.ClosedUICache.Clear();
+			BaseLibrary.PanelGUI.UI.CloseAllUIs();
 		}
 	}
 }
