@@ -1,4 +1,6 @@
-﻿namespace BaseLibrary
+﻿using Terraria;
+
+namespace BaseLibrary
 {
 	public enum Side
 	{

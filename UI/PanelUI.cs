@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 
@@ -29,17 +30,21 @@ namespace BaseLibrary.UI
 
 		public void HandleUI(IHasUI entity)
 		{
+			if (Main.netMode == NetmodeID.Server || entity == null) return;
+
 			if (entity.UI != null) CloseUI(entity);
 			else
 			{
-				if (!Hooking.ClosedUICache.Contains(entity)) OpenUI(entity);
+				if (!BaseLibrary.ClosedUICache.Contains(entity)) OpenUI(entity);
 
-				if (!Main.playerInventory) Main.LocalPlayer.ToggleInv();
+				if (!Main.playerInventory) Main.playerInventory = true;
 			}
 		}
 
 		public void CloseUI(IHasUI entity)
 		{
+			if (Main.netMode == NetmodeID.Server || entity == null) return;
+
 			BaseElement element = entity.UI;
 			if (element == null) return;
 
@@ -53,6 +58,8 @@ namespace BaseLibrary.UI
 
 		public void OpenUI(IHasUI entity)
 		{
+			if (Main.netMode == NetmodeID.Server || entity == null) return;
+
 			Type entityType = UICache.ContainsKey(entity.GetType()) ? entity.GetType() : entity.GetType().BaseType;
 
 			entity.UI = (BaseUIPanel)Activator.CreateInstance(UICache[entityType]);

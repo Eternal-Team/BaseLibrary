@@ -1,4 +1,6 @@
-﻿namespace BaseLibrary.UI
+﻿using Terraria;
+
+namespace BaseLibrary.UI
 {
 	public enum ScaleMode
 	{

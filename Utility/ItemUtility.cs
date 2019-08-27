@@ -108,7 +108,6 @@ namespace BaseLibrary
 		public static IEnumerable<T> OfType<T>(this IEnumerable<Item> items) where T : class => items.Where(item => item.modItem is T).Select(item => item.modItem as T);
 
 		#region Player
-
 		public static Item[] Inventory(this Player player)
 		{
 			Item[] inv = new Item[58];
@@ -121,7 +120,6 @@ namespace BaseLibrary
 			if (!Main.mouseItem.IsAir) return ref Main.mouseItem;
 			return ref player.inventory[player.selectedItem];
 		}
-
 		#endregion
 	}
 }

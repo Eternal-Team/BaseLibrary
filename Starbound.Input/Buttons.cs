@@ -1,4 +1,6 @@
-﻿namespace Starbound.Input
+﻿using Terraria;
+
+namespace Starbound.Input
 {
 	/// <summary>
 	///     An enumeration of all of the buttons that are available on a game pad. This is more broad than

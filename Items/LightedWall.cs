@@ -1,3 +1,5 @@
+using Terraria;
+
 namespace BaseLibrary.Items
 {
 	public class LightedWall : BaseItem

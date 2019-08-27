@@ -1,4 +1,6 @@
-﻿namespace BaseLibrary.UI.Elements
+﻿using Terraria;
+
+namespace BaseLibrary.UI.Elements
 {
 	public class BaseState : BaseElement
 	{

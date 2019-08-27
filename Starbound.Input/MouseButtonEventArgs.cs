@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System;
+using Terraria;
 
 namespace Starbound.Input
 {

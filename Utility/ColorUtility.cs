@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using Terraria;
 
 namespace BaseLibrary
 {
@@ -30,7 +32,7 @@ namespace BaseLibrary
 
 		public static string ToHex(this Color color) => $"{color.R:X2}{color.G:X2}{color.B:X2}";
 
-		public static Color DoubleLerp(Color c1, Color c2, Color c3, float step) => step < .5f ? Color.Lerp(c1, c2, step * 2f) : Color.Lerp(c2, c3, (step - .5f) * 2f);
+		public static Color DoubleLerp(Color c1, Color c2, Color c3, float step) => step < 0.5f ? Color.Lerp(c1, c2, step * 2f) : Color.Lerp(c2, c3, (step - 0.5f) * 2f);
 
 		public static Color HSL2RGB(float h, float sl, float l)
 		{
@@ -123,8 +125,10 @@ namespace BaseLibrary
 
 		public static Color AverageColor(this IEnumerable<Color> colors)
 		{
+			List<Color> list = colors.ToList();
+
 			int r = 0, g = 0, b = 0, a = 0;
-			foreach (Color color in colors)
+			foreach (Color color in list)
 			{
 				r += color.R;
 				g += color.G;
@@ -132,7 +136,8 @@ namespace BaseLibrary
 				a += color.A;
 			}
 
-			return new Color(r / 4, g / 4, b / 4, a / 4);
+			int count = list.Count;
+			return new Color(r / count, g / count, b / count, a / count);
 		}
 	}
 }

@@ -36,7 +36,6 @@ namespace BaseLibrary
 		}
 
 		#region Weather
-
 		public static void StartRain() => typeof(Main).InvokeMethod<object>("StartRain");
 
 		public static void StopRain() => typeof(Main).InvokeMethod<object>("StopRain");
@@ -44,7 +43,6 @@ namespace BaseLibrary
 		public static void StartSandstorm() => typeof(Sandstorm).InvokeMethod<object>("StartSandstorm");
 
 		public static void StopSandstorm() => typeof(Sandstorm).InvokeMethod<object>("StopSandstorm");
-
 		#endregion
 	}
 }

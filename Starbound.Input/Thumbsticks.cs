@@ -1,4 +1,6 @@
-﻿namespace Starbound.Input
+﻿using Terraria;
+
+namespace Starbound.Input
 {
 	/// <summary>
 	///     An enumeration of the thumbsticks in a game pad.

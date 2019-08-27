@@ -3,11 +3,9 @@ using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
-using On.Terraria;
 using On.Terraria.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using Terraria;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 
@@ -16,12 +14,11 @@ namespace BaseLibrary
 	public static partial class Hooking
 	{
 		public static bool BlockScrolling;
-		internal static List<IHasUI> ClosedUICache = new List<IHasUI>();
 
 		internal static void Load()
 		{
 			ItemSlot.LeftClick_ItemArray_int_int += ItemSlot_LeftClick;
-			Player.DropSelectedItem += Player_DropSelectedItem;
+			On.Terraria.Player.DropSelectedItem += Player_DropSelectedItem;
 			UIElement.GetElementAt += UIElement_GetElementAt;
 
 			UserInterface.Update += UserInterface_Update;
@@ -29,9 +26,9 @@ namespace BaseLibrary
 			IL.Terraria.Main.DrawInterface_36_Cursor += Main_DrawInterface_36_Cursor;
 			On.Terraria.GameInput.PlayerInput.KeyboardInput += PlayerInput_KeyboardInput;
 
-			Main.DoUpdate_Enter_ToggleChat += Main_DoUpdate_Enter_ToggleChat;
+			On.Terraria.Main.DoUpdate_Enter_ToggleChat += Main_DoUpdate_Enter_ToggleChat;
 
-			Player.ToggleInv += Player_ToggleInv;
+			On.Terraria.Player.ToggleInv += Player_ToggleInv;
 
 			IL.Terraria.Player.Update += Player_Update;
 
@@ -49,7 +46,7 @@ namespace BaseLibrary
 				cursor.RemoveRange(113);
 
 				cursor.Emit(OpCodes.Ldarg, 0);
-				cursor.EmitDelegate<Action<Terraria.Player>>(player =>
+				cursor.EmitDelegate<Action<Player>>(player =>
 				{
 					if (BlockScrolling)
 					{
@@ -57,19 +54,19 @@ namespace BaseLibrary
 						return;
 					}
 
-					if (!Terraria.Main.playerInventory) player.InvokeMethod<object>("HandleHotbar");
+					if (!Main.playerInventory) player.InvokeMethod<object>("HandleHotbar");
 					else
 					{
 						int delta = Terraria.GameInput.PlayerInput.ScrollWheelDelta / 120;
-						if (Terraria.Main.recBigList)
+						if (Main.recBigList)
 						{
 							const int height = 42;
 							const int y = 340;
 							const int x = 310;
 							Terraria.GameInput.PlayerInput.SetZoom_UI();
-							int mulX = (Terraria.Main.screenWidth - x - 280) / height;
-							int mulY = (Terraria.Main.screenHeight - y - 20) / height;
-							if (new Rectangle(x, y, mulX * height, mulY * height).Contains(Terraria.Utils.ToPoint(Terraria.Main.MouseScreen)))
+							int mulX = (Main.screenWidth - x - 280) / height;
+							int mulY = (Main.screenHeight - y - 20) / height;
+							if (new Rectangle(x, y, mulX * height, mulY * height).Contains(Utils.ToPoint(Main.MouseScreen)))
 							{
 								delta *= -1;
 								int sign = Math.Sign(delta);
@@ -77,13 +74,13 @@ namespace BaseLibrary
 								{
 									if (delta < 0)
 									{
-										Terraria.Main.recStart -= mulX;
-										if (Terraria.Main.recStart < 0) Terraria.Main.recStart = 0;
+										Main.recStart -= mulX;
+										if (Main.recStart < 0) Main.recStart = 0;
 									}
 									else
 									{
-										Terraria.Main.recStart += mulX;
-										if (Terraria.Main.recStart > Terraria.Main.numAvailableRecipes - mulX) Terraria.Main.recStart = Terraria.Main.numAvailableRecipes - mulX;
+										Main.recStart += mulX;
+										if (Main.recStart > Main.numAvailableRecipes - mulX) Main.recStart = Main.numAvailableRecipes - mulX;
 									}
 
 									delta -= sign;
@@ -93,39 +90,20 @@ namespace BaseLibrary
 							Terraria.GameInput.PlayerInput.SetZoom_World();
 						}
 
-						Terraria.Main.focusRecipe += delta;
-						if (Terraria.Main.focusRecipe > Terraria.Main.numAvailableRecipes - 1) Terraria.Main.focusRecipe = Terraria.Main.numAvailableRecipes - 1;
-						if (Terraria.Main.focusRecipe < 0) Terraria.Main.focusRecipe = 0;
+						Main.focusRecipe += delta;
+						if (Main.focusRecipe > Main.numAvailableRecipes - 1) Main.focusRecipe = Main.numAvailableRecipes - 1;
+						if (Main.focusRecipe < 0) Main.focusRecipe = 0;
 					}
 				});
 			}
 		}
 
-		private static void Player_ToggleInv(Player.orig_ToggleInv orig, Terraria.Player self)
+		private static void Player_ToggleInv(On.Terraria.Player.orig_ToggleInv orig, Player self)
 		{
-			if (!Utility.Input.KeyboardHandler.Enabled)
-			{
-				orig(self);
-
-				if (!Terraria.Main.playerInventory)
-				{
-					List<BaseUIPanel> panels = BaseLibrary.PanelGUI.Elements.Cast<BaseUIPanel>().ToList();
-					foreach (BaseUIPanel ui in panels)
-					{
-						ClosedUICache.Add(ui.Container);
-						BaseLibrary.PanelGUI.UI.CloseUI(ui.Container);
-					}
-				}
-				else
-				{
-					foreach (IHasUI ui in ClosedUICache) BaseLibrary.PanelGUI.UI.OpenUI(ui);
-
-					ClosedUICache.Clear();
-				}
-			}
+			if (!Utility.Input.KeyboardHandler.Enabled) orig(self);
 		}
 
-		private static void Main_DoUpdate_Enter_ToggleChat(Main.orig_DoUpdate_Enter_ToggleChat orig)
+		private static void Main_DoUpdate_Enter_ToggleChat(On.Terraria.Main.orig_DoUpdate_Enter_ToggleChat orig)
 		{
 			if (!Utility.Input.KeyboardHandler.Enabled) orig();
 		}
@@ -149,15 +127,16 @@ namespace BaseLibrary
 			orig(self, time);
 		}
 
-		private static void ItemSlot_LeftClick(ItemSlot.orig_LeftClick_ItemArray_int_int orig, Terraria.Item[] inv, int context, int slot)
+		private static void ItemSlot_LeftClick(ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)
 		{
-			if (Terraria.Main.mouseItem.modItem is IHasUI mouse) BaseLibrary.PanelGUI.UI.CloseUI(mouse);
+			if (Main.mouseItem.modItem is IHasUI mouse) BaseLibrary.PanelGUI.UI.CloseUI(mouse);
+
 			if (inv[slot].modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
 
 			orig(inv, context, slot);
 		}
 
-		private static void Player_DropSelectedItem(Player.orig_DropSelectedItem orig, Terraria.Player self)
+		private static void Player_DropSelectedItem(On.Terraria.Player.orig_DropSelectedItem orig, Player self)
 		{
 			if (self.HeldItem.modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
 

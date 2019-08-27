@@ -49,5 +49,19 @@ namespace BaseLibrary
 			rectangle.BottomLeft(),
 			rectangle.BottomRight()
 		};
+
+		public static void MoveItem<T>(this List<T> list, int oldIndex, int newIndex)
+		{
+			T removedItem = list[oldIndex];
+			list.RemoveAt(oldIndex);
+			list.Insert(newIndex, removedItem);
+		}
+
+		public static void MoveToEnd<T>(this List<T> list, int index)
+		{
+			T removedItem = list[index];
+			list.RemoveAt(index);
+			list.Add(removedItem);
+		}
 	}
 }

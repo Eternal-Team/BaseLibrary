@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -15,6 +16,7 @@ namespace BaseLibrary
 	public class BaseLibrary : Mod
 	{
 		internal static BaseLibrary Instance;
+		internal static List<IHasUI> ClosedUICache = new List<IHasUI>();
 
 		public static Effect ColorSelectionShader { get; private set; }
 		public static Effect DesaturateShader { get; private set; }
@@ -90,13 +92,29 @@ namespace BaseLibrary
 				}
 			}
 
+			if (!Main.playerInventory)
+			{
+				List<BaseUIPanel> bagPanels = PanelGUI.Elements.Cast<BaseUIPanel>().ToList();
+				foreach (BaseUIPanel ui in bagPanels)
+				{
+					ClosedUICache.Add(ui.Container);
+					PanelGUI.UI.CloseUI(ui.Container);
+				}
+			}
+			else
+			{
+				foreach (IHasUI ui in ClosedUICache) PanelGUI.UI.OpenUI(ui);
+
+				ClosedUICache.Clear();
+			}
+
 			PanelGUI?.Update(gameTime);
 			//TestGUI?.Update(gameTime);
 		}
 
 		public override void PreSaveAndQuit()
 		{
-			Hooking.ClosedUICache.Clear();
+			ClosedUICache.Clear();
 			PanelGUI.UI.CloseAllUIs();
 		}
 	}

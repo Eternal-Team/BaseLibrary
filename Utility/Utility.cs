@@ -53,7 +53,7 @@ namespace BaseLibrary
 						npc.SetDefaults(type);
 						NPCCache[type] = npc;
 					}
-					catch 
+					catch
 					{
 					}
 				}

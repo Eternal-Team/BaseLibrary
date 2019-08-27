@@ -72,7 +72,6 @@ namespace BaseLibrary
 		}
 
 		#region Draw
-
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Color? color = null)
 		{
 			spriteBatch.Draw(texture, position, color ?? Color.White);
@@ -115,11 +114,9 @@ namespace BaseLibrary
 			state.ScissorRectangle = prevRect;
 			spriteBatch.Begin(oldState);
 		}
-
 		#endregion
 
 		#region DrawPanel
-
 		public static void DrawPanel(this SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color color)
 		{
 			Point point = new Point(dimensions.X, dimensions.Y);
@@ -147,11 +144,9 @@ namespace BaseLibrary
 		{
 			spriteBatch.DrawPanel(dimensions.ToRectangle(), bgColor, borderColor);
 		}
-
 		#endregion
 
 		#region DrawSlot
-
 		public static void DrawSlot(this SpriteBatch spriteBatch, Rectangle dimensions, Color? color = null, Texture2D texture = null)
 		{
 			if (texture == null) texture = Main.inventoryBack13Texture;
@@ -177,11 +172,9 @@ namespace BaseLibrary
 		{
 			spriteBatch.DrawSlot(dimensions.ToRectangle(), color, texture);
 		}
-
 		#endregion
 
 		#region DrawLine
-
 		public static void DrawLine(this SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
 		{
 			float num = Vector2.Distance(start, end);
@@ -208,11 +201,9 @@ namespace BaseLibrary
 			spriteBatch.Draw(Main.magicPixel, new Rectangle(topleft.X, topleft.Y + height - lineSize, width, lineSize), color);
 			spriteBatch.Draw(Main.magicPixel, new Rectangle(topleft.X + width - lineSize, topleft.Y, lineSize, height), color);
 		}
-
 		#endregion
 
 		#region DrawMouseText
-
 		public static void DrawMouseText(object text, Color? color = null)
 		{
 			mouseText = text.ToString();
@@ -286,11 +277,9 @@ namespace BaseLibrary
 
 			return true;
 		}
-
 		#endregion
 
 		#region DrawEntity
-
 		public static void DrawEntity(this SpriteBatch spriteBatch, Entity entity, Vector2 position, Vector2 size)
 		{
 			switch (entity)
@@ -411,7 +400,6 @@ namespace BaseLibrary
 				spriteBatch.Draw(projTexture, position, null, Color.White, 0, projTexture.Size() * 0.5f, Math.Min(size.X / projTexture.Width, size.Y / projTexture.Height), SpriteEffects.None, 0);
 			});
 		}
-
 		#endregion
 
 		private static SpriteBatchState GetState(this SpriteBatch spriteBatch) => new SpriteBatchState

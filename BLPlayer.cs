@@ -1,5 +1,4 @@
 ﻿using BaseLibrary.Tiles;
-using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using MonoMod.Utils;
 using System;
@@ -9,7 +8,6 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Terraria.UI;
 
 namespace BaseLibrary
 {
@@ -54,7 +52,7 @@ namespace BaseLibrary
 
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
 		{
-			Hooking.ClosedUICache.Clear();
+			BaseLibrary.ClosedUICache.Clear();
 			BaseLibrary.PanelGUI.UI.CloseAllUIs();
 		}
 	}
