@@ -1,6 +1,6 @@
 ﻿using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An enumeration of the triggers on a game pad.

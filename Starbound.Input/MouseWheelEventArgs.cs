@@ -2,7 +2,7 @@
 using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An EventArgs object that represents mouse wheel rotation events.

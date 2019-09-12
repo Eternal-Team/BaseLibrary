@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ReLogic.OS;
-using Starbound.Input;
+using BaseLibrary.Input;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading;

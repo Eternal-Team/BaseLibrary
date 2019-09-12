@@ -1,7 +1,7 @@
 ﻿using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An enumeration of the modifiers that may apply to a key press, including Control, Shift, and Alt.

@@ -2,7 +2,7 @@
 using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An EventArgs object that represents mouse events specific to buttons, their presses, clicks, and releases.
@@ -18,8 +18,7 @@ namespace Starbound.Input
 		///     Creates a new MouseButtonEventArgs object given a time, the previous and current mouse states, and
 		///     the button that the event occurred with.
 		/// </summary>
-		public MouseButtonEventArgs(TimeSpan time, MouseState previous, MouseState current, MouseButton button)
-			: base(time, previous, current)
+		public MouseButtonEventArgs(TimeSpan time, MouseState previous, MouseState current, MouseButton button) : base(time, previous, current)
 		{
 			Button = button;
 		}

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An abstraction around keyboard input that turns XNA's underlying polling model into an event-based

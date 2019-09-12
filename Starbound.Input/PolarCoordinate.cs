@@ -2,7 +2,7 @@
 using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     Represents a polar coordinate, defined by a distance from the origin and an angle from the

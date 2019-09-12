@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An abstraction around game pad input that turns XNA's underlying polling model into an event-based

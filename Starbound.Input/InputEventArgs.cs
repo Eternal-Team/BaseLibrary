@@ -1,7 +1,7 @@
 ﻿using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     A base class for all Starbound.Input event args to derive from.

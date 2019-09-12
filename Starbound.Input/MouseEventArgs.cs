@@ -2,7 +2,7 @@
 using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An EventArgs type that is used for mouse-based input events in Starbound.UI.

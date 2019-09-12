@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	public static class KeyboardUtil
 	{

@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Starbound.Input;
+using BaseLibrary.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.GameInput;
 using Terraria.ModLoader;
 
 namespace BaseLibrary
@@ -13,11 +14,14 @@ namespace BaseLibrary
 	{
 		public static class Input
 		{
-			internal static MouseEvents MouseHandler;
+			//internal static MouseEvents MouseHandler;
 			internal static KeyboardEvents KeyboardHandler;
 
 			public static Func<bool> InterceptKeyboard = () => false;
 			public static Func<bool> InterceptMouse = () => false;
+
+			public static bool LeftMouseDown;
+			public static bool RightMouseDown;
 
 			internal static void Load()
 			{
@@ -25,21 +29,38 @@ namespace BaseLibrary
 
 				KeyboardEvents.RepeatDelay = 31;
 
-				MouseHandler = new MouseEvents(Main.instance);
-				Main.instance.Components.Add(MouseHandler);
+				MouseEvents.ButtonPressed += ( args) =>
+				{
+					switch (args.Button)
+					{
+						case MouseButton.Left:
+							LeftMouseDown = true;
+							break;
+						case MouseButton.Right:
+							RightMouseDown = true;
+							break;
+					}
+
+					return false;
+				};
+				MouseEvents.ButtonReleased += ( args) =>
+				{
+					switch (args.Button)
+					{
+						case MouseButton.Left:
+							LeftMouseDown = false;
+							break;
+						case MouseButton.Right:
+							RightMouseDown = false;
+							break;
+					}
+
+					return false;
+				};
 
 				KeyboardHandler = new KeyboardEvents(Main.instance);
-				Main.instance.Components.Add(KeyboardHandler);
 			}
-
-			internal static void Unload()
-			{
-				if (Main.dedServ) return;
-
-				Main.instance.Components.Remove(MouseHandler);
-				Main.instance.Components.Remove(KeyboardHandler);
-			}
-
+			
 			internal static void Update(GameTime time)
 			{
 				if (Main.dedServ) return;
@@ -51,12 +72,7 @@ namespace BaseLibrary
 				}
 				else KeyboardHandler.Enabled = false;
 
-				if (InterceptMouse.GetInvocationList().Any(del => (bool)del.DynamicInvoke()))
-				{
-					MouseHandler.Enabled = true;
-					MouseHandler.Update(time);
-				}
-				else MouseHandler.Enabled = false;
+				MouseEvents.Update(time);
 			}
 		}
 

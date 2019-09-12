@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An EventArgs object for game pad trigger events.

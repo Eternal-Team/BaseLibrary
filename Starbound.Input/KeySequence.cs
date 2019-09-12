@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     Represents a key sequence that a player can enter. Provides an event for when the sequence

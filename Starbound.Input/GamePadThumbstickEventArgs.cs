@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An event args class for events related to a game pad's thumbsticks.

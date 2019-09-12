@@ -1,5 +1,7 @@
-﻿using BaseLibrary.UI;
+﻿using BaseLibrary.Input;
+using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
@@ -25,6 +27,7 @@ namespace BaseLibrary
 
 			IL.Terraria.Main.DrawInterface_36_Cursor += Main_DrawInterface_36_Cursor;
 			On.Terraria.GameInput.PlayerInput.KeyboardInput += PlayerInput_KeyboardInput;
+			On.Terraria.GameInput.PlayerInput.MouseInput += PlayerInput_MouseInput;
 
 			On.Terraria.Main.DoUpdate_Enter_ToggleChat += Main_DoUpdate_Enter_ToggleChat;
 
@@ -32,7 +35,84 @@ namespace BaseLibrary
 
 			IL.Terraria.Player.Update += Player_Update;
 
+			On.Terraria.Main.DoUpdate += Main_DoUpdate;
+
+			On.Terraria.GameInput.PlayerInput.UpdateInput += PlayerInput_UpdateInput;
+
 			HookEndpointManager.Modify(typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.DownloadManager.UILoadModsProgress").GetMethod("OnDeactivate", Utility.defaultFlags), new Action<ILContext>(ShowIntroMessage));
+		}
+
+		private static void PlayerInput_MouseInput(On.Terraria.GameInput.PlayerInput.orig_MouseInput orig)
+		{
+			bool anyInput = false;
+			PlayerInput.MouseInfoOld = PlayerInput.MouseInfo;
+			PlayerInput.MouseInfo = Mouse.GetState();
+			PlayerInput.ScrollWheelValue += PlayerInput.MouseInfo.ScrollWheelValue;
+			int deltaX = PlayerInput.MouseInfo.X - PlayerInput.MouseInfoOld.X;
+			int deltaY = PlayerInput.MouseInfo.Y - PlayerInput.MouseInfoOld.Y;
+			if (deltaX != 0 || deltaY != 0 || PlayerInput.MouseInfo.ScrollWheelValue != PlayerInput.MouseInfoOld.ScrollWheelValue)
+			{
+				PlayerInput.MouseX = PlayerInput.MouseInfo.X;
+				PlayerInput.MouseY = PlayerInput.MouseInfo.Y;
+				anyInput = true;
+			}
+
+			PlayerInput.MouseKeys.Clear();
+			if (Main.instance.IsActive && !MouseEvents.ButtonPressCaptured)
+			{
+				if (PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed)
+				{
+					PlayerInput.MouseKeys.Add("Mouse1");
+					anyInput = true;
+				}
+
+				if (PlayerInput.MouseInfo.RightButton == ButtonState.Pressed)
+				{
+					PlayerInput.MouseKeys.Add("Mouse2");
+					anyInput = true;
+				}
+
+				if (PlayerInput.MouseInfo.MiddleButton == ButtonState.Pressed)
+				{
+					PlayerInput.MouseKeys.Add("Mouse3");
+					anyInput = true;
+				}
+
+				if (PlayerInput.MouseInfo.XButton1 == ButtonState.Pressed)
+				{
+					PlayerInput.MouseKeys.Add("Mouse4");
+					anyInput = true;
+				}
+
+				if (PlayerInput.MouseInfo.XButton2 == ButtonState.Pressed)
+				{
+					PlayerInput.MouseKeys.Add("Mouse5");
+					anyInput = true;
+				}
+			}
+
+			if (anyInput)
+			{
+				PlayerInput.CurrentInputMode = InputMode.Mouse;
+				PlayerInput.Triggers.Current.UsedMovementKey = false;
+			}
+		}
+
+		private static GameTime time;
+
+		private static void Main_DoUpdate(On.Terraria.Main.orig_DoUpdate orig, Main self, GameTime gameTime)
+		{
+			time = gameTime;
+			orig(self, gameTime);
+		}
+
+		private static void PlayerInput_UpdateInput(On.Terraria.GameInput.PlayerInput.orig_UpdateInput orig)
+		{
+			Utility.Input.Update(time);
+			
+			orig();
+
+			//if (Utility.Input.RightMouseDown) PlayerInput.LockTileUseButton = true;
 		}
 
 		private static void Player_Update(ILContext il)
@@ -57,16 +137,16 @@ namespace BaseLibrary
 					if (!Main.playerInventory) player.InvokeMethod<object>("HandleHotbar");
 					else
 					{
-						int delta = Terraria.GameInput.PlayerInput.ScrollWheelDelta / 120;
+						int delta = PlayerInput.ScrollWheelDelta / 120;
 						if (Main.recBigList)
 						{
 							const int height = 42;
 							const int y = 340;
 							const int x = 310;
-							Terraria.GameInput.PlayerInput.SetZoom_UI();
+							PlayerInput.SetZoom_UI();
 							int mulX = (Main.screenWidth - x - 280) / height;
 							int mulY = (Main.screenHeight - y - 20) / height;
-							if (new Rectangle(x, y, mulX * height, mulY * height).Contains(Utils.ToPoint(Main.MouseScreen)))
+							if (new Rectangle(x, y, mulX * height, mulY * height).Contains(Main.MouseScreen.ToPoint()))
 							{
 								delta *= -1;
 								int sign = Math.Sign(delta);
@@ -87,7 +167,7 @@ namespace BaseLibrary
 								}
 							}
 
-							Terraria.GameInput.PlayerInput.SetZoom_World();
+							PlayerInput.SetZoom_World();
 						}
 
 						Main.focusRecipe += delta;
@@ -113,7 +193,7 @@ namespace BaseLibrary
 			if (!Utility.Input.KeyboardHandler.Enabled) orig();
 			else
 			{
-				foreach (string key in Terraria.GameInput.PlayerInput.MouseKeys)
+				foreach (string key in PlayerInput.MouseKeys)
 				{
 					PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard].Processkey(PlayerInput.Triggers.Current, key);
 				}
@@ -122,7 +202,7 @@ namespace BaseLibrary
 
 		private static void UserInterface_Update(UserInterface.orig_Update orig, Terraria.UI.UserInterface self, GameTime time)
 		{
-			Utility.Input.Update(time);
+			//Utility.Input.Update(time);
 
 			orig(self, time);
 		}

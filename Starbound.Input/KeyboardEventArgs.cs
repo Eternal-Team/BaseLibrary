@@ -2,7 +2,7 @@
 using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     Represents an EventArgs object that is for all keyboard events in Starbound.UI.

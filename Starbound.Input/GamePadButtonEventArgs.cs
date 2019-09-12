@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using Terraria;
 
-namespace Starbound.Input
+namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An event args object for button presses on the game pad. This includes all of the standard buttons,

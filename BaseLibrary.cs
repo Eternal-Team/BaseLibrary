@@ -58,7 +58,6 @@ namespace BaseLibrary
 
 		public override void Unload()
 		{
-			Utility.Input.Unload();
 			Dispatcher.Unload();
 
 			Utility.UnloadNullableTypes();
