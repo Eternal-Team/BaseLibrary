@@ -53,7 +53,7 @@ namespace BaseLibrary
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
 		{
 			BaseLibrary.ClosedUICache.Clear();
-			BaseLibrary.PanelGUI.UI.CloseAllUIs();
+			BaseLibrary.PanelGUI?.UI.CloseAllUIs();
 		}
 	}
 }
