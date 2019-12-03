@@ -55,7 +55,7 @@ namespace BaseLibrary.Input
 		/// <summary>
 		///     Sets defaults for the various mouse input settings.
 		/// </summary>
-		static MouseEvents()
+		internal static void Load()
 		{
 			DoubleClickTime = 300;
 			DoubleClickMaxMove = 2;

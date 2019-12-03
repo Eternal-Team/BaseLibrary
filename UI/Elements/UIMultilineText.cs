@@ -126,7 +126,16 @@ namespace BaseLibrary.UI.Elements
 		{
 			if (DrawBackground) spriteBatch.DrawPanel(Dimensions.ToRectangle(), BaseLibrary.texturePanelBackground, Utility.ColorPanel_Selected * 0.75f);
 
-			spriteBatch.Draw(Utility.ImmediateState, GetClippingRectangle(spriteBatch), () => Utils.DrawBorderStringFourWay(spriteBatch, font, actualText, textPosition.X, textPosition.Y - scrollbar.ViewPosition, TextColor, BorderColor, Vector2.Zero, textScale));
+			spriteBatch.End();
+			Rectangle prev = spriteBatch.GraphicsDevice.ScissorRectangle;
+			spriteBatch.GraphicsDevice.ScissorRectangle = new Rectangle((int)InnerDimensions.X, (int)InnerDimensions.Y, (int)InnerDimensions.Width, (int)InnerDimensions.Height);
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, Utility.OverflowHiddenState);
+
+			Utils.DrawBorderStringFourWay(spriteBatch, font, actualText, textPosition.X, textPosition.Y - scrollbar.ViewPosition, TextColor, BorderColor, Vector2.Zero, textScale);
+
+			spriteBatch.End();
+			spriteBatch.GraphicsDevice.ScissorRectangle = prev;
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
 		}
 	}
 }

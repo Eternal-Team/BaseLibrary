@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.ModLoader;
 
 namespace BaseLibrary.Items
 {
@@ -22,7 +23,7 @@ namespace BaseLibrary.Items
 			item.useTime = 7;
 			item.useStyle = 1;
 			item.consumable = true;
-			item.createWall = mod.WallType<Walls.LightedBlackWall>();
+			item.createWall = ModContent.WallType<Walls.LightedBlackWall>();
 		}
 	}
 }

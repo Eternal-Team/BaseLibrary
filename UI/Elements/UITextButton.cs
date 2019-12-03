@@ -99,7 +99,7 @@ namespace BaseLibrary.UI.Elements
 		{
 			if (RenderPanel)
 			{
-				if (Toggleable) spriteBatch.DrawPanel(Dimensions, IsMouseHovering ? Utility.ColorPanel_Hovered : Selected ? Utility.ColorPanel_Selected : Utility.ColorPanel);
+				if (Toggleable) spriteBatch.DrawPanel(Dimensions, IsMouseHovering ? Utility.ColorPanel_Hovered : Selected ? Utility.ColorPanel : Utility.ColorPanel_Selected);
 				else spriteBatch.DrawPanel(Dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
 			}
 

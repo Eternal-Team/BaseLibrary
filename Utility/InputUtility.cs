@@ -1,11 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.Input;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using BaseLibrary.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
-using Terraria.GameInput;
 using Terraria.ModLoader;
 
 namespace BaseLibrary
@@ -27,9 +26,11 @@ namespace BaseLibrary
 			{
 				if (Main.dedServ) return;
 
+				MouseEvents.Load();
+
 				KeyboardEvents.RepeatDelay = 31;
 
-				MouseEvents.ButtonPressed += ( args) =>
+				MouseEvents.ButtonPressed += args =>
 				{
 					switch (args.Button)
 					{
@@ -43,7 +44,7 @@ namespace BaseLibrary
 
 					return false;
 				};
-				MouseEvents.ButtonReleased += ( args) =>
+				MouseEvents.ButtonReleased += args =>
 				{
 					switch (args.Button)
 					{
@@ -60,7 +61,7 @@ namespace BaseLibrary
 
 				KeyboardHandler = new KeyboardEvents(Main.instance);
 			}
-			
+
 			internal static void Update(GameTime time)
 			{
 				if (Main.dedServ) return;
@@ -84,7 +85,7 @@ namespace BaseLibrary
 
 		public static string GetHotkeyValue(string hotkey)
 		{
-			if (string.IsNullOrWhiteSpace(hotkey) || Hotkeys == null) throw new ArgumentNullException();
+			if (String.IsNullOrWhiteSpace(hotkey) || Hotkeys == null) throw new ArgumentNullException();
 			if (!Hotkeys.ContainsKey(hotkey)) throw new Exception("Hotkey doesn't exist");
 
 			return Hotkeys[hotkey].GetAssignedKeys().Count > 0 ? Hotkeys[hotkey].GetAssignedKeys().First() : "Unassigned";

@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Mono.Cecil;
+﻿using log4net;
+using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Terraria;
@@ -88,12 +89,18 @@ namespace BaseLibrary
 			return output.ToArray();
 		}
 
-		public static void UnloadNullableTypes()
+		public static void UnloadNullableTypes(this Mod mod)
 		{
-			foreach (Type type in Assembly.GetCallingAssembly().GetTypes())
+			ILog logger = LogManager.GetLogger("BaseLibrary");
+
+			logger.Info($"Unloading nullable fields for mod: {mod.DisplayName}");
+
+			foreach (Type type in mod.Code.GetTypes())
 			{
 				foreach (FieldInfo field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.FieldType.IsValueType && !field.IsLiteral && !type.HasAttribute<CompilerGeneratedAttribute>()))
 				{
+					logger.Info($"Unloading field: {type.FullName}.{field.Name} [of type: {field.FieldType.Name}]");
+
 					if (field.FieldType.IsGenericType)
 					{
 						if (field.FieldType.GetGenericTypeDefinition() == typeof(List<>)) ((IList)field.GetValue(null))?.Clear();
@@ -108,12 +115,6 @@ namespace BaseLibrary
 		{
 			context.Body.Variables.Add(new VariableDefinition(context.Import(typeof(T))));
 			return context.Body.Variables.Count - 1;
-		}
-
-		public static int GetParameterIndex(this ILContext context, string name)
-		{
-			ParameterDefinition def = context.Method.Parameters.FirstOrDefault(parameter => parameter.Name == name);
-			return def?.Index + 1 ?? throw new Exception($"Parameter with name '{name}' does not exist!");
 		}
 
 		public static void Write(this BinaryWriter writer, Point16 point)
@@ -176,5 +177,17 @@ namespace BaseLibrary
 		}
 
 		public static bool Contains(this Rectangle rectangle, Vector2 position) => rectangle.Contains(position.ToPoint());
+
+		public static bool PingHost(string hostUri, int portNumber)
+		{
+			try
+			{
+				using (var client = new TcpClient(hostUri, portNumber)) return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
 	}
 }

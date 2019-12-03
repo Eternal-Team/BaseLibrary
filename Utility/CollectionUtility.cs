@@ -14,7 +14,7 @@ namespace BaseLibrary
 
 			List<T> temp = source.ToList();
 
-			return temp.Count > 0 ? temp.Select(x => x.ToString()).Aggregate((x, y) => x + joinSequence + y) : string.Empty;
+			return temp.Count > 0 ? temp.Select(x => x.ToString()).Aggregate((x, y) => x + joinSequence + y) : String.Empty;
 		}
 
 		public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)

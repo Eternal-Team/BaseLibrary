@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.Input;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ReLogic.OS;
-using BaseLibrary.Input;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading;

@@ -15,7 +15,7 @@ namespace BaseLibrary.Walls
 		public override void SetDefaults()
 		{
 			Main.wallHouse[Type] = true;
-			drop = mod.ItemType<Items.LightedWall>();
+			drop = ModContent.ItemType<Items.LightedWall>();
 			AddMapEntry(Color.White);
 		}
 

@@ -29,7 +29,7 @@ namespace BaseLibrary.UI.Elements
 
 		public List<T> Items = new List<T>();
 		public UIScrollbar scrollbar;
-		internal UIElement innerList = new UIInnerList();
+		internal BaseElement innerList = new BaseElement();
 		private float innerListHeight;
 		public float ListPadding = 4f;
 
@@ -42,15 +42,15 @@ namespace BaseLibrary.UI.Elements
 			this.columns = columns;
 
 			innerList.OverflowHidden = false;
-			innerList.Width.Set(0f, 1f);
-			innerList.Height.Set(0f, 1f);
+			innerList.Width = (0f, 1f);
+			innerList.Height = (0f, 1f);
 			OverflowHidden = true;
 			Append(innerList);
 
 			scrollbar = new UIScrollbar();
 			scrollbar.OnScroll += () =>
 			{
-				innerList.Top.Set(-scrollbar.ViewPosition, 0f);
+				innerList.Top = (-scrollbar.ViewPosition, 0f);
 				innerList.Recalculate();
 			};
 		}
@@ -74,6 +74,16 @@ namespace BaseLibrary.UI.Elements
 				Items.Add(item);
 				innerList.Append(item);
 			}
+
+			Items.Sort(SortMethod);
+			RecalculateChildren();
+		}
+
+		public void Insert(int index, T item)
+		{
+			if (item is IGridElement<T> element) element.Grid = this;
+			Items.Insert(index, item);
+			innerList.Insert(index, item);
 
 			Items.Sort(SortMethod);
 			RecalculateChildren();
@@ -126,7 +136,7 @@ namespace BaseLibrary.UI.Elements
 				item.Top.Set(top, 0f);
 				item.Left.Set(left, 0f);
 				item.Recalculate();
-				CalculatedStyle dimensions = item.GetDimensions();
+				CalculatedStyle dimensions = item.GetOuterDimensions();
 
 				if (i % columns == columns - 1 || i == Items.Count - 1)
 				{

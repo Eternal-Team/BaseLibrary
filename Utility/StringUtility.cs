@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using ReLogic.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,10 +12,10 @@ namespace BaseLibrary
 	public static partial class Utility
 	{
 		private static Regex _colorGetText;
-		private static Regex ColorGetText => _colorGetText ?? (_colorGetText = new Regex(@"(?<=\[c\/\w{6}:)[^]]*(?=\])"));
+		private static Regex ColorGetText => _colorGetText = _colorGetText ?? new Regex(@"(?<=\[c\/\w{6}:)[^]]*(?=\])");
 
 		private static Regex _colorGetTag;
-		private static Regex ColorGetTag => _colorGetTag ?? (_colorGetTag = new Regex(@"\[c\/\w{6}:[^]]*\]"));
+		private static Regex ColorGetTag => _colorGetTag = _colorGetTag ?? new Regex(@"\[c\/\w{6}:[^]]*\]");
 
 		public static DynamicSpriteFont Font { get; internal set; }
 
@@ -29,6 +30,8 @@ namespace BaseLibrary
 			if (font == null) font = Main.fontMouseText;
 			StringBuilder actualLine = new StringBuilder();
 			float actualWidth = 0;
+
+			text = text.Replace("\r\n", "\n");
 
 			foreach (string newLine in text.Split('\n'))
 			{

@@ -1,4 +1,4 @@
-﻿using BaseLibrary.UI;
+﻿using BaseLibrary.UI.Intro;
 using MonoMod.Cil;
 using Newtonsoft.Json;
 using System;
@@ -38,12 +38,12 @@ namespace BaseLibrary
 						if (o != null && !o.GetValue<object>("properties").GetValue<string>("author").Contains("Itorius")) return false;
 
 #if DEBUG
-						return false;
+						return true;
 #elif RELEASE
 						return previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name);
 #endif
 					}).ToList();
-					if (newOrUpdated.Count > 0)
+					if (Utility.PingHost("localhost", 59035) && newOrUpdated.Count > 0)
 					{
 						Dispatcher.Dispatch(() =>
 						{

@@ -5,7 +5,8 @@
     <AssemblyName>BaseLibrary</AssemblyName>
     <TargetFramework>net45</TargetFramework>
     <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <Target Name="BuildMod" AfterTargets="Build">
     <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -define $(DefineConstants) -unsafe $(AllowUnsafeBlocks)" />
@@ -13,11 +14,20 @@
   <ItemGroup>
     <None Remove=".gitignore" />
     <None Remove="BaseLibrary.csproj.DotSettings" />
+    <None Remove="Effects\BorderRadius.fx" />
+    <None Remove="Effects\ColorSelectionShader.fx" />
+    <None Remove="Effects\DesaturateShader.fx" />
     <None Remove="EternalMods.sln.DotSettings" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Octokit">
-      <HintPath>lib\Octokit.dll</HintPath>
+    <Resource Include="Effects\BorderRadius.fx" />
+    <Content Include="Effects\ColorSelectionShader.fx" />
+    <Content Include="Effects\DesaturateShader.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>lib\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

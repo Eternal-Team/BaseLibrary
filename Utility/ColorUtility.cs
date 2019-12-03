@@ -24,11 +24,11 @@ namespace BaseLibrary
 			new Color(120, 120, 120)
 		};
 
-		public static Color ToColor(this int value) => new Color((value >> 16) & 255, (value >> 8) & 255, (value >> 0) & 255, (value >> 24) & 255);
+		public static Color ToColor(this int value) => new Color((value >> 16) & 255, (value >> 8) & 255, value & 255, (value >> 24) & 255);
 
 		public static Color ToColor(this string s) => int.Parse(s.Replace("#", ""), NumberStyles.HexNumber).ToColor();
 
-		public static int ToInt(this Color color) => (color.A << 24) | (color.R << 16) | (color.G << 8) | (color.B << 0);
+		public static int ToInt(this Color color) => (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
 
 		public static string ToHex(this Color color) => $"{color.R:X2}{color.G:X2}{color.B:X2}";
 

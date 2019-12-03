@@ -23,8 +23,6 @@ namespace BaseLibrary
 			On.Terraria.Player.DropSelectedItem += Player_DropSelectedItem;
 			UIElement.GetElementAt += UIElement_GetElementAt;
 
-			UserInterface.Update += UserInterface_Update;
-
 			IL.Terraria.Main.DrawInterface_36_Cursor += Main_DrawInterface_36_Cursor;
 			On.Terraria.GameInput.PlayerInput.KeyboardInput += PlayerInput_KeyboardInput;
 			On.Terraria.GameInput.PlayerInput.MouseInput += PlayerInput_MouseInput;
@@ -39,61 +37,61 @@ namespace BaseLibrary
 
 			On.Terraria.GameInput.PlayerInput.UpdateInput += PlayerInput_UpdateInput;
 
-			HookEndpointManager.Modify(typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.DownloadManager.UILoadModsProgress").GetMethod("OnDeactivate", Utility.defaultFlags), new Action<ILContext>(ShowIntroMessage));
+			HookEndpointManager.Modify(typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.UILoadMods").GetMethod("OnDeactivate", Utility.defaultFlags), new Action<ILContext>(ShowIntroMessage));
 		}
 
 		private static void PlayerInput_MouseInput(On.Terraria.GameInput.PlayerInput.orig_MouseInput orig)
 		{
 			bool anyInput = false;
-			PlayerInput.MouseInfoOld = PlayerInput.MouseInfo;
-			PlayerInput.MouseInfo = Mouse.GetState();
-			PlayerInput.ScrollWheelValue += PlayerInput.MouseInfo.ScrollWheelValue;
-			int deltaX = PlayerInput.MouseInfo.X - PlayerInput.MouseInfoOld.X;
-			int deltaY = PlayerInput.MouseInfo.Y - PlayerInput.MouseInfoOld.Y;
-			if (deltaX != 0 || deltaY != 0 || PlayerInput.MouseInfo.ScrollWheelValue != PlayerInput.MouseInfoOld.ScrollWheelValue)
+			Terraria.GameInput.PlayerInput.MouseInfoOld = Terraria.GameInput.PlayerInput.MouseInfo;
+			Terraria.GameInput.PlayerInput.MouseInfo = Mouse.GetState();
+			Terraria.GameInput.PlayerInput.ScrollWheelValue += Terraria.GameInput.PlayerInput.MouseInfo.ScrollWheelValue;
+			int deltaX = Terraria.GameInput.PlayerInput.MouseInfo.X - Terraria.GameInput.PlayerInput.MouseInfoOld.X;
+			int deltaY = Terraria.GameInput.PlayerInput.MouseInfo.Y - Terraria.GameInput.PlayerInput.MouseInfoOld.Y;
+			if (deltaX != 0 || deltaY != 0 || Terraria.GameInput.PlayerInput.MouseInfo.ScrollWheelValue != Terraria.GameInput.PlayerInput.MouseInfoOld.ScrollWheelValue)
 			{
-				PlayerInput.MouseX = PlayerInput.MouseInfo.X;
-				PlayerInput.MouseY = PlayerInput.MouseInfo.Y;
+				Terraria.GameInput.PlayerInput.MouseX = Terraria.GameInput.PlayerInput.MouseInfo.X;
+				Terraria.GameInput.PlayerInput.MouseY = Terraria.GameInput.PlayerInput.MouseInfo.Y;
 				anyInput = true;
 			}
 
-			PlayerInput.MouseKeys.Clear();
+			Terraria.GameInput.PlayerInput.MouseKeys.Clear();
 			if (Main.instance.IsActive && !MouseEvents.ButtonPressCaptured)
 			{
-				if (PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed)
+				if (Terraria.GameInput.PlayerInput.MouseInfo.LeftButton == ButtonState.Pressed)
 				{
-					PlayerInput.MouseKeys.Add("Mouse1");
+					Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse1");
 					anyInput = true;
 				}
 
-				if (PlayerInput.MouseInfo.RightButton == ButtonState.Pressed)
+				if (Terraria.GameInput.PlayerInput.MouseInfo.RightButton == ButtonState.Pressed)
 				{
-					PlayerInput.MouseKeys.Add("Mouse2");
+					Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse2");
 					anyInput = true;
 				}
 
-				if (PlayerInput.MouseInfo.MiddleButton == ButtonState.Pressed)
+				if (Terraria.GameInput.PlayerInput.MouseInfo.MiddleButton == ButtonState.Pressed)
 				{
-					PlayerInput.MouseKeys.Add("Mouse3");
+					Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse3");
 					anyInput = true;
 				}
 
-				if (PlayerInput.MouseInfo.XButton1 == ButtonState.Pressed)
+				if (Terraria.GameInput.PlayerInput.MouseInfo.XButton1 == ButtonState.Pressed)
 				{
-					PlayerInput.MouseKeys.Add("Mouse4");
+					Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse4");
 					anyInput = true;
 				}
 
-				if (PlayerInput.MouseInfo.XButton2 == ButtonState.Pressed)
+				if (Terraria.GameInput.PlayerInput.MouseInfo.XButton2 == ButtonState.Pressed)
 				{
-					PlayerInput.MouseKeys.Add("Mouse5");
+					Terraria.GameInput.PlayerInput.MouseKeys.Add("Mouse5");
 					anyInput = true;
 				}
 			}
 
 			if (anyInput)
 			{
-				PlayerInput.CurrentInputMode = InputMode.Mouse;
+				Terraria.GameInput.PlayerInput.CurrentInputMode = InputMode.Mouse;
 				PlayerInput.Triggers.Current.UsedMovementKey = false;
 			}
 		}
@@ -109,7 +107,7 @@ namespace BaseLibrary
 		private static void PlayerInput_UpdateInput(On.Terraria.GameInput.PlayerInput.orig_UpdateInput orig)
 		{
 			Utility.Input.Update(time);
-			
+
 			orig();
 
 			//if (Utility.Input.RightMouseDown) PlayerInput.LockTileUseButton = true;
@@ -200,25 +198,21 @@ namespace BaseLibrary
 			}
 		}
 
-		private static void UserInterface_Update(UserInterface.orig_Update orig, Terraria.UI.UserInterface self, GameTime time)
-		{
-			//Utility.Input.Update(time);
-
-			orig(self, time);
-		}
-
 		private static void ItemSlot_LeftClick(ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)
 		{
-			if (Main.mouseItem.modItem is IHasUI mouse) BaseLibrary.PanelGUI.UI.CloseUI(mouse);
+			if (Main.mouseItem.modItem is IHasUI mouse)
+				BaseLibrary.PanelGUI.UI.CloseUI(mouse);
 
-			if (inv[slot].modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
+			if (inv[slot].modItem is IHasUI hasUI)
+				BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
 
 			orig(inv, context, slot);
 		}
 
 		private static void Player_DropSelectedItem(On.Terraria.Player.orig_DropSelectedItem orig, Player self)
 		{
-			if (self.HeldItem.modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
+			if (self.HeldItem.modItem is IHasUI hasUI)
+				BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
 
 			orig(self);
 		}

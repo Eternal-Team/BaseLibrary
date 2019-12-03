@@ -13,13 +13,16 @@ using Terraria.UI;
 
 namespace BaseLibrary
 {
+	// note: update checker via github releases
+
 	public class BaseLibrary : Mod
 	{
-		internal static BaseLibrary Instance;
 		internal static List<IHasUI> ClosedUICache = new List<IHasUI>();
 
 		public static Effect ColorSelectionShader { get; private set; }
 		public static Effect DesaturateShader { get; private set; }
+		public static Effect RoundedRectShader { get; private set; }
+
 		public static Texture2D texturePanelBackground;
 		public static Texture2D texturePanelBorder;
 
@@ -30,8 +33,6 @@ namespace BaseLibrary
 
 		public override void Load()
 		{
-			Instance = this;
-
 			TagSerializer.AddSerializer(new GUIDSerializer());
 
 			Dispatcher.Load();
@@ -48,6 +49,7 @@ namespace BaseLibrary
 
 				ColorSelectionShader = GetEffect("Effects/ColorSelectionShader");
 				DesaturateShader = GetEffect("Effects/DesaturateShader");
+				RoundedRectShader = GetEffect("Effects/BorderRadius");
 
 				PanelGUI = Utility.SetupGUI<PanelUI>();
 				TestGUI = Utility.SetupGUI<TestUI>();
@@ -60,7 +62,7 @@ namespace BaseLibrary
 		{
 			Dispatcher.Unload();
 
-			Utility.UnloadNullableTypes();
+			this.UnloadNullableTypes();
 		}
 
 		public override void PostSetupContent() => Utility.Cache.Load();
@@ -79,35 +81,37 @@ namespace BaseLibrary
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			for (int i = 0; i < PanelGUI.Elements.Count; i++)
+			var gui = PanelGUI;
+
+			for (int i = 0; i < gui.Elements.Count; i++)
 			{
-				UIElement element = PanelGUI.Elements[i];
+				UIElement element = gui.Elements[i];
 				if (element is BaseUIPanel panel && panel.Container is BaseTE tileEntity)
 				{
 					TileObjectData data = TileObjectData.GetTileData(tileEntity.mod.GetTile(tileEntity.TileType.Name).Type, 0);
 					Vector2 offset = data != null ? new Vector2(data.Width * 8f, data.Height * 8f) : Vector2.Zero;
 
-					if (Vector2.DistanceSquared(tileEntity.Position.ToWorldCoordinates(offset), Main.LocalPlayer.Center) > 160 * 160) PanelGUI.UI.CloseUI(panel.Container);
+					if (Vector2.DistanceSquared(tileEntity.Position.ToWorldCoordinates(offset), Main.LocalPlayer.Center) > 160 * 160) gui.UI.CloseUI(panel.Container);
 				}
 			}
 
 			if (!Main.playerInventory)
 			{
-				List<BaseUIPanel> bagPanels = PanelGUI.Elements.Cast<BaseUIPanel>().ToList();
+				List<BaseUIPanel> bagPanels = gui.Elements.Cast<BaseUIPanel>().ToList();
 				foreach (BaseUIPanel ui in bagPanels)
 				{
 					ClosedUICache.Add(ui.Container);
-					PanelGUI.UI.CloseUI(ui.Container);
+					gui.UI.CloseUI(ui.Container);
 				}
 			}
 			else
 			{
-				foreach (IHasUI ui in ClosedUICache) PanelGUI.UI.OpenUI(ui);
+				foreach (IHasUI ui in ClosedUICache) gui.UI.OpenUI(ui);
 
 				ClosedUICache.Clear();
 			}
 
-			PanelGUI?.Update(gameTime);
+			gui?.Update(gameTime);
 			//TestGUI?.Update(gameTime);
 		}
 
