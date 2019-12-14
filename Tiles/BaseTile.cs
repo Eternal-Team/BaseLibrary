@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace BaseLibrary.Tiles
 {
-	public class BaseTile : ModTile
+	public abstract class BaseTile : ModTile
 	{
 		public virtual string Texture => "BaseLibrary/Textures/Placeholder";
 

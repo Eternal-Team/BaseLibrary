@@ -42,6 +42,18 @@ namespace BaseLibrary
 			return null;
 		}
 
+		public static bool TryGetTileEntity<T>(Point16 position, out T tileEntity) where T : ModTileEntity
+		{
+			if (TileEntity.ByPosition.TryGetValue(TileTopLeft(position), out TileEntity te))
+			{
+				tileEntity = (T)te;
+				return true;
+			}
+
+			tileEntity = null;
+			return false;
+		}
+
 		public static TileObjectDirection GetDirection(this Tile tile)
 		{
 			if (tile == null) return TileObjectDirection.None;

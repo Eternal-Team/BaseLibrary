@@ -200,19 +200,16 @@ namespace BaseLibrary
 
 		private static void ItemSlot_LeftClick(ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)
 		{
-			if (Main.mouseItem.modItem is IHasUI mouse)
-				BaseLibrary.PanelGUI.UI.CloseUI(mouse);
+			if (Main.mouseItem.modItem is IHasUI mouse) BaseLibrary.PanelGUI.UI.CloseUI(mouse);
 
-			if (inv[slot].modItem is IHasUI hasUI)
-				BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
+			if (inv[slot].modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
 
 			orig(inv, context, slot);
 		}
 
 		private static void Player_DropSelectedItem(On.Terraria.Player.orig_DropSelectedItem orig, Player self)
 		{
-			if (self.HeldItem.modItem is IHasUI hasUI)
-				BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
+			if (self.HeldItem.modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
 
 			orig(self);
 		}
