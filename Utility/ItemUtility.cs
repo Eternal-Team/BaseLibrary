@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.UI;
+using Terraria.Utilities;
 
 namespace BaseLibrary
 {
@@ -17,6 +20,120 @@ namespace BaseLibrary
 			ItemID.GoldCoin,
 			ItemID.PlatinumCoin
 		});
+
+		public static int NewItem(int X, int Y, int width, int height, Item item, bool noBroadcast = false, bool noGrabDelay = false, bool reverseLookup = false)
+		{
+			if (WorldGen.gen) return 0;
+			if (Main.rand == null) Main.rand = new UnifiedRandom();
+
+			int num = 400;
+			int type = item.type;
+			int stack = item.stack;
+
+			Main.item[400] = new Item();
+			if (NPCLoader.blockLoot.Contains(type)) return num;
+			if (Main.halloween)
+			{
+				if (type == 58) type = 1734;
+				if (type == 184) type = 1735;
+			}
+
+			if (Main.xMas)
+			{
+				if (type == 58) type = 1867;
+				if (type == 184) type = 1868;
+			}
+
+			if (Item.itemCaches[type] != -1)
+			{
+				Item.itemCaches[type] += stack;
+				return 400;
+			}
+
+			if (Main.netMode != 1)
+			{
+				if (reverseLookup)
+				{
+					for (int i = 399; i >= 0; i--)
+					{
+						if (!Main.item[i].active && Main.itemLockoutTime[i] == 0)
+						{
+							num = i;
+							break;
+						}
+					}
+				}
+				else
+				{
+					for (int j = 0; j < 400; j++)
+					{
+						if (!Main.item[j].active && Main.itemLockoutTime[j] == 0)
+						{
+							num = j;
+							break;
+						}
+					}
+				}
+			}
+
+			if (num == 400 && Main.netMode != 1)
+			{
+				int num2 = 0;
+				for (int k = 0; k < 400; k++)
+				{
+					if (Main.item[k].spawnTime - Main.itemLockoutTime[k] > num2)
+					{
+						num2 = Main.item[k].spawnTime - Main.itemLockoutTime[k];
+						num = k;
+					}
+				}
+			}
+
+			Main.itemLockoutTime[num] = 0;
+
+			ref Item newItem = ref Main.item[num];
+
+			newItem = item.Clone();
+
+			newItem.position.X = X + width / 2 - newItem.width / 2;
+			newItem.position.Y = Y + height / 2 - newItem.height / 2;
+			newItem.wet = Collision.WetCollision(newItem.position, newItem.width, newItem.height);
+			newItem.velocity.X = Main.rand.Next(-30, 31) * 0.1f;
+			newItem.velocity.Y = Main.rand.Next(-40, -15) * 0.1f;
+			if (type == 859) newItem.velocity *= 0f;
+
+			if (type == 520 || type == 521 || newItem.type >= 0 && ItemID.Sets.NebulaPickup[newItem.type])
+			{
+				newItem.velocity.X = Main.rand.Next(-30, 31) * 0.1f;
+				newItem.velocity.Y = Main.rand.Next(-30, 31) * 0.1f;
+			}
+
+			newItem.active = true;
+			newItem.spawnTime = 0;
+			newItem.stack = stack;
+			if (ItemSlot.Options.HighlightNewItems && newItem.type >= 0 && !ItemID.Sets.NeverShiny[newItem.type])
+			{
+				newItem.newAndShiny = true;
+			}
+
+			if (Main.netMode == 2 && !noBroadcast)
+			{
+				int num3 = 0;
+				if (noGrabDelay)
+				{
+					num3 = 1;
+				}
+
+				NetMessage.SendData(21, -1, -1, null, num, num3);
+				newItem.FindOwner(num);
+			}
+			else if (Main.netMode == 0)
+			{
+				newItem.owner = Main.myPlayer;
+			}
+
+			return num;
+		}
 
 		/*	public static Item TakeItemFromNearbyChest(Item item, Vector2 position)
 		{

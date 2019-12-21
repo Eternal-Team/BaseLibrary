@@ -24,6 +24,8 @@ namespace BaseLibrary
 			new Color(120, 120, 120)
 		};
 
+		public static Color RandomColor() => new Color(Main.rand.NextFloat(), Main.rand.NextFloat(), Main.rand.NextFloat());
+
 		public static Color ToColor(this int value) => new Color((value >> 16) & 255, (value >> 8) & 255, value & 255, (value >> 24) & 255);
 
 		public static Color ToColor(this string s) => int.Parse(s.Replace("#", ""), NumberStyles.HexNumber).ToColor();
