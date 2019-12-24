@@ -37,11 +37,14 @@ namespace BaseLibrary
 						object o = arr.FirstOrDefault(x => x.GetValue<string>("Name") == mod.Name);
 						if (o != null && !o.GetValue<object>("properties").GetValue<string>("author").Contains("Itorius")) return false;
 
-#if DEBUG
+						// todo: setup server-side
 						return false;
-#elif RELEASE
-						return previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name);
-#endif
+
+//#if DEBUG
+//						return false;
+//#elif RELEASE
+//						return previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name);
+//#endif
 					}).ToList();
 					if (newOrUpdated.Count > 0 && Utility.PingHost("localhost", 59035))
 					{

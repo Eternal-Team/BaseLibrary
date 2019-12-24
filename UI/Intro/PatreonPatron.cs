@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Terraria;
 
 namespace BaseLibrary.UI.Intro
 {

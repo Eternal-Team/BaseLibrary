@@ -1,7 +1,6 @@
 ﻿using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using System;
-using Terraria;
 using Terraria.UI;
 
 namespace BaseLibrary

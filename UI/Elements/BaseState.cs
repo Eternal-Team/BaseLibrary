@@ -1,6 +1,4 @@
-﻿using Terraria;
-
-namespace BaseLibrary.UI.Elements
+﻿namespace BaseLibrary.UI.Elements
 {
 	public class BaseState : BaseElement
 	{

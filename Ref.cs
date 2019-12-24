@@ -1,6 +1,4 @@
-﻿using Terraria;
-
-namespace BaseLibrary
+﻿namespace BaseLibrary
 {
 	public class Ref<T>
 	{

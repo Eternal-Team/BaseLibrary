@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using Terraria;
 
 namespace BaseLibrary.Input
 {

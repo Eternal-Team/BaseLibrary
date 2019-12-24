@@ -1,6 +1,4 @@
-﻿using Terraria;
-
-namespace BaseLibrary.UI.Intro
+﻿namespace BaseLibrary.UI.Intro
 {
 	public enum PatreonType
 	{

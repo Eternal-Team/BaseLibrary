@@ -1,6 +1,4 @@
-﻿using Terraria;
-
-namespace BaseLibrary.Input
+﻿namespace BaseLibrary.Input
 {
 	/// <summary>
 	///     An enumeration of the thumbsticks in a game pad.
