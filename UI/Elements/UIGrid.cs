@@ -44,6 +44,7 @@ namespace BaseLibrary.UI.Elements
 			innerList.OverflowHidden = false;
 			innerList.Width = (0f, 1f);
 			innerList.Height = (0f, 1f);
+			innerList.MaxHeight = new StyleDimension(10000, 0);
 			OverflowHidden = true;
 			Append(innerList);
 
@@ -56,7 +57,7 @@ namespace BaseLibrary.UI.Elements
 		}
 
 		public override void ScrollWheel(UIScrollWheelEvent evt) => scrollbar.ViewPosition -= evt.ScrollWheelValue;
-
+		
 		public override void Update(GameTime gameTime)
 		{
 			if (IsMouseHovering && innerListHeight > InnerDimensions.Height) Hooking.BlockScrolling = true;
@@ -146,7 +147,9 @@ namespace BaseLibrary.UI.Elements
 				else left += dimensions.Width + ListPadding;
 			}
 
-			innerListHeight = top - ListPadding;
+			innerListHeight = top;
+			innerList.Height = (innerListHeight, 0);
+			innerList.Recalculate();
 
 			scrollbar?.SetView(InnerDimensions.Height, innerListHeight);
 		}
