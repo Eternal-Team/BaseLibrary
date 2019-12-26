@@ -161,7 +161,7 @@ namespace BaseLibrary.UI.Elements
 			spriteBatch.End();
 			Rectangle prevRect = spriteBatch.GraphicsDevice.ScissorRectangle;
 			spriteBatch.GraphicsDevice.ScissorRectangle = Rectangle.Intersect(GetClippingRectangle(spriteBatch), spriteBatch.GraphicsDevice.ScissorRectangle);
-			spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, Utility.DefaultSamplerState, null, Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Utility.DefaultSamplerState, null, Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
 
 			DrawSelf(spriteBatch);
 			innerList.InvokeMethod<object>("DrawChildren", spriteBatch);
