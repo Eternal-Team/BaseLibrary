@@ -16,6 +16,8 @@ namespace BaseLibrary
 		private static string mouseText;
 		private static Color? colorMouseText;
 
+		public static SamplerState DefaultSamplerState = SamplerState.LinearClamp;
+
 		public static readonly RasterizerState OverflowHiddenState = new RasterizerState
 		{
 			CullMode = CullMode.None,
@@ -30,7 +32,7 @@ namespace BaseLibrary
 			{
 				SpriteSortMode = SpriteSortMode.Immediate,
 				BlendState = BlendState.AlphaBlend,
-				SamplerState = SamplerState.AnisotropicClamp,
+				SamplerState = SamplerState.LinearClamp,
 				DepthStencilState = DepthStencilState.None,
 				RasterizerState = OverflowHiddenState,
 				CustomEffect = null,

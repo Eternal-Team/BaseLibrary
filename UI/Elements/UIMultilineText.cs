@@ -129,13 +129,13 @@ namespace BaseLibrary.UI.Elements
 			spriteBatch.End();
 			Rectangle prev = spriteBatch.GraphicsDevice.ScissorRectangle;
 			spriteBatch.GraphicsDevice.ScissorRectangle = new Rectangle((int)InnerDimensions.X, (int)InnerDimensions.Y, (int)InnerDimensions.Width, (int)InnerDimensions.Height);
-			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, Utility.OverflowHiddenState);
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Utility.DefaultSamplerState, DepthStencilState.None, Utility.OverflowHiddenState);
 
 			Utils.DrawBorderStringFourWay(spriteBatch, font, actualText, textPosition.X, textPosition.Y - scrollbar.ViewPosition, TextColor, BorderColor, Vector2.Zero, textScale);
 
 			spriteBatch.End();
 			spriteBatch.GraphicsDevice.ScissorRectangle = prev;
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Utility.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise);
 		}
 	}
 }

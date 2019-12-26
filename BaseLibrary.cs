@@ -52,7 +52,7 @@ namespace BaseLibrary
 				RoundedRectShader = GetEffect("Effects/BorderRadius");
 
 				PanelGUI = Utility.SetupGUI<PanelUI>();
-				TestGUI = Utility.SetupGUI<TestUI>();
+				//TestGUI = Utility.SetupGUI<TestUI>();
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
@@ -75,7 +75,7 @@ namespace BaseLibrary
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
 				layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
-				//layers.Insert(MouseTextIndex, TestGUI.InterfaceLayer);
+				if (TestGUI != null) layers.Insert(MouseTextIndex, TestGUI.InterfaceLayer);
 			}
 		}
 
@@ -112,7 +112,7 @@ namespace BaseLibrary
 			}
 
 			gui?.Update(gameTime);
-			//TestGUI?.Update(gameTime);
+			TestGUI?.Update(gameTime);
 		}
 
 		public override void PreSaveAndQuit()

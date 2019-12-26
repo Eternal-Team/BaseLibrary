@@ -57,7 +57,7 @@ namespace BaseLibrary.UI.Elements
 		}
 
 		public override void ScrollWheel(UIScrollWheelEvent evt) => scrollbar.ViewPosition -= evt.ScrollWheelValue;
-		
+
 		public override void Update(GameTime gameTime)
 		{
 			if (IsMouseHovering && innerListHeight > InnerDimensions.Height) Hooking.BlockScrolling = true;
@@ -161,14 +161,14 @@ namespace BaseLibrary.UI.Elements
 			spriteBatch.End();
 			Rectangle prevRect = spriteBatch.GraphicsDevice.ScissorRectangle;
 			spriteBatch.GraphicsDevice.ScissorRectangle = Rectangle.Intersect(GetClippingRectangle(spriteBatch), spriteBatch.GraphicsDevice.ScissorRectangle);
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, null, Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
+			spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, Utility.DefaultSamplerState, null, Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
 
 			DrawSelf(spriteBatch);
 			innerList.InvokeMethod<object>("DrawChildren", spriteBatch);
 
 			spriteBatch.End();
 			spriteBatch.GraphicsDevice.ScissorRectangle = prevRect;
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, null, null, null, Main.UIScaleMatrix);
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Utility.DefaultSamplerState, null, null, null, Main.UIScaleMatrix);
 		}
 	}
 }

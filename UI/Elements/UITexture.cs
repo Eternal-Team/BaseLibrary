@@ -31,7 +31,7 @@ namespace BaseLibrary.UI.Elements
 			{
 				BlendState = BlendState.NonPremultiplied,
 				SpriteSortMode = SpriteSortMode.Immediate,
-				SamplerState = SamplerState.AnisotropicClamp,
+				SamplerState = SamplerState.LinearClamp,
 				TransformMatrix = Matrix.Identity
 			};
 
