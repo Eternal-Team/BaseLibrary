@@ -37,6 +37,7 @@ namespace BaseLibrary.UI.Elements
 		public UIText(string text, float scale = 1f)
 		{
 			Padding = (0, 2, 2, 0);
+			Height = (20, 0);
 
 			this.text = text;
 			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
