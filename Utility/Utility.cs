@@ -182,7 +182,11 @@ namespace BaseLibrary
 		{
 			try
 			{
-				using (var client = new TcpClient(hostUri, portNumber)) return true;
+				using (var client = new TcpClient())
+				{
+					client.Connect(hostUri, portNumber);
+					return true;
+				}
 			}
 			catch
 			{
