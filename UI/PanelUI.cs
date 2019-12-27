@@ -77,6 +77,8 @@ namespace BaseLibrary.UI
 
 			entity.UI.OnMouseDown += (evt, element) =>
 			{
+				if (entity.UI == null) return;
+
 				RemoveChild(entity.UI);
 				Append(entity.UI);
 			};

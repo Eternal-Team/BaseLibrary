@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.UI;
-using Terraria.UI.Chat;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -33,37 +32,13 @@ namespace BaseLibrary.UI.Elements
 		private static readonly Color CaretColor = new Color(160, 160, 160);
 		private static readonly Color SelectionColor = new Color(51, 144, 255) * 0.25f;
 
-		private Ref<string> _text;
-		private bool _renderPanel;
-		private bool _focused;
-
-		private bool selecting;
-		private int selectionStart;
-		private int selectionEnd;
-		private bool doubleClicked;
-
-		private Vector2 textPosition;
-		private Vector2 textSize;
-
-		private int caretTimer;
-		private bool caretVisible;
-
-		public bool SelectOnFirstClick;
-		public bool AllowMultiline;
-		public bool SizeToText;
-
-		public int MaxLength;
-		public string HintText;
-		public event Action OnTextChange;
-
-		public HorizontalAlignment HorizontalAlignment = HorizontalAlignment.Left;
-		public VerticalAlignment VerticalAlignment = VerticalAlignment.Top;
-
 		public string Text
 		{
-			get => _text.Value;
+			get => _text?.Value;
 			set
 			{
+				if (_text == null) return;
+
 				_text.Value = value;
 
 				CalculateTextMetrics();
@@ -117,6 +92,32 @@ namespace BaseLibrary.UI.Elements
 			}
 		}
 
+		private bool _focused;
+		private bool _renderPanel;
+
+		private Ref<string> _text;
+		public bool AllowMultiline;
+
+		private int caretTimer;
+		private bool caretVisible;
+		private bool doubleClicked;
+		public string HintText;
+
+		public HorizontalAlignment HorizontalAlignment = HorizontalAlignment.Left;
+
+		public int MaxLength;
+
+		private bool selecting;
+		private int selectionEnd;
+		private int selectionStart;
+
+		public bool SelectOnFirstClick;
+		public bool SizeToText;
+
+		private Vector2 textPosition;
+		private Vector2 textSize;
+		public VerticalAlignment VerticalAlignment = VerticalAlignment.Top;
+
 		public UITextInput(ref Ref<string> text)
 		{
 			_text = text;
@@ -125,21 +126,12 @@ namespace BaseLibrary.UI.Elements
 			KeyboardEvents.KeyTyped += KeyTyped;
 		}
 
-		public override void OnDeactivate()
-		{
-			Focused = false;
-
-			Utility.Input.InterceptKeyboard -= ShouldIntercept;
-			KeyboardEvents.KeyTyped -= KeyTyped;
-		}
-
-		private bool ShouldIntercept() => Focused;
-
 		private void CalculateTextMetrics()
 		{
-			if (_text == null || Text == null) return;
+			string text = Text ?? HintText;
+			if (text == null) return;
 
-			textSize = Text.Measure(Utility.Font);
+			textSize = text.Measure(Utility.Font);
 			if (SizeToText) Size = textSize;
 
 			if (HorizontalAlignment == HorizontalAlignment.Left) textPosition.X = InnerDimensions.X;
@@ -151,11 +143,91 @@ namespace BaseLibrary.UI.Elements
 			else if (VerticalAlignment == VerticalAlignment.Bottom) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
 		}
 
-		public override void Recalculate()
+		public override void Click(UIMouseEvent evt)
 		{
-			base.Recalculate();
+			if (doubleClicked)
+			{
+				doubleClicked = false;
+				return;
+			}
 
-			CalculateTextMetrics();
+			if (!Focused && SelectOnFirstClick)
+			{
+				selectionEnd = 0;
+				selectionStart = Text.Length;
+				selecting = true;
+			}
+
+			selecting = false;
+
+			Focused = true;
+
+			float clickedX = evt.MousePosition.X - textPosition.X;
+
+			for (int i = 0; i <= Text.Length; i++)
+			{
+				if (Text.Substring(0, i).Measure(Utility.Font).X < clickedX) selectionStart = i;
+			}
+
+			caretVisible = true;
+			caretTimer = 0;
+		}
+
+		public override void DoubleClick(UIMouseEvent evt)
+		{
+			string[] split = Regex.Split(Text, "\\b");
+
+			int stringStart = 0;
+			foreach (string s in split)
+			{
+				if (selectionStart >= stringStart && selectionStart <= stringStart + s.Length && !string.IsNullOrWhiteSpace(s))
+				{
+					selecting = true;
+					selectionEnd = stringStart;
+					selectionStart = stringStart + s.Length;
+
+					doubleClicked = true;
+				}
+
+				stringStart += s.Length;
+			}
+		}
+
+		protected override void DrawSelf(SpriteBatch spriteBatch)
+		{
+			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, Utility.ColorPanel, Color.Black);
+
+			if (string.IsNullOrWhiteSpace(Text)) goto draw_hint;
+
+			Utils.DrawBorderStringFourWay(spriteBatch, Utility.Font, Text, textPosition.X, textPosition.Y, Color.White, Color.Black, Vector2.Zero);
+
+			if (selecting)
+			{
+				spriteBatch.Draw(Main.magicPixel, new Rectangle(
+					(int)(textPosition.X + Text.Substring(0, Math.Min(selectionStart, selectionEnd)).Measure(Utility.Font).X),
+					(int)textPosition.Y,
+					(int)Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)).Measure(Utility.Font).X,
+					20
+				), SelectionColor);
+			}
+
+			if (++caretTimer > 30)
+			{
+				caretVisible = !caretVisible;
+				caretTimer = 0;
+			}
+
+			if (caretVisible && Focused)
+			{
+				float size = Text.Substring(0, selectionStart).Measure(Utility.Font).X;
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 1, (int)textPosition.Y, 1, 20), CaretColor);
+				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 2, (int)textPosition.Y, 1, 20), CaretColor * 0.25f);
+			}
+
+			draw_hint:
+			if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(HintText) && !Focused) Utils.DrawBorderStringFourWay(spriteBatch, Utility.Font, HintText, textPosition.X, textPosition.Y, new Color(10, 10, 10), new Color(50, 50, 50), Vector2.Zero);
+
+			if (IsMouseHovering) Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor", new Vector2(3.5f, 8.5f));
 		}
 
 		private void KeyTyped(object sender, KeyboardEventArgs args)
@@ -360,55 +432,24 @@ namespace BaseLibrary.UI.Elements
 			}
 		}
 
-		public override void Click(UIMouseEvent evt)
+		public override void OnDeactivate()
 		{
-			if (doubleClicked)
-			{
-				doubleClicked = false;
-				return;
-			}
+			Focused = false;
 
-			if (!Focused && SelectOnFirstClick)
-			{
-				selectionEnd = 0;
-				selectionStart = Text.Length;
-				selecting = true;
-			}
-
-			selecting = false;
-
-			Focused = true;
-
-			float clickedX = evt.MousePosition.X - textPosition.X;
-
-			for (int i = 0; i <= Text.Length; i++)
-			{
-				if (Text.Substring(0, i).Measure(Utility.Font).X < clickedX) selectionStart = i;
-			}
-
-			caretVisible = true;
-			caretTimer = 0;
+			Utility.Input.InterceptKeyboard -= ShouldIntercept;
+			KeyboardEvents.KeyTyped -= KeyTyped;
 		}
 
-		public override void DoubleClick(UIMouseEvent evt)
+		public event Action OnTextChange;
+
+		public override void Recalculate()
 		{
-			string[] split = Regex.Split(Text, "\\b");
+			base.Recalculate();
 
-			int stringStart = 0;
-			foreach (string s in split)
-			{
-				if (selectionStart >= stringStart && selectionStart <= stringStart + s.Length && !string.IsNullOrWhiteSpace(s))
-				{
-					selecting = true;
-					selectionEnd = stringStart;
-					selectionStart = stringStart + s.Length;
-
-					doubleClicked = true;
-				}
-
-				stringStart += s.Length;
-			}
+			CalculateTextMetrics();
 		}
+
+		private bool ShouldIntercept() => Focused;
 
 		public override void TripleClick(UIMouseEvent evt)
 		{
@@ -420,40 +461,6 @@ namespace BaseLibrary.UI.Elements
 		public override void Update(GameTime gameTime)
 		{
 			if ((Main.mouseLeft || Main.mouseRight || Main.mouseMiddle || Main.mouseXButton1 || Main.mouseXButton2) && !IsMouseHovering) Focused = false;
-		}
-
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
-			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, Utility.ColorPanel, Color.Black);
-
-			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, Text, textPosition, Color.White, 0f, Vector2.Zero, Vector2.One);
-
-			if (selecting)
-			{
-				spriteBatch.Draw(Main.magicPixel, new Rectangle(
-					(int)(textPosition.X + Text.Substring(0, Math.Min(selectionStart, selectionEnd)).Measure(Utility.Font).X),
-					(int)textPosition.Y,
-					(int)Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)).Measure(Utility.Font).X,
-					20
-				), SelectionColor);
-			}
-
-			if (++caretTimer > 30)
-			{
-				caretVisible = !caretVisible;
-				caretTimer = 0;
-			}
-
-			if (caretVisible && Focused)
-			{
-				float size = Text.Substring(0, selectionStart).Measure(Utility.Font).X;
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 1, (int)textPosition.Y, 1, 20), CaretColor);
-				spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(textPosition.X + size) + 2, (int)textPosition.Y, 1, 20), CaretColor * 0.25f);
-			}
-
-			if (string.IsNullOrWhiteSpace(Text) && !Focused) ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, HintText, textPosition, Color.Gray, 0f, Vector2.Zero, Vector2.One);
-
-			if (IsMouseHovering) Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor", new Vector2(3.5f, 8.5f));
 		}
 	}
 }
