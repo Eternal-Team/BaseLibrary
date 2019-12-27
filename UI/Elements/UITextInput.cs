@@ -105,7 +105,7 @@ namespace BaseLibrary.UI.Elements
 
 		public HorizontalAlignment HorizontalAlignment = HorizontalAlignment.Left;
 
-		public int MaxLength;
+		public int? MaxLength;
 
 		private bool selecting;
 		private int selectionEnd;
@@ -128,10 +128,12 @@ namespace BaseLibrary.UI.Elements
 
 		private void CalculateTextMetrics()
 		{
-			string text = Text ?? HintText;
-			if (text == null) return;
+			string text = Text;
+			if (string.IsNullOrWhiteSpace(text)) text = HintText;
+			if (string.IsNullOrWhiteSpace(text)) return;
 
 			textSize = text.Measure(Utility.Font);
+			textSize.Y -= 8f;
 			if (SizeToText) Size = textSize;
 
 			if (HorizontalAlignment == HorizontalAlignment.Left) textPosition.X = InnerDimensions.X;
@@ -225,7 +227,7 @@ namespace BaseLibrary.UI.Elements
 			}
 
 			draw_hint:
-			if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(HintText) && !Focused) Utils.DrawBorderStringFourWay(spriteBatch, Utility.Font, HintText, textPosition.X, textPosition.Y, new Color(10, 10, 10), new Color(50, 50, 50), Vector2.Zero);
+			if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(HintText) && !Focused) Utils.DrawBorderStringFourWay(spriteBatch, Utility.Font, HintText, textPosition.X, textPosition.Y, new Color(150, 150, 150), Color.Black, Vector2.Zero);
 
 			if (IsMouseHovering) Hooking.SetCursor("BaseLibrary/Textures/UI/TextCursor", new Vector2(3.5f, 8.5f));
 		}
@@ -257,7 +259,7 @@ namespace BaseLibrary.UI.Elements
 					{
 						selecting = false;
 
-						if (Text.Length + Platform.Current.Clipboard.Length > MaxLength) return;
+						if (MaxLength != null && Text.Length + Platform.Current.Clipboard.Length > MaxLength) return;
 
 						SelectedText = Platform.Current.Clipboard;
 						selectionStart = Math.Min(selectionStart, selectionEnd) + Platform.Current.Clipboard.Length;
@@ -422,7 +424,7 @@ namespace BaseLibrary.UI.Elements
 						}
 						else
 						{
-							if (Text.Length + 1 > MaxLength) return;
+							if (MaxLength != null && Text.Length + 1 > MaxLength) return;
 							Text = Text.Insert(selectionStart++, charValue);
 						}
 					}

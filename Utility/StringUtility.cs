@@ -11,18 +11,24 @@ namespace BaseLibrary
 	public static partial class Utility
 	{
 		private static Regex _colorGetText;
-		private static Regex ColorGetText => _colorGetText = _colorGetText ?? new Regex(@"(?<=\[c\/\w{6}:)[^]]*(?=\])");
 
 		private static Regex _colorGetTag;
+		private static Regex ColorGetText => _colorGetText = _colorGetText ?? new Regex(@"(?<=\[c\/\w{6}:)[^]]*(?=\])");
 		private static Regex ColorGetTag => _colorGetTag = _colorGetTag ?? new Regex(@"\[c\/\w{6}:[^]]*\]");
 
 		public static DynamicSpriteFont Font { get; internal set; }
 
-		public static string ReplaceTagWithText(Match m) => ColorGetText.Match(ColorGetTag.Match(m.Value).Value).Value;
-
 		public static string ExtractText(string withTag) => ColorGetTag.Replace(withTag, ReplaceTagWithText);
 
-		public static Vector2 Measure(this string text, DynamicSpriteFont font = null) => (font ?? Main.fontMouseText).MeasureString(text) - new Vector2(text.Count(x => x == ' ') * 2, 0);
+		public static Vector2 Measure(this string text, DynamicSpriteFont font = null)
+		{
+			DynamicSpriteFont curr = font ?? Main.fontMouseText;
+			Vector2 size = curr.MeasureString(text.Replace(" ", ""));
+			size.X += text.Count(c => c == ' ') * 8f;
+			return size;
+		}
+
+		public static string ReplaceTagWithText(Match m) => ColorGetText.Match(ColorGetTag.Match(m.Value).Value).Value;
 
 		public static IEnumerable<string> WrapText(string text, float width, DynamicSpriteFont font = null)
 		{
