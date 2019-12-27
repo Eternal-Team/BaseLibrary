@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.UI;
 
@@ -13,29 +15,17 @@ namespace BaseLibrary.UI.Elements
 
 	public class UIGrid<T> : BaseElement where T : BaseElement
 	{
-		private class UIInnerList : BaseElement
-		{
-			public override bool ContainsPoint(Vector2 point) => true;
-
-			protected override void DrawChildren(SpriteBatch spriteBatch)
-			{
-				for (int i = 0; i < Elements.Count; i++)
-				{
-					UIElement current = Elements[i];
-					if (Collision.CheckAABBvAABBCollision(Parent.Position, Parent.Size, current.GetDimensions().Position(), current.GetDimensions().Size())) current.Draw(spriteBatch);
-				}
-			}
-		}
-
-		public List<T> Items = new List<T>();
-		public UIScrollbar scrollbar;
-		internal BaseElement innerList = new BaseElement();
-		private float innerListHeight;
-		public float ListPadding = 4f;
-
 		public int Count => Items.Count;
 
 		public int columns;
+		internal BaseElement innerList = new BaseElement();
+		private float innerListHeight;
+
+		public List<T> Items = new List<T>();
+		public float ListPadding = 4f;
+		public UIScrollbar scrollbar;
+
+		public Func<T, bool> SearchSelector;
 
 		public UIGrid(int columns = 1)
 		{
@@ -56,17 +46,6 @@ namespace BaseLibrary.UI.Elements
 			};
 		}
 
-		public override void ScrollWheel(UIScrollWheelEvent evt) => scrollbar.ViewPosition -= evt.ScrollWheelValue;
-
-		public override void Update(GameTime gameTime)
-		{
-			if (IsMouseHovering && innerListHeight > InnerDimensions.Height) Hooking.BlockScrolling = true;
-
-			for (int i = 0; i < Items.Count; i++) Items[i].Update(gameTime);
-
-			base.Update(gameTime);
-		}
-
 		public void Add(IEnumerable<T> items)
 		{
 			foreach (T item in items)
@@ -75,16 +54,6 @@ namespace BaseLibrary.UI.Elements
 				Items.Add(item);
 				innerList.Append(item);
 			}
-
-			Items.Sort(SortMethod);
-			RecalculateChildren();
-		}
-
-		public void Insert(int index, T item)
-		{
-			if (item is IGridElement<T> element) element.Grid = this;
-			Items.Insert(index, item);
-			innerList.Insert(index, item);
 
 			Items.Sort(SortMethod);
 			RecalculateChildren();
@@ -100,21 +69,36 @@ namespace BaseLibrary.UI.Elements
 			RecalculateChildren();
 		}
 
-		public void Remove(T item)
-		{
-			if (item is IGridElement<T> element) element.Grid = null;
-			Items.Remove(item);
-			innerList.RemoveChild(item);
-
-			Items.Sort(SortMethod);
-			RecalculateChildren();
-		}
-
 		public void Clear()
 		{
 			innerList.RemoveAllChildren();
 			Items.Clear();
 
+			RecalculateChildren();
+		}
+
+		public override void Draw(SpriteBatch spriteBatch)
+		{
+			spriteBatch.End();
+			Rectangle prevRect = spriteBatch.GraphicsDevice.ScissorRectangle;
+			spriteBatch.GraphicsDevice.ScissorRectangle = Rectangle.Intersect(GetClippingRectangle(spriteBatch), spriteBatch.GraphicsDevice.ScissorRectangle);
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Utility.DefaultSamplerState, null, Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
+
+			DrawSelf(spriteBatch);
+			innerList.InvokeMethod<object>("DrawChildren", spriteBatch);
+
+			spriteBatch.End();
+			spriteBatch.GraphicsDevice.ScissorRectangle = prevRect;
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Utility.DefaultSamplerState, null, null, null, Main.UIScaleMatrix);
+		}
+
+		public void Insert(int index, T item)
+		{
+			if (item is IGridElement<T> element) element.Grid = this;
+			Items.Insert(index, item);
+			innerList.Insert(index, item);
+
+			Items.Sort(SortMethod);
 			RecalculateChildren();
 		}
 
@@ -130,16 +114,19 @@ namespace BaseLibrary.UI.Elements
 			float top = 0f;
 			float left = 0f;
 
-			for (int i = 0; i < Items.Count; i++)
-			{
-				UIElement item = Items[i];
+			List<T> visible = Items.Where(item => item.Visible).ToList();
 
-				item.Top.Set(top, 0f);
-				item.Left.Set(left, 0f);
+			for (int i = 0; i < visible.Count; i++)
+			{
+				BaseElement item = visible[i];
+				if (!item.Visible) continue;
+
+				item.Top = (top, 0f);
+				item.Left = (left, 0f);
 				item.Recalculate();
 				CalculatedStyle dimensions = item.GetOuterDimensions();
 
-				if (i % columns == columns - 1 || i == Items.Count - 1)
+				if (i % columns == columns - 1 || i == visible.Count - 1)
 				{
 					top += dimensions.Height + ListPadding;
 					left = 0;
@@ -154,21 +141,48 @@ namespace BaseLibrary.UI.Elements
 			scrollbar?.SetView(InnerDimensions.Height, innerListHeight);
 		}
 
+		public void Remove(T item)
+		{
+			if (item is IGridElement<T> element) element.Grid = null;
+			Items.Remove(item);
+			innerList.RemoveChild(item);
+
+			Items.Sort(SortMethod);
+			RecalculateChildren();
+		}
+
+		public override void ScrollWheel(UIScrollWheelEvent evt) => scrollbar.ViewPosition -= evt.ScrollWheelValue;
+
+		public void Search()
+		{
+			if (SearchSelector == null) return;
+
+			foreach (T item in Items) item.Visible = SearchSelector.Invoke(item);
+		}
+
 		public int SortMethod(UIElement item1, UIElement item2) => item1.CompareTo(item2);
 
-		public override void Draw(SpriteBatch spriteBatch)
+		public override void Update(GameTime gameTime)
 		{
-			spriteBatch.End();
-			Rectangle prevRect = spriteBatch.GraphicsDevice.ScissorRectangle;
-			spriteBatch.GraphicsDevice.ScissorRectangle = Rectangle.Intersect(GetClippingRectangle(spriteBatch), spriteBatch.GraphicsDevice.ScissorRectangle);
-			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Utility.DefaultSamplerState, null, Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
+			if (IsMouseHovering && innerListHeight > InnerDimensions.Height) Hooking.BlockScrolling = true;
 
-			DrawSelf(spriteBatch);
-			innerList.InvokeMethod<object>("DrawChildren", spriteBatch);
+			for (int i = 0; i < Items.Count; i++) Items[i].Update(gameTime);
 
-			spriteBatch.End();
-			spriteBatch.GraphicsDevice.ScissorRectangle = prevRect;
-			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Utility.DefaultSamplerState, null, null, null, Main.UIScaleMatrix);
+			base.Update(gameTime);
+		}
+
+		private class UIInnerList : BaseElement
+		{
+			public override bool ContainsPoint(Vector2 point) => true;
+
+			protected override void DrawChildren(SpriteBatch spriteBatch)
+			{
+				for (int i = 0; i < Elements.Count; i++)
+				{
+					UIElement current = Elements[i];
+					if (Collision.CheckAABBvAABBCollision(Parent.Position, Parent.Size, current.GetDimensions().Position(), current.GetDimensions().Size())) current.Draw(spriteBatch);
+				}
+			}
 		}
 	}
 }

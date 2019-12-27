@@ -10,12 +10,6 @@ namespace BaseLibrary.UI.Elements
 {
 	public class BaseElement : UIState
 	{
-		public event Action<SpriteBatch> OnPreDraw;
-		public event Action<SpriteBatch> OnPostDraw;
-
-		public object HoverText = null;
-		public event Func<object> GetHoverText;
-
 		private string hoverText
 		{
 			get
@@ -26,9 +20,6 @@ namespace BaseLibrary.UI.Elements
 				return builder.ToString();
 			}
 		}
-
-		public bool SubstituteWidth;
-		public bool SubstituteHeight;
 
 		public new (float pixels, float precent) Width
 		{
@@ -108,15 +99,6 @@ namespace BaseLibrary.UI.Elements
 			set => base.Elements = value;
 		}
 
-		public event MouseEvent OnClickContinuous;
-		public event MouseEvent OnRightClickContinuous;
-
-		public event MouseEvent OnTripleClick;
-		public event MouseEvent OnRightTripleClick;
-		public event MouseEvent OnMiddleTripleClick;
-		public event MouseEvent OnXButton1TripleClick;
-		public event MouseEvent OnXButton2TripleClick;
-
 		public CalculatedStyle Dimensions => GetDimensions();
 		public CalculatedStyle InnerDimensions => GetInnerDimensions();
 		public CalculatedStyle OuterDimensions => GetOuterDimensions();
@@ -127,15 +109,14 @@ namespace BaseLibrary.UI.Elements
 			set => base.Parent = value;
 		}
 
-		public BaseElement() => base.Width.Precent = base.Height.Precent = 0;
+		public object HoverText = null;
+		public bool SubstituteHeight;
 
-		public void Insert(int index, BaseElement element)
-		{
-			element.Remove();
-			element.Parent = this;
-			Elements.Insert(index, element);
-			element.Recalculate();
-		}
+		public bool SubstituteWidth;
+
+		public bool Visible = true;
+
+		public BaseElement() => base.Width.Precent = base.Height.Precent = 0;
 
 		public void Append(IEnumerable<BaseElement> elements)
 		{
@@ -146,33 +127,42 @@ namespace BaseLibrary.UI.Elements
 			}
 		}
 
-		public void Remove(IEnumerable<BaseElement> elements)
-		{
-			foreach (BaseElement element in elements) RemoveChild(element);
-		}
-
 		public virtual void ClickContinuous(UIMouseEvent evt)
 		{
 			OnClickContinuous?.Invoke(evt, this);
 			Parent?.ClickContinuous(evt);
 		}
 
-		public virtual void RightClickContinuous(UIMouseEvent evt)
+		public override void Draw(SpriteBatch spriteBatch)
 		{
-			OnRightClickContinuous?.Invoke(evt, this);
-			Parent?.RightClickContinuous(evt);
+			if (!Visible) return;
+
+			PreDraw(spriteBatch);
+
+			if (_useImmediateMode) spriteBatch.Draw(Utility.ImmediateState, () => DrawSelf(spriteBatch));
+			else DrawSelf(spriteBatch);
+
+			if (OverflowHidden) spriteBatch.DrawOverflowHidden(this, () => DrawChildren(spriteBatch));
+			else DrawChildren(spriteBatch);
+
+			PostDraw(spriteBatch);
+
+			if (IsMouseHovering && !string.IsNullOrWhiteSpace(hoverText)) Utility.DrawMouseText(hoverText);
 		}
 
-		public virtual void TripleClick(UIMouseEvent evt)
+		protected override void DrawChildren(SpriteBatch spriteBatch)
 		{
-			OnTripleClick?.Invoke(evt, this);
-			Parent?.TripleClick(evt);
+			foreach (UIElement current in Elements) current.Draw(spriteBatch);
 		}
 
-		public virtual void RightTripleClick(UIMouseEvent evt)
+		public event Func<object> GetHoverText;
+
+		public void Insert(int index, BaseElement element)
 		{
-			OnRightTripleClick?.Invoke(evt, this);
-			Parent?.RightTripleClick(evt);
+			element.Remove();
+			element.Parent = this;
+			Elements.Insert(index, element);
+			element.Recalculate();
 		}
 
 		public virtual void MiddleTripleClick(UIMouseEvent evt)
@@ -181,27 +171,25 @@ namespace BaseLibrary.UI.Elements
 			Parent?.MiddleTripleClick(evt);
 		}
 
-		public virtual void XButton1TripleClick(UIMouseEvent evt)
+		public event MouseEvent OnClickContinuous;
+		public event MouseEvent OnMiddleTripleClick;
+		public event Action<SpriteBatch> OnPostDraw;
+		public event Action<SpriteBatch> OnPreDraw;
+		public event MouseEvent OnRightClickContinuous;
+		public event MouseEvent OnRightTripleClick;
+
+		public event MouseEvent OnTripleClick;
+		public event MouseEvent OnXButton1TripleClick;
+		public event MouseEvent OnXButton2TripleClick;
+
+		public virtual void PostDraw(SpriteBatch spriteBatch)
 		{
-			OnXButton1TripleClick?.Invoke(evt, this);
-			Parent?.XButton1TripleClick(evt);
+			OnPostDraw?.Invoke(spriteBatch);
 		}
 
-		public virtual void XButton2TripleClick(UIMouseEvent evt)
+		public virtual void PreDraw(SpriteBatch spriteBatch)
 		{
-			OnXButton2TripleClick?.Invoke(evt, this);
-			Parent?.XButton2TripleClick(evt);
-		}
-
-		public override void Update(GameTime gameTime)
-		{
-			if (Main.hasFocus && IsMouseHovering)
-			{
-				if (Main.mouseLeft) ClickContinuous(new UIMouseEvent(this, UserInterface.ActiveInstance.MousePosition));
-				if (Main.mouseRight) RightClickContinuous(new UIMouseEvent(this, UserInterface.ActiveInstance.MousePosition));
-			}
-
-			base.Update(gameTime);
+			OnPreDraw?.Invoke(spriteBatch);
 		}
 
 		public override void Recalculate()
@@ -242,34 +230,52 @@ namespace BaseLibrary.UI.Elements
 			RecalculateChildren();
 		}
 
-		public override void Draw(SpriteBatch spriteBatch)
+		public void Remove(IEnumerable<BaseElement> elements)
 		{
-			PreDraw(spriteBatch);
-
-			if (_useImmediateMode) spriteBatch.Draw(Utility.ImmediateState, () => DrawSelf(spriteBatch));
-			else DrawSelf(spriteBatch);
-
-			if (OverflowHidden) spriteBatch.DrawOverflowHidden(this, () => DrawChildren(spriteBatch));
-			else DrawChildren(spriteBatch);
-
-			PostDraw(spriteBatch);
-
-			if (IsMouseHovering && !string.IsNullOrWhiteSpace(hoverText)) Utility.DrawMouseText(hoverText);
+			foreach (BaseElement element in elements) RemoveChild(element);
 		}
 
-		protected override void DrawChildren(SpriteBatch spriteBatch)
+		public virtual void RightClickContinuous(UIMouseEvent evt)
 		{
-			foreach (UIElement current in Elements) current.Draw(spriteBatch);
+			OnRightClickContinuous?.Invoke(evt, this);
+			Parent?.RightClickContinuous(evt);
 		}
 
-		public virtual void PreDraw(SpriteBatch spriteBatch)
+		public virtual void RightTripleClick(UIMouseEvent evt)
 		{
-			OnPreDraw?.Invoke(spriteBatch);
+			OnRightTripleClick?.Invoke(evt, this);
+			Parent?.RightTripleClick(evt);
 		}
 
-		public virtual void PostDraw(SpriteBatch spriteBatch)
+		public virtual void TripleClick(UIMouseEvent evt)
 		{
-			OnPostDraw?.Invoke(spriteBatch);
+			OnTripleClick?.Invoke(evt, this);
+			Parent?.TripleClick(evt);
+		}
+
+		public override void Update(GameTime gameTime)
+		{
+			if (!Visible) return;
+
+			if (Main.hasFocus && IsMouseHovering)
+			{
+				if (Main.mouseLeft) ClickContinuous(new UIMouseEvent(this, UserInterface.ActiveInstance.MousePosition));
+				if (Main.mouseRight) RightClickContinuous(new UIMouseEvent(this, UserInterface.ActiveInstance.MousePosition));
+			}
+
+			base.Update(gameTime);
+		}
+
+		public virtual void XButton1TripleClick(UIMouseEvent evt)
+		{
+			OnXButton1TripleClick?.Invoke(evt, this);
+			Parent?.XButton1TripleClick(evt);
+		}
+
+		public virtual void XButton2TripleClick(UIMouseEvent evt)
+		{
+			OnXButton2TripleClick?.Invoke(evt, this);
+			Parent?.XButton2TripleClick(evt);
 		}
 	}
 }
