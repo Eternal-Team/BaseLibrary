@@ -13,10 +13,12 @@ namespace BaseLibrary.UI
 	public class PanelUI : BaseUI
 	{
 		private static Dictionary<Type, Type> UICache;
+		public static PanelUI Instance;
 
 		public PanelUI()
 		{
 			UICache = new Dictionary<Type, Type>();
+			Instance = this;
 
 			foreach (Type type in ModLoader.Mods.Where(mod => mod.Name != "ModLoader").SelectMany(mod => mod.Code?.GetTypes()))
 			{
