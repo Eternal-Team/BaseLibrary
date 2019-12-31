@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace BaseLibrary.Input
+namespace BaseLibrary.Input.GamePad
 {
 	/// <summary>
 	///     An abstraction around game pad input that turns XNA's underlying polling model into an event-based
@@ -82,87 +82,87 @@ namespace BaseLibrary.Input
 
 			base.Update(gameTime);
 
-			GamePadState current = GamePad.GetState(PhysicalIndex);
+			GamePadState current = Microsoft.Xna.Framework.Input.GamePad.GetState(PhysicalIndex);
 
 			// Button Down
 			if (current.Buttons.A == ButtonState.Pressed && previous.Buttons.A == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.A, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.A, current));
 			}
 
 			if (current.Buttons.B == ButtonState.Pressed && previous.Buttons.B == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.B, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.B, current));
 			}
 
 			if (current.Buttons.X == ButtonState.Pressed && previous.Buttons.X == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.X, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.X, current));
 			}
 
 			if (current.Buttons.Y == ButtonState.Pressed && previous.Buttons.Y == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.Y, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.Y, current));
 			}
 
 			if (current.Buttons.Back == ButtonState.Pressed && previous.Buttons.Back == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.Back, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.Back, current));
 			}
 
 			if (current.Buttons.Start == ButtonState.Pressed && previous.Buttons.Start == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.Start, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.Start, current));
 			}
 
 			if (current.Buttons.LeftShoulder == ButtonState.Pressed && previous.Buttons.LeftShoulder == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftShoulder, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftShoulder, current));
 			}
 
 			if (current.Buttons.RightShoulder == ButtonState.Pressed && previous.Buttons.RightShoulder == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightShoulder, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightShoulder, current));
 			}
 
 			if (current.DPad.Left == ButtonState.Pressed && previous.DPad.Left == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.DPadLeft, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.DPadLeft, current));
 			}
 
 			if (current.DPad.Right == ButtonState.Pressed && previous.DPad.Right == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.DPadRight, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.DPadRight, current));
 			}
 
 			if (current.DPad.Up == ButtonState.Pressed && previous.DPad.Up == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.DPadUp, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.DPadUp, current));
 			}
 
 			if (current.DPad.Down == ButtonState.Pressed && previous.DPad.Down == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.DPadDown, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.DPadDown, current));
 			}
 
 			if (current.Triggers.Left > TriggerThreshold && previous.Triggers.Left <= TriggerThreshold)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftTrigger, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftTrigger, current));
 			}
 
 			if (current.Triggers.Right > TriggerThreshold && previous.Triggers.Right <= TriggerThreshold)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightTrigger, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightTrigger, current));
 			}
 
 			if (current.Buttons.LeftStick == ButtonState.Pressed && previous.Buttons.LeftStick == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstick, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstick, current));
 			}
 
 			if (current.Buttons.RightStick == ButtonState.Pressed && previous.Buttons.RightStick == ButtonState.Released)
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstick, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstick, current));
 			}
 
 			PolarCoordinate oldLeft = PolarCoordinate.FromCartesian(previous.ThumbSticks.Left);
@@ -172,189 +172,189 @@ namespace BaseLibrary.Input
 
 			if (InLeftSection(newLeft) && !InLeftSection(oldLeft))
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstickLeft, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstickLeft, current));
 			}
 
 			if (InRightSection(newLeft) && !InRightSection(oldLeft))
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstickRight, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstickRight, current));
 			}
 
 			if (InUpSection(newLeft) && !InUpSection(oldLeft))
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstickUp, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstickUp, current));
 			}
 
 			if (InDownSection(newLeft) && !InDownSection(oldLeft))
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstickDown, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstickDown, current));
 			}
 
 			if (InLeftSection(newRight) && !InLeftSection(oldRight))
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstickLeft, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstickLeft, current));
 			}
 
 			if (InRightSection(newRight) && !InRightSection(oldRight))
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstickRight, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstickRight, current));
 			}
 
 			if (InUpSection(newRight) && !InUpSection(oldRight))
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstickUp, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstickUp, current));
 			}
 
 			if (InDownSection(newRight) && !InDownSection(oldRight))
 			{
-				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstickDown, current));
+				OnButtonDown(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstickDown, current));
 			}
 
 			// Button up
 			if (current.Buttons.A == ButtonState.Released && previous.Buttons.A == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.A, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.A, current));
 			}
 
 			if (current.Buttons.B == ButtonState.Released && previous.Buttons.B == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.B, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.B, current));
 			}
 
 			if (current.Buttons.X == ButtonState.Released && previous.Buttons.X == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.X, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.X, current));
 			}
 
 			if (current.Buttons.Y == ButtonState.Released && previous.Buttons.Y == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.Y, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.Y, current));
 			}
 
 			if (current.Buttons.Back == ButtonState.Released && previous.Buttons.Back == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.Back, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.Back, current));
 			}
 
 			if (current.Buttons.Start == ButtonState.Released && previous.Buttons.Start == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.Start, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.Start, current));
 			}
 
 			if (current.Buttons.LeftShoulder == ButtonState.Released && previous.Buttons.LeftShoulder == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftShoulder, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftShoulder, current));
 			}
 
 			if (current.Buttons.RightShoulder == ButtonState.Released && previous.Buttons.RightShoulder == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightShoulder, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightShoulder, current));
 			}
 
 			if (current.DPad.Left == ButtonState.Released && previous.DPad.Left == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.DPadLeft, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.DPadLeft, current));
 			}
 
 			if (current.DPad.Right == ButtonState.Released && previous.DPad.Right == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.DPadRight, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.DPadRight, current));
 			}
 
 			if (current.DPad.Up == ButtonState.Released && previous.DPad.Up == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.DPadUp, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.DPadUp, current));
 			}
 
 			if (current.DPad.Down == ButtonState.Released && previous.DPad.Down == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.DPadDown, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.DPadDown, current));
 			}
 
 			if (current.Triggers.Left <= TriggerThreshold && previous.Triggers.Left > TriggerThreshold)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftTrigger, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftTrigger, current));
 			}
 
 			if (current.Triggers.Right <= TriggerThreshold && previous.Triggers.Right > TriggerThreshold)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightTrigger, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightTrigger, current));
 			}
 
 			if (current.Buttons.LeftStick == ButtonState.Released && previous.Buttons.LeftStick == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstick, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstick, current));
 			}
 
 			if (current.Buttons.RightStick == ButtonState.Released && previous.Buttons.RightStick == ButtonState.Pressed)
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstick, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstick, current));
 			}
 
 			if (!InLeftSection(newLeft) && InLeftSection(oldLeft))
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstickLeft, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstickLeft, current));
 			}
 
 			if (!InRightSection(newLeft) && InRightSection(oldLeft))
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstickRight, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstickRight, current));
 			}
 
 			if (!InUpSection(newLeft) && InUpSection(oldLeft))
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstickUp, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstickUp, current));
 			}
 
 			if (!InDownSection(newLeft) && InDownSection(oldLeft))
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.LeftThumbstickDown, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.LeftThumbstickDown, current));
 			}
 
 			if (!InLeftSection(newRight) && InLeftSection(oldRight))
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstickLeft, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstickLeft, current));
 			}
 
 			if (!InRightSection(newRight) && InRightSection(oldRight))
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstickRight, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstickRight, current));
 			}
 
 			if (!InUpSection(newRight) && InUpSection(oldRight))
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstickUp, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstickUp, current));
 			}
 
 			if (!InDownSection(newRight) && InDownSection(oldRight))
 			{
-				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, Buttons.RightThumbstickDown, current));
+				OnButtonUp(this, new GamePadButtonEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadButtons.RightThumbstickDown, current));
 			}
 
 			// Triggers moved.
 			if (current.Triggers.Left != previous.Triggers.Left)
 			{
-				OnTriggerMoved(this, new GamePadTriggerEventArgs(gameTime.TotalGameTime, LogicalIndex, Triggers.Left, current.Triggers.Left, current));
-				OnLeftTriggerMoved(this, new GamePadTriggerEventArgs(gameTime.TotalGameTime, LogicalIndex, Triggers.Left, current.Triggers.Left, current));
+				OnTriggerMoved(this, new GamePadTriggerEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadTriggers.Left, current.Triggers.Left, current));
+				OnLeftTriggerMoved(this, new GamePadTriggerEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadTriggers.Left, current.Triggers.Left, current));
 			}
 
 			if (current.Triggers.Right != previous.Triggers.Right)
 			{
-				OnTriggerMoved(this, new GamePadTriggerEventArgs(gameTime.TotalGameTime, LogicalIndex, Triggers.Right, current.Triggers.Right, current));
-				OnRightTriggerMoved(this, new GamePadTriggerEventArgs(gameTime.TotalGameTime, LogicalIndex, Triggers.Right, current.Triggers.Right, current));
+				OnTriggerMoved(this, new GamePadTriggerEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadTriggers.Right, current.Triggers.Right, current));
+				OnRightTriggerMoved(this, new GamePadTriggerEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadTriggers.Right, current.Triggers.Right, current));
 			}
 
 			// Thumbsticks moved.
 			if (current.ThumbSticks.Left.X != previous.ThumbSticks.Left.X || current.ThumbSticks.Left.Y != previous.ThumbSticks.Left.Y)
 			{
-				OnThumbstickMoved(this, new GamePadThumbstickEventArgs(gameTime.TotalGameTime, LogicalIndex, Thumbsticks.Left, new Vector2(current.ThumbSticks.Left.X, current.ThumbSticks.Left.Y), current));
-				OnLeftThumbstickMoved(this, new GamePadThumbstickEventArgs(gameTime.TotalGameTime, LogicalIndex, Thumbsticks.Left, new Vector2(current.ThumbSticks.Left.X, current.ThumbSticks.Left.Y), current));
+				OnThumbstickMoved(this, new GamePadThumbstickEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadThumbsticks.Left, new Vector2(current.ThumbSticks.Left.X, current.ThumbSticks.Left.Y), current));
+				OnLeftThumbstickMoved(this, new GamePadThumbstickEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadThumbsticks.Left, new Vector2(current.ThumbSticks.Left.X, current.ThumbSticks.Left.Y), current));
 			}
 
 			if (current.ThumbSticks.Right.X != previous.ThumbSticks.Right.X || current.ThumbSticks.Right.Y != previous.ThumbSticks.Right.Y)
 			{
-				OnThumbstickMoved(this, new GamePadThumbstickEventArgs(gameTime.TotalGameTime, LogicalIndex, Thumbsticks.Right, new Vector2(current.ThumbSticks.Right.X, current.ThumbSticks.Right.Y), current));
-				OnRightThumbstickMoved(this, new GamePadThumbstickEventArgs(gameTime.TotalGameTime, LogicalIndex, Thumbsticks.Right, new Vector2(current.ThumbSticks.Right.X, current.ThumbSticks.Right.Y), current));
+				OnThumbstickMoved(this, new GamePadThumbstickEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadThumbsticks.Right, new Vector2(current.ThumbSticks.Right.X, current.ThumbSticks.Right.Y), current));
+				OnRightThumbstickMoved(this, new GamePadThumbstickEventArgs(gameTime.TotalGameTime, LogicalIndex, GamePadThumbsticks.Right, new Vector2(current.ThumbSticks.Right.X, current.ThumbSticks.Right.Y), current));
 			}
 
 			// Connected and Disconnected events.

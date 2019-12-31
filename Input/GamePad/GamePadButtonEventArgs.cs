@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace BaseLibrary.Input
+namespace BaseLibrary.Input.GamePad
 {
 	/// <summary>
 	///     An event args object for button presses on the game pad. This includes all of the standard buttons,
@@ -13,7 +13,7 @@ namespace BaseLibrary.Input
 		/// <summary>
 		///     The button that was involved in the button press.
 		/// </summary>
-		public Buttons Button { get; set; }
+		public GamePadButtons Button { get; set; }
 
 		/// <summary>
 		///     Creates a new GamePadButtonEventArgs object.
@@ -22,7 +22,7 @@ namespace BaseLibrary.Input
 		/// <param name="logicalIndex"></param>
 		/// <param name="button"></param>
 		/// <param name="current"></param>
-		public GamePadButtonEventArgs(TimeSpan gameTime, PlayerIndex logicalIndex, Buttons button, GamePadState current)
+		public GamePadButtonEventArgs(TimeSpan gameTime, PlayerIndex logicalIndex, GamePadButtons button, GamePadState current)
 			: base(gameTime, logicalIndex, current)
 		{
 			Button = button;

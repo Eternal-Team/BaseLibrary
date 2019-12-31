@@ -16,6 +16,29 @@ namespace BaseLibrary
 		private static Texture2D CursorTexture;
 		private static Vector2 CursorOffset;
 
+		public static void SetCursor(string texture, Vector2? offset = null)
+		{
+			Main.cursorOverride = CustomCursorOverride;
+			CursorTexture = ModContent.GetTexture(texture);
+			CursorOffset = offset ?? Vector2.Zero;
+		}
+
+		private static void CloseUI_ItemSlot(On.Terraria.UI.ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)
+		{
+			if (Main.mouseItem.modItem is IHasUI mouse) BaseLibrary.PanelGUI.UI.CloseUI(mouse);
+
+			if (inv[slot].modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
+
+			orig(inv, context, slot);
+		}
+
+		private static void CloseUI_Drop(On.Terraria.Player.orig_DropSelectedItem orig, Player self)
+		{
+			if (self.HeldItem.modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
+
+			orig(self);
+		}
+
 		private static UIElement UIElement_GetElementAt(On.Terraria.UI.UIElement.orig_GetElementAt orig, UIElement self, Vector2 point)
 		{
 			if (self is PanelUI ui)
@@ -37,7 +60,7 @@ namespace BaseLibrary
 			return orig(self, point);
 		}
 
-		private static void Main_DrawInterface_36_Cursor(ILContext il)
+		private static void DrawCursor(ILContext il)
 		{
 			ILCursor cursor = new ILCursor(il);
 			ILLabel label = cursor.DefineLabel();
@@ -63,13 +86,6 @@ namespace BaseLibrary
 
 				cursor.MarkLabel(label);
 			}
-		}
-
-		public static void SetCursor(string texture, Vector2? offset = null)
-		{
-			Main.cursorOverride = CustomCursorOverride;
-			CursorTexture = ModContent.GetTexture(texture);
-			CursorOffset = offset ?? Vector2.Zero;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using BaseLibrary.Input;
+using BaseLibrary.Input.Keyboard;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -122,8 +123,8 @@ namespace BaseLibrary.UI.Elements
 		{
 			_text = text;
 
-			Utility.Input.InterceptKeyboard += ShouldIntercept;
-			KeyboardEvents.KeyTyped += KeyTyped;
+			//Utility.Input.InterceptKeyboard += ShouldIntercept;
+			//KeyboardEvents.KeyTyped += KeyTyped;
 		}
 
 		private void CalculateTextMetrics()
@@ -147,6 +148,8 @@ namespace BaseLibrary.UI.Elements
 
 		public override void Click(UIMouseEvent evt)
 		{
+			if (evt.Target != this) return;
+
 			if (doubleClicked)
 			{
 				doubleClicked = false;
@@ -177,6 +180,8 @@ namespace BaseLibrary.UI.Elements
 
 		public override void DoubleClick(UIMouseEvent evt)
 		{
+			if (evt.Target != this) return;
+
 			string[] split = Regex.Split(Text, "\\b");
 
 			int stringStart = 0;
@@ -438,8 +443,8 @@ namespace BaseLibrary.UI.Elements
 		{
 			Focused = false;
 
-			Utility.Input.InterceptKeyboard -= ShouldIntercept;
-			KeyboardEvents.KeyTyped -= KeyTyped;
+			//Utility.Input.InterceptKeyboard -= ShouldIntercept;
+			//KeyboardEvents.KeyTyped -= KeyTyped;
 		}
 
 		public event Action OnTextChange;

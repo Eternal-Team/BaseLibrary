@@ -25,11 +25,17 @@ namespace BaseLibrary
 				case MemberTypes.Property:
 					return (T)Convert.ChangeType(((PropertyInfo)memberInfo).GetValue(obj), typeof(T));
 				default:
-					throw new NotImplementedException();
+					throw new ArgumentException();
 			}
 		}
 
 		public static void SetValue(this Type type, string name, object value, object obj = null, BindingFlags flags = defaultFlags)
+		{
+			if (type.GetProperty(name, flags) != null) type.GetProperty(name, flags)?.SetValue(obj, value);
+			else type.GetField(name, flags)?.SetValue(obj, value);
+		}
+
+		public static void SetValue<T>(this Type type, string name, T value, object obj = null, BindingFlags flags = defaultFlags)
 		{
 			if (type.GetProperty(name, flags) != null) type.GetProperty(name, flags)?.SetValue(obj, value);
 			else type.GetField(name, flags)?.SetValue(obj, value);
@@ -48,7 +54,7 @@ namespace BaseLibrary
 					((PropertyInfo)memberInfo).SetValue(obj, value);
 					break;
 				default:
-					throw new NotImplementedException();
+					throw new ArgumentException();
 			}
 		}
 
@@ -90,6 +96,8 @@ namespace BaseLibrary
 
 		// instance, w/o flags
 		public static T InvokeMethod<T>(this object obj, string name, params object[] args) => obj.GetType().InvokeMethod<T>(name, obj, defaultFlags, args);
+
+		public static void InvokeMethod(this Type type, string name, params object[] args) => type.InvokeMethod<object>(name, null, defaultFlags, args);
 
 		public static bool HasAttribute<T>(this MemberInfo field) where T : Attribute => field.GetCustomAttribute<T>() != null;
 

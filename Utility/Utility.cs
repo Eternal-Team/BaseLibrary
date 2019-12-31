@@ -21,59 +21,6 @@ namespace BaseLibrary
 {
 	public static partial class Utility
 	{
-		public static class Cache
-		{
-			public static Item[] ItemCache { get; internal set; }
-			public static NPC[] NPCCache { get; internal set; }
-			public static Projectile[] ProjectileCache { get; internal set; }
-
-			public static void Load()
-			{
-				ItemCache = new Item[ItemLoader.ItemCount];
-				NPCCache = new NPC[NPCLoader.NPCCount];
-				ProjectileCache = new Projectile[ProjectileLoader.ProjectileCount];
-
-				for (int type = 0; type < ItemLoader.ItemCount; type++)
-				{
-					try
-					{
-						Item item = new Item();
-						item.SetDefaults(type);
-						ItemCache[type] = item;
-					}
-					catch
-					{
-					}
-				}
-
-				for (int type = 0; type < NPCLoader.NPCCount; type++)
-				{
-					try
-					{
-						NPC npc = new NPC();
-						npc.SetDefaults(type);
-						NPCCache[type] = npc;
-					}
-					catch
-					{
-					}
-				}
-
-				for (int type = 0; type < ProjectileLoader.ProjectileCount; type++)
-				{
-					try
-					{
-						Projectile projectile = new Projectile();
-						projectile.SetDefaults(type);
-						ProjectileCache[type] = projectile;
-					}
-					catch
-					{
-					}
-				}
-			}
-		}
-
 		public static byte[] CompressBytes(this byte[] data)
 		{
 			MemoryStream output = new MemoryStream();
@@ -191,6 +138,61 @@ namespace BaseLibrary
 			catch
 			{
 				return false;
+			}
+		}
+
+		public static bool CheckAABBvAABBCollision(Rectangle a, Rectangle b) => a.X < b.X + b.Width && a.X + a.Width > b.X && a.Y < b.Y + b.Height && a.Y + a.Height > b.Y;
+
+		public static class Cache
+		{
+			public static Item[] ItemCache { get; internal set; }
+			public static NPC[] NPCCache { get; internal set; }
+			public static Projectile[] ProjectileCache { get; internal set; }
+
+			public static void Load()
+			{
+				ItemCache = new Item[ItemLoader.ItemCount];
+				NPCCache = new NPC[NPCLoader.NPCCount];
+				ProjectileCache = new Projectile[ProjectileLoader.ProjectileCount];
+
+				for (int type = 0; type < ItemLoader.ItemCount; type++)
+				{
+					try
+					{
+						Item item = new Item();
+						item.SetDefaults(type);
+						ItemCache[type] = item;
+					}
+					catch
+					{
+					}
+				}
+
+				for (int type = 0; type < NPCLoader.NPCCount; type++)
+				{
+					try
+					{
+						NPC npc = new NPC();
+						npc.SetDefaults(type);
+						NPCCache[type] = npc;
+					}
+					catch
+					{
+					}
+				}
+
+				for (int type = 0; type < ProjectileLoader.ProjectileCount; type++)
+				{
+					try
+					{
+						Projectile projectile = new Projectile();
+						projectile.SetDefaults(type);
+						ProjectileCache[type] = projectile;
+					}
+					catch
+					{
+					}
+				}
 			}
 		}
 	}

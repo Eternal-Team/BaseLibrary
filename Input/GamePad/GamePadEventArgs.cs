@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace BaseLibrary.Input
+namespace BaseLibrary.Input.GamePad
 {
 	/// <summary>
 	///     A base class for game pad event args.
@@ -26,7 +26,6 @@ namespace BaseLibrary.Input
 		/// <param name="logicalIndex"></param>
 		/// <param name="current"></param>
 		public GamePadEventArgs(TimeSpan time, PlayerIndex logicalIndex, GamePadState current)
-			: base(time)
 		{
 			LogicalIndex = logicalIndex;
 			Current = current;

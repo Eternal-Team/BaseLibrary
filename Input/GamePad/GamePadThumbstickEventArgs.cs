@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace BaseLibrary.Input
+namespace BaseLibrary.Input.GamePad
 {
 	/// <summary>
 	///     An event args class for events related to a game pad's thumbsticks.
@@ -12,7 +12,7 @@ namespace BaseLibrary.Input
 		/// <summary>
 		///     The thumbstick involved in the event.
 		/// </summary>
-		public Thumbsticks Thumbstick { get; set; }
+		public GamePadThumbsticks Thumbstick { get; set; }
 
 		/// <summary>
 		///     The current position of the thumbstick as a Cartesian coordinate.
@@ -38,7 +38,7 @@ namespace BaseLibrary.Input
 		/// <param name="thumbstick"></param>
 		/// <param name="position"></param>
 		/// <param name="current"></param>
-		public GamePadThumbstickEventArgs(TimeSpan gameTime, PlayerIndex logicalIndex, Thumbsticks thumbstick, Vector2 position, GamePadState current)
+		public GamePadThumbstickEventArgs(TimeSpan gameTime, PlayerIndex logicalIndex, GamePadThumbsticks thumbstick, Vector2 position, GamePadState current)
 			: base(gameTime, logicalIndex, current)
 		{
 			Thumbstick = thumbstick;

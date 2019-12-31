@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace BaseLibrary.Input
+namespace BaseLibrary.Input.GamePad
 {
 	/// <summary>
 	///     An EventArgs object for game pad trigger events.
@@ -12,7 +12,7 @@ namespace BaseLibrary.Input
 		/// <summary>
 		///     The trigger that is involved in the event.
 		/// </summary>
-		public Triggers Trigger { get; set; }
+		public GamePadTriggers Trigger { get; set; }
 
 		/// <summary>
 		///     The value of the trigger at the time of the event.
@@ -27,8 +27,7 @@ namespace BaseLibrary.Input
 		/// <param name="trigger"></param>
 		/// <param name="value"></param>
 		/// <param name="current"></param>
-		public GamePadTriggerEventArgs(TimeSpan gameTime, PlayerIndex logicalIndex, Triggers trigger, float value, GamePadState current)
-			: base(gameTime, logicalIndex, current)
+		public GamePadTriggerEventArgs(TimeSpan gameTime, PlayerIndex logicalIndex, GamePadTriggers trigger, float value, GamePadState current) : base(gameTime, logicalIndex, current)
 		{
 			Trigger = trigger;
 			Value = value;

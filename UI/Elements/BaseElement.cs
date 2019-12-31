@@ -255,6 +255,8 @@ namespace BaseLibrary.UI.Elements
 
 		public override void Update(GameTime gameTime)
 		{
+			base.Update(gameTime);
+
 			if (!Visible) return;
 
 			if (Main.hasFocus && IsMouseHovering)
@@ -262,8 +264,6 @@ namespace BaseLibrary.UI.Elements
 				if (Main.mouseLeft) ClickContinuous(new UIMouseEvent(this, UserInterface.ActiveInstance.MousePosition));
 				if (Main.mouseRight) RightClickContinuous(new UIMouseEvent(this, UserInterface.ActiveInstance.MousePosition));
 			}
-
-			base.Update(gameTime);
 		}
 
 		public virtual void XButton1TripleClick(UIMouseEvent evt)

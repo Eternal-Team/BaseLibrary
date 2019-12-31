@@ -1,0 +1,30 @@
+﻿namespace BaseLibrary.Input.GamePad
+{
+	public enum GamePadButtons
+	{
+		A,
+		B,
+		X,
+		Y,
+		Start,
+		Back,
+		LeftShoulder,
+		RightShoulder,
+		DPadUp,
+		DPadDown,
+		DPadLeft,
+		DPadRight,
+		LeftTrigger,
+		RightTrigger,
+		LeftThumbstickLeft,
+		LeftThumbstickRight,
+		LeftThumbstickUp,
+		LeftThumbstickDown,
+		LeftThumbstick,
+		RightThumbstickLeft,
+		RightThumbstickRight,
+		RightThumbstickUp,
+		RightThumbstickDown,
+		RightThumbstick
+	}
+}

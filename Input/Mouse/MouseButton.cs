@@ -1,4 +1,4 @@
-﻿namespace BaseLibrary.Input
+﻿namespace BaseLibrary.Input.Mouse
 {
 	/// <summary>
 	///     An enumeration of the buttons on the mouse that are accessible through Starbound Input.

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
@@ -27,7 +28,6 @@ namespace BaseLibrary
 		public static Texture2D texturePanelBorder;
 
 		public static GUI<PanelUI> PanelGUI { get; private set; }
-		internal static GUI<TestUI> TestGUI { get; private set; }
 
 		private LegacyGameInterfaceLayer MouseInterface;
 
@@ -36,7 +36,6 @@ namespace BaseLibrary
 			TagSerializer.AddSerializer(new GUIDSerializer());
 
 			Dispatcher.Load();
-			Utility.Input.Load();
 			Hooking.Load();
 
 			if (!Main.dedServ)
@@ -52,7 +51,6 @@ namespace BaseLibrary
 				RoundedRectShader = GetEffect("Effects/BorderRadius");
 
 				PanelGUI = Utility.SetupGUI<PanelUI>();
-				//TestGUI = Utility.SetupGUI<TestUI>();
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
@@ -65,7 +63,11 @@ namespace BaseLibrary
 			this.UnloadNullableTypes();
 		}
 
-		public override void PostSetupContent() => Utility.Cache.Load();
+		public override void PostSetupContent()
+		{
+			Input.Input.Load();
+			Utility.Cache.Load();
+		}
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 		{
@@ -75,7 +77,14 @@ namespace BaseLibrary
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
 				layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
-				if (TestGUI != null) layers.Insert(MouseTextIndex, TestGUI.InterfaceLayer);
+				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer("aa", delegate
+				{
+					foreach (Layer layer in Input.Input.Layers)
+					{
+						layer.OnDraw(Main.spriteBatch);
+					}
+					return true;
+				}, InterfaceScaleType.UI));
 			}
 		}
 
@@ -112,7 +121,8 @@ namespace BaseLibrary
 			}
 
 			gui?.Update(gameTime);
-			TestGUI?.Update(gameTime);
+
+			foreach (Layer layer in Input.Input.Layers) layer.OnUpdate(gameTime);
 		}
 
 		public override void PreSaveAndQuit()
