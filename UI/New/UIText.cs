@@ -69,17 +69,7 @@ namespace BaseLibrary.UI.New
 
 			CalculateTextMetrics();
 		}
-
-		public override void MouseDown(MouseButtonEventArgs args)
-		{
-			args.Handled = true;
-		}
-
-		public override void MouseUp(MouseButtonEventArgs args)
-		{
-			args.Handled = true;
-		}
-
+		
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			Utils.DrawBorderStringFourWay(spriteBatch, font, text.ToString(), textPosition.X, textPosition.Y, TextColor, BorderColor, Vector2.Zero, textScale);

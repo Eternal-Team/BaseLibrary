@@ -13,7 +13,7 @@ namespace BaseLibrary.UI.New
 
 		public UIPanel()
 		{
-			Padding = (8, 8, 8, 8);
+			Padding = new Padding(8);
 		}
 
 		protected override void Draw(SpriteBatch spriteBatch)

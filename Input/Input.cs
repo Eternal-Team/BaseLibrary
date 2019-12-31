@@ -1,5 +1,6 @@
 ﻿using BaseLibrary.Input.Keyboard;
 using BaseLibrary.Input.Mouse;
+using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
@@ -9,6 +10,10 @@ namespace BaseLibrary.Input
 	public static class Input
 	{
 		public static LayerStack Layers;
+
+		private static int lastScreenWidth;
+		private static int lastScreenHeight;
+
 
 		internal static void Load()
 		{
@@ -110,18 +115,27 @@ namespace BaseLibrary.Input
 					if (args.Handled) break;
 				}
 			};
-
-			var sequence = new KeySequence(Keys.LeftControl, Keys.V);
-			sequence.KeySequenceEntered += (sender, args) =>
-			{
-				Main.NewText("ctrl + v");
-			};
-			KeyboardEvents.AddKeySequence(sequence);
 		}
 
 		internal static void Update(GameTime time)
 		{
 			if (Main.dedServ) return;
+
+			if (lastScreenWidth != Main.screenWidth || lastScreenHeight != Main.screenHeight)
+			{
+				WindowResizedEventArgs args = new WindowResizedEventArgs
+				{
+					Size = new Vector2Int(Main.screenWidth, Main.screenHeight)
+				};
+
+				foreach (Layer layer in Layers)
+				{
+					layer.OnWindowResize(args);
+				}
+
+				lastScreenWidth = Main.screenWidth;
+				lastScreenHeight = Main.screenHeight;
+			}
 
 			MouseEvents.Update(time);
 			KeyboardEvents.Update(time);

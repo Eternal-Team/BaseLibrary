@@ -42,6 +42,14 @@ namespace BaseLibrary
 			yield return element;
 		}
 
+		public static IEnumerable<T> Reverse<T>(this IList<T> items)
+		{
+			for (int i = items.Count - 1; i >= 0; i--)
+			{
+				yield return items[i];
+			}
+		}
+
 		public static Vector2[] GetCorners(this Rectangle rectangle) => new[]
 		{
 			rectangle.TopLeft(),

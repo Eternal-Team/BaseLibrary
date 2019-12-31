@@ -9,6 +9,15 @@ namespace BaseLibrary.Input
 		public bool Handled = false;
 	}
 
+	public class WindowResizedEventArgs
+	{
+		public Vector2Int Size { get; internal set; }
+
+		public int Width => Size.X;
+
+		public int Height => Size.Y;
+	}
+
 	public class MouseEventArgs : InputEventArgs
 	{
 		public Vector2Int Position { get; internal set; }

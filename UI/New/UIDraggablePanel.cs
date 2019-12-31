@@ -1,4 +1,5 @@
 ﻿using BaseLibrary.Input;
+using BaseLibrary.Input.Mouse;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.UI;
@@ -10,8 +11,10 @@ namespace BaseLibrary.UI.New
 		private Vector2Int offset;
 		private bool dragging;
 
-		public override void MouseDown(MouseButtonEventArgs args)
+		protected override void MouseDown(MouseButtonEventArgs args)
 		{
+			if (args.Button != MouseButton.Left) return;
+
 			offset = args.Position - Position;
 
 			dragging = true;
@@ -19,14 +22,16 @@ namespace BaseLibrary.UI.New
 			args.Handled = true;
 		}
 
-		public override void MouseUp(MouseButtonEventArgs args)
+		protected override void MouseUp(MouseButtonEventArgs args)
 		{
+			if (args.Button != MouseButton.Left) return;
+			
 			dragging = false;
 
 			args.Handled = true;
 		}
 
-		public override void Update(GameTime gameTime)
+		protected override void Update(GameTime gameTime)
 		{
 			if (IsMouseHovering)
 			{
@@ -34,6 +39,7 @@ namespace BaseLibrary.UI.New
 				Main.LocalPlayer.showItemIcon = false;
 				Main.ItemIconCacheUpdate(0);
 				Main.mouseText = false;
+				Main.HoverItem = new Item();
 			}
 
 			if (dragging)

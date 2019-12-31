@@ -53,6 +53,7 @@ namespace BaseLibrary
 			if (elements.Count > 0) args.Handled = true;
 		}
 
+		// note: won't get called on original element -> e.g. draggable panel still moves
 		public override void OnMouseUp(MouseButtonEventArgs args)
 		{
 			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
@@ -70,7 +71,7 @@ namespace BaseLibrary
 			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
 			foreach (BaseElement element in elements)
 			{
-				element.MouseMove(args);
+				element.InternalMouseMove(args);
 				if (args.Handled) break;
 			}
 
@@ -84,7 +85,6 @@ namespace BaseLibrary
 					{
 						if (current.Value.Contains(key))
 						{
-							PlayerInput.Triggers.Old.KeyStatus[current.Key] = true;
 							PlayerInput.Triggers.Current.KeyStatus[current.Key] = false;
 						}
 					}
@@ -98,7 +98,7 @@ namespace BaseLibrary
 		{
 			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
-				element.MouseScroll(args);
+				element.InternalMouseScroll(args);
 				if (args.Handled) break;
 			}
 		}
@@ -107,7 +107,7 @@ namespace BaseLibrary
 		{
 			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
-				element.MouseClick(args);
+				element.InternalMouseClick(args);
 				if (args.Handled) break;
 			}
 		}
@@ -116,7 +116,7 @@ namespace BaseLibrary
 		{
 			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
-				element.DoubleClick(args);
+				element.InternalDoubleClick(args);
 				if (args.Handled) break;
 			}
 		}
@@ -125,7 +125,7 @@ namespace BaseLibrary
 		{
 			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
-				element.TripleClick(args);
+				element.InternalTripleClick(args);
 				if (args.Handled) break;
 			}
 		}
@@ -134,7 +134,7 @@ namespace BaseLibrary
 		{
 			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
 			{
-				element.KeyPressed(args);
+				element.InternalKeyPressed(args);
 				if (args.Handled) break;
 			}
 		}
@@ -143,7 +143,7 @@ namespace BaseLibrary
 		{
 			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
 			{
-				element.KeyReleased(args);
+				element.InternalKeyReleased(args);
 				if (args.Handled) break;
 			}
 		}
@@ -152,8 +152,16 @@ namespace BaseLibrary
 		{
 			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
 			{
-				element.KeyTyped(args);
+				element.InternalKeyTyped(args);
 				if (args.Handled) break;
+			}
+		}
+
+		public override void OnWindowResize(WindowResizedEventArgs args)
+		{
+			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
+			{
+				element.Recalculate();
 			}
 		}
 	}

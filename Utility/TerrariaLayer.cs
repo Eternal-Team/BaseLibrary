@@ -2,7 +2,6 @@
 using BaseLibrary.Input.Mouse;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.GameInput;
 
@@ -110,9 +109,53 @@ namespace BaseLibrary
 
 		public override void OnKeyPressed(KeyboardEventArgs args)
 		{
+			string newKey = args.Key.ToString();
+			InputMode listeningInputMode = typeof(PlayerInput).GetValue<InputMode>("_listeningInputMode");
+
+			if (PlayerInput.CurrentlyRebinding && listeningInputMode == InputMode.Keyboard)
+			{
+				PlayerInput.NavigatorRebindingLock = 3;
+				Main.PlaySound(12);
+				if (PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard].KeyStatus[PlayerInput.ListeningTrigger].Contains(newKey))
+				{
+					PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard].KeyStatus[PlayerInput.ListeningTrigger].Remove(newKey);
+				}
+				else
+				{
+					PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard].KeyStatus[PlayerInput.ListeningTrigger] = new List<string>
+					{
+						newKey
+					};
+				}
+
+				PlayerInput.ListenFor(null, InputMode.Keyboard);
+
+				return;
+			}
+
+			if (PlayerInput.CurrentlyRebinding && listeningInputMode == InputMode.KeyboardUI)
+			{
+				PlayerInput.NavigatorRebindingLock = 3;
+				Main.PlaySound(12);
+				if (PlayerInput.CurrentProfile.InputModes[InputMode.KeyboardUI].KeyStatus[PlayerInput.ListeningTrigger].Contains(newKey))
+				{
+					PlayerInput.CurrentProfile.InputModes[InputMode.KeyboardUI].KeyStatus[PlayerInput.ListeningTrigger].Remove(newKey);
+				}
+				else
+				{
+					PlayerInput.CurrentProfile.InputModes[InputMode.KeyboardUI].KeyStatus[PlayerInput.ListeningTrigger] = new List<string>
+					{
+						newKey
+					};
+				}
+
+				PlayerInput.ListenFor(null, InputMode.KeyboardUI);
+
+				return;
+			}
+
 			KeyConfiguration keyConfiguration = PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard];
 			if (Main.gameMenu && !PlayerInput.WritingText) keyConfiguration = PlayerInput.CurrentProfile.InputModes[InputMode.KeyboardUI];
-
 			foreach (KeyValuePair<string, List<string>> current in keyConfiguration.KeyStatus)
 			{
 				if (current.Value.Contains(args.Key.ToString()))

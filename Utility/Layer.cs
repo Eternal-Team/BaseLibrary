@@ -66,5 +66,9 @@ namespace BaseLibrary
 		public virtual void OnKeyTyped(KeyboardEventArgs args)
 		{
 		}
+
+		public virtual  void OnWindowResize(WindowResizedEventArgs args)
+		{
+		}
 	}
 }
