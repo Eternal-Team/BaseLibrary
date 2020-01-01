@@ -67,7 +67,7 @@ namespace BaseLibrary.Input.Mouse
 
 		internal static void Update(GameTime gameTime)
 		{
-			if (!Main.instance.IsActive) return;
+			if (!Main.instance.IsActive || !Main.hasFocus) return;
 
 			time = gameTime;
 

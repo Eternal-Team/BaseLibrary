@@ -15,12 +15,14 @@ namespace BaseLibrary
 		private const int CustomCursorOverride = 1000;
 		private static Texture2D CursorTexture;
 		private static Vector2 CursorOffset;
+		private static bool Pulse;
 
-		public static void SetCursor(string texture, Vector2? offset = null)
+		public static void SetCursor(string texture, Vector2? offset = null, bool pulse = true)
 		{
 			Main.cursorOverride = CustomCursorOverride;
 			CursorTexture = ModContent.GetTexture(texture);
 			CursorOffset = offset ?? Vector2.Zero;
+			Pulse = pulse;
 		}
 
 		private static void CloseUI_ItemSlot(On.Terraria.UI.ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)
@@ -80,7 +82,8 @@ namespace BaseLibrary
 					if (CursorTexture == null) return;
 
 					float texScale = Math.Min(20f / CursorTexture.Width, 20f / CursorTexture.Height);
-					Main.spriteBatch.Draw(CursorTexture, new Vector2(Main.mouseX, Main.mouseY), null, Color.White, rotation, CursorOffset, Main.cursorScale * texScale, SpriteEffects.None, 0f);
+					float s = Pulse ? Main.cursorScale * texScale : texScale;
+					Main.spriteBatch.Draw(CursorTexture, new Vector2(Main.mouseX, Main.mouseY), null, Color.White, rotation, CursorOffset, s, SpriteEffects.None, 0f);
 				});
 				cursor.Emit(OpCodes.Ret);
 

@@ -4,11 +4,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace BaseLibrary.Input
 {
-	public class InputEventArgs
-	{
-		public bool Handled = false;
-	}
-
 	public class WindowResizedEventArgs
 	{
 		public Vector2Int Size { get; internal set; }
@@ -16,6 +11,11 @@ namespace BaseLibrary.Input
 		public int Width => Size.X;
 
 		public int Height => Size.Y;
+	}
+
+	public class InputEventArgs
+	{
+		public bool Handled = false;
 	}
 
 	public class MouseEventArgs : InputEventArgs

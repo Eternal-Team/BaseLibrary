@@ -62,7 +62,7 @@ namespace BaseLibrary.Input.Keyboard
 
 		internal static void Update(GameTime gameTime)
 		{
-			if (!Main.instance.IsActive) return;
+			if (!Main.instance.IsActive || !Main.hasFocus) return;
 
 			KeyboardState current = Microsoft.Xna.Framework.Input.Keyboard.GetState();
 

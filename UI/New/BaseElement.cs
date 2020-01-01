@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -119,8 +118,7 @@ namespace BaseLibrary.UI.New
 				for (int i = 0; i < Children.Count; i++)
 				{
 					BaseElement element = this[i];
-					if (element.Display != Display.None)
-						element.InternalDraw(spriteBatch);
+					if (element.Display != Display.None) element.InternalDraw(spriteBatch);
 				}
 			}
 			else if (Overflow == Overflow.Hidden)
@@ -128,12 +126,11 @@ namespace BaseLibrary.UI.New
 				for (int i = 0; i < Children.Count; i++)
 				{
 					BaseElement element = this[i];
-					if (element.Display != Display.None && Utility.CheckAABBvAABBCollision(Parent.Dimensions, element.Dimensions))
-						element.InternalDraw(spriteBatch);
+					if (element.Display != Display.None && Utility.CheckAABBvAABBCollision(Parent.Dimensions, element.Dimensions)) element.InternalDraw(spriteBatch);
 				}
 			}
 		}
-		
+
 		protected virtual void MouseDown(MouseButtonEventArgs args)
 		{
 			OnMouseDown?.Invoke(args);
@@ -149,12 +146,12 @@ namespace BaseLibrary.UI.New
 			OnClick?.Invoke(args);
 		}
 
-		protected void DoubleClick(MouseButtonEventArgs args)
+		protected virtual void DoubleClick(MouseButtonEventArgs args)
 		{
 			OnDoubleClick?.Invoke(args);
 		}
 
-		protected void TripleClick(MouseButtonEventArgs args)
+		protected virtual void TripleClick(MouseButtonEventArgs args)
 		{
 			OnTripleClick?.Invoke(args);
 		}
@@ -442,7 +439,7 @@ namespace BaseLibrary.UI.New
 		}
 
 		public virtual int CompareTo(BaseElement other) => 0;
-		
+
 		public int Count => Children.Count;
 
 		public void Add(BaseElement item)
