@@ -3,6 +3,7 @@ using BaseLibrary.Input.Mouse;
 using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using Terraria;
 
 namespace BaseLibrary.Input
@@ -14,10 +15,13 @@ namespace BaseLibrary.Input
 		private static int lastScreenWidth;
 		private static int lastScreenHeight;
 
+		internal static List<Keys> HandledKeys;
 
 		internal static void Load()
 		{
 			if (Main.dedServ) return;
+
+			HandledKeys=new List<Keys>();
 
 			Layers = new LayerStack();
 			Layers.PushLayer(new TerrariaLayer());
@@ -94,7 +98,11 @@ namespace BaseLibrary.Input
 				foreach (Layer layer in Layers)
 				{
 					layer.OnKeyPressed(args);
-					if (args.Handled) break;
+					if (args.Handled)
+					{
+						HandledKeys.Add(args.Key);
+						break;
+					}
 				}
 			};
 
@@ -103,7 +111,11 @@ namespace BaseLibrary.Input
 				foreach (Layer layer in Layers)
 				{
 					layer.OnKeyReleased(args);
-					if (args.Handled) break;
+					if (args.Handled)
+					{
+						HandledKeys.Add(args.Key);
+						break;
+					}
 				}
 			};
 
@@ -112,7 +124,11 @@ namespace BaseLibrary.Input
 				foreach (Layer layer in Layers)
 				{
 					layer.OnKeyTyped(args);
-					if (args.Handled) break;
+					if (args.Handled)
+					{
+						HandledKeys.Add(args.Key);
+						break;
+					}
 				}
 			};
 		}
@@ -136,6 +152,8 @@ namespace BaseLibrary.Input
 				lastScreenWidth = Main.screenWidth;
 				lastScreenHeight = Main.screenHeight;
 			}
+
+			HandledKeys.Clear();
 
 			MouseEvents.Update(time);
 			KeyboardEvents.Update(time);

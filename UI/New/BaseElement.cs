@@ -102,6 +102,24 @@ namespace BaseLibrary.UI.New
 		public int? MaxWidth;
 		public int? MaxHeight;
 
+		#region Events
+		public event Action<MouseMoveEventArgs> OnMouseMove;
+		public event Func<MouseScrollEventArgs, bool> OnMouseScroll;
+		public event Func<MouseButtonEventArgs, bool> OnClick;
+		public event Func<MouseButtonEventArgs, bool> OnDoubleClick;
+		public event Func<MouseButtonEventArgs, bool> OnTripleClick;
+		public event Func<MouseButtonEventArgs, bool> OnMouseDown;
+		public event Func<MouseButtonEventArgs, bool> OnMouseUp;
+		public event Func<MouseEventArgs, bool> OnMouseOut;
+		public event Func<MouseEventArgs, bool> OnMouseOver;
+		public event Action<MouseEventArgs> OnMouseEnter;
+		public event Action<MouseEventArgs> OnMouseLeave;
+
+		public event Func<KeyboardEventArgs, bool> OnKeyPressed;
+		public event Func<KeyboardEventArgs, bool> OnKeyReleased;
+		public event Func<KeyboardEventArgs, bool> OnKeyTyped;
+		#endregion
+
 		#region Virtual methods
 		protected virtual void Update(GameTime gameTime)
 		{
@@ -164,6 +182,16 @@ namespace BaseLibrary.UI.New
 		protected virtual void MouseScroll(MouseScrollEventArgs args)
 		{
 			OnMouseScroll?.Invoke(args);
+		}
+
+		protected virtual void MouseEnter(MouseEventArgs args)
+		{
+			OnMouseEnter?.Invoke(args);
+		}
+
+		protected virtual void MouseLeave(MouseEventArgs args)
+		{
+			OnMouseLeave?.Invoke(args);
 		}
 
 		protected virtual void KeyTyped(KeyboardEventArgs args)
@@ -313,6 +341,16 @@ namespace BaseLibrary.UI.New
 			MouseScroll(args);
 		}
 
+		internal void InternalMouseEnter(MouseMoveEventArgs args)
+		{
+			MouseEnter(args);
+		}
+
+		internal void InternalMouseLeave(MouseMoveEventArgs args)
+		{
+			MouseLeave(args);
+		}
+
 		internal void InternalKeyPressed(KeyboardEventArgs args)
 		{
 			foreach (BaseElement element in Children)
@@ -406,23 +444,7 @@ namespace BaseLibrary.UI.New
 			return result;
 		}
 
-		#region Events
-		public event Action<MouseMoveEventArgs> OnMouseMove;
-		public event Func<MouseScrollEventArgs, bool> OnMouseScroll;
-		public event Func<MouseButtonEventArgs, bool> OnClick;
-		public event Func<MouseButtonEventArgs, bool> OnDoubleClick;
-		public event Func<MouseButtonEventArgs, bool> OnTripleClick;
-		public event Func<MouseButtonEventArgs, bool> OnMouseDown;
-		public event Func<MouseButtonEventArgs, bool> OnMouseUp;
-		public event Func<MouseEventArgs, bool> OnMouseOut;
-		public event Func<MouseEventArgs, bool> OnMouseOver;
-		public event Action<MouseEventArgs> OnMouseEnter;
-		public event Action<MouseEventArgs> OnMouseLeave;
-
-		public event Func<KeyboardEventArgs, bool> OnKeyPressed;
-		public event Func<KeyboardEventArgs, bool> OnKeyReleased;
-		public event Func<KeyboardEventArgs, bool> OnKeyTyped;
-		#endregion
+		
 
 		private IEnumerable<BaseElement> ElementsAt(Vector2Int point)
 		{
@@ -436,6 +458,15 @@ namespace BaseLibrary.UI.New
 
 			elements.Reverse();
 			return elements;
+		}
+
+		public BaseElement GetElementAt(Vector2Int point)
+		{
+			BaseElement element = Children.FirstOrDefault(current => current.ContainsPoint(point));
+
+			if (element != null) return element.GetElementAt(point);
+
+			return ContainsPoint(point) ? this : null;
 		}
 
 		public virtual int CompareTo(BaseElement other) => 0;
@@ -461,5 +492,7 @@ namespace BaseLibrary.UI.New
 			get => Children[index];
 			set => Children[index] = value;
 		}
+
+		
 	}
 }

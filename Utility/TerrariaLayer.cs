@@ -1,6 +1,8 @@
 ﻿using BaseLibrary.Input;
+using BaseLibrary.Input.Keyboard;
 using BaseLibrary.Input.Mouse;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameInput;
@@ -154,23 +156,50 @@ namespace BaseLibrary
 				return;
 			}
 
-			KeyConfiguration keyConfiguration = PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard];
-			if (Main.gameMenu && !PlayerInput.WritingText) keyConfiguration = PlayerInput.CurrentProfile.InputModes[InputMode.KeyboardUI];
-			foreach (KeyValuePair<string, List<string>> current in keyConfiguration.KeyStatus)
+			foreach (KeyValuePair<string, List<string>> current in KeyConfiguration.KeyStatus)
 			{
 				if (current.Value.Contains(args.Key.ToString()))
 				{
 					PlayerInput.Triggers.Current.KeyStatus[current.Key] = true;
 				}
 			}
+
+			HandleChat(args);
+		}
+
+		private KeyConfiguration KeyConfiguration
+		{
+			get
+			{
+				if (Main.gameMenu && !PlayerInput.WritingText) return PlayerInput.CurrentProfile.InputModes[InputMode.KeyboardUI];
+				return PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard];
+			}
+		}
+
+		private static void HandleChat(KeyboardEventArgs args)
+		{
+			if (args.Key != Keys.Enter || KeyboardUtil.AltDown(args.Modifiers))
+			{
+				Main.chatRelease = true;
+				return;
+			}
+
+			if (!Main.drawingPlayerChat && !Main.editSign && !Main.editChest && !Main.gameMenu /* && !Main.keyState.IsKeyDown(Keys.Escape)*/)
+			{
+				Main.PlaySound(10);
+				Main.drawingPlayerChat = true;
+				Main.clrInput();
+				Main.chatText = "";
+
+				args.Handled = true;
+			}
+
+			Main.chatRelease = false;
 		}
 
 		public override void OnKeyReleased(KeyboardEventArgs args)
 		{
-			KeyConfiguration keyConfiguration = PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard];
-			if (Main.gameMenu && !PlayerInput.WritingText) keyConfiguration = PlayerInput.CurrentProfile.InputModes[InputMode.KeyboardUI];
-
-			foreach (KeyValuePair<string, List<string>> current in keyConfiguration.KeyStatus)
+			foreach (KeyValuePair<string, List<string>> current in KeyConfiguration.KeyStatus)
 			{
 				if (current.Value.Contains(args.Key.ToString()))
 				{

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -18,6 +19,23 @@ namespace BaseLibrary
 		public override void Initialize()
 		{
 			UIPositions = new Dictionary<Guid, Vector2>();
+		}
+		// bug: possibly doesn't work with overhaul
+		public override void ProcessTriggers(TriggersSet triggersSet)
+		{
+			if (BaseLibrary.hotkey.JustPressed)
+			{
+				Main.NewText("Just pressed");
+			}
+			if (BaseLibrary.hotkey.JustReleased)
+			{
+				Main.NewText("Just released");
+			}
+
+			if (BaseLibrary.hotkey.Current)
+			{
+				Main.NewText("Held down");
+			}
 		}
 
 		public override void PostUpdate()

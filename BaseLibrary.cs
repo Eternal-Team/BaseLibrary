@@ -2,6 +2,7 @@
 using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ReLogic.Graphics;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,7 +31,7 @@ namespace BaseLibrary
 		public static GUI<PanelUI> PanelGUI { get; private set; }
 
 		private LegacyGameInterfaceLayer MouseInterface;
-
+		internal static ModHotKey hotkey;
 		public override void Load()
 		{
 			TagSerializer.AddSerializer(new GUIDSerializer());
@@ -42,6 +43,8 @@ namespace BaseLibrary
 			{
 				texturePanelBackground = ModContent.GetTexture("Terraria/UI/PanelBackground");
 				texturePanelBorder = ModContent.GetTexture("Terraria/UI/PanelBorder");
+
+				hotkey = RegisterHotKey("Test hotkey", Keys.OemOpenBrackets.ToString());
 
 				Utility.Font = GetFont("Fonts/Mouse_Text");
 				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, Utility.Font);

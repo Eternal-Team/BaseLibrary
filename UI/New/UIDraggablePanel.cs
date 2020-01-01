@@ -25,7 +25,7 @@ namespace BaseLibrary.UI.New
 		protected override void MouseUp(MouseButtonEventArgs args)
 		{
 			if (args.Button != MouseButton.Left) return;
-			
+
 			dragging = false;
 
 			args.Handled = true;

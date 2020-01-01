@@ -1,5 +1,4 @@
-﻿using BaseLibrary.Input;
-using BaseLibrary.UI.Elements;
+﻿using BaseLibrary.UI.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
@@ -69,7 +68,7 @@ namespace BaseLibrary.UI.New
 
 			CalculateTextMetrics();
 		}
-		
+
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			Utils.DrawBorderStringFourWay(spriteBatch, font, text.ToString(), textPosition.X, textPosition.Y, TextColor, BorderColor, Vector2.Zero, textScale);

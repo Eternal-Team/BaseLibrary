@@ -138,7 +138,7 @@ namespace BaseLibrary.UI.New
 		protected override void DoubleClick(MouseButtonEventArgs args)
 		{
 			if (args.Button != MouseButton.Left) return;
-			
+
 			args.Handled = true;
 
 			string[] split = Regex.Split(Text, "\\b");
@@ -160,7 +160,7 @@ namespace BaseLibrary.UI.New
 		protected override void TripleClick(MouseButtonEventArgs args)
 		{
 			if (args.Button != MouseButton.Left) return;
-			
+
 			args.Handled = true;
 
 			selectionEnd = 0;
@@ -203,7 +203,7 @@ namespace BaseLibrary.UI.New
 				}
 
 				Utils.DrawBorderStringFourWay(spriteBatch, Utility.Font, Text, textPosition.X, textPosition.Y, Color.White, Color.Black, Vector2.Zero);
-				
+
 				if (++caretTimer > 30)
 				{
 					caretVisible = !caretVisible;

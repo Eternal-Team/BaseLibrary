@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework.Input;
+using Terraria;
 using Terraria.GameInput;
 
 namespace BaseLibrary
@@ -31,6 +32,16 @@ namespace BaseLibrary
 			Main.mouseMiddle = current.MouseMiddle;
 			Main.mouseXButton1 = current.MouseXButton1;
 			Main.mouseXButton2 = current.MouseXButton2;
+		}
+
+		private static void Main_DoUpdate_HandleInput(On.Terraria.Main.orig_DoUpdate_HandleInput orig, Main self)
+		{
+			orig(self);
+		}
+
+		private static void Main_DoUpdate_Enter_ToggleChat(On.Terraria.Main.orig_DoUpdate_Enter_ToggleChat orig)
+		{
+			
 		}
 	}
 }

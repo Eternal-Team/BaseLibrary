@@ -26,6 +26,8 @@ namespace BaseLibrary
 			On.Terraria.GameInput.PlayerInput.UpdateInput += ReplaceInput;
 			On.Terraria.GameInput.PlayerInput.KeyboardInput += PlayerInput_KeyboardInput;
 			On.Terraria.GameInput.PlayerInput.MouseInput += PlayerInput_MouseInput;
+			On.Terraria.Main.DoUpdate_HandleInput += Main_DoUpdate_HandleInput;
+			On.Terraria.Main.DoUpdate_Enter_ToggleChat += Main_DoUpdate_Enter_ToggleChat;
 
 			On.Terraria.Main.DoUpdate += (orig, self, gameTime) =>
 			{
