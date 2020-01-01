@@ -1,4 +1,5 @@
 ﻿using BaseLibrary.UI.Elements;
+using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -29,21 +30,21 @@ namespace BaseLibrary.UI.Intro
 		private int repositoryIndex;
 
 		private UILoadingWheel loadingWheelChangelogs;
-		private UIText textCurrentRepository;
+		private Elements.UIText textCurrentRepository;
 		private UIMultilineText textCommits;
 		private UITextButton buttonMain, buttonChangelogs, buttonCredits;
-		private UIPanel panelMain;
+		private Elements.UIPanel panelMain;
 		private UITextButton buttonReturnToMenu;
 
-		private UIGrid<BaseElement> gridPatrons;
+		private Elements.UIGrid<Elements.BaseElement> gridPatrons;
 
-		private UIText textProgress;
+		private Elements.UIText textProgress;
 		private UIMultilineText textGoal;
 		private UIRoundedBar sliderProgress;
 
-		private List<BaseElement> tabMain;
-		private List<BaseElement> tabChangelogs;
-		private List<BaseElement> tabCredits;
+		private List<Elements.BaseElement> tabMain;
+		private List<Elements.BaseElement> tabChangelogs;
+		private List<Elements.BaseElement> tabCredits;
 
 		public override async void OnInitialize()
 		{
@@ -60,7 +61,7 @@ namespace BaseLibrary.UI.Intro
 			HttpResponseMessage response = await client.GetAsync("patreon/getgoals");
 			if (response.IsSuccessStatusCode) PatreonGoals = await response.Content.ReadAsAsync<List<PatreonGoal>>();
 
-			panelMain = new UIPanel
+			panelMain = new Elements.UIPanel
 			{
 				Width = (0, 0.4f),
 				Height = (0, 0.6f),
@@ -193,7 +194,7 @@ namespace BaseLibrary.UI.Intro
 			buttonReturnToMenu.OnClick += (evt, element) => Main.menuMode = 0;
 			Append(buttonReturnToMenu);
 
-			tabMain = new List<BaseElement>();
+			tabMain = new List<Elements.BaseElement>();
 			{
 				UIMultilineText textIntro = new UIMultilineText(client.GetStringAsync("misc/gettext").Result)
 				{
@@ -206,7 +207,7 @@ namespace BaseLibrary.UI.Intro
 
 				// Goals
 				{
-					UIPanel panelGoals = new UIPanel
+					Elements.UIPanel panelGoals = new Elements.UIPanel
 					{
 						Width = (0, 0.5f),
 						Height = (0, 0.5f),
@@ -217,7 +218,7 @@ namespace BaseLibrary.UI.Intro
 					};
 					tabMain.Add(panelGoals);
 
-					UIText textGoals = new UIText("Goals", 1.2f)
+					Elements.UIText textGoals = new Elements.UIText("Goals", 1.2f)
 					{
 						HorizontalAlignment = HorizontalAlignment.Center,
 						Width = (-76, 1),
@@ -266,7 +267,7 @@ namespace BaseLibrary.UI.Intro
 					};
 					panelGoals.Append(buttonPrev);
 
-					textProgress = new UIText($"${PatreonGoals[goalIndex].CompletedPercentage * PatreonGoals[goalIndex].AmountCents * 0.0001f:N0} of ${PatreonGoals[goalIndex].AmountCents * 0.01f} per month")
+					textProgress = new Elements.UIText($"${PatreonGoals[goalIndex].CompletedPercentage * PatreonGoals[goalIndex].AmountCents * 0.0001f:N0} of ${PatreonGoals[goalIndex].AmountCents * 0.01f} per month")
 					{
 						Width = (0, 1),
 						Height = (20, 0),
@@ -294,7 +295,7 @@ namespace BaseLibrary.UI.Intro
 
 				// Links
 				{
-					UIPanel panelLinks = new UIPanel
+					Elements.UIPanel panelLinks = new Elements.UIPanel
 					{
 						Width = (0, 0.5f),
 						Height = (0, 0.5f),
@@ -308,7 +309,7 @@ namespace BaseLibrary.UI.Intro
 
 					// Patreon
 					{
-						BaseElement containerPatreon = new BaseElement
+						Elements.BaseElement containerPatreon = new Elements.BaseElement
 						{
 							Width = (0, 1),
 							Height = (32, 0)
@@ -323,7 +324,7 @@ namespace BaseLibrary.UI.Intro
 						};
 						containerPatreon.Append(texture);
 
-						UIText text = new UIText("Donate on Patreon!")
+						Elements.UIText text = new Elements.UIText("Donate on Patreon!")
 						{
 							Width = (-40, 1),
 							Left = (40, 0),
@@ -335,7 +336,7 @@ namespace BaseLibrary.UI.Intro
 
 					// TCF
 					{
-						BaseElement containerTCF = new BaseElement
+						Elements.BaseElement containerTCF = new Elements.BaseElement
 						{
 							Width = (0, 1),
 							Height = (32, 0),
@@ -351,7 +352,7 @@ namespace BaseLibrary.UI.Intro
 						};
 						containerTCF.Append(texture);
 
-						UIText text = new UIText("Visit my TCF page!")
+						Elements.UIText text = new Elements.UIText("Visit my TCF page!")
 						{
 							Width = (-40, 1),
 							Left = (40, 0),
@@ -363,7 +364,7 @@ namespace BaseLibrary.UI.Intro
 
 					// Github
 					{
-						BaseElement containerGithub = new BaseElement
+						Elements.BaseElement containerGithub = new Elements.BaseElement
 						{
 							Width = (0, 1),
 							Height = (32, 0),
@@ -379,7 +380,7 @@ namespace BaseLibrary.UI.Intro
 						};
 						containerGithub.Append(texture);
 
-						UIText text = new UIText("Check out my code!")
+						Elements.UIText text = new Elements.UIText("Check out my code!")
 						{
 							Width = (-40, 1),
 							Left = (40, 0),
@@ -391,7 +392,7 @@ namespace BaseLibrary.UI.Intro
 				}
 			}
 
-			tabChangelogs = new List<BaseElement>();
+			tabChangelogs = new List<Elements.BaseElement>();
 			{
 				loadingWheelChangelogs = new UILoadingWheel(0.75f)
 				{
@@ -435,7 +436,7 @@ namespace BaseLibrary.UI.Intro
 				};
 				tabChangelogs.Add(buttonNext);
 
-				textCurrentRepository = new UIText("Loading...", 1.5f)
+				textCurrentRepository = new Elements.UIText("Loading...", 1.5f)
 				{
 					Width = (-116, 1),
 					Height = (40, 0),
@@ -462,9 +463,9 @@ namespace BaseLibrary.UI.Intro
 				tabChangelogs.Add(textCommits.scrollbar);
 			}
 
-			tabCredits = new List<BaseElement>();
+			tabCredits = new List<Elements.BaseElement>();
 			{
-				gridPatrons = new UIGrid<BaseElement>
+				gridPatrons = new Elements.UIGrid<Elements.BaseElement>
 				{
 					Width = (0, 1),
 					Height = (0, 1),

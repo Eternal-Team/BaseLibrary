@@ -1,5 +1,6 @@
 ﻿using BaseLibrary.Input;
 using BaseLibrary.Input.Keyboard;
+using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,20 +15,6 @@ using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
-	public enum HorizontalAlignment
-	{
-		Left,
-		Center,
-		Right
-	}
-
-	public enum VerticalAlignment
-	{
-		Top,
-		Center,
-		Bottom
-	}
-
 	public class UITextInput : BaseElement
 	{
 		private static readonly Color CaretColor = new Color(160, 160, 160);

@@ -9,18 +9,6 @@ using Terraria.UI;
 
 namespace BaseLibrary.UI.New
 {
-	public enum Overflow
-	{
-		Visible,
-		Hidden
-	}
-
-	public enum Display
-	{
-		Visible,
-		None
-	}
-
 	public readonly struct Padding
 	{
 		public readonly int Left, Top, Right, Bottom;
@@ -60,10 +48,14 @@ namespace BaseLibrary.UI.New
 	public static class Extensions
 	{
 		public static Vector2Int TopLeft(this Rectangle rectangle) => new Vector2Int(rectangle.X, rectangle.Y);
+		public static Vector2Int TopRight(this Rectangle rectangle) => new Vector2Int(rectangle.X + rectangle.Width, rectangle.Y);
+		public static Vector2Int BottomLeft(this Rectangle rectangle) => new Vector2Int(rectangle.X, rectangle.Y + rectangle.Height);
 		public static Vector2Int BottomRight(this Rectangle rectangle) => new Vector2Int(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height);
 
 		public static Vector2Int Position(this Rectangle rectangle) => new Vector2Int(rectangle.X, rectangle.Y);
 		public static Vector2Int Size(this Rectangle rectangle) => new Vector2Int(rectangle.Width, rectangle.Height);
+
+		public static bool Contains(this Rectangle rectangle, Vector2Int point) => point.X >= rectangle.X && point.X <= rectangle.X + rectangle.Width && point.Y >= rectangle.Y && point.Y <= rectangle.Y + rectangle.Height;
 	}
 
 	public class StyleDimension
@@ -104,20 +96,20 @@ namespace BaseLibrary.UI.New
 
 		#region Events
 		public event Action<MouseMoveEventArgs> OnMouseMove;
-		public event Func<MouseScrollEventArgs, bool> OnMouseScroll;
-		public event Func<MouseButtonEventArgs, bool> OnClick;
-		public event Func<MouseButtonEventArgs, bool> OnDoubleClick;
-		public event Func<MouseButtonEventArgs, bool> OnTripleClick;
-		public event Func<MouseButtonEventArgs, bool> OnMouseDown;
-		public event Func<MouseButtonEventArgs, bool> OnMouseUp;
-		public event Func<MouseEventArgs, bool> OnMouseOut;
-		public event Func<MouseEventArgs, bool> OnMouseOver;
+		public event Action<MouseScrollEventArgs> OnMouseScroll;
+		public event Action<MouseButtonEventArgs> OnClick;
+		public event Action<MouseButtonEventArgs> OnDoubleClick;
+		public event Action<MouseButtonEventArgs> OnTripleClick;
+		public event Action<MouseButtonEventArgs> OnMouseDown;
+		public event Action<MouseButtonEventArgs> OnMouseUp;
+		public event Action<MouseEventArgs> OnMouseOut;
+		public event Action<MouseEventArgs> OnMouseOver;
 		public event Action<MouseEventArgs> OnMouseEnter;
 		public event Action<MouseEventArgs> OnMouseLeave;
 
-		public event Func<KeyboardEventArgs, bool> OnKeyPressed;
-		public event Func<KeyboardEventArgs, bool> OnKeyReleased;
-		public event Func<KeyboardEventArgs, bool> OnKeyTyped;
+		public event Action<KeyboardEventArgs> OnKeyPressed;
+		public event Action<KeyboardEventArgs> OnKeyReleased;
+		public event Action<KeyboardEventArgs> OnKeyTyped;
 		#endregion
 
 		#region Virtual methods
@@ -230,38 +222,43 @@ namespace BaseLibrary.UI.New
 			SamplerState sampler = SamplerState.LinearClamp;
 			RasterizerState rasterizer = new RasterizerState
 			{
-				CullMode = CullMode.None
+				CullMode = CullMode.None,
+				ScissorTestEnable = true
 			};
 
-			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
+			//spriteBatch.End();
+			//spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-			Draw(spriteBatch);
-			if (Overflow == Overflow.Visible) DrawChildren(spriteBatch);
+			//Draw(spriteBatch);
+			//if (Overflow == Overflow.Visible) DrawChildren(spriteBatch);
+
+			//spriteBatch.End();
+			//spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
+
+			//if (Overflow == Overflow.Hidden)
+			//{
+			Rectangle original = device.ScissorRectangle;
 
 			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
 			if (Overflow == Overflow.Hidden)
 			{
-				Rectangle original = device.ScissorRectangle;
-
-				spriteBatch.End();
-
 				Rectangle clippingRectangle = GetClippingRectangle(spriteBatch);
 				Rectangle adjustedClippingRectangle = Rectangle.Intersect(clippingRectangle, device.ScissorRectangle);
 				device.ScissorRectangle = adjustedClippingRectangle;
-
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, Utility.OverflowHiddenState, null, Main.UIScaleMatrix);
-
-				DrawChildren(spriteBatch);
-
-				spriteBatch.End();
-
-				device.ScissorRectangle = original;
-
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 			}
+
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
+
+			Draw(spriteBatch);
+			DrawChildren(spriteBatch);
+
+			spriteBatch.End();
+
+			device.ScissorRectangle = original;
+
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
+			//}
 		}
 
 		internal void InternalMouseDown(MouseButtonEventArgs args)
@@ -421,7 +418,6 @@ namespace BaseLibrary.UI.New
 
 		internal bool ContainsPoint(Vector2Int point) => point.X >= Dimensions.X && point.X <= Dimensions.X + Dimensions.Width && point.Y >= Dimensions.Y && point.Y <= Dimensions.Y + Dimensions.Height;
 
-		// todo: cache, recalculate on mouse move/window resize
 		private Rectangle GetClippingRectangle(SpriteBatch spriteBatch)
 		{
 			Vector2Int topLeft = InnerDimensions.TopLeft();
@@ -444,8 +440,6 @@ namespace BaseLibrary.UI.New
 			return result;
 		}
 
-		
-
 		private IEnumerable<BaseElement> ElementsAt(Vector2Int point)
 		{
 			List<BaseElement> elements = new List<BaseElement>();
@@ -462,11 +456,11 @@ namespace BaseLibrary.UI.New
 
 		public BaseElement GetElementAt(Vector2Int point)
 		{
-			BaseElement element = Children.FirstOrDefault(current => current.ContainsPoint(point));
+			BaseElement element = Children.FirstOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
 
 			if (element != null) return element.GetElementAt(point);
 
-			return ContainsPoint(point) ? this : null;
+			return ContainsPoint(point) && Display != Display.None ? this : null;
 		}
 
 		public virtual int CompareTo(BaseElement other) => 0;
@@ -492,7 +486,5 @@ namespace BaseLibrary.UI.New
 			get => Children[index];
 			set => Children[index] = value;
 		}
-
-		
 	}
 }

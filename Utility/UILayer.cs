@@ -15,6 +15,7 @@ namespace BaseLibrary
 		public override bool Enabled => !Main.ingameOptionsWindow && !Main.gameMenu;
 
 		private List<BaseElement> Elements;
+		private BaseElement Current;
 
 		internal UILayer()
 		{
@@ -53,7 +54,6 @@ namespace BaseLibrary
 			if (elements.Count > 0) args.Handled = true;
 		}
 
-
 		// note: won't get called on original element -> e.g. draggable panel still moves
 		public override void OnMouseUp(MouseButtonEventArgs args)
 		{
@@ -66,8 +66,6 @@ namespace BaseLibrary
 
 			if (elements.Count > 0) args.Handled = true;
 		}
-
-		private BaseElement Current;
 
 		public override void OnMouseMove(MouseMoveEventArgs args)
 		{
