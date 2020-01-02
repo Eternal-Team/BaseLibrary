@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ReLogic.Graphics;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
@@ -19,7 +18,7 @@ namespace BaseLibrary
 
 	public class BaseLibrary : Mod
 	{
-		internal static List<IHasUI> ClosedUICache = new List<IHasUI>();
+		internal static List<UI.IHasUI> ClosedUICache = new List<UI.IHasUI>();
 
 		public static Effect ColorSelectionShader { get; private set; }
 		public static Effect DesaturateShader { get; private set; }
@@ -28,10 +27,11 @@ namespace BaseLibrary
 		public static Texture2D texturePanelBackground;
 		public static Texture2D texturePanelBorder;
 
-		public static GUI<PanelUI> PanelGUI { get; private set; }
+		public static GUI<UI.PanelUI> PanelGUI { get; private set; }
 
 		private LegacyGameInterfaceLayer MouseInterface;
 		internal static ModHotKey hotkey;
+
 		public override void Load()
 		{
 			TagSerializer.AddSerializer(new GUIDSerializer());
@@ -53,7 +53,7 @@ namespace BaseLibrary
 				DesaturateShader = GetEffect("Effects/DesaturateShader");
 				RoundedRectShader = GetEffect("Effects/BorderRadius");
 
-				PanelGUI = Utility.SetupGUI<PanelUI>();
+				PanelGUI = Utility.SetupGUI<UI.PanelUI>();
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
@@ -86,6 +86,7 @@ namespace BaseLibrary
 					{
 						layer.OnDraw(Main.spriteBatch);
 					}
+
 					return true;
 				}, InterfaceScaleType.UI));
 			}
@@ -98,7 +99,7 @@ namespace BaseLibrary
 			for (int i = 0; i < gui.Elements.Count; i++)
 			{
 				UIElement element = gui.Elements[i];
-				if (element is BaseUIPanel panel && panel.Container is BaseTE tileEntity)
+				if (element is UI.BaseUIPanel panel && panel.Container is BaseTE tileEntity)
 				{
 					TileObjectData data = TileObjectData.GetTileData(tileEntity.mod.GetTile(tileEntity.TileType.Name).Type, 0);
 					Vector2 offset = data != null ? new Vector2(data.Width * 8f, data.Height * 8f) : Vector2.Zero;
@@ -109,8 +110,8 @@ namespace BaseLibrary
 
 			if (!Main.playerInventory)
 			{
-				List<BaseUIPanel> bagPanels = gui.Elements.Cast<BaseUIPanel>().ToList();
-				foreach (BaseUIPanel ui in bagPanels)
+				List<UI.BaseUIPanel> bagPanels = gui.Elements.Cast<UI.BaseUIPanel>().ToList();
+				foreach (UI.BaseUIPanel ui in bagPanels)
 				{
 					ClosedUICache.Add(ui.Container);
 					gui.UI.CloseUI(ui.Container);
@@ -118,7 +119,7 @@ namespace BaseLibrary
 			}
 			else
 			{
-				foreach (IHasUI ui in ClosedUICache) gui.UI.OpenUI(ui);
+				foreach (UI.IHasUI ui in ClosedUICache) gui.UI.OpenUI(ui);
 
 				ClosedUICache.Clear();
 			}

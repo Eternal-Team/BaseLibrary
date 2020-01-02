@@ -261,15 +261,16 @@ namespace BaseLibrary.UI.New
 			//}
 		}
 
-		internal void InternalMouseDown(MouseButtonEventArgs args)
+		internal BaseElement InternalMouseDown(MouseButtonEventArgs args)
 		{
 			foreach (BaseElement element in ElementsAt(args.Position))
 			{
 				element.MouseDown(args);
-				if (args.Handled) return;
+				if (args.Handled) return element;
 			}
 
 			MouseDown(args);
+			return this;
 		}
 
 		internal void InternalMouseUp(MouseButtonEventArgs args)
@@ -401,8 +402,8 @@ namespace BaseLibrary.UI.New
 			if (dimensions.Height < minHeight) dimensions.Height = minHeight;
 			else if (dimensions.Height > maxHeight) dimensions.Height = maxHeight;
 
-			dimensions.X = parent.X + X.Percent * parent.Width / 100 + X.Pixels;
-			dimensions.Y = parent.Y + Y.Percent * parent.Height / 100 + Y.Pixels;
+			dimensions.X = parent.X + (X.Percent * parent.Width / 100 - dimensions.Width * X.Percent / 100) + X.Pixels;
+			dimensions.Y = parent.Y + (Y.Percent * parent.Height / 100 - dimensions.Height * Y.Percent / 100) + Y.Pixels;
 
 			Dimensions = dimensions;
 			InnerDimensions = new Rectangle(dimensions.X + Padding.Left, dimensions.Y + Padding.Top, dimensions.Width - Padding.Left - Padding.Right, dimensions.Height - Padding.Top - Padding.Bottom);
@@ -440,7 +441,7 @@ namespace BaseLibrary.UI.New
 			return result;
 		}
 
-		private IEnumerable<BaseElement> ElementsAt(Vector2Int point)
+		internal IEnumerable<BaseElement> ElementsAt(Vector2Int point)
 		{
 			List<BaseElement> elements = new List<BaseElement>();
 
@@ -454,7 +455,7 @@ namespace BaseLibrary.UI.New
 			return elements;
 		}
 
-		public BaseElement GetElementAt(Vector2Int point)
+		public virtual BaseElement GetElementAt(Vector2Int point)
 		{
 			BaseElement element = Children.FirstOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
 
@@ -474,6 +475,14 @@ namespace BaseLibrary.UI.New
 			Children.Add(item);
 			item.Parent = this;
 			item.Recalculate();
+		}
+
+		public void Remove(BaseElement item)
+		{
+			if (item == null) throw new ArgumentNullException(nameof(item));
+
+			Children.Remove(item);
+			item.Parent = null;
 		}
 
 		public void Clear()

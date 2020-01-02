@@ -20,6 +20,7 @@ namespace BaseLibrary
 		{
 			UIPositions = new Dictionary<Guid, Vector2>();
 		}
+
 		// bug: possibly doesn't work with overhaul
 		public override void ProcessTriggers(TriggersSet triggersSet)
 		{
@@ -27,6 +28,7 @@ namespace BaseLibrary
 			{
 				Main.NewText("Just pressed");
 			}
+
 			if (BaseLibrary.hotkey.JustReleased)
 			{
 				Main.NewText("Just released");
@@ -42,6 +44,7 @@ namespace BaseLibrary
 		{
 			if (player.mouseInterface) return;
 
+			// todo: better do this with the layer system
 			if (player.GetHeldItem().IsAir && Main.mouseLeft && Main.mouseLeftRelease)
 			{
 				int type = Main.tile[Player.tileTargetX, Player.tileTargetY].type;

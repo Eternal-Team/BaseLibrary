@@ -3,8 +3,6 @@ using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
 using On.Terraria.UI;
 using System;
-using Terraria;
-using Terraria.GameInput;
 using Terraria.ModLoader;
 
 namespace BaseLibrary

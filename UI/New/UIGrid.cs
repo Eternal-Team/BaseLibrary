@@ -29,7 +29,7 @@ namespace BaseLibrary.UI.New
 			this.columns = columns;
 
 			Overflow = Overflow.Hidden;
-			
+
 			scrollbar = new UIScrollbar();
 			scrollbar.OnScroll += () =>
 			{
@@ -58,7 +58,7 @@ namespace BaseLibrary.UI.New
 			Children.Sort(SortMethod);
 			RecalculateChildren();
 		}
-		
+
 		public void Insert(int index, T item)
 		{
 			if (item is IGridElement<T> element) element.Grid = this;

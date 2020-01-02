@@ -1,5 +1,4 @@
-﻿using BaseLibrary.UI;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -27,23 +26,23 @@ namespace BaseLibrary
 
 		private static void CloseUI_ItemSlot(On.Terraria.UI.ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)
 		{
-			if (Main.mouseItem.modItem is IHasUI mouse) BaseLibrary.PanelGUI.UI.CloseUI(mouse);
+			if (Main.mouseItem.modItem is UI.IHasUI mouse) BaseLibrary.PanelGUI.UI.CloseUI(mouse);
 
-			if (inv[slot].modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
+			if (inv[slot].modItem is UI.IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
 
 			orig(inv, context, slot);
 		}
 
 		private static void CloseUI_Drop(On.Terraria.Player.orig_DropSelectedItem orig, Player self)
 		{
-			if (self.HeldItem.modItem is IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
+			if (self.HeldItem.modItem is UI.IHasUI hasUI) BaseLibrary.PanelGUI.UI.CloseUI(hasUI);
 
 			orig(self);
 		}
 
 		private static UIElement UIElement_GetElementAt(On.Terraria.UI.UIElement.orig_GetElementAt orig, UIElement self, Vector2 point)
 		{
-			if (self is PanelUI ui)
+			if (self is UI.PanelUI ui)
 			{
 				UIElement uiElement = null;
 				for (int i = ui.Elements.Count - 1; i >= 0; i--)

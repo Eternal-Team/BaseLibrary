@@ -98,7 +98,7 @@ namespace BaseLibrary
 		public static T InvokeMethod<T>(this object obj, string name, params object[] args) => obj.GetType().InvokeMethod<T>(name, obj, defaultFlags, args);
 
 		public static void InvokeMethod(this object obj, string name, params object[] args) => obj.GetType().InvokeMethod<object>(name, obj, defaultFlags, args);
-		
+
 		public static void InvokeMethod(this Type type, string name, params object[] args) => type.InvokeMethod<object>(name, null, defaultFlags, args);
 
 		public static bool HasAttribute<T>(this MemberInfo field) where T : Attribute => field.GetCustomAttribute<T>() != null;

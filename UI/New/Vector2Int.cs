@@ -31,7 +31,7 @@ namespace BaseLibrary.UI.New
 		public static implicit operator Vector2(Vector2Int vector) => new Vector2(vector.X, vector.Y);
 
 		public static implicit operator Vector2Int(Vector2 vector) => new Vector2Int((int)vector.X, (int)vector.Y);
-		
+
 		public static Vector2Int Transform(Vector2Int position, Matrix matrix) => new Vector2Int((int)(position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41), (int)(position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42));
 
 		public override string ToString() => $"X: {X} Y: {Y}";

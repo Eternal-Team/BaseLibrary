@@ -1,5 +1,4 @@
-﻿using BaseLibrary.UI.New;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.OS;
 using System;
@@ -79,16 +78,6 @@ namespace BaseLibrary
 		{
 			spriteBatch.Draw(texture, position, color ?? Color.White);
 		}
-
-		//public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Vector2Int position, Color? color = null)
-		//{
-		//	spriteBatch.Draw(texture, new Vector2(position.X, position.Y), color ?? Color.White);
-		//}
-
-		//public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Vector2Int position, Rectangle source, Color? color = null)
-		//{
-		//	spriteBatch.Draw(texture, new Vector2(position.X, position.Y), source, color ?? Color.White);
-		//}
 
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Rectangle rectangle, Color? color = null)
 		{
@@ -329,7 +318,7 @@ namespace BaseLibrary
 					else scale = availableWidth / height;
 				}
 
-				Vector2 origin = Utils.Size(rect) * 0.5f;
+				Vector2 origin = rect.Size() * 0.5f;
 				float totalScale = pulseScale * scale;
 
 				if (ItemLoader.PreDrawInInventory(item, spriteBatch, position, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, totalScale))
@@ -364,7 +353,7 @@ namespace BaseLibrary
 					else drawScale = availableWidth / height;
 				}
 
-				Vector2 origin = Utils.Size(rect) * 0.5f;
+				Vector2 origin = rect.Size() * 0.5f;
 
 				float totalScale = pulseScale * drawScale;
 
@@ -397,7 +386,7 @@ namespace BaseLibrary
 					Texture2D npcTexture = Main.npcTexture[npc.type];
 					Rectangle rectangle = new Rectangle(0, 0, Main.npcTexture[npc.type].Width, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type]);
 
-					spriteBatch.Draw(npcTexture, position, rectangle, color, 0, Utils.Size(rectangle) * 0.5f, Math.Min(size.X / rectangle.Width, size.Y / rectangle.Height), SpriteEffects.None, 0);
+					spriteBatch.Draw(npcTexture, position, rectangle, color, 0, rectangle.Size() * 0.5f, Math.Min(size.X / rectangle.Width, size.Y / rectangle.Height), SpriteEffects.None, 0);
 				}
 			});
 		}

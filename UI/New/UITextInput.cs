@@ -1,7 +1,6 @@
 ﻿using BaseLibrary.Input;
 using BaseLibrary.Input.Keyboard;
 using BaseLibrary.Input.Mouse;
-using BaseLibrary.UI.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

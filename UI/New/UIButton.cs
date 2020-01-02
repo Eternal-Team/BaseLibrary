@@ -15,6 +15,8 @@ namespace BaseLibrary.UI.New
 		private ScaleMode scaleMode;
 		public Rectangle? sourceRectangle;
 
+		private bool mouseDown;
+
 		public UIButton(Texture2D texture = null, Rectangle? sourceRectangle = null, ScaleMode scaleMode = ScaleMode.Stretch)
 		{
 			this.texture = texture;
@@ -36,9 +38,25 @@ namespace BaseLibrary.UI.New
 			Main.PlaySound(SoundID.MenuTick);
 		}
 
+		protected override void MouseDown(MouseButtonEventArgs args)
+		{
+			base.MouseDown(args);
+
+			args.Handled = true;
+			mouseDown = true;
+		}
+
+		protected override void MouseUp(MouseButtonEventArgs args)
+		{
+			base.MouseUp(args);
+
+			args.Handled = true;
+			mouseDown = false;
+		}
+
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
-			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, IsMouseHovering ? Main.mouseLeft ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
+			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, IsMouseHovering ? mouseDown ? Utility.ColorPanel_Selected : Utility.ColorPanel_Hovered : Utility.ColorPanel);
 
 			if (texture != null)
 			{

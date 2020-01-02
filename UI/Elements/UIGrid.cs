@@ -150,7 +150,7 @@ namespace BaseLibrary.UI.Elements
 			Items.Sort(SortMethod);
 			RecalculateChildren();
 		}
-		
+
 		public override void ScrollWheel(UIScrollWheelEvent evt) => scrollbar.ViewPosition -= evt.ScrollWheelValue;
 
 		public void Search()

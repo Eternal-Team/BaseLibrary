@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-using Terraria;
+﻿using Terraria;
 using Terraria.GameInput;
 
 namespace BaseLibrary
@@ -41,7 +40,6 @@ namespace BaseLibrary
 
 		private static void Main_DoUpdate_Enter_ToggleChat(On.Terraria.Main.orig_DoUpdate_Enter_ToggleChat orig)
 		{
-			
 		}
 	}
 }

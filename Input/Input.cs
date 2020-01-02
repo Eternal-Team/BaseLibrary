@@ -21,7 +21,7 @@ namespace BaseLibrary.Input
 		{
 			if (Main.dedServ) return;
 
-			HandledKeys=new List<Keys>();
+			HandledKeys = new List<Keys>();
 
 			Layers = new LayerStack();
 			Layers.PushLayer(new TerrariaLayer());

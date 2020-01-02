@@ -1,5 +1,4 @@
 ﻿using BaseLibrary.Input;
-using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -20,7 +19,7 @@ namespace BaseLibrary
 		public virtual void OnMouseMove(MouseMoveEventArgs args)
 		{
 		}
-		
+
 		public virtual void OnMouseDown(MouseButtonEventArgs args)
 		{
 		}
@@ -31,12 +30,10 @@ namespace BaseLibrary
 
 		public virtual void OnMouseEnter(MouseEventArgs args)
 		{
-
 		}
 
 		public virtual void OnMouseLeave(MouseEventArgs args)
 		{
-
 		}
 
 		public virtual void OnClick(MouseButtonEventArgs args)
@@ -67,7 +64,7 @@ namespace BaseLibrary
 		{
 		}
 
-		public virtual  void OnWindowResize(WindowResizedEventArgs args)
+		public virtual void OnWindowResize(WindowResizedEventArgs args)
 		{
 		}
 	}
