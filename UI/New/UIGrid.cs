@@ -13,7 +13,7 @@ namespace BaseLibrary.UI.New
 
 	public class UIGrid<T> : BaseElement where T : BaseElement
 	{
-		public int columns;
+		public int columns; 
 
 		private float innerListHeight;
 

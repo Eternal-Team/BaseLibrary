@@ -28,6 +28,8 @@ namespace BaseLibrary.UI.New
 
 		public static Vector2Int operator +(Vector2Int a, Vector2Int b) => new Vector2Int(a.X + b.X, a.Y + b.Y);
 
+		public static Vector2Int operator *(Vector2Int a, float scalar) => new Vector2Int((int)(a.X * scalar), (int)(a.Y * scalar));
+
 		public static implicit operator Vector2(Vector2Int vector) => new Vector2(vector.X, vector.Y);
 
 		public static implicit operator Vector2Int(Vector2 vector) => new Vector2Int((int)vector.X, (int)vector.Y);

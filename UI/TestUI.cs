@@ -2,7 +2,7 @@ using BaseLibrary.UI.New;
 
 namespace BaseLibrary.UI
 {
-	public class TestUI : global::BaseLibrary.BaseUIPanel
+	public class TestUI : BaseElement
 	{
 		private Ref<string> text = new Ref<string>("");
 

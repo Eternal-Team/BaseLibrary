@@ -67,6 +67,7 @@ namespace BaseLibrary.UI.New
 	public class BaseElement : IComparable<BaseElement>
 	{
 		public BaseElement Parent { get; private set; }
+		public List<BaseElement> Children = new List<BaseElement>();
 
 		public bool IsMouseHovering { get; private set; }
 
@@ -76,7 +77,6 @@ namespace BaseLibrary.UI.New
 		public Rectangle Dimensions { get; private set; }
 		public Rectangle InnerDimensions { get; private set; }
 		public Rectangle OuterDimensions { get; private set; }
-		public List<BaseElement> Children = new List<BaseElement>();
 
 		public Display Display = Display.Visible;
 		public Overflow Overflow = Overflow.Visible;
@@ -199,6 +199,16 @@ namespace BaseLibrary.UI.New
 		protected virtual void KeyPressed(KeyboardEventArgs args)
 		{
 			OnKeyPressed?.Invoke(args);
+		}
+
+		protected virtual void Activate()
+		{
+
+		}
+
+		protected virtual void Deactivate()
+		{
+
 		}
 		#endregion
 
@@ -364,7 +374,7 @@ namespace BaseLibrary.UI.New
 		{
 			foreach (BaseElement element in Children)
 			{
-				element.KeyReleased(args);
+				element.InternalKeyReleased(args);
 				if (args.Handled) return;
 			}
 
@@ -375,11 +385,33 @@ namespace BaseLibrary.UI.New
 		{
 			foreach (BaseElement element in Children)
 			{
-				element.KeyTyped(args);
+				element.InternalKeyTyped(args);
 				if (args.Handled) return;
 			}
 
 			KeyTyped(args);
+		}
+
+		internal void InternalActivate()
+		{
+			foreach (BaseElement element in Children)
+			{
+				element.InternalActivate();
+				//if (args.Handled) return;
+			}
+
+			Activate();
+		}
+
+		internal void InternalDeactivate()
+		{
+			foreach (BaseElement element in Children)
+			{
+				element.InternalDeactivate();
+				//if (args.Handled) return;
+			}
+
+			Deactivate();
 		}
 		#endregion
 

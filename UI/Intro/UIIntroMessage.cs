@@ -32,9 +32,9 @@ namespace BaseLibrary.UI.Intro
 		private UILoadingWheel loadingWheelChangelogs;
 		private Elements.UIText textCurrentRepository;
 		private UIMultilineText textCommits;
-		private UITextButton buttonMain, buttonChangelogs, buttonCredits;
+		private Elements.UITextButton buttonMain, buttonChangelogs, buttonCredits;
 		private Elements.UIPanel panelMain;
-		private UITextButton buttonReturnToMenu;
+		private Elements.UITextButton buttonReturnToMenu;
 
 		private Elements.UIGrid<Elements.BaseElement> gridPatrons;
 
@@ -72,7 +72,7 @@ namespace BaseLibrary.UI.Intro
 			Append(panelMain);
 
 			float width = panelMain.Dimensions.Width * 0.31f;
-			buttonMain = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Main"))
+			buttonMain = new Elements.UITextButton(Language.GetText("Mods.BaseLibrary.UI.Main"))
 			{
 				Width = (width, 0),
 				Height = (40, 0),
@@ -91,7 +91,7 @@ namespace BaseLibrary.UI.Intro
 			};
 			Insert(0, buttonMain);
 
-			buttonChangelogs = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Changelogs"))
+			buttonChangelogs = new Elements.UITextButton(Language.GetText("Mods.BaseLibrary.UI.Changelogs"))
 			{
 				Width = (width, 0),
 				Height = (40, 0),
@@ -116,7 +116,7 @@ namespace BaseLibrary.UI.Intro
 			};
 			Insert(1, buttonChangelogs);
 
-			buttonCredits = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Credits"))
+			buttonCredits = new Elements.UITextButton(Language.GetText("Mods.BaseLibrary.UI.Credits"))
 			{
 				Width = (width, 0),
 				Height = (40, 0),
@@ -139,7 +139,7 @@ namespace BaseLibrary.UI.Intro
 
 					foreach (PatreonTier tier in PatreonTiers)
 					{
-						UITextButton buttonTier = new UITextButton(tier.Title)
+						Elements.UITextButton buttonTier = new Elements.UITextButton(tier.Title)
 						{
 							Width = (0, 1),
 							Height = (40, 0),
@@ -184,7 +184,7 @@ namespace BaseLibrary.UI.Intro
 			};
 			Insert(2, buttonCredits);
 
-			buttonReturnToMenu = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.ReturnToMenu"))
+			buttonReturnToMenu = new Elements.UITextButton(Language.GetText("Mods.BaseLibrary.UI.ReturnToMenu"))
 			{
 				Width = (0, 0.2f),
 				Height = (40, 0),
@@ -227,7 +227,7 @@ namespace BaseLibrary.UI.Intro
 					textGoals.OnPostDraw += spritebatch => spritebatch.Draw(dividerTexture, new Rectangle((int)textGoals.Position.X - 6, (int)textGoals.Position.Y + 32, (int)panelGoals.Size.X - 4, 4));
 					panelGoals.Append(textGoals);
 
-					UITextButton buttonNext = new UITextButton(">")
+					Elements.UITextButton buttonNext = new Elements.UITextButton(">")
 					{
 						Size = new Vector2(30),
 						HAlign = 1,
@@ -247,7 +247,7 @@ namespace BaseLibrary.UI.Intro
 					};
 					panelGoals.Append(buttonNext);
 
-					UITextButton buttonPrev = new UITextButton("<")
+					Elements.UITextButton buttonPrev = new Elements.UITextButton("<")
 					{
 						Size = new Vector2(30),
 						Left = (-64, 1),
@@ -401,7 +401,7 @@ namespace BaseLibrary.UI.Intro
 				};
 				tabChangelogs.Add(loadingWheelChangelogs);
 
-				UITextButton buttonPrevious = new UITextButton("<")
+				Elements.UITextButton buttonPrevious = new Elements.UITextButton("<")
 				{
 					Width = (50, 0),
 					Height = (40, 0),
@@ -418,7 +418,7 @@ namespace BaseLibrary.UI.Intro
 				};
 				tabChangelogs.Add(buttonPrevious);
 
-				UITextButton buttonNext = new UITextButton(">")
+				Elements.UITextButton buttonNext = new Elements.UITextButton(">")
 				{
 					Width = (50, 0),
 					Height = (40, 0),

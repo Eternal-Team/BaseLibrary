@@ -12,7 +12,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BaseLibrary
+namespace BaseLibrary.UI.New
 {
 	public interface IHasUI
 	{
@@ -28,11 +28,17 @@ namespace BaseLibrary
 	public class BaseUIPanel : UIDraggablePanel
 	{
 		public IHasUI Container;
+
+		public BaseUIPanel(IHasUI container) => Container = container;
 	}
 
 	public class BaseUIPanel<T> : BaseUIPanel where T : IHasUI
 	{
 		public new T Container => (T)base.Container;
+
+		public BaseUIPanel(T container) : base(container)
+		{
+		}
 	}
 
 	public class PanelUI : BaseElement
@@ -76,7 +82,8 @@ namespace BaseLibrary
 			if (element == null) return;
 
 			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.UUID] = new Vector2(element.X.Percent, element.Y.Percent);
-			//element.Deactivate();
+			element.InternalDeactivate();
+
 			Remove(element);
 			entity.UI = null;
 
@@ -89,10 +96,8 @@ namespace BaseLibrary
 
 			Type entityType = UICache.ContainsKey(entity.GetType()) ? entity.GetType() : entity.GetType().BaseType;
 
-			entity.UI = (BaseUIPanel)Activator.CreateInstance(UICache[entityType]);
-			entity.UI.Container = entity;
-
-			//entity.UI.Activate();
+			entity.UI = (BaseUIPanel)Activator.CreateInstance(UICache[entityType], entity);
+			entity.UI.InternalActivate();
 
 			if (Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions.TryGetValue(entity.UUID, out Vector2 position))
 			{
@@ -146,13 +151,10 @@ namespace BaseLibrary
 
 		internal UILayer()
 		{
-			TestUI ui = new TestUI();
-			ui.Recalculate();
-
 			PanelUI panelUI = new PanelUI();
 			panelUI.Recalculate();
 
-			Elements = new List<BaseElement> { ui, panelUI };
+			Elements = new List<BaseElement> {  panelUI };
 		}
 
 		private BaseElement MouseDownElement;
