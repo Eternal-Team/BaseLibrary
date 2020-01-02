@@ -1,6 +1,4 @@
 ﻿using BaseLibrary.Input;
-using BaseLibrary.UI;
-using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -81,7 +79,7 @@ namespace BaseLibrary.UI.New
 			BaseElement element = entity.UI;
 			if (element == null) return;
 
-			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.UUID] = new Vector2(element.X.Percent, element.Y.Percent);
+			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.UUID] = new Vector2(element.Dimensions.X / (float)Dimensions.Width, element.Dimensions.Y / (float)Dimensions.Height);
 			element.InternalDeactivate();
 
 			Remove(element);
@@ -101,8 +99,8 @@ namespace BaseLibrary.UI.New
 
 			if (Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions.TryGetValue(entity.UUID, out Vector2 position))
 			{
-				entity.UI.X.Percent = (int)position.X;
-				entity.UI.Y.Percent = (int)position.Y;
+				entity.UI.X = new StyleDimension { Pixels = (int)(position.X * Dimensions.Width) };
+				entity.UI.Y = new StyleDimension { Pixels = (int)(position.Y * Dimensions.Height) };
 			}
 
 			entity.UI.OnMouseDown += args =>
@@ -154,7 +152,7 @@ namespace BaseLibrary.UI.New
 			PanelUI panelUI = new PanelUI();
 			panelUI.Recalculate();
 
-			Elements = new List<BaseElement> {  panelUI };
+			Elements = new List<BaseElement> { panelUI };
 		}
 
 		private BaseElement MouseDownElement;
