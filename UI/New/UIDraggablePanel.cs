@@ -8,7 +8,7 @@ namespace BaseLibrary.UI.New
 {
 	public class UIDraggablePanel : UIPanel
 	{
-		private Vector2Int offset;
+		private Vector2 offset;
 		private bool dragging;
 
 		protected override void MouseDown(MouseButtonEventArgs args)
@@ -49,8 +49,8 @@ namespace BaseLibrary.UI.New
 
 				Rectangle parent = Parent?.InnerDimensions ?? UserInterface.ActiveInstance.GetDimensions().ToRectangle();
 
-				X.Pixels = (Main.mouseX - offset.X - parent.X).Clamp(0, parent.Width - OuterDimensions.Width);
-				Y.Pixels = (Main.mouseY - offset.Y - parent.Y).Clamp(0, parent.Height - OuterDimensions.Height);
+				X.Pixels = (int)(Main.mouseX - offset.X - parent.X).Clamp(0, parent.Width - OuterDimensions.Width);
+				Y.Pixels = (int)(Main.mouseY - offset.Y - parent.Y).Clamp(0, parent.Height - OuterDimensions.Height);
 
 				Recalculate();
 			}

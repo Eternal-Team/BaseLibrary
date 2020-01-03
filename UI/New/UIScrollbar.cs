@@ -71,9 +71,9 @@ namespace BaseLibrary.UI.New
 
 			{
 				spriteBatch.Draw(Texture, Dimensions.TopLeft(), new Rectangle(0, 0, 8, 8), Color.White);
-				spriteBatch.Draw(Texture, Dimensions.TopRight() - new Vector2Int(8, 0), new Rectangle(12, 0, 8, 8), Color.White);
-				spriteBatch.Draw(Texture, Dimensions.BottomLeft() - new Vector2Int(0, 8), new Rectangle(0, 8, 8, 8), Color.White);
-				spriteBatch.Draw(Texture, Dimensions.BottomRight() - new Vector2Int(8, 8), new Rectangle(12, 8, 8, 8), Color.White);
+				spriteBatch.Draw(Texture, Dimensions.TopRight() - new Vector2(8, 0), new Rectangle(12, 0, 8, 8), Color.White);
+				spriteBatch.Draw(Texture, Dimensions.BottomLeft() - new Vector2(0, 8), new Rectangle(0, 8, 8, 8), Color.White);
+				spriteBatch.Draw(Texture, Dimensions.BottomRight() - new Vector2(8, 8), new Rectangle(12, 8, 8, 8), Color.White);
 
 				spriteBatch.Draw(Texture, new Rectangle(Dimensions.X + 8, Dimensions.Y, Dimensions.Width - 16, 8), new Rectangle(8, 0, 1, 8), Color.White);
 				spriteBatch.Draw(Texture, new Rectangle(Dimensions.X + 8, Dimensions.Y + Dimensions.Height - 8, Dimensions.Width - 16, 8), new Rectangle(8, 8, 1, 8), Color.White);
@@ -86,9 +86,9 @@ namespace BaseLibrary.UI.New
 			{
 				Color color = Color.White * (isDragging || isHoveringOverHandle ? 1f : 0.85f);
 				spriteBatch.Draw(BarSliderTexture, HandleRectangle.TopLeft(), new Rectangle(0, 0, 6, 6), color);
-				spriteBatch.Draw(BarSliderTexture, HandleRectangle.TopRight() - new Vector2Int(6, 0), new Rectangle(6, 0, 6, 6), color);
+				spriteBatch.Draw(BarSliderTexture, HandleRectangle.TopRight() - new Vector2(6, 0), new Rectangle(6, 0, 6, 6), color);
 				spriteBatch.Draw(BarSliderTexture, HandleRectangle.BottomLeft(), new Rectangle(0, 10, 6, 6), color);
-				spriteBatch.Draw(BarSliderTexture, HandleRectangle.BottomRight() - new Vector2Int(6, 0), new Rectangle(6, 10, 6, 6), color);
+				spriteBatch.Draw(BarSliderTexture, HandleRectangle.BottomRight() - new Vector2(6, 0), new Rectangle(6, 10, 6, 6), color);
 
 				spriteBatch.Draw(BarSliderTexture, new Rectangle(HandleRectangle.X + 6, HandleRectangle.Y, HandleRectangle.Width - 12, 6), new Rectangle(5, 0, 1, 6), color);
 				spriteBatch.Draw(BarSliderTexture, new Rectangle(HandleRectangle.X + 6, HandleRectangle.Y + HandleRectangle.Height, HandleRectangle.Width - 12, 6), new Rectangle(5, 10, 1, 6), color);

@@ -37,9 +37,5 @@ namespace BaseLibrary
 		{
 			orig(self);
 		}
-
-		private static void Main_DoUpdate_Enter_ToggleChat(On.Terraria.Main.orig_DoUpdate_Enter_ToggleChat orig)
-		{
-		}
 	}
 }

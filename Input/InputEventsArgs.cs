@@ -1,16 +1,17 @@
 ﻿using BaseLibrary.Input.Mouse;
 using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace BaseLibrary.Input
 {
 	public class WindowResizedEventArgs
 	{
-		public Vector2Int Size { get; internal set; }
+		public Vector2 Size { get; internal set; }
 
-		public int Width => Size.X;
+		public float Width => Size.X;
 
-		public int Height => Size.Y;
+		public float Height => Size.Y;
 	}
 
 	public class InputEventArgs
@@ -20,11 +21,11 @@ namespace BaseLibrary.Input
 
 	public class MouseEventArgs : InputEventArgs
 	{
-		public Vector2Int Position { get; internal set; }
+		public Vector2 Position { get; internal set; }
 
-		public int X => Position.X;
+		public float X => Position.X;
 
-		public int Y => Position.Y;
+		public float Y => Position.Y;
 	}
 
 	public class KeyboardEventArgs : InputEventArgs
@@ -38,11 +39,11 @@ namespace BaseLibrary.Input
 
 	public class MouseScrollEventArgs : MouseEventArgs
 	{
-		public Vector2Int Offset { get; internal set; }
+		public Vector2 Offset { get; internal set; }
 
-		public int OffsetX => Offset.X;
+		public float OffsetX => Offset.X;
 
-		public int OffsetY => Offset.Y;
+		public float OffsetY => Offset.Y;
 	}
 
 	public class MouseButtonEventArgs : MouseEventArgs
@@ -54,10 +55,10 @@ namespace BaseLibrary.Input
 
 	public class MouseMoveEventArgs : MouseEventArgs
 	{
-		public Vector2Int Delta { get; internal set; }
+		public Vector2 Delta { get; internal set; }
 
-		public int DeltaX => Delta.X;
+		public float DeltaX => Delta.X;
 
-		public int DeltaY => Delta.Y;
+		public float DeltaY => Delta.Y;
 	}
 }

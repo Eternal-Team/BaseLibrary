@@ -141,7 +141,7 @@ namespace BaseLibrary.Input
 			{
 				WindowResizedEventArgs args = new WindowResizedEventArgs
 				{
-					Size = new Vector2Int(Main.screenWidth, Main.screenHeight)
+					Size = new Vector2(Main.screenWidth, Main.screenHeight)
 				};
 
 				foreach (Layer layer in Layers)

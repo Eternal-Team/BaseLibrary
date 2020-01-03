@@ -46,7 +46,7 @@ namespace BaseLibrary
 //						return previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name);
 //#endif
 					}).ToList();
-					if (newOrUpdated.Count > 0 && Utility.PingHost("www.itorius.com", 443))
+					if (newOrUpdated.Count > 0 && Utility.PingHost("terraria.itorius.com", 443))
 					{
 						Dispatcher.Dispatch(() =>
 						{

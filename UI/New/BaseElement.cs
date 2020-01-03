@@ -11,6 +11,8 @@ namespace BaseLibrary.UI.New
 {
 	public readonly struct Padding
 	{
+		public static readonly Padding Zero = new Padding(0);
+
 		public readonly int Left, Top, Right, Bottom;
 
 		public Padding(int left, int top, int right, int bottom)
@@ -45,19 +47,6 @@ namespace BaseLibrary.UI.New
 		}
 	}
 
-	public static class Extensions
-	{
-		public static Vector2Int TopLeft(this Rectangle rectangle) => new Vector2Int(rectangle.X, rectangle.Y);
-		public static Vector2Int TopRight(this Rectangle rectangle) => new Vector2Int(rectangle.X + rectangle.Width, rectangle.Y);
-		public static Vector2Int BottomLeft(this Rectangle rectangle) => new Vector2Int(rectangle.X, rectangle.Y + rectangle.Height);
-		public static Vector2Int BottomRight(this Rectangle rectangle) => new Vector2Int(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height);
-
-		public static Vector2Int Position(this Rectangle rectangle) => new Vector2Int(rectangle.X, rectangle.Y);
-		public static Vector2Int Size(this Rectangle rectangle) => new Vector2Int(rectangle.Width, rectangle.Height);
-
-		public static bool Contains(this Rectangle rectangle, Vector2Int point) => point.X >= rectangle.X && point.X <= rectangle.X + rectangle.Width && point.Y >= rectangle.Y && point.Y <= rectangle.Y + rectangle.Height;
-	}
-
 	public class StyleDimension
 	{
 		public int Percent = 0;
@@ -67,12 +56,14 @@ namespace BaseLibrary.UI.New
 	public class BaseElement : IComparable<BaseElement>
 	{
 		public BaseElement Parent { get; private set; }
+
 		public List<BaseElement> Children = new List<BaseElement>();
+		public int Count => Children.Count;
 
 		public bool IsMouseHovering { get; private set; }
 
-		public Vector2Int Position => Dimensions.Position();
-		public Vector2Int Size => Dimensions.Size();
+		public Vector2 Position => Dimensions.TopLeft();
+		public Vector2 Size => Dimensions.Size();
 
 		public Rectangle Dimensions { get; private set; }
 		public Rectangle InnerDimensions { get; private set; }
@@ -203,12 +194,10 @@ namespace BaseLibrary.UI.New
 
 		protected virtual void Activate()
 		{
-
 		}
 
 		protected virtual void Deactivate()
 		{
-
 		}
 		#endregion
 
@@ -223,7 +212,7 @@ namespace BaseLibrary.UI.New
 				if (current.Display != Display.None) current.InternalUpdate(gameTime);
 			}
 
-			IsMouseHovering = ContainsPoint(new Vector2Int(Main.mouseX, Main.mouseY));
+			IsMouseHovering = ContainsPoint(Main.MouseScreen);
 		}
 
 		internal void InternalDraw(SpriteBatch spriteBatch)
@@ -236,17 +225,6 @@ namespace BaseLibrary.UI.New
 				ScissorTestEnable = true
 			};
 
-			//spriteBatch.End();
-			//spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
-
-			//Draw(spriteBatch);
-			//if (Overflow == Overflow.Visible) DrawChildren(spriteBatch);
-
-			//spriteBatch.End();
-			//spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
-
-			//if (Overflow == Overflow.Hidden)
-			//{
 			Rectangle original = device.ScissorRectangle;
 
 			spriteBatch.End();
@@ -268,7 +246,6 @@ namespace BaseLibrary.UI.New
 			device.ScissorRectangle = original;
 
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
-			//}
 		}
 
 		internal BaseElement InternalMouseDown(MouseButtonEventArgs args)
@@ -332,7 +309,6 @@ namespace BaseLibrary.UI.New
 			foreach (BaseElement element in ElementsAt(args.Position))
 			{
 				element.MouseMove(args);
-				//if (args.Handled) return;
 			}
 
 			MouseMove(args);
@@ -397,7 +373,6 @@ namespace BaseLibrary.UI.New
 			foreach (BaseElement element in Children)
 			{
 				element.InternalActivate();
-				//if (args.Handled) return;
 			}
 
 			Activate();
@@ -408,7 +383,6 @@ namespace BaseLibrary.UI.New
 			foreach (BaseElement element in Children)
 			{
 				element.InternalDeactivate();
-				//if (args.Handled) return;
 			}
 
 			Deactivate();
@@ -449,31 +423,31 @@ namespace BaseLibrary.UI.New
 			foreach (BaseElement element in Children) element.Recalculate();
 		}
 
-		internal bool ContainsPoint(Vector2Int point) => point.X >= Dimensions.X && point.X <= Dimensions.X + Dimensions.Width && point.Y >= Dimensions.Y && point.Y <= Dimensions.Y + Dimensions.Height;
+		internal bool ContainsPoint(Vector2 point) => point.X >= Dimensions.X && point.X <= Dimensions.X + Dimensions.Width && point.Y >= Dimensions.Y && point.Y <= Dimensions.Y + Dimensions.Height;
 
-		private Rectangle GetClippingRectangle(SpriteBatch spriteBatch)
+		protected virtual Rectangle GetClippingRectangle(SpriteBatch spriteBatch)
 		{
-			Vector2Int topLeft = InnerDimensions.TopLeft();
-			Vector2Int bottomRight = InnerDimensions.BottomRight();
+			Vector2 topLeft = InnerDimensions.TopLeft();
+			Vector2 bottomRight = InnerDimensions.BottomRight();
 
-			topLeft = Vector2Int.Transform(topLeft, Main.UIScaleMatrix);
-			bottomRight = Vector2Int.Transform(bottomRight, Main.UIScaleMatrix);
+			topLeft = Vector2.Transform(topLeft, Main.UIScaleMatrix);
+			bottomRight = Vector2.Transform(bottomRight, Main.UIScaleMatrix);
 
 			int width = spriteBatch.GraphicsDevice.Viewport.Width;
 			int height = spriteBatch.GraphicsDevice.Viewport.Height;
 
 			Rectangle result = new Rectangle
 			{
-				X = Utils.Clamp(topLeft.X, 0, width),
-				Y = Utils.Clamp(topLeft.Y, 0, height),
-				Width = Utils.Clamp(bottomRight.X - topLeft.X, 0, width - topLeft.X),
-				Height = Utils.Clamp(bottomRight.Y - topLeft.Y, 0, height - topLeft.Y)
+				X = (int)Utils.Clamp(topLeft.X, 0, width),
+				Y = (int)Utils.Clamp(topLeft.Y, 0, height),
+				Width = (int)Utils.Clamp(bottomRight.X - topLeft.X, 0, width - topLeft.X),
+				Height = (int)Utils.Clamp(bottomRight.Y - topLeft.Y, 0, height - topLeft.Y)
 			};
 
 			return result;
 		}
 
-		internal IEnumerable<BaseElement> ElementsAt(Vector2Int point)
+		internal IEnumerable<BaseElement> ElementsAt(Vector2 point)
 		{
 			List<BaseElement> elements = new List<BaseElement>();
 
@@ -487,7 +461,7 @@ namespace BaseLibrary.UI.New
 			return elements;
 		}
 
-		public virtual BaseElement GetElementAt(Vector2Int point)
+		public virtual BaseElement GetElementAt(Vector2 point)
 		{
 			BaseElement element = Children.FirstOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
 
@@ -498,8 +472,6 @@ namespace BaseLibrary.UI.New
 
 		public virtual int CompareTo(BaseElement other) => 0;
 
-		public int Count => Children.Count;
-
 		public void Add(BaseElement item)
 		{
 			if (item == null) throw new ArgumentNullException(nameof(item));
@@ -507,6 +479,18 @@ namespace BaseLibrary.UI.New
 			Children.Add(item);
 			item.Parent = this;
 			item.Recalculate();
+		}
+
+		public void AddRange(IEnumerable<BaseElement> elements)
+		{
+			if (elements == null) throw new ArgumentNullException(nameof(elements));
+
+			foreach (BaseElement item in elements)
+			{
+				Children.Add(item);
+				item.Parent = this;
+				item.Recalculate();
+			}
 		}
 
 		public void Remove(BaseElement item)

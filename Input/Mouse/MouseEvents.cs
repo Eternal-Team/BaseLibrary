@@ -12,9 +12,9 @@ namespace BaseLibrary.Input.Mouse
 	{
 		private static MouseState previous;
 
-		private static Dictionary<MouseButton, (TimeSpan Time, Vector2Int Position)> lastClicks;
+		private static Dictionary<MouseButton, (TimeSpan Time, Vector2 Position)> lastClicks;
 
-		private static Dictionary<MouseButton, (TimeSpan Time, Vector2Int Position)> lastDoubleClicks;
+		private static Dictionary<MouseButton, (TimeSpan Time, Vector2 Position)> lastDoubleClicks;
 
 		private static GameTime time;
 
@@ -46,22 +46,22 @@ namespace BaseLibrary.Input.Mouse
 			DoubleClickMaxMove = 2;
 			MoveRaisedOnDrag = true;
 
-			lastClicks = new Dictionary<MouseButton, (TimeSpan, Vector2Int)>
+			lastClicks = new Dictionary<MouseButton, (TimeSpan, Vector2)>
 			{
-				{ MouseButton.Left, (TimeSpan.Zero, Vector2Int.Zero) },
-				{ MouseButton.Right, (TimeSpan.Zero, Vector2Int.Zero) },
-				{ MouseButton.Middle, (TimeSpan.Zero, Vector2Int.Zero) },
-				{ MouseButton.XButton1, (TimeSpan.Zero, Vector2Int.Zero) },
-				{ MouseButton.XButton2, (TimeSpan.Zero, Vector2Int.Zero) }
+				{ MouseButton.Left, (TimeSpan.Zero, Vector2.Zero) },
+				{ MouseButton.Right, (TimeSpan.Zero, Vector2.Zero) },
+				{ MouseButton.Middle, (TimeSpan.Zero, Vector2.Zero) },
+				{ MouseButton.XButton1, (TimeSpan.Zero, Vector2.Zero) },
+				{ MouseButton.XButton2, (TimeSpan.Zero, Vector2.Zero) }
 			};
 
-			lastDoubleClicks = new Dictionary<MouseButton, (TimeSpan, Vector2Int)>
+			lastDoubleClicks = new Dictionary<MouseButton, (TimeSpan, Vector2)>
 			{
-				{ MouseButton.Left, (TimeSpan.Zero, Vector2Int.Zero) },
-				{ MouseButton.Right, (TimeSpan.Zero, Vector2Int.Zero) },
-				{ MouseButton.Middle, (TimeSpan.Zero, Vector2Int.Zero) },
-				{ MouseButton.XButton1, (TimeSpan.Zero, Vector2Int.Zero) },
-				{ MouseButton.XButton2, (TimeSpan.Zero, Vector2Int.Zero) }
+				{ MouseButton.Left, (TimeSpan.Zero, Vector2.Zero) },
+				{ MouseButton.Right, (TimeSpan.Zero, Vector2.Zero) },
+				{ MouseButton.Middle, (TimeSpan.Zero, Vector2.Zero) },
+				{ MouseButton.XButton1, (TimeSpan.Zero, Vector2.Zero) },
+				{ MouseButton.XButton2, (TimeSpan.Zero, Vector2.Zero) }
 			};
 		}
 
@@ -75,7 +75,7 @@ namespace BaseLibrary.Input.Mouse
 			KeyboardState keyboard = Microsoft.Xna.Framework.Input.Keyboard.GetState();
 
 			Modifiers modifiers = KeyboardUtil.GetModifiers(keyboard);
-			Vector2Int position = new Vector2Int(mouse.X, mouse.Y);
+			Vector2 position = new Vector2(mouse.X, mouse.Y);
 
 			if (mouse.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released)
 				OnButtonPressed(new MouseButtonEventArgs
@@ -211,7 +211,7 @@ namespace BaseLibrary.Input.Mouse
 					OnMouseMoved(new MouseMoveEventArgs
 					{
 						Position = position,
-						Delta = new Vector2Int(mouse.X - previous.X, mouse.Y - previous.Y)
+						Delta = new Vector2(mouse.X - previous.X, mouse.Y - previous.Y)
 					});
 			}
 
@@ -222,14 +222,14 @@ namespace BaseLibrary.Input.Mouse
 				OnMouseScroll(new MouseScrollEventArgs
 				{
 					Position = position,
-					Offset = new Vector2Int(0, delta)
+					Offset = new Vector2(0, delta)
 				});
 			}
 
 			previous = mouse;
 		}
 
-		private static int DistanceBetween(Vector2Int a, Vector2Int b) => Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+		private static float DistanceBetween(Vector2 a, Vector2 b) => Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
 
 		private static void OnButtonClicked(MouseButtonEventArgs args)
 		{

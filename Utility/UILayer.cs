@@ -132,7 +132,7 @@ namespace BaseLibrary.UI.New
 			Clear();
 		}
 
-		public override BaseElement GetElementAt(Vector2Int point)
+		public override BaseElement GetElementAt(Vector2 point)
 		{
 			BaseElement element = Children.FirstOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
 
@@ -140,6 +140,7 @@ namespace BaseLibrary.UI.New
 		}
 	}
 
+	// note: when capturing mouse click events mouse down/up still gets run
 	public class UILayer : Layer
 	{
 		public override bool Enabled => !Main.ingameOptionsWindow && !Main.gameMenu;
@@ -152,7 +153,10 @@ namespace BaseLibrary.UI.New
 			PanelUI panelUI = new PanelUI();
 			panelUI.Recalculate();
 
-			Elements = new List<BaseElement> { panelUI };
+			ChatUI chatUI = new ChatUI();
+			chatUI.Recalculate();
+
+			Elements = new List<BaseElement> { chatUI, panelUI };
 		}
 
 		private BaseElement MouseDownElement;
