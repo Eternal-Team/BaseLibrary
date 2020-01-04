@@ -1,5 +1,4 @@
 ﻿using BaseLibrary.Input;
-using BaseLibrary.Input.GamePad;
 using BaseLibrary.Input.Keyboard;
 using BaseLibrary.Input.Mouse;
 using Microsoft.Xna.Framework;
@@ -146,6 +145,8 @@ namespace BaseLibrary.UI.New
 				}
 			}
 
+			selectionEnd = selectionStart;
+
 			caretVisible = true;
 			caretTimer = 0;
 		}
@@ -165,20 +166,16 @@ namespace BaseLibrary.UI.New
 				return;
 			}
 
-			string[] split = Regex.Split(Text, "\\b");
+			selecting = true;
 
-			int stringStart = 0;
-			foreach (string s in split)
-			{
-				if (selectionStart >= stringStart && selectionStart <= stringStart + s.Length && !string.IsNullOrWhiteSpace(s))
-				{
-					selecting = true;
-					selectionEnd = stringStart;
-					selectionStart = stringStart + s.Length;
-				}
+			Regex regex = new Regex("\\b");
+			while (selectionEnd - 1 >= 0 && regex.IsMatch(Text[selectionEnd - 1].ToString())) selectionEnd--;
 
-				stringStart += s.Length;
-			}
+			if (!regex.IsMatch(Text[selectionStart].ToString())) return;
+
+			while (selectionStart + 1 <= Text.Length && regex.IsMatch(Text[selectionStart + 1].ToString())) selectionStart++;
+
+			selectionStart++;
 		}
 
 		protected override void TripleClick(MouseButtonEventArgs args)
@@ -324,98 +321,88 @@ namespace BaseLibrary.UI.New
 			}
 			else if (args.Key == Keys.Delete) HandleDelete();
 			else if (args.Key == Keys.Back) HandleBackspace();
+			else if (args.Key == Keys.Left) HandleGoLeft(args);
+			else if (args.Key == Keys.Right) HandleGoRight(args);
 			else
 			{
-				switch (args.Key)
+				if (args.Character != null)
 				{
-					case Keys.Left:
+					string charValue = args.Character.Value.ToString();
+
+					if (selecting)
 					{
-						string next = Text.Substring(0, selectionStart);
-						var list = ChatManager.ParseMessage(next, Color.White);
-						int width = 1;
-						if (list.Count > 0 && (list[list.Count - 1].Text != list[list.Count - 1].TextOriginal || list[list.Count - 1].DeleteWhole)) width = list[list.Count - 1].TextOriginal.Length;
+						selecting = false;
 
-						selectionStart -= width;
+						SelectedText = charValue;
 
-						selectionStart = selectionStart.Clamp(0, Text.Length);
-
-						if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
-						{
-							selecting = true;
-							selectionEnd = selectionStart + width;
-						}
-						else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
-						{
-							selecting = false;
-
-							if (selectionEnd < selectionStart) selectionStart = selectionEnd;
-							else if (selectionStart > 0) selectionStart += width;
-						}
-
-						caretVisible = true;
-						caretTimer = 0;
-
-						// todo: ctrl - move index to previous word
-						// todo: ctrl + shift - (un)select previous word
-						break;
+						selectionStart = Math.Min(selectionStart, selectionEnd) + 1;
+						selectionEnd = selectionStart;
 					}
-
-					case Keys.Right:
+					else
 					{
-						string next = Text.Substring(selectionStart, Text.Length - selectionStart);
-						var list = ChatManager.ParseMessage(next, Color.White);
-						int width = 1;
-						if (list.Count > 0 && (list[0].Text != list[0].TextOriginal || list[0].DeleteWhole)) width = list[0].TextOriginal.Length;
-
-						selectionStart += width;
-						selectionStart = selectionStart.Clamp(0, Text.Length);
-
-						if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
-						{
-							selecting = true;
-							selectionEnd = selectionStart - width;
-						}
-						else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
-						{
-							selecting = false;
-
-							if (selectionEnd > selectionStart) selectionStart = selectionEnd;
-							else if (selectionStart < Text.Length) selectionStart -= width;
-						}
-
-						caretVisible = true;
-						caretTimer = 0;
-
-						// todo: ctrl - move index to next word
-						// todo: ctrl + shift - (un)select next word
-						break;
-					}
-					default:
-					{
-						if (args.Character != null)
-						{
-							string charValue = args.Character.Value.ToString();
-
-							if (selecting)
-							{
-								selecting = false;
-
-								SelectedText = charValue;
-
-								selectionStart = Math.Min(selectionStart, selectionEnd) + 1;
-								selectionEnd = selectionStart;
-							}
-							else
-							{
-								if (MaxLength != null && Text.Length + 1 > MaxLength) return;
-								Text = Text.Insert(selectionStart++, charValue);
-							}
-						}
-
-						break;
+						if (MaxLength != null && Text.Length + 1 > MaxLength) return;
+						Text = Text.Insert(selectionStart++, charValue);
 					}
 				}
 			}
+		}
+
+		private void HandleGoRight(KeyboardEventArgs args)
+		{
+			string next = Text.Substring(selectionStart, Text.Length - selectionStart);
+			var list = ChatManager.ParseMessage(next, Color.White);
+
+			int width = 1;
+			if (list.Count > 0 && (list[0].Text != list[0].TextOriginal || list[0].DeleteWhole)) width = list[0].TextOriginal.Length;
+			selectionStart += width;
+			selectionStart = selectionStart.Clamp(0, Text.Length);
+			if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
+			{
+				selecting = true;
+				selectionEnd = selectionStart - width;
+			}
+			else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
+			{
+				selecting = false;
+
+				if (selectionEnd > selectionStart) selectionStart = selectionEnd;
+				else if (selectionStart < Text.Length) selectionStart -= width;
+			}
+
+			caretVisible = true;
+			caretTimer = 0;
+
+			// todo: ctrl - move index to next word
+			// todo: ctrl + shift - (un)select next word
+		}
+
+		private void HandleGoLeft(KeyboardEventArgs args)
+		{
+			string next = Text.Substring(0, selectionStart);
+			var list = ChatManager.ParseMessage(next, Color.White);
+
+			int width = 1;
+			if (list.Count > 0 && (list[list.Count - 1].Text != list[list.Count - 1].TextOriginal || list[list.Count - 1].DeleteWhole)) width = list[list.Count - 1].TextOriginal.Length;
+			selectionStart -= width;
+			selectionStart = selectionStart.Clamp(0, Text.Length);
+			if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
+			{
+				selecting = true;
+				selectionEnd = selectionStart + width;
+			}
+			else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
+			{
+				selecting = false;
+
+				if (selectionEnd < selectionStart) selectionStart = selectionEnd;
+				else if (selectionStart > 0) selectionStart += width;
+			}
+
+			caretVisible = true;
+			caretTimer = 0;
+
+			// todo: ctrl - move index to previous word
+			// todo: ctrl + shift - (un)select previous word
 		}
 
 		private void HandleBackspace()
@@ -428,6 +415,7 @@ namespace BaseLibrary.UI.New
 
 				selectionStart = Math.Min(selectionStart, selectionEnd);
 			}
+
 			else if (selectionStart > 0)
 			{
 				string next = Text.Substring(0, selectionStart);
@@ -453,6 +441,7 @@ namespace BaseLibrary.UI.New
 
 				selectionStart = Math.Min(selectionStart, selectionEnd);
 			}
+
 			else if (selectionStart < Text.Length)
 			{
 				string next = Text.Substring(selectionStart, Text.Length - selectionStart);
@@ -477,6 +466,7 @@ namespace BaseLibrary.UI.New
 
 				selectionStart = Math.Min(selectionStart, selectionEnd);
 			}
+
 			else
 			{
 				Platform.Current.Clipboard = Text;
@@ -496,6 +486,7 @@ namespace BaseLibrary.UI.New
 				SelectedText = Platform.Current.Clipboard;
 				selectionStart = Math.Min(selectionStart, selectionEnd) + Platform.Current.Clipboard.Length;
 			}
+
 			else
 			{
 				Text = Text.Insert(selectionStart, Platform.Current.Clipboard);
@@ -519,7 +510,6 @@ namespace BaseLibrary.UI.New
 		public override void Recalculate()
 		{
 			base.Recalculate();
-
 			CalculateTextMetrics();
 		}
 
