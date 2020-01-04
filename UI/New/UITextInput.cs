@@ -1,4 +1,5 @@
 ﻿using BaseLibrary.Input;
+using BaseLibrary.Input.GamePad;
 using BaseLibrary.Input.Keyboard;
 using BaseLibrary.Input.Mouse;
 using Microsoft.Xna.Framework;
@@ -6,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ReLogic.OS;
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.UI.Chat;
@@ -17,13 +17,19 @@ namespace BaseLibrary.UI.New
 	{
 		private static readonly Color CaretColor = new Color(160, 160, 160);
 		private static readonly Color SelectionColor = new Color(51, 144, 255) * 0.4f;
+		public Color PanelColor = Utility.ColorPanel;
+		public bool RenderPanel;
 
 		public event Action OnTextChange;
 		public string HintText;
+		public bool AllowMultiline;
+		public int? MaxLength;
+		public bool Focused;
 
 		public HorizontalAlignment HorizontalAlignment = HorizontalAlignment.Left;
 		public VerticalAlignment VerticalAlignment = VerticalAlignment.Top;
-		public int? MaxLength;
+
+		private Ref<string> text;
 
 		public string Text
 		{
@@ -31,6 +37,13 @@ namespace BaseLibrary.UI.New
 			set
 			{
 				text.Value = value;
+
+				if (string.IsNullOrWhiteSpace(value))
+				{
+					selecting = false;
+					selectionStart = 0;
+					selectionEnd = 0;
+				}
 
 				CalculateTextMetrics();
 
@@ -47,25 +60,6 @@ namespace BaseLibrary.UI.New
 				Text = Text.Insert(Math.Min(selectionStart, selectionEnd), value);
 			}
 		}
-
-		private bool Focused { get; set; }
-
-		public bool RenderPanel
-		{
-			get => renderPanel;
-			set
-			{
-				renderPanel = value;
-				Padding = new Padding(value ? 8 : 0);
-			}
-		}
-
-		private bool renderPanel;
-
-		public Color PanelColor = Utility.ColorPanel;
-
-		private Ref<string> text;
-		public bool AllowMultiline;
 
 		private int caretTimer;
 		private bool caretVisible;
@@ -129,11 +123,13 @@ namespace BaseLibrary.UI.New
 			float clickedX = args.Position.X - textPosition.X;
 
 			var list = ChatManager.ParseMessage(Text, Color.White);
-			
+
 			for (int i = 0; i <= Text.Length; i++)
 			{
 				if (ChatManager.GetStringSize(Utility.Font, Text.Substring(0, i), Vector2.One).X < clickedX) selectionStart = i;
 			}
+
+			selected = null;
 
 			int current = 0;
 			foreach (TextSnippet snippet in list)
@@ -141,11 +137,12 @@ namespace BaseLibrary.UI.New
 				int prev = current;
 				current += snippet.TextOriginal.Length;
 
-				if (snippet.Text == snippet.TextOriginal&&!snippet.DeleteWhole) continue;
+				if (snippet.Text == snippet.TextOriginal && !snippet.DeleteWhole) continue;
 
 				if (selectionStart >= prev && selectionStart <= current)
 				{
 					selectionStart = prev;
+					selected = snippet;
 				}
 			}
 
@@ -153,11 +150,20 @@ namespace BaseLibrary.UI.New
 			caretTimer = 0;
 		}
 
+		private TextSnippet selected;
+
 		protected override void DoubleClick(MouseButtonEventArgs args)
 		{
 			if (args.Button != MouseButton.Left) return;
 
 			args.Handled = true;
+
+			if (selected != null)
+			{
+				selectionEnd = selectionStart + selected.TextOriginal.Length;
+				selecting = true;
+				return;
+			}
 
 			string[] split = Regex.Split(Text, "\\b");
 
@@ -206,6 +212,8 @@ namespace BaseLibrary.UI.New
 
 			base.MouseUp(args);
 		}
+
+		// <\/?[A-Za-z]+>
 
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
@@ -262,6 +270,7 @@ namespace BaseLibrary.UI.New
 				), SelectionColor);
 			}
 
+			//Utils.DrawBorderStringFourWay(spriteBatch, Utility.Font, Text, textPosition.X, textPosition.Y, Color.White, Color.Black, Vector2.Zero);
 			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Utility.Font, Text, textPosition, Color.White, 0f, Vector2.Zero, Vector2.One);
 
 			if (++caretTimer > 30)
@@ -278,17 +287,18 @@ namespace BaseLibrary.UI.New
 			}
 		}
 
-		protected override void KeyPressed(KeyboardEventArgs args) => args.Handled = Focused;
+		protected override void KeyPressed(KeyboardEventArgs args)
+		{
+			base.KeyPressed(args);
+
+			args.Handled = Focused;
+		}
 
 		protected override void KeyReleased(KeyboardEventArgs args)
 		{
-			if (Focused)
-			{
-				if (args.Key == Keys.Escape || args.Key == Keys.Enter && !AllowMultiline) Focused = false;
-				args.Handled = true;
+			base.KeyReleased(args);
 
-				base.KeyReleased(args);
-			}
+			args.Handled = Focused;
 		}
 
 		// [item:2] getting [item:666] tags [c/FF0000:This text is red.] working [a:NO_HOBO]. was a real pain in the ass [g:4]
@@ -297,103 +307,28 @@ namespace BaseLibrary.UI.New
 		{
 			if (!Focused) return;
 			if (args.Key == Keys.Enter && !AllowMultiline) return;
+			if (args.Key == Keys.LeftAlt || args.Key == Keys.Tab)
+			{
+				args.Handled = true;
+				return;
+			}
 
 			args.Handled = true;
 
-			switch (args.Key)
+			if (KeyboardUtil.ControlDown(args.Modifiers))
 			{
-				case Keys.A when KeyboardUtil.ControlDown(args.Modifiers):
+				if (args.Key == Keys.A) HandleSelectAll();
+				else if (args.Key == Keys.C) HandleCopy();
+				else if (args.Key == Keys.V) HandlePaste();
+				else if (args.Key == Keys.X) HandleCut();
+			}
+			else if (args.Key == Keys.Delete) HandleDelete();
+			else if (args.Key == Keys.Back) HandleBackspace();
+			else
+			{
+				switch (args.Key)
 				{
-					selectionEnd = 0;
-					selectionStart = Text.Length;
-					selecting = true;
-					break;
-				}
-
-				case Keys.C when KeyboardUtil.ControlDown(args.Modifiers):
-				{
-					Platform.Current.Clipboard = selecting ? SelectedText : Text;
-
-					break;
-				}
-
-				case Keys.V when KeyboardUtil.ControlDown(args.Modifiers):
-				{
-					if (selecting)
-					{
-						selecting = false;
-
-						if (MaxLength != null && Text.Length + Platform.Current.Clipboard.Length > MaxLength) return;
-
-						SelectedText = Platform.Current.Clipboard;
-						selectionStart = Math.Min(selectionStart, selectionEnd) + Platform.Current.Clipboard.Length;
-					}
-					else
-					{
-						Text = Text.Insert(selectionStart, Platform.Current.Clipboard);
-
-						selectionStart += Platform.Current.Clipboard.Length;
-					}
-
-					break;
-				}
-
-				case Keys.X when KeyboardUtil.ControlDown(args.Modifiers):
-				{
-					if (selecting)
-					{
-						selecting = false;
-
-						Platform.Current.Clipboard = SelectedText;
-						SelectedText = "";
-
-						selectionStart = Math.Min(selectionStart, selectionEnd);
-					}
-					else
-					{
-						Platform.Current.Clipboard = Text;
-						Text = string.Empty;
-						selectionStart = 0;
-					}
-
-					break;
-				}
-
-				case Keys.Delete:
-				{
-					if (selecting)
-					{
-						selecting = false;
-
-						SelectedText = "";
-
-						selectionStart = Math.Min(selectionStart, selectionEnd);
-					}
-					else if (selectionStart < Text.Length)
-					{
-						string next = Text.Substring(selectionStart, Text.Length - selectionStart);
-						var list = ChatManager.ParseMessage(next, Color.White);
-						int width = 1;
-						if (list.Count > 0 && (list[0].Text != list[0].TextOriginal || list[0].DeleteWhole)) width = list[0].TextOriginal.Length;
-
-						Text = Text.Remove(selectionStart, width);
-					}
-
-					// ctrl - delete to next word
-					break;
-				}
-
-				case Keys.Back:
-				{
-					if (selecting)
-					{
-						selecting = false;
-
-						SelectedText = "";
-
-						selectionStart = Math.Min(selectionStart, selectionEnd);
-					}
-					else if (selectionStart > 0)
+					case Keys.Left:
 					{
 						string next = Text.Substring(0, selectionStart);
 						var list = ChatManager.ParseMessage(next, Color.White);
@@ -402,103 +337,183 @@ namespace BaseLibrary.UI.New
 
 						selectionStart -= width;
 
-						Text = Text.Remove(selectionStart, width);
-					}
+						selectionStart = selectionStart.Clamp(0, Text.Length);
 
-					// ctrl - delete to previous word
-					break;
-				}
-
-				case Keys.Left:
-				{
-					string next = Text.Substring(0, selectionStart);
-					var list = ChatManager.ParseMessage(next, Color.White);
-					int width = 1;
-					if (list.Count > 0 && (list[list.Count - 1].Text != list[list.Count - 1].TextOriginal || list[list.Count - 1].DeleteWhole)) width = list[list.Count - 1].TextOriginal.Length;
-
-					selectionStart -= width;
-
-					selectionStart = selectionStart.Clamp(0, Text.Length);
-
-					if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
-					{
-						selecting = true;
-						selectionEnd = selectionStart + width;
-					}
-					else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
-					{
-						selecting = false;
-
-						if (selectionEnd < selectionStart) selectionStart = selectionEnd;
-						else if (selectionStart > 0) selectionStart += width;
-					}
-
-					caretVisible = true;
-					caretTimer = 0;
-
-					// ctrl - move index to previous word
-					// ctrl + shift - (un)select previous word
-					break;
-				}
-
-				case Keys.Right:
-				{
-					string next = Text.Substring(selectionStart, Text.Length - selectionStart);
-					var list = ChatManager.ParseMessage(next, Color.White);
-					int width = 1;
-					if (list.Count > 0 && (list[0].Text != list[0].TextOriginal || list[0].DeleteWhole)) width = list[0].TextOriginal.Length;
-
-					selectionStart += width;
-					selectionStart = selectionStart.Clamp(0, Text.Length);
-
-					if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
-					{
-						selecting = true;
-						selectionEnd = selectionStart - width;
-					}
-					else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
-					{
-						selecting = false;
-
-						if (selectionEnd > selectionStart) selectionStart = selectionEnd;
-						else if (selectionStart < Text.Length) selectionStart -= width;
-					}
-
-					caretVisible = true;
-					caretTimer = 0;
-
-					// ctrl - move index to next word
-					// ctrl + shift - (un)select next word
-					break;
-				}
-				case Keys.LeftAlt:
-				case Keys.Tab:
-					break;
-				default:
-				{
-					if (args.Character != null)
-					{
-						string charValue = args.Character.Value.ToString();
-
-						if (selecting)
+						if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
+						{
+							selecting = true;
+							selectionEnd = selectionStart + width;
+						}
+						else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
 						{
 							selecting = false;
 
-							SelectedText = charValue;
+							if (selectionEnd < selectionStart) selectionStart = selectionEnd;
+							else if (selectionStart > 0) selectionStart += width;
+						}
 
-							selectionStart = Math.Min(selectionStart, selectionEnd) + 1;
-							selectionEnd = selectionStart;
-						}
-						else
-						{
-							if (MaxLength != null && Text.Length + 1 > MaxLength) return;
-							Text = Text.Insert(selectionStart++, charValue);
-						}
+						caretVisible = true;
+						caretTimer = 0;
+
+						// todo: ctrl - move index to previous word
+						// todo: ctrl + shift - (un)select previous word
+						break;
 					}
 
-					break;
+					case Keys.Right:
+					{
+						string next = Text.Substring(selectionStart, Text.Length - selectionStart);
+						var list = ChatManager.ParseMessage(next, Color.White);
+						int width = 1;
+						if (list.Count > 0 && (list[0].Text != list[0].TextOriginal || list[0].DeleteWhole)) width = list[0].TextOriginal.Length;
+
+						selectionStart += width;
+						selectionStart = selectionStart.Clamp(0, Text.Length);
+
+						if (KeyboardUtil.ShiftDown(args.Modifiers) && !selecting)
+						{
+							selecting = true;
+							selectionEnd = selectionStart - width;
+						}
+						else if (!KeyboardUtil.ShiftDown(args.Modifiers) && selecting)
+						{
+							selecting = false;
+
+							if (selectionEnd > selectionStart) selectionStart = selectionEnd;
+							else if (selectionStart < Text.Length) selectionStart -= width;
+						}
+
+						caretVisible = true;
+						caretTimer = 0;
+
+						// todo: ctrl - move index to next word
+						// todo: ctrl + shift - (un)select next word
+						break;
+					}
+					default:
+					{
+						if (args.Character != null)
+						{
+							string charValue = args.Character.Value.ToString();
+
+							if (selecting)
+							{
+								selecting = false;
+
+								SelectedText = charValue;
+
+								selectionStart = Math.Min(selectionStart, selectionEnd) + 1;
+								selectionEnd = selectionStart;
+							}
+							else
+							{
+								if (MaxLength != null && Text.Length + 1 > MaxLength) return;
+								Text = Text.Insert(selectionStart++, charValue);
+							}
+						}
+
+						break;
+					}
 				}
 			}
+		}
+
+		private void HandleBackspace()
+		{
+			if (selecting)
+			{
+				selecting = false;
+
+				SelectedText = "";
+
+				selectionStart = Math.Min(selectionStart, selectionEnd);
+			}
+			else if (selectionStart > 0)
+			{
+				string next = Text.Substring(0, selectionStart);
+				var list = ChatManager.ParseMessage(next, Color.White);
+				int width = 1;
+				if (list.Count > 0 && (list[list.Count - 1].Text != list[list.Count - 1].TextOriginal || list[list.Count - 1].DeleteWhole)) width = list[list.Count - 1].TextOriginal.Length;
+
+				selectionStart -= width;
+
+				Text = Text.Remove(selectionStart, width);
+			}
+
+			// todo: ctrl - delete to previous word
+		}
+
+		private void HandleDelete()
+		{
+			if (selecting)
+			{
+				selecting = false;
+
+				SelectedText = "";
+
+				selectionStart = Math.Min(selectionStart, selectionEnd);
+			}
+			else if (selectionStart < Text.Length)
+			{
+				string next = Text.Substring(selectionStart, Text.Length - selectionStart);
+				var list = ChatManager.ParseMessage(next, Color.White);
+				int width = 1;
+				if (list.Count > 0 && (list[0].Text != list[0].TextOriginal || list[0].DeleteWhole)) width = list[0].TextOriginal.Length;
+
+				Text = Text.Remove(selectionStart, width);
+			}
+
+			// todo: ctrl - delete to next word
+		}
+
+		private void HandleCut()
+		{
+			if (selecting)
+			{
+				selecting = false;
+
+				Platform.Current.Clipboard = SelectedText;
+				SelectedText = "";
+
+				selectionStart = Math.Min(selectionStart, selectionEnd);
+			}
+			else
+			{
+				Platform.Current.Clipboard = Text;
+				Text = string.Empty;
+				selectionStart = 0;
+			}
+		}
+
+		private void HandlePaste()
+		{
+			if (selecting)
+			{
+				selecting = false;
+
+				if (MaxLength != null && Text.Length + Platform.Current.Clipboard.Length > MaxLength) return;
+
+				SelectedText = Platform.Current.Clipboard;
+				selectionStart = Math.Min(selectionStart, selectionEnd) + Platform.Current.Clipboard.Length;
+			}
+			else
+			{
+				Text = Text.Insert(selectionStart, Platform.Current.Clipboard);
+
+				selectionStart += Platform.Current.Clipboard.Length;
+			}
+		}
+
+		private void HandleCopy()
+		{
+			Platform.Current.Clipboard = selecting ? SelectedText : Text;
+		}
+
+		private void HandleSelectAll()
+		{
+			selectionEnd = 0;
+			selectionStart = Text.Length;
+			selecting = true;
 		}
 
 		public override void Recalculate()
