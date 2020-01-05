@@ -1,5 +1,4 @@
 ﻿using BaseLibrary.Input.Keyboard;
-using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -65,13 +64,34 @@ namespace BaseLibrary.Input.Mouse
 			};
 		}
 
+		private static MouseState mouse;
+
+		public static bool IsMouseDown(MouseButton button)
+		{
+			switch (button)
+			{
+				case MouseButton.Left:
+					return mouse.LeftButton == ButtonState.Pressed;
+				case MouseButton.Middle:
+					return mouse.MiddleButton == ButtonState.Pressed;
+				case MouseButton.Right:
+					return mouse.RightButton == ButtonState.Pressed;
+				case MouseButton.XButton1:
+					return mouse.XButton1 == ButtonState.Pressed;
+				case MouseButton.XButton2:
+					return mouse.XButton2 == ButtonState.Pressed;
+			}
+
+			return false;
+		}
+
 		internal static void Update(GameTime gameTime)
 		{
 			if (!Main.instance.IsActive || !Main.hasFocus) return;
 
 			time = gameTime;
 
-			MouseState mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
+			mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
 			KeyboardState keyboard = Microsoft.Xna.Framework.Input.Keyboard.GetState();
 
 			Modifiers modifiers = KeyboardUtil.GetModifiers(keyboard);

@@ -31,6 +31,8 @@ namespace BaseLibrary.UI.New
 
 	public readonly struct Margin
 	{
+		public static readonly Margin Zero = new Margin(0);
+
 		public readonly int Left, Top, Right, Bottom;
 
 		public Margin(int left, int top, int right, int bottom)
@@ -49,8 +51,18 @@ namespace BaseLibrary.UI.New
 
 	public class StyleDimension
 	{
-		public int Percent = 0;
-		public int Pixels = 0;
+		public int Pixels;
+		public int Percent;
+
+		public StyleDimension()
+		{
+		}
+
+		public StyleDimension(int pixels, int percent)
+		{
+			Pixels = pixels;
+			Percent = percent;
+		}
 	}
 
 	public class BaseElement : IComparable<BaseElement>
@@ -61,9 +73,19 @@ namespace BaseLibrary.UI.New
 		public int Count => Children.Count;
 
 		public bool IsMouseHovering { get; private set; }
+		public object HoverText = null;
 
-		public Vector2 Position => Dimensions.TopLeft();
-		public Vector2 Size => Dimensions.Size();
+		public Vector2 Position => Dimensions.Position();
+
+		public Vector2 Size
+		{
+			get => Dimensions.Size();
+			set
+			{
+				Width = new StyleDimension((int)value.X, 0);
+				Height = new StyleDimension((int)value.Y, 0);
+			}
+		}
 
 		public Rectangle Dimensions { get; private set; }
 		public Rectangle InnerDimensions { get; private set; }
@@ -240,6 +262,7 @@ namespace BaseLibrary.UI.New
 
 			Draw(spriteBatch);
 			DrawChildren(spriteBatch);
+			if (IsMouseHovering && HoverText != null) Utility.DrawMouseText(HoverText, Color.White);
 
 			spriteBatch.End();
 
@@ -290,7 +313,7 @@ namespace BaseLibrary.UI.New
 				if (args.Handled) return;
 			}
 
-			MouseClick(args);
+			DoubleClick(args);
 		}
 
 		internal void InternalTripleClick(MouseButtonEventArgs args)
@@ -301,7 +324,7 @@ namespace BaseLibrary.UI.New
 				if (args.Handled) return;
 			}
 
-			MouseClick(args);
+			TripleClick(args);
 		}
 
 		internal void InternalMouseMove(MouseMoveEventArgs args)
@@ -427,7 +450,7 @@ namespace BaseLibrary.UI.New
 
 		protected virtual Rectangle GetClippingRectangle(SpriteBatch spriteBatch)
 		{
-			Vector2 topLeft = InnerDimensions.TopLeft();
+			Vector2 topLeft = InnerDimensions.Position();
 			Vector2 bottomRight = InnerDimensions.BottomRight();
 
 			topLeft = Vector2.Transform(topLeft, Main.UIScaleMatrix);
@@ -451,7 +474,7 @@ namespace BaseLibrary.UI.New
 		{
 			List<BaseElement> elements = new List<BaseElement>();
 
-			foreach (BaseElement element in Children.Where(element => element.ContainsPoint(point)))
+			foreach (BaseElement element in Children.Where(element => element.ContainsPoint(point)&&element.Display!=Display.None))
 			{
 				elements.Add(element);
 				elements.AddRange(element.ElementsAt(point));
@@ -491,6 +514,15 @@ namespace BaseLibrary.UI.New
 				item.Parent = this;
 				item.Recalculate();
 			}
+		}
+
+		public void Insert(int index, BaseElement item)
+		{
+			if (item == null) throw new ArgumentNullException(nameof(item));
+
+			Children.Insert(index, item);
+			item.Parent = this;
+			item.Recalculate();
 		}
 
 		public void Remove(BaseElement item)

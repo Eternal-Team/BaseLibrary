@@ -214,7 +214,7 @@ namespace BaseLibrary
 
 		internal static bool DrawMouseText()
 		{
-			if (mouseText == null) return true;
+			if (string.IsNullOrWhiteSpace(mouseText)) return true;
 
 			Main.LocalPlayer.showItemIcon = false;
 			Main.ItemIconCacheUpdate(0);
@@ -415,12 +415,6 @@ namespace BaseLibrary
 			TransformMatrix = typeof(SpriteBatch).GetValue<Matrix>("transformMatrix", spriteBatch),
 			ScissorRectangle = spriteBatch.GraphicsDevice.ScissorRectangle
 		};
-
-		public static void DrawOverflowHidden(this SpriteBatch spriteBatch, UIElement element, Action action)
-		{
-			ImmediateState.ScissorRectangle = Rectangle.Intersect(element.GetClippingRectangle(spriteBatch), spriteBatch.GraphicsDevice.ScissorRectangle);
-			spriteBatch.Draw(ImmediateState, action);
-		}
 
 		public static void DrawWithEffect(this SpriteBatch spriteBatch, Effect effect, Action action)
 		{

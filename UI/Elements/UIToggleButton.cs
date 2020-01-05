@@ -1,9 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.Input;
+using BaseLibrary.Input.Mouse;
+using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
-using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -19,28 +21,30 @@ namespace BaseLibrary.UI.Elements
 			this.scaleMode = scaleMode;
 		}
 
-		public override void MouseOver(UIMouseEvent evt)
+		protected override void MouseEnter(MouseEventArgs args)
 		{
-			base.MouseOver(evt);
+			base.MouseEnter(args);
 
 			Main.PlaySound(SoundID.MenuTick);
 		}
 
-		public override void MouseOut(UIMouseEvent evt)
+		protected override void MouseLeave(MouseEventArgs args)
 		{
-			base.MouseOut(evt);
+			base.MouseLeave(args);
 
 			Main.PlaySound(SoundID.MenuTick);
 		}
 
-		public override void Click(UIMouseEvent evt)
+		protected override void MouseClick(MouseButtonEventArgs args)
 		{
-			base.Click(evt);
+			if (args.Button != MouseButton.Left) return;
+
+			args.Handled = true;
 
 			Toggled = !Toggled;
 		}
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
+		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			if (texture == null) return;
 

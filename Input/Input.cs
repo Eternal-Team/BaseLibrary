@@ -1,31 +1,20 @@
 ﻿using BaseLibrary.Input.Keyboard;
 using BaseLibrary.Input.Mouse;
-using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 using Terraria;
 
 namespace BaseLibrary.Input
 {
 	public static class Input
 	{
-		public static LayerStack Layers;
+		private static LayerStack Layers => BaseLibrary.Layers;
 
 		private static int lastScreenWidth;
 		private static int lastScreenHeight;
 
-		internal static List<Keys> HandledKeys;
-
 		internal static void Load()
 		{
 			if (Main.dedServ) return;
-
-			HandledKeys = new List<Keys>();
-
-			Layers = new LayerStack();
-			Layers.PushLayer(new TerrariaLayer());
-			Layers.PushOverlay(new UILayer());
 
 			MouseEvents.Load();
 			KeyboardEvents.Load();
@@ -98,11 +87,7 @@ namespace BaseLibrary.Input
 				foreach (Layer layer in Layers)
 				{
 					layer.OnKeyPressed(args);
-					if (args.Handled)
-					{
-						HandledKeys.Add(args.Key);
-						break;
-					}
+					if (args.Handled) break;
 				}
 			};
 
@@ -111,11 +96,7 @@ namespace BaseLibrary.Input
 				foreach (Layer layer in Layers)
 				{
 					layer.OnKeyReleased(args);
-					if (args.Handled)
-					{
-						HandledKeys.Add(args.Key);
-						break;
-					}
+					if (args.Handled) break;
 				}
 			};
 
@@ -124,11 +105,7 @@ namespace BaseLibrary.Input
 				foreach (Layer layer in Layers)
 				{
 					layer.OnKeyTyped(args);
-					if (args.Handled)
-					{
-						HandledKeys.Add(args.Key);
-						break;
-					}
+					if (args.Handled) break;
 				}
 			};
 		}
@@ -144,16 +121,11 @@ namespace BaseLibrary.Input
 					Size = new Vector2(Main.screenWidth, Main.screenHeight)
 				};
 
-				foreach (Layer layer in Layers)
-				{
-					layer.OnWindowResize(args);
-				}
+				foreach (Layer layer in Layers) layer.OnWindowResize(args);
 
 				lastScreenWidth = Main.screenWidth;
 				lastScreenHeight = Main.screenHeight;
 			}
-
-			HandledKeys.Clear();
 
 			MouseEvents.Update(time);
 			KeyboardEvents.Update(time);

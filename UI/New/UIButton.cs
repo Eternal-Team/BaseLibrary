@@ -62,7 +62,7 @@ namespace BaseLibrary.UI.New
 			{
 				if (scaleMode == ScaleMode.Stretch) spriteBatch.Draw(texture, InnerDimensions, sourceRectangle, Color.White);
 				else if (scaleMode == ScaleMode.Zoom) spriteBatch.Draw(texture, InnerDimensions.Center(), sourceRectangle, Color.White, 0f, texture.Size() * 0.5f, Math.Min(InnerDimensions.Width / texture.Width, InnerDimensions.Height / texture.Height), SpriteEffects.None, 0f);
-				else if (scaleMode == ScaleMode.None) spriteBatch.Draw(texture, Utils.TopLeft(InnerDimensions), sourceRectangle, Color.White);
+				else if (scaleMode == ScaleMode.None) spriteBatch.Draw(texture, InnerDimensions.TopLeft(), sourceRectangle, Color.White);
 			}
 		}
 	}

@@ -1,52 +1,55 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.UI;
+﻿//using BaseLibrary.UI.New;
+//using Microsoft.Xna.Framework;
+//using Terraria;
+//using Terraria.UI;
 
-namespace BaseLibrary.UI.Elements
-{
-	public class UIDraggablePanel : UIPanel
-	{
-		private Vector2 offset;
-		private bool dragging;
+//namespace BaseLibrary.UI.Elements
+//{
+//	public class UIDraggablePanel : UIPanel
+//	{
+//		private Vector2 offset;
+//		private bool dragging;
 
-		public override void MouseDown(UIMouseEvent evt)
-		{
-			base.MouseDown(evt);
 
-			if (evt.Target != this) return;
+//		public override void MouseDown(UIMouseEvent evt)
+//		{
+//			base.MouseDown(evt);
 
-			offset = evt.MousePosition - Position;
-			HAlign = VAlign = 0f;
+//			if (evt.Target != this) return;
 
-			dragging = true;
-		}
+//			offset = evt.MousePosition - Position;
+//			HAlign = VAlign = 0f;
 
-		public override void MouseUp(UIMouseEvent evt)
-		{
-			base.MouseUp(evt);
+//			dragging = true;
+//		}
 
-			dragging = false;
-		}
+//		public override void MouseUp(UIMouseEvent evt)
+//		{
+//			base.MouseUp(evt);
 
-		public override void Update(GameTime gameTime)
-		{
-			base.Update(gameTime);
+//			dragging = false;
+//		}
 
-			if (ContainsPoint(Main.MouseScreen))
-			{
-				Main.LocalPlayer.mouseInterface = true;
-				Main.LocalPlayer.showItemIcon = false;
-				Main.ItemIconCacheUpdate(0);
-				Main.mouseText = false;
-			}
+//		protected override void Update(GameTime gameTime)
+//		{
+//			base.Update(gameTime);
 
-			if (dragging)
-			{
-				Left = ((Main.MouseScreen.X - offset.X).Clamp(0, Main.screenWidth - Dimensions.Width), 0);
-				Top = ((Main.MouseScreen.Y - offset.Y).Clamp(0, Main.screenHeight - Dimensions.Height), 0);
+//			if (ContainsPoint(Main.MouseScreen))
+//			{
+//				Main.LocalPlayer.mouseInterface = true;
+//				Main.LocalPlayer.showItemIcon = false;
+//				Main.ItemIconCacheUpdate(0);
+//				Main.mouseText = false;
+//			}
 
-				Recalculate();
-			}
-		}
-	}
-}
+//			if (dragging)
+//			{
+//				X = { Pixels = (Main.MouseScreen.X - offset.X).Clamp(0, Percent = Main.screenWidth - Dimensions.Width) 0);
+//				Y = { Pixels = (Main.MouseScreen.Y - offset.Y).Clamp(0, Percent = Main.screenHeight - Dimensions.Height) 0);
+
+//				Recalculate();
+//			}
+//		}
+//	}
+//}
+

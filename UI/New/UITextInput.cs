@@ -210,8 +210,6 @@ namespace BaseLibrary.UI.New
 			base.MouseUp(args);
 		}
 
-		// <\/?[A-Za-z]+>
-
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			if (RenderPanel) spriteBatch.DrawPanel(Dimensions, PanelColor, Color.Black);
@@ -286,9 +284,9 @@ namespace BaseLibrary.UI.New
 
 		protected override void KeyPressed(KeyboardEventArgs args)
 		{
-			base.KeyPressed(args);
-
 			args.Handled = Focused;
+
+			base.KeyPressed(args);
 		}
 
 		protected override void KeyReleased(KeyboardEventArgs args)
@@ -297,8 +295,6 @@ namespace BaseLibrary.UI.New
 
 			args.Handled = Focused;
 		}
-
-		// [item:2] getting [item:666] tags [c/FF0000:This text is red.] working [a:NO_HOBO]. was a real pain in the ass [g:4]
 
 		protected override void KeyTyped(KeyboardEventArgs args)
 		{
@@ -515,7 +511,7 @@ namespace BaseLibrary.UI.New
 
 		protected override void Update(GameTime gameTime)
 		{
-			if ((Main.mouseLeft || Main.mouseRight || Main.mouseMiddle || Main.mouseXButton1 || Main.mouseXButton2) && !IsMouseHovering)
+			if (MouseEvents.IsMouseDown(MouseButton.Left) && !IsMouseHovering)
 			{
 				selecting = false;
 				Focused = false;

@@ -1,4 +1,4 @@
-﻿using BaseLibrary.Tiles;
+﻿using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using MonoMod.Utils;
 using System;
@@ -40,19 +40,6 @@ namespace BaseLibrary
 			}
 		}
 
-		public override void PostUpdate()
-		{
-			if (player.mouseInterface) return;
-
-			// todo: better do this with the layer system
-			if (player.GetHeldItem().IsAir && Main.mouseLeft && Main.mouseLeftRelease)
-			{
-				int type = Main.tile[Player.tileTargetX, Player.tileTargetY].type;
-				ModTile modTile = TileLoader.GetTile(type);
-				if (modTile != null && modTile is BaseTile baseTile) baseTile.LeftClick(Player.tileTargetX, Player.tileTargetY);
-			}
-		}
-
 		public override TagCompound Save()
 		{
 			return new TagCompound
@@ -74,7 +61,9 @@ namespace BaseLibrary
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
 		{
 			BaseLibrary.ClosedUICache.Clear();
-			BaseLibrary.PanelGUI?.UI.CloseAllUIs();
+			//BaseLibrary.PanelGUI?.UI.CloseAllUIs();
+
+			PanelUI.Instance.CloseAllUIs();
 		}
 	}
 }

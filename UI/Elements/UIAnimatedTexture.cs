@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -30,7 +31,7 @@ namespace BaseLibrary.UI.Elements
 			this.scaleMode = scaleMode;
 		}
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
+		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			Vector2 position = InnerDimensions.Position() + InnerDimensions.Size() * 0.5f;
 			Rectangle frame = animation.GetFrame(textureBack);
@@ -43,7 +44,7 @@ namespace BaseLibrary.UI.Elements
 			switch (scaleMode)
 			{
 				case ScaleMode.Stretch:
-					spriteBatch.Draw(textureBack, position, frame, Color.White, 0f, origin, new Vector2(InnerDimensions.Width / frame.Width, InnerDimensions.Height / frame.Height), SpriteEffects.None, 0f);
+					spriteBatch.Draw(textureBack, position, frame, Color.White, 0f, origin, new Vector2(InnerDimensions.Width / (float)frame.Width, InnerDimensions.Height / (float)frame.Height), SpriteEffects.None, 0f);
 					break;
 				case ScaleMode.Zoom:
 					spriteBatch.Draw(textureBack, position, frame, Color.White, 0f, origin, Math.Min(InnerDimensions.Width / frame.Width, InnerDimensions.Height / frame.Height), SpriteEffects.None, 0f);

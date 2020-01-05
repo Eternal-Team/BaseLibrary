@@ -14,25 +14,25 @@ namespace BaseLibrary.UI
 
 			//UITextInput input = new UITextInput(ref text)
 			//{
-			//	Width = { Percent = 100 },
-			//	Height = { Pixels = 40 },
+			//	Width = { Percent = 10000)
+			//	Height = { Pixels = 40)
 			//	RenderPanel = true
 			//};
 			//Add(input);
 
 			//UIButton button = new UIButton
 			//{
-			//	Width = { Percent = 100 },
-			//	Height = { Percent = 50 },
-			//	Y = { Pixels = 48 },
+			//	Width = { Percent = 10000)
+			//	Height = { Percent = 50)
+			//	Y = { Pixels = 48)
 			//	RenderPanel = true
 			//};
 			//Add(button);
 
 			//UIGrid<UIButton> grid = new UIGrid<UIButton>(2)
 			//{
-			//	Width = { Percent = 104 },
-			//	Height = { Percent = 100 }
+			//	Width = { Percent = 10004)
+			//	Height = { Percent = 10000 }
 			//};
 			//Add(grid);
 
@@ -40,22 +40,22 @@ namespace BaseLibrary.UI
 			//{
 			//	UIButton button = new UIButton
 			//	{
-			//		Width = { Pixels = 50 },
-			//		Height = { Pixels = 50 },
+			//		Width = { Pixels = 50)
+			//		Height = { Pixels = 50)
 			//		RenderPanel = true
 			//	};
 			//	grid.Add(button);
 			//}
 
-			UIButton but = new UIButton
-			{
-				Width = { Pixels = 150 },
-				Height = { Pixels = 150 },
-				X = { Percent = 50 },
-				Y = { Percent = 50 },
-				RenderPanel = true
-			};
-			Add(but);
+			//UIButton but = new UIButton
+			//{
+			//	Width = { Pixels = 150)
+			//	Height = { Pixels = 150)
+			//	X = { Percent = 50)
+			//	Y = { Percent = 50)
+			//	RenderPanel = true
+			//};
+			//Add(but);
 		}
 	}
 }

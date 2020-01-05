@@ -40,7 +40,7 @@ namespace BaseLibrary.UI.New
 			if (BarSliderTexture == null) BarSliderTexture = ModContent.GetTexture("BaseLibrary/Textures/UI/BarSlider");
 
 			Width.Pixels = 20;
-			Padding = new Padding(2, 4, 4, 2);
+			Padding = new Padding(4, 2, 4, 2);
 		}
 
 		public void SetView(float viewSize, float maxViewSize)
@@ -70,7 +70,7 @@ namespace BaseLibrary.UI.New
 			if (!wasHovering && isHoveringOverHandle && Main.hasFocus) Main.PlaySound(SoundID.MenuTick);
 
 			{
-				spriteBatch.Draw(Texture, Dimensions.TopLeft(), new Rectangle(0, 0, 8, 8), Color.White);
+				spriteBatch.Draw(Texture, Dimensions.Position(), new Rectangle(0, 0, 8, 8), Color.White);
 				spriteBatch.Draw(Texture, Dimensions.TopRight() - new Vector2(8, 0), new Rectangle(12, 0, 8, 8), Color.White);
 				spriteBatch.Draw(Texture, Dimensions.BottomLeft() - new Vector2(0, 8), new Rectangle(0, 8, 8, 8), Color.White);
 				spriteBatch.Draw(Texture, Dimensions.BottomRight() - new Vector2(8, 8), new Rectangle(12, 8, 8, 8), Color.White);

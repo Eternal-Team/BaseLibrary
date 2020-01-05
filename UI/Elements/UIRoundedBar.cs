@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -13,7 +14,7 @@ namespace BaseLibrary.UI.Elements
 
 		public int Progress;
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
+		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			Effect shader = BaseLibrary.RoundedRectShader;
 			Vector2 size = Size;

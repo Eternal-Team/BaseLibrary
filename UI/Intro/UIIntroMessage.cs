@@ -12,11 +12,10 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.UI;
 
 namespace BaseLibrary.UI.Intro
 {
-	internal class UIIntroMessage : BaseState
+	internal class UIIntroMessage : BaseElement
 	{
 		private HttpClient client;
 
@@ -30,23 +29,31 @@ namespace BaseLibrary.UI.Intro
 		private int repositoryIndex;
 
 		private UILoadingWheel loadingWheelChangelogs;
-		private Elements.UIText textCurrentRepository;
+		private UIText textCurrentRepository;
 		private UIMultilineText textCommits;
-		private Elements.UITextButton buttonMain, buttonChangelogs, buttonCredits;
-		private Elements.UIPanel panelMain;
-		private Elements.UITextButton buttonReturnToMenu;
+		private UITextButton buttonMain, buttonChangelogs, buttonCredits;
+		private UIPanel panelMain;
+		private UITextButton buttonReturnToMenu;
 
-		private Elements.UIGrid<Elements.BaseElement> gridPatrons;
+		private UIGrid<BaseElement> gridPatrons;
 
-		private Elements.UIText textProgress;
+		private UIText textProgress;
 		private UIMultilineText textGoal;
 		private UIRoundedBar sliderProgress;
 
-		private List<Elements.BaseElement> tabMain;
-		private List<Elements.BaseElement> tabChangelogs;
-		private List<Elements.BaseElement> tabCredits;
+		private List<BaseElement> tabMain;
+		private List<BaseElement> tabChangelogs;
+		private List<BaseElement> tabCredits;
 
-		public override async void OnInitialize()
+		public UIIntroMessage()
+		{
+			Width.Percent = 10000;
+			Height.Percent = 10000;
+
+			Initialize();
+		}
+
+		public async void Initialize()
 		{
 			Texture2D dividerTexture = ModContent.GetTexture("Terraria/UI/Divider");
 
@@ -61,51 +68,51 @@ namespace BaseLibrary.UI.Intro
 			HttpResponseMessage response = await client.GetAsync("patreon/getgoals");
 			if (response.IsSuccessStatusCode) PatreonGoals = await response.Content.ReadAsAsync<List<PatreonGoal>>();
 
-			panelMain = new Elements.UIPanel
+			panelMain = new UIPanel
 			{
-				Width = (0, 0.4f),
-				Height = (0, 0.6f),
-				Padding = (12, 12, 12, 12),
-				HAlign = 0.5f,
-				VAlign = 0.6f
+				Width = { Percent = 40 },
+				Height = { Percent = 60 },
+				Padding = new Padding(12),
+				X = { Percent = 50 },
+				Y = { Percent = 60 }
 			};
-			Append(panelMain);
+			Add(panelMain);
 
-			float width = panelMain.Dimensions.Width * 0.31f;
-			buttonMain = new Elements.UITextButton(Language.GetText("Mods.BaseLibrary.UI.Main"))
+			int width = (int)(panelMain.Dimensions.Width * 0.31f);
+			buttonMain = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Main"))
 			{
-				Width = (width, 0),
-				Height = (40, 0),
-				Left = (panelMain.Position.X + 8f, 0),
-				Top = (panelMain.Position.Y - 30, 0),
-				Padding = (12, 8, 8, 4),
+				Width = { Pixels = width },
+				Height = { Pixels = 40 },
+				X = { Pixels = panelMain.Dimensions.X + 8 },
+				Y = { Pixels = panelMain.Dimensions.Y - 30 },
+				Padding = new Padding(12, 8, 8, 4),
 				Selected = true,
 				Toggleable = true
 			};
-			buttonMain.OnClick += (evt, element) =>
+			buttonMain.OnClick += args =>
 			{
 				buttonChangelogs.Selected = buttonCredits.Selected = false;
 
-				panelMain.RemoveAllChildren();
-				panelMain.Append(tabMain);
+				panelMain.Clear();
+				panelMain.AddRange(tabMain);
 			};
 			Insert(0, buttonMain);
 
-			buttonChangelogs = new Elements.UITextButton(Language.GetText("Mods.BaseLibrary.UI.Changelogs"))
+			buttonChangelogs = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Changelogs"))
 			{
-				Width = (width, 0),
-				Height = (40, 0),
-				HAlign = 0.5f,
-				Top = (panelMain.Position.Y - 30, 0),
-				Padding = (12, 8, 8, 4),
+				Width = { Pixels = width },
+				Height = { Pixels = 40 },
+				X = { Percent = 50 },
+				Y = { Pixels = panelMain.Dimensions.Y - 30 },
+				Padding = new Padding(12, 8, 8, 4),
 				Toggleable = true
 			};
-			buttonChangelogs.OnClick += async (evt, element) =>
+			buttonChangelogs.OnClick += async args =>
 			{
 				buttonMain.Selected = buttonCredits.Selected = false;
 
-				panelMain.RemoveAllChildren();
-				panelMain.Append(tabChangelogs);
+				panelMain.Clear();
+				panelMain.AddRange(tabChangelogs);
 
 				response = await client.GetAsync("github/getrepositories");
 				if (response.IsSuccessStatusCode) GithubRepositories = (await response.Content.ReadAsAsync<List<GithubRepository>>()).Where(repository => ModLoader.GetMod(repository.Name) != null).ToList();
@@ -116,16 +123,16 @@ namespace BaseLibrary.UI.Intro
 			};
 			Insert(1, buttonChangelogs);
 
-			buttonCredits = new Elements.UITextButton(Language.GetText("Mods.BaseLibrary.UI.Credits"))
+			buttonCredits = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Credits"))
 			{
-				Width = (width, 0),
-				Height = (40, 0),
-				Left = (panelMain.Position.X + panelMain.Dimensions.Width - width - 8f, 0),
-				Top = (panelMain.Position.Y - 30, 0),
-				Padding = (12, 8, 8, 4),
+				Width = { Pixels = width },
+				Height = { Pixels = 40 },
+				X = { Pixels = panelMain.Dimensions.X + panelMain.Dimensions.Width - width - 8 },
+				Y = { Pixels = panelMain.Dimensions.Y - 30 },
+				Padding = new Padding(12, 8, 8, 4),
 				Toggleable = true
 			};
-			buttonCredits.OnClick += async (evt, element) =>
+			buttonCredits.OnClick += async args =>
 			{
 				if (PatreonTiers.Count == 0 && PatreonPatrons.Count == 0)
 				{
@@ -139,36 +146,36 @@ namespace BaseLibrary.UI.Intro
 
 					foreach (PatreonTier tier in PatreonTiers)
 					{
-						Elements.UITextButton buttonTier = new Elements.UITextButton(tier.Title)
+						UITextButton buttonTier = new UITextButton(tier.Title)
 						{
-							Width = (0, 1),
-							Height = (40, 0),
+							Width = { Percent = 100 },
+							Height = { Pixels = 40 },
 							Toggleable = true,
-							MarginTop = 8
+							Margin = new Margin(0, 8, 0, 0),
+							Padding = new Padding(6)
 						};
-						buttonTier.SetPadding(6);
-						buttonTier.OnClick += (a, b) =>
+						buttonTier.OnClick += _ =>
 						{
-							int index = gridPatrons.Items.IndexOf(buttonTier) + 1;
-							if (index < gridPatrons.Items.Count && gridPatrons.Items[index] is UIMultilineText text) gridPatrons.Remove(text);
+							int index = gridPatrons.Children.IndexOf(buttonTier) + 1;
+							if (index < gridPatrons.Children.Count && gridPatrons.Children[index] is UIMultilineText text) gridPatrons.Remove(text);
 							else
 							{
 								string t = "No patrons";
-								float height = 40f;
+								int height = 40;
 								List<PatreonPatron> valid = PatreonPatrons.Where(patron => patron.Tier == tier).ToList();
 								if (valid.Count > 0)
 								{
 									t = valid.Select(patron => $"{patron.Name} donated ${patron.LifetimeCents / 100}").Aggregate((x, y) => x + "\n" + y);
-									height = valid.Count * 24f + 16f;
+									height = valid.Count * 24 + 16;
 								}
 
 								UIMultilineText textPatrons = new UIMultilineText(t)
 								{
-									Width = (0, 1),
-									Height = (height, 0),
+									Width = { Percent = 100 },
+									Height = { Pixels = height },
 									DrawBackground = true,
-									Padding = (8, 8, 8, 8),
-									MarginTop = -2
+									Padding = new Padding(8, 8, 8, 8),
+									Margin = new Margin(0, -2, 0, 0)
 								};
 								gridPatrons.Insert(index, textPatrons);
 							}
@@ -179,61 +186,61 @@ namespace BaseLibrary.UI.Intro
 
 				buttonChangelogs.Selected = buttonMain.Selected = false;
 
-				panelMain.RemoveAllChildren();
-				panelMain.Append(tabCredits);
+				panelMain.Clear();
+				panelMain.AddRange(tabCredits);
 			};
 			Insert(2, buttonCredits);
 
-			buttonReturnToMenu = new Elements.UITextButton(Language.GetText("Mods.BaseLibrary.UI.ReturnToMenu"))
+			buttonReturnToMenu = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.ReturnToMenu"))
 			{
-				Width = (0, 0.2f),
-				Height = (40, 0),
-				Top = (panelMain.Dimensions.Y + panelMain.Dimensions.Height + 8, 0),
-				HAlign = 0.5f
+				Width = { Percent = 20 },
+				Height = { Pixels = 40 },
+				Y = { Pixels = panelMain.Dimensions.Y + panelMain.Dimensions.Height + 8 },
+				X = { Percent = 50 }
 			};
-			buttonReturnToMenu.OnClick += (evt, element) => Main.menuMode = 0;
-			Append(buttonReturnToMenu);
+			buttonReturnToMenu.OnClick += args => Main.menuMode = 0;
+			Add(buttonReturnToMenu);
 
-			tabMain = new List<Elements.BaseElement>();
+			tabMain = new List<BaseElement>();
 			{
 				UIMultilineText textIntro = new UIMultilineText(client.GetStringAsync("misc/gettext").Result)
 				{
-					Width = (0, 1),
-					Height = (0, 0.5f),
-					Padding = (8, 8, 8, 8),
+					Width = { Percent = 100 },
+					Height = { Percent = 50 },
+					Padding = new Padding(8, 8, 8, 8),
 					DrawBackground = true
 				};
 				tabMain.Add(textIntro);
 
 				// Goals
 				{
-					Elements.UIPanel panelGoals = new Elements.UIPanel
+					UIPanel panelGoals = new UIPanel
 					{
-						Width = (0, 0.5f),
-						Height = (0, 0.5f),
-						Top = (0, 0.5f),
-						Padding = (8, 8, 8, 8),
+						Width = { Percent = 50 },
+						Height = { Percent = 50 },
+						Y = { Percent = 50 },
+						Padding = new Padding(8, 8, 8, 8),
 						BorderColor = Color.Transparent,
 						BackgroundColor = Utility.ColorPanel_Selected * 0.75f
 					};
 					tabMain.Add(panelGoals);
 
-					Elements.UIText textGoals = new Elements.UIText("Goals", 1.2f)
+					UIText textGoals = new UIText("Goals", 1.2f)
 					{
 						HorizontalAlignment = HorizontalAlignment.Center,
-						Width = (-76, 1),
-						Height = (30, 0)
+						Width = { Pixels = -76, Percent = 100 },
+						Height = { Pixels = 30 }
 					};
-					textGoals.OnPostDraw += spritebatch => spritebatch.Draw(dividerTexture, new Rectangle((int)textGoals.Position.X - 6, (int)textGoals.Position.Y + 32, (int)panelGoals.Size.X - 4, 4));
-					panelGoals.Append(textGoals);
+					//textGoals.OnPostDraw += spritebatch => spritebatch.Draw(dividerTexture, new Rectangle((int)textGoals.Position.X - 6, (int)textGoals.Position.Y + 32, (int)panelGoals.Size.X - 4, 4));
+					panelGoals.Add(textGoals);
 
-					Elements.UITextButton buttonNext = new Elements.UITextButton(">")
+					UITextButton buttonNext = new UITextButton(">")
 					{
 						Size = new Vector2(30),
-						HAlign = 1,
-						Padding = (0, 0, 0, 0)
+						X = { Percent = 100 },
+						Padding = Padding.Zero
 					};
-					buttonNext.OnClick += (evt, element) =>
+					buttonNext.OnClick += args =>
 					{
 						if (goalIndex < PatreonGoals.Count - 1)
 						{
@@ -245,15 +252,15 @@ namespace BaseLibrary.UI.Intro
 							sliderProgress.Progress = goal.CompletedPercentage;
 						}
 					};
-					panelGoals.Append(buttonNext);
+					panelGoals.Add(buttonNext);
 
-					Elements.UITextButton buttonPrev = new Elements.UITextButton("<")
+					UITextButton buttonPrev = new UITextButton("<")
 					{
 						Size = new Vector2(30),
-						Left = (-64, 1),
-						Padding = (0, 0, 0, 0)
+						X = { Pixels = -64, Percent = 100 },
+						Padding = Padding.Zero
 					};
-					buttonPrev.OnClick += (evt, element) =>
+					buttonPrev.OnClick += args =>
 					{
 						if (goalIndex > 0)
 						{
@@ -265,43 +272,43 @@ namespace BaseLibrary.UI.Intro
 							sliderProgress.Progress = goal.CompletedPercentage;
 						}
 					};
-					panelGoals.Append(buttonPrev);
+					panelGoals.Add(buttonPrev);
 
-					textProgress = new Elements.UIText($"${PatreonGoals[goalIndex].CompletedPercentage * PatreonGoals[goalIndex].AmountCents * 0.0001f:N0} of ${PatreonGoals[goalIndex].AmountCents * 0.01f} per month")
+					textProgress = new UIText($"${PatreonGoals[goalIndex].CompletedPercentage * PatreonGoals[goalIndex].AmountCents * 0.0001f:N0} of ${PatreonGoals[goalIndex].AmountCents * 0.01f} per month")
 					{
-						Width = (0, 1),
-						Height = (20, 0),
-						Top = (40, 0)
+						Width = { Percent = 100 },
+						Height = { Pixels = 20 },
+						Y = { Pixels = 40 }
 					};
-					panelGoals.Append(textProgress);
+					panelGoals.Add(textProgress);
 
 					textGoal = new UIMultilineText(PatreonGoals[goalIndex].Description)
 					{
-						Width = (0, 1),
-						Height = (-84, 1),
-						Top = (84, 0)
+						Width = { Percent = 100 },
+						Height = { Pixels = -84, Percent = 100 },
+						Y = { Pixels = 84 }
 					};
-					panelGoals.Append(textGoal);
+					panelGoals.Add(textGoal);
 
 					sliderProgress = new UIRoundedBar
 					{
-						Width = (0, 1),
-						Height = (8, 0),
-						Top = (68, 0),
+						Width = { Percent = 100 },
+						Height = { Pixels = 8 },
+						Y = { Pixels = 68 },
 						Progress = PatreonGoals[goalIndex].CompletedPercentage
 					};
-					panelGoals.Append(sliderProgress);
+					panelGoals.Add(sliderProgress);
 				}
 
 				// Links
 				{
-					Elements.UIPanel panelLinks = new Elements.UIPanel
+					UIPanel panelLinks = new UIPanel
 					{
-						Width = (0, 0.5f),
-						Height = (0, 0.5f),
-						Top = (0, 0.5f),
-						HAlign = 1f,
-						Padding = (8, 8, 8, 8),
+						Width = { Percent = 50 },
+						Height = { Percent = 50 },
+						Y = { Percent = 50 },
+						X = { Percent = 100 },
+						Padding = new Padding(8, 8, 8, 8),
 						BorderColor = Color.Transparent,
 						BackgroundColor = Utility.ColorPanel_Selected * 0.75f
 					};
@@ -309,106 +316,105 @@ namespace BaseLibrary.UI.Intro
 
 					// Patreon
 					{
-						Elements.BaseElement containerPatreon = new Elements.BaseElement
+						BaseElement containerPatreon = new BaseElement
 						{
-							Width = (0, 1),
-							Height = (32, 0)
+							Width = { Percent = 100 },
+							Height = { Pixels = 32 }
 						};
-						containerPatreon.OnClick += (evt, element) => Process.Start("https://www.patreon.com/Itorius");
-						panelLinks.Append(containerPatreon);
+						containerPatreon.OnClick += args => Process.Start("https://www.patreon.com/Itorius");
+						panelLinks.Add(containerPatreon);
 
 						UITexture texture = new UITexture(ModContent.GetTexture("BaseLibrary/Textures/UI/PatreonLogo"), ScaleMode.Stretch)
 						{
-							Width = (32, 0),
-							Height = (32, 0)
+							Width = { Pixels = 32 },
+							Height = { Pixels = 32 }
 						};
-						containerPatreon.Append(texture);
+						containerPatreon.Add(texture);
 
-						Elements.UIText text = new Elements.UIText("Donate on Patreon!")
+						UIText text = new UIText("Donate on Patreon!")
 						{
-							Width = (-40, 1),
-							Left = (40, 0),
-							Height = (28, 0),
+							Width = { Pixels = -40, Percent = 100 },
+							X = { Pixels = 40 },
+							Height = { Pixels = 28 },
 							VerticalAlignment = VerticalAlignment.Center
 						};
-						containerPatreon.Append(text);
+						containerPatreon.Add(text);
 					}
 
 					// TCF
 					{
-						Elements.BaseElement containerTCF = new Elements.BaseElement
+						BaseElement containerTCF = new BaseElement
 						{
-							Width = (0, 1),
-							Height = (32, 0),
-							Top = (40, 0)
+							Width = { Percent = 100 },
+							Height = { Pixels = 32 },
+							Y = { Pixels = 40 }
 						};
-						containerTCF.OnClick += (evt, element) => Process.Start("https://forums.terraria.org/index.php?threads/itorius-mods.42289/");
-						panelLinks.Append(containerTCF);
+						containerTCF.OnClick += args => Process.Start("https://forums.terraria.org/index.php?threads/itorius-mods.42289/");
+						panelLinks.Add(containerTCF);
 
 						UITexture texture = new UITexture(ModContent.GetTexture("BaseLibrary/Textures/UI/TCFLogo"), ScaleMode.Stretch)
 						{
-							Width = (32, 0),
-							Height = (32, 0)
+							Width = { Pixels = 32 },
+							Height = { Pixels = 32 }
 						};
-						containerTCF.Append(texture);
+						containerTCF.Add(texture);
 
-						Elements.UIText text = new Elements.UIText("Visit my TCF page!")
+						UIText text = new UIText("Visit my TCF page!")
 						{
-							Width = (-40, 1),
-							Left = (40, 0),
-							Height = (28, 0),
+							Width = { Pixels = -40, Percent = 100 },
+							X = { Pixels = 40 },
+							Height = { Pixels = 28 },
 							VerticalAlignment = VerticalAlignment.Center
 						};
-						containerTCF.Append(text);
+						containerTCF.Add(text);
 					}
 
 					// Github
 					{
-						Elements.BaseElement containerGithub = new Elements.BaseElement
+						BaseElement containerGithub = new BaseElement
 						{
-							Width = (0, 1),
-							Height = (32, 0),
-							Top = (80, 0)
+							Width = { Percent = 100 },
+							Height = { Pixels = 32 },
+							Y = { Pixels = 80 }
 						};
-						containerGithub.OnClick += (evt, element) => Process.Start("https://github.com/Eternal-Team");
-						panelLinks.Append(containerGithub);
+						containerGithub.OnClick += args => Process.Start("https://github.com/Eternal-Team");
+						panelLinks.Add(containerGithub);
 
 						UITexture texture = new UITexture(ModContent.GetTexture("BaseLibrary/Textures/UI/GithubLogo"), ScaleMode.Stretch)
 						{
-							Width = (32, 0),
-							Height = (32, 0)
+							Width = { Pixels = 32 },
+							Height = { Pixels = 32 }
 						};
-						containerGithub.Append(texture);
+						containerGithub.Add(texture);
 
-						Elements.UIText text = new Elements.UIText("Check out my code!")
+						UIText text = new UIText("Check out my code!")
 						{
-							Width = (-40, 1),
-							Left = (40, 0),
-							Height = (28, 0),
+							Width = { Pixels = -40, Percent = 100 },
+							X = { Pixels = 40 },
+							Height = { Pixels = 28 },
 							VerticalAlignment = VerticalAlignment.Center
 						};
-						containerGithub.Append(text);
+						containerGithub.Add(text);
 					}
 				}
 			}
 
-			tabChangelogs = new List<Elements.BaseElement>();
+			tabChangelogs = new List<BaseElement>();
 			{
 				loadingWheelChangelogs = new UILoadingWheel(0.75f)
 				{
-					HAlign = 0.5f,
-					VAlign = 0.5f
+					X = { Percent = 50 },
+					Y = { Percent = 50 }
 				};
 				tabChangelogs.Add(loadingWheelChangelogs);
 
-				Elements.UITextButton buttonPrevious = new Elements.UITextButton("<")
+				UITextButton buttonPrevious = new UITextButton("<")
 				{
-					Width = (50, 0),
-					Height = (40, 0),
-					PaddingBottom = 4f,
-					PaddingTop = 4f
+					Width = { Pixels = 50 },
+					Height = { Pixels = 40 },
+					Padding = new Padding(0, 4, 0, 4)
 				};
-				buttonPrevious.OnClick += async (evt, element) =>
+				buttonPrevious.OnClick += async args =>
 				{
 					if (GithubRepositories.Count == 0) return;
 
@@ -418,15 +424,14 @@ namespace BaseLibrary.UI.Intro
 				};
 				tabChangelogs.Add(buttonPrevious);
 
-				Elements.UITextButton buttonNext = new Elements.UITextButton(">")
+				UITextButton buttonNext = new UITextButton(">")
 				{
-					Width = (50, 0),
-					Height = (40, 0),
-					HAlign = 1,
-					PaddingBottom = 4f,
-					PaddingTop = 4f
+					Width = { Pixels = 50 },
+					Height = { Pixels = 40 },
+					X = { Percent = 100 },
+					Padding = new Padding(0, 4, 0, 4)
 				};
-				buttonNext.OnClick += async (evt, element) =>
+				buttonNext.OnClick += async args =>
 				{
 					if (GithubRepositories.Count == 0) return;
 
@@ -436,11 +441,11 @@ namespace BaseLibrary.UI.Intro
 				};
 				tabChangelogs.Add(buttonNext);
 
-				textCurrentRepository = new Elements.UIText("Loading...", 1.5f)
+				textCurrentRepository = new UIText("Loading...", 1.5f)
 				{
-					Width = (-116, 1),
-					Height = (40, 0),
-					HAlign = 0.5f,
+					Width = { Pixels = -116, Percent = 100 },
+					Height = { Pixels = 40 },
+					X = { Percent = 50 },
 					HorizontalAlignment = HorizontalAlignment.Center,
 					VerticalAlignment = VerticalAlignment.Center,
 					ScaleToFit = true
@@ -449,32 +454,32 @@ namespace BaseLibrary.UI.Intro
 
 				textCommits = new UIMultilineText("")
 				{
-					Width = (-28, 1),
-					Height = (-48, 1),
-					Top = (48, 0),
-					DrawBackground = true
+					Width = { Pixels = -28, Percent = 100 },
+					Height = { Pixels = -48, Percent = 100 },
+					Y = { Pixels = 48 },
+					DrawBackground = true,
+					Padding = new Padding(8)
 				};
-				textCommits.SetPadding(8);
 				tabChangelogs.Add(textCommits);
 
-				textCommits.scrollbar.Height = (-64, 1);
-				textCommits.scrollbar.Top = (56, 0);
-				textCommits.scrollbar.HAlign = 1;
+				textCommits.scrollbar.Height = new New.StyleDimension { Pixels = -64, Percent = 100 };
+				textCommits.scrollbar.Y = new New.StyleDimension { Pixels = 56 };
+				textCommits.scrollbar.X.Percent = 100;
 				tabChangelogs.Add(textCommits.scrollbar);
 			}
 
-			tabCredits = new List<Elements.BaseElement>();
+			tabCredits = new List<BaseElement>();
 			{
-				gridPatrons = new Elements.UIGrid<Elements.BaseElement>
+				gridPatrons = new UIGrid<BaseElement>
 				{
-					Width = (0, 1),
-					Height = (0, 1),
+					Width = { Percent = 100 },
+					Height = { Percent = 100 },
 					ListPadding = 0
 				};
 				tabCredits.Add(gridPatrons);
 			}
 
-			panelMain.Append(tabMain);
+			panelMain.AddRange(tabMain);
 		}
 
 		public override void Recalculate()
@@ -483,25 +488,25 @@ namespace BaseLibrary.UI.Intro
 
 			if (panelMain == null) return;
 
-			CalculatedStyle dimensions = panelMain.Dimensions;
-			Vector2 position = panelMain.Position;
+			Rectangle dimensions = panelMain.Dimensions;
+			Point position = new Point((int)panelMain.Position.X, (int)panelMain.Position.Y);
 
-			float width = dimensions.Width * 0.31f;
-			buttonMain.Left = (position.X + 8f, 0);
-			buttonMain.Top = (position.Y - 30, 0);
-			buttonMain.Width = (width, 0);
+			int width = (int)(dimensions.Width * 0.31f);
+			buttonMain.X = new New.StyleDimension { Pixels = position.X + 8 };
+			buttonMain.Y = new New.StyleDimension { Pixels = position.Y - 30 };
+			buttonMain.Width = new New.StyleDimension { Pixels = width };
 			buttonMain.Recalculate();
 
-			buttonChangelogs.Top = (position.Y - 30, 0);
-			buttonChangelogs.Width = (width, 0);
+			buttonChangelogs.Y = new New.StyleDimension { Pixels = position.Y - 30 };
+			buttonChangelogs.Width = new New.StyleDimension { Pixels = width };
 			buttonChangelogs.Recalculate();
 
-			buttonCredits.Left = (position.X + dimensions.Width - width - 8f, 0);
-			buttonCredits.Top = (position.Y - 30, 0);
-			buttonCredits.Width = (width, 0);
+			buttonCredits.X = new New.StyleDimension { Pixels = position.X + dimensions.Width - width - 8 };
+			buttonCredits.Y = new New.StyleDimension { Pixels = position.Y - 30 };
+			buttonCredits.Width = new New.StyleDimension { Pixels = width };
 			buttonCredits.Recalculate();
 
-			buttonReturnToMenu.Top = (dimensions.Y + dimensions.Height + 8, 0);
+			buttonReturnToMenu.Y = new New.StyleDimension { Pixels = dimensions.Y + dimensions.Height + 8 };
 			buttonReturnToMenu.Recalculate();
 		}
 

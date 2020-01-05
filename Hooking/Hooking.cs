@@ -17,7 +17,7 @@ namespace BaseLibrary
 		{
 			ItemSlot.LeftClick_ItemArray_int_int += CloseUI_ItemSlot;
 			On.Terraria.Player.DropSelectedItem += CloseUI_Drop;
-			UIElement.GetElementAt += UIElement_GetElementAt;
+			//BaseElement.GetElementAt += BaseElement_GetElementAt;
 
 			IL.Terraria.Main.DrawInterface_36_Cursor += DrawCursor;
 

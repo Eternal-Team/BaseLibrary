@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -7,14 +8,14 @@ namespace BaseLibrary.UI.Elements
 		public UIColorSelection(Ref<Color> color)
 		{
 			UIColor uiColor = new UIColor(color.Value);
-			uiColor.Width = uiColor.Height = (0, 1);
-			uiColor.SetPadding(2);
-			Append(uiColor);
+			uiColor.Width.Percent = uiColor.Height.Percent = 100;
+			uiColor.Padding = new Padding(2);
+			Add(uiColor);
 
 			UIGradient gradient = new UIGradient();
-			gradient.Width = gradient.Height = (0, 1);
+			gradient.Width.Percent = gradient.Height.Percent = 100;
 			gradient.OnChangeColor += newColor => color.Value = uiColor.color = newColor;
-			uiColor.Append(gradient);
+			uiColor.Add(gradient);
 		}
 	}
 }

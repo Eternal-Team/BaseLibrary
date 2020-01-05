@@ -1,5 +1,8 @@
-﻿using BaseLibrary.Tiles.TileEntites;
-using BaseLibrary.UI;
+﻿using BaseLibrary.Input;
+using BaseLibrary.Input.Mouse;
+using BaseLibrary.Tiles;
+using BaseLibrary.Tiles.TileEntites;
+using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,9 +19,24 @@ namespace BaseLibrary
 {
 	// note: update checker via github releases
 
+	public class BaseLibraryLayer : Layer
+	{
+		public override void OnClick(MouseButtonEventArgs args)
+		{
+			if (args.Button != MouseButton.Left || !Main.LocalPlayer.GetHeldItem().IsAir) return;
+
+			args.Handled = true;
+
+			int type = Main.tile[Player.tileTargetX, Player.tileTargetY].type;
+			ModTile modTile = TileLoader.GetTile(type);
+			if (modTile != null && modTile is BaseTile baseTile) baseTile.LeftClick(Player.tileTargetX, Player.tileTargetY);
+		}
+	}
+
 	public class BaseLibrary : Mod
 	{
-		internal static List<UI.IHasUI> ClosedUICache = new List<UI.IHasUI>();
+		internal static List<IHasUI> ClosedUICache = new List<IHasUI>();
+		public static LayerStack Layers;
 
 		public static Effect ColorSelectionShader { get; private set; }
 		public static Effect DesaturateShader { get; private set; }
@@ -27,7 +45,7 @@ namespace BaseLibrary
 		public static Texture2D texturePanelBackground;
 		public static Texture2D texturePanelBorder;
 
-		public static GUI<UI.PanelUI> PanelGUI { get; private set; }
+		//public static GUI<UI.PanelUI> PanelGUI { get; private set; }
 
 		private LegacyGameInterfaceLayer MouseInterface;
 		internal static ModHotKey hotkey;
@@ -53,7 +71,12 @@ namespace BaseLibrary
 				DesaturateShader = GetEffect("Effects/DesaturateShader");
 				RoundedRectShader = GetEffect("Effects/BorderRadius");
 
-				PanelGUI = Utility.SetupGUI<UI.PanelUI>();
+				//PanelGUI = Utility.SetupGUI<UI.PanelUI>();
+
+				Layers = new LayerStack();
+				Layers.PushLayer(new TerrariaLayer());
+				Layers.PushLayer(new BaseLibraryLayer());
+				Layers.PushOverlay(new UILayer());
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
@@ -79,12 +102,12 @@ namespace BaseLibrary
 			if (MouseTextIndex != -1)
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
-				layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
-				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer("aa", delegate
+				//layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
+				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer("Layers", delegate
 				{
-					foreach (Layer layer in Input.Input.Layers)
+					foreach (Layer layer in Layers)
 					{
-						layer.OnDraw(Main.spriteBatch);
+						if (layer.Enabled) layer.OnDraw(Main.spriteBatch);
 					}
 
 					return true;
@@ -94,45 +117,49 @@ namespace BaseLibrary
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			var gui = PanelGUI;
+			var gui = PanelUI.Instance;
 
-			for (int i = 0; i < gui.Elements.Count; i++)
+			for (int i = 0; i < gui.Children.Count; i++)
 			{
-				UIElement element = gui.Elements[i];
-				if (element is UI.BaseUIPanel panel && panel.Container is BaseTE tileEntity)
+				BaseElement element = gui.Children[i];
+				if (element is BaseUIPanel panel && panel.Container is BaseTE tileEntity)
 				{
 					TileObjectData data = TileObjectData.GetTileData(tileEntity.mod.GetTile(tileEntity.TileType.Name).Type, 0);
 					Vector2 offset = data != null ? new Vector2(data.Width * 8f, data.Height * 8f) : Vector2.Zero;
 
-					if (Vector2.DistanceSquared(tileEntity.Position.ToWorldCoordinates(offset), Main.LocalPlayer.Center) > 160 * 160) gui.UI.CloseUI(panel.Container);
+					if (Vector2.DistanceSquared(tileEntity.Position.ToWorldCoordinates(offset), Main.LocalPlayer.Center) > 160 * 160) gui.CloseUI(panel.Container);
 				}
 			}
 
 			if (!Main.playerInventory)
 			{
-				List<UI.BaseUIPanel> bagPanels = gui.Elements.Cast<UI.BaseUIPanel>().ToList();
-				foreach (UI.BaseUIPanel ui in bagPanels)
+				List<BaseUIPanel> panels = gui.Children.Cast<BaseUIPanel>().ToList();
+				foreach (BaseUIPanel ui in panels)
 				{
 					ClosedUICache.Add(ui.Container);
-					gui.UI.CloseUI(ui.Container);
+					gui.CloseUI(ui.Container);
 				}
 			}
 			else
 			{
-				foreach (UI.IHasUI ui in ClosedUICache) gui.UI.OpenUI(ui);
+				foreach (IHasUI ui in ClosedUICache) gui.OpenUI(ui);
 
 				ClosedUICache.Clear();
 			}
 
-			gui?.Update(gameTime);
+			//gui?.Update(gameTime);
 
-			foreach (Layer layer in Input.Input.Layers) layer.OnUpdate(gameTime);
+			foreach (Layer layer in Layers)
+				if (layer.Enabled)
+					layer.OnUpdate(gameTime);
 		}
 
 		public override void PreSaveAndQuit()
 		{
 			ClosedUICache.Clear();
-			PanelGUI.UI.CloseAllUIs();
+			//PanelGUI.UI.CloseAllUIs();
+
+			PanelUI.Instance.CloseAllUIs();
 		}
 	}
 }

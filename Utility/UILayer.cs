@@ -46,8 +46,8 @@ namespace BaseLibrary.UI.New
 
 		public PanelUI()
 		{
-			Width.Percent = 100;
-			Height.Percent = 100;
+			Width.Percent = 10000;
+			Height.Percent = 10000;
 
 			UICache = new Dictionary<Type, Type>();
 			Instance = this;
@@ -156,14 +156,14 @@ namespace BaseLibrary.UI.New
 			ChatUI chatUI = new ChatUI();
 			chatUI.Recalculate();
 
-			Elements = new List<BaseElement> { chatUI, panelUI };
+			Elements = new List<BaseElement> {  panelUI , chatUI };
 		}
 
 		private BaseElement MouseDownElement;
 
 		public override void OnDraw(SpriteBatch spriteBatch)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None).Reverse())
 			{
 				element.InternalDraw(spriteBatch);
 			}

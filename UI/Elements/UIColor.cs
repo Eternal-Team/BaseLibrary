@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 
@@ -10,6 +11,6 @@ namespace BaseLibrary.UI.Elements
 
 		public UIColor(Color color) => this.color = color;
 
-		protected override void DrawSelf(SpriteBatch spriteBatch) => spriteBatch.Draw(Main.magicPixel, Dimensions.ToRectangle(), color);
+		protected override void Draw(SpriteBatch spriteBatch) => spriteBatch.Draw(Main.magicPixel, Dimensions, color);
 	}
 }

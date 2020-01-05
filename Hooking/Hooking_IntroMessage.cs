@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.UI;
 
 namespace BaseLibrary
 {
@@ -52,8 +51,8 @@ namespace BaseLibrary
 						{
 							Main.menuMode = 888;
 
-							uiIntroMessage = new UIIntroMessage();
-							UserInterface.ActiveInstance.SetState(uiIntroMessage);
+							//uiIntroMessage = new UIIntroMessage();
+							//UserInterface.ActiveInstance.SetState(uiIntroMessage);
 						});
 					}
 

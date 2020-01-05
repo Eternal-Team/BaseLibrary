@@ -143,6 +143,10 @@ namespace BaseLibrary
 
 		public static bool CheckAABBvAABBCollision(Rectangle a, Rectangle b) => a.X < b.X + b.Width && a.X + a.Width > b.X && a.Y < b.Y + b.Height && a.Y + a.Height > b.Y;
 
+		public static Vector2 Center(this Rectangle rectangle) => new Vector2(rectangle.Center.X, rectangle.Center.Y);
+
+		public static Vector2 Position(this Rectangle rectangle) => rectangle.TopLeft();
+
 		public static class Cache
 		{
 			public static Item[] ItemCache { get; internal set; }

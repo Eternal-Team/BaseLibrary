@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.ModLoader.UI;
 
@@ -19,15 +20,12 @@ namespace BaseLibrary.UI.Elements
 		public UILoadingWheel(float scale = 1f)
 		{
 			this.scale = scale;
-			Width = Height = (200f * scale, 0);
-		}
+			Width.Pixels = Height.Pixels = (int)(200 * scale);
 
-		public override void OnInitialize()
-		{
 			texture = typeof(UICommon).GetValue<Texture2D>("LoaderTexture");
 		}
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
+		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			if (!Enabled) return;
 

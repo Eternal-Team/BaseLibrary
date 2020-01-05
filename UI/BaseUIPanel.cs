@@ -1,27 +1,28 @@
-﻿using BaseLibrary.UI.Elements;
-using System;
-using Terraria.Audio;
+﻿//using BaseLibrary.UI.Elements;
+//using System;
+//using Terraria.Audio;
 
-namespace BaseLibrary.UI
-{
-	public interface IHasUI
-	{
-		Guid UUID { get; set; }
+//namespace BaseLibrary.UI
+//{
+//	public interface IHasUI
+//	{
+//		Guid UUID { get; set; }
 
-		BaseUIPanel UI { get; set; }
+//		BaseUIPanel UI { get; set; }
 
-		LegacySoundStyle CloseSound { get; }
+//		LegacySoundStyle CloseSound { get; }
 
-		LegacySoundStyle OpenSound { get; }
-	}
+//		LegacySoundStyle OpenSound { get; }
+//	}
 
-	public class BaseUIPanel : UIDraggablePanel
-	{
-		public IHasUI Container;
-	}
+//	public class BaseUIPanel : UIDraggablePanel
+//	{
+//		public IHasUI Container;
+//	}
 
-	public class BaseUIPanel<T> : BaseUIPanel where T : IHasUI
-	{
-		public new T Container => (T)base.Container;
-	}
-}
+//	public class BaseUIPanel<T> : BaseUIPanel where T : IHasUI
+//	{
+//		public new T Container => (T)base.Container;
+//	}
+//}
+

@@ -1,11 +1,11 @@
-﻿using BaseLibrary.UI.New;
+﻿using BaseLibrary.Input;
+using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System.Linq;
 using Terraria;
 using Terraria.Localization;
-using Terraria.UI;
 
 namespace BaseLibrary.UI.Elements
 {
@@ -42,7 +42,7 @@ namespace BaseLibrary.UI.Elements
 
 		public UIMultilineText(string text, float scale = 1f)
 		{
-			Padding = (0, 2, 2, 0);
+			Padding = new Padding(0, 2, 2, 0);
 
 			this.text = text;
 			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
@@ -54,7 +54,7 @@ namespace BaseLibrary.UI.Elements
 
 		public UIMultilineText(LocalizedText text, float scale = 1f)
 		{
-			Padding = (0, 2, 2, 0);
+			Padding = new Padding(0, 2, 2, 0);
 
 			this.text = text;
 			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
@@ -66,7 +66,7 @@ namespace BaseLibrary.UI.Elements
 
 		public UIMultilineText(Ref<string> text, float scale = 1f)
 		{
-			Padding = (0, 2, 2, 0);
+			Padding = new Padding(0, 2, 2, 0);
 
 			this.text = text;
 			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
@@ -83,11 +83,11 @@ namespace BaseLibrary.UI.Elements
 			CalculateTextMetrics();
 		}
 
-		public override void ScrollWheel(UIScrollWheelEvent evt)
+		protected override void MouseScroll(MouseScrollEventArgs args)
 		{
-			base.ScrollWheel(evt);
+			args.Handled = true;
 
-			if (scrollbar != null) scrollbar.ViewPosition -= evt.ScrollWheelValue * 0.5f;
+			if (scrollbar != null) scrollbar.ViewPosition -= args.OffsetY * 0.5f;
 		}
 
 		private void CalculateTextMetrics()
@@ -123,13 +123,13 @@ namespace BaseLibrary.UI.Elements
 			scrollbar?.SetView(InnerDimensions.Height, innerListHeight);
 		}
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
+		protected override void Draw(SpriteBatch spriteBatch)
 		{
-			if (DrawBackground) spriteBatch.DrawPanel(Dimensions.ToRectangle(), BaseLibrary.texturePanelBackground, Utility.ColorPanel_Selected * 0.75f);
+			if (DrawBackground) spriteBatch.DrawPanel(Dimensions, BaseLibrary.texturePanelBackground, Utility.ColorPanel_Selected * 0.75f);
 
 			spriteBatch.End();
 			Rectangle prev = spriteBatch.GraphicsDevice.ScissorRectangle;
-			spriteBatch.GraphicsDevice.ScissorRectangle = new Rectangle((int)InnerDimensions.X, (int)InnerDimensions.Y, (int)InnerDimensions.Width, (int)InnerDimensions.Height);
+			spriteBatch.GraphicsDevice.ScissorRectangle = new Rectangle(InnerDimensions.X, InnerDimensions.Y, InnerDimensions.Width, InnerDimensions.Height);
 			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Utility.DefaultSamplerState, DepthStencilState.None, Utility.OverflowHiddenState);
 
 			Utils.DrawBorderStringFourWay(spriteBatch, font, actualText, textPosition.X, textPosition.Y - scrollbar.ViewPosition, TextColor, BorderColor, Vector2.Zero, textScale);

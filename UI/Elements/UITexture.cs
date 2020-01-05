@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -20,7 +21,7 @@ namespace BaseLibrary.UI.Elements
 			this.scaleMode = scaleMode;
 		}
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
+		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			if (texture == null) return;
 
@@ -40,7 +41,7 @@ namespace BaseLibrary.UI.Elements
 				switch (scaleMode)
 				{
 					case ScaleMode.Stretch:
-						Vector2 scale = new Vector2(Dimensions.Width / texture.Width, Dimensions.Height / texture.Height);
+						Vector2 scale = new Vector2(Dimensions.Width / (float)texture.Width, Dimensions.Height / (float)texture.Height);
 						spriteBatch.Draw(texture, position, null, Color, Rotation.ToRadians(), origin, scale, SpriteEffects, 0f);
 						break;
 					case ScaleMode.Zoom:

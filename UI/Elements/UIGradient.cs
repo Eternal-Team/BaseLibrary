@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -10,7 +11,7 @@ namespace BaseLibrary.UI.Elements
 	{
 		public Action<Color> OnChangeColor;
 
-		public override void Update(GameTime gameTime)
+		protected override void Update(GameTime gameTime)
 		{
 			if (IsMouseHovering && Main.mouseLeft)
 			{
@@ -20,7 +21,7 @@ namespace BaseLibrary.UI.Elements
 			}
 		}
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
+		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			spriteBatch.DrawWithEffect(BaseLibrary.ColorSelectionShader, () => spriteBatch.Draw(Main.magicPixel, Dimensions));
 		}
