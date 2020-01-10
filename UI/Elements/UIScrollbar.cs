@@ -8,7 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace BaseLibrary.UI.New
+namespace BaseLibrary.UI
 {
 	public class UIScrollbar : BaseElement
 	{

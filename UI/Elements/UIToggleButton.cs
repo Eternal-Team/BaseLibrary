@@ -1,6 +1,5 @@
 ﻿using BaseLibrary.Input;
 using BaseLibrary.Input.Mouse;
-using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

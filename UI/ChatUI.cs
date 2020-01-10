@@ -1,5 +1,4 @@
-﻿using BaseLibrary.UI.New;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -10,7 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
 
-namespace BaseLibrary
+namespace BaseLibrary.UI
 {
 	public class ChatUI : BaseState
 	{

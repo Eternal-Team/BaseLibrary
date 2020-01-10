@@ -1,5 +1,4 @@
 ﻿using BaseLibrary.UI.Intro;
-using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using MonoMod.Cil;
 using Newtonsoft.Json;

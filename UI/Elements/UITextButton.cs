@@ -8,7 +8,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 
-namespace BaseLibrary.UI.New
+namespace BaseLibrary.UI
 {
 	public class UITextButton : BaseElement
 	{

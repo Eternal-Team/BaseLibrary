@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.UI.Chat;
 
-namespace BaseLibrary.UI.New
+namespace BaseLibrary.UI
 {
 	public class UITextInput : BaseElement
 	{
@@ -189,8 +189,8 @@ namespace BaseLibrary.UI.New
 			selecting = true;
 		}
 
-		// todo: selection of text when dragging
-		// todo: control Z/Y
+		// selection of text when dragging
+		// control Z/Y
 
 		protected override void MouseDown(MouseButtonEventArgs args)
 		{
@@ -368,8 +368,8 @@ namespace BaseLibrary.UI.New
 			caretVisible = true;
 			caretTimer = 0;
 
-			// todo: ctrl - move index to next word
-			// todo: ctrl + shift - (un)select next word
+			// ctrl - move index to next word
+			// ctrl + shift - (un)select next word
 		}
 
 		private void HandleGoLeft(KeyboardEventArgs args)
@@ -397,8 +397,8 @@ namespace BaseLibrary.UI.New
 			caretVisible = true;
 			caretTimer = 0;
 
-			// todo: ctrl - move index to previous word
-			// todo: ctrl + shift - (un)select previous word
+			// ctrl - move index to previous word
+			// ctrl + shift - (un)select previous word
 		}
 
 		private void HandleBackspace()
@@ -424,7 +424,7 @@ namespace BaseLibrary.UI.New
 				Text = Text.Remove(selectionStart, width);
 			}
 
-			// todo: ctrl - delete to previous word
+			// ctrl - delete to previous word
 		}
 
 		private void HandleDelete()
@@ -448,7 +448,7 @@ namespace BaseLibrary.UI.New
 				Text = Text.Remove(selectionStart, width);
 			}
 
-			// todo: ctrl - delete to next word
+			// ctrl - delete to next word
 		}
 
 		private void HandleCut()
@@ -511,7 +511,7 @@ namespace BaseLibrary.UI.New
 
 		protected override void Update(GameTime gameTime)
 		{
-			if (MouseEvents.IsMouseDown(MouseButton.Left) && !IsMouseHovering)
+			if (MouseInput.IsMouseDown(MouseButton.Left) && !IsMouseHovering)
 			{
 				selecting = false;
 				Focused = false;

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 
-namespace BaseLibrary.UI.New
+namespace BaseLibrary.UI
 {
 	public class UIPanel : BaseElement
 	{

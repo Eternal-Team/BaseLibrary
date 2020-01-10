@@ -16,11 +16,11 @@ namespace BaseLibrary.Input
 		{
 			if (Main.dedServ) return;
 
-			MouseEvents.Load();
+			MouseInput.Load();
 			KeyboardEvents.Load();
 			KeyboardEvents.RepeatDelay = 31;
 
-			MouseEvents.MouseMoved += args =>
+			MouseInput.MouseMoved += args =>
 			{
 				foreach (Layer layer in Layers)
 				{
@@ -28,7 +28,7 @@ namespace BaseLibrary.Input
 				}
 			};
 
-			MouseEvents.MouseScroll += args =>
+			MouseInput.MouseScroll += args =>
 			{
 				foreach (Layer layer in Layers)
 				{
@@ -37,7 +37,7 @@ namespace BaseLibrary.Input
 				}
 			};
 
-			MouseEvents.ButtonClicked += args =>
+			MouseInput.ButtonClicked += args =>
 			{
 				foreach (Layer layer in Layers)
 				{
@@ -46,7 +46,7 @@ namespace BaseLibrary.Input
 				}
 			};
 
-			MouseEvents.ButtonDoubleClicked += args =>
+			MouseInput.ButtonDoubleClicked += args =>
 			{
 				foreach (Layer layer in Layers)
 				{
@@ -55,7 +55,7 @@ namespace BaseLibrary.Input
 				}
 			};
 
-			MouseEvents.ButtonTripleClicked += args =>
+			MouseInput.ButtonTripleClicked += args =>
 			{
 				foreach (Layer layer in Layers)
 				{
@@ -64,7 +64,7 @@ namespace BaseLibrary.Input
 				}
 			};
 
-			MouseEvents.ButtonPressed += args =>
+			MouseInput.ButtonPressed += args =>
 			{
 				foreach (Layer layer in Layers)
 				{
@@ -73,7 +73,7 @@ namespace BaseLibrary.Input
 				}
 			};
 
-			MouseEvents.ButtonReleased += args =>
+			MouseInput.ButtonReleased += args =>
 			{
 				foreach (Layer layer in Layers)
 				{
@@ -127,7 +127,7 @@ namespace BaseLibrary.Input
 				lastScreenHeight = Main.screenHeight;
 			}
 
-			MouseEvents.Update(time);
+			MouseInput.Update(time);
 			KeyboardEvents.Update(time);
 		}
 	}

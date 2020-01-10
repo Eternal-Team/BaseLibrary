@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 
-namespace BaseLibrary.UI.New
+namespace BaseLibrary.UI
 {
 	public readonly struct Padding
 	{
@@ -160,7 +160,6 @@ namespace BaseLibrary.UI.New
 
 		protected virtual void MouseHeld(MouseButtonEventArgs args)
 		{
-
 		}
 
 		protected virtual void MouseDown(MouseButtonEventArgs args)
@@ -290,7 +289,6 @@ namespace BaseLibrary.UI.New
 				spriteBatch.Draw(Main.magicPixel, Dimensions, Color.LimeGreen * 0.5f);
 				if (InnerDimensions != Dimensions) spriteBatch.Draw(Main.magicPixel, InnerDimensions, Color.LightBlue * 0.5f);
 			}
-
 		}
 
 		internal void InternalMouseHeld(MouseButtonEventArgs args)

@@ -1,4 +1,4 @@
-﻿namespace BaseLibrary.UI.New
+﻿namespace BaseLibrary.UI
 {
 	public enum HorizontalAlignment
 	{

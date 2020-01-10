@@ -2,7 +2,7 @@
 using BaseLibrary.Input.Mouse;
 using BaseLibrary.Tiles;
 using BaseLibrary.Tiles.TileEntites;
-using BaseLibrary.UI.New;
+using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -17,7 +17,7 @@ using Terraria.UI;
 
 namespace BaseLibrary
 {
-	// note: update checker via github releases
+	// todo: update checker via github releases
 
 	public class BaseLibraryLayer : Layer
 	{
@@ -45,8 +45,6 @@ namespace BaseLibrary
 		public static Texture2D texturePanelBackground;
 		public static Texture2D texturePanelBorder;
 
-		//public static GUI<UI.PanelUI> PanelGUI { get; private set; }
-
 		private LegacyGameInterfaceLayer MouseInterface;
 		internal static ModHotKey hotkey;
 
@@ -70,8 +68,6 @@ namespace BaseLibrary
 				ColorSelectionShader = GetEffect("Effects/ColorSelectionShader");
 				DesaturateShader = GetEffect("Effects/DesaturateShader");
 				RoundedRectShader = GetEffect("Effects/BorderRadius");
-
-				//PanelGUI = Utility.SetupGUI<UI.PanelUI>();
 
 				Layers = new LayerStack();
 				Layers.PushLayer(new TerrariaLayer());
@@ -102,7 +98,6 @@ namespace BaseLibrary
 			if (MouseTextIndex != -1)
 			{
 				layers.Insert(MouseTextIndex + 1, MouseInterface);
-				//layers.Insert(MouseTextIndex, PanelGUI.InterfaceLayer);
 				layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer("Layers", delegate
 				{
 					foreach (Layer layer in Layers)
@@ -147,8 +142,6 @@ namespace BaseLibrary
 				ClosedUICache.Clear();
 			}
 
-			//gui?.Update(gameTime);
-
 			foreach (Layer layer in Layers)
 				if (layer.Enabled)
 					layer.OnUpdate(gameTime);
@@ -157,7 +150,6 @@ namespace BaseLibrary
 		public override void PreSaveAndQuit()
 		{
 			ClosedUICache.Clear();
-			//PanelGUI.UI.CloseAllUIs();
 
 			PanelUI.Instance.CloseAllUIs();
 		}

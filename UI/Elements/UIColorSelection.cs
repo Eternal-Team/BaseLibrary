@@ -1,5 +1,4 @@
-﻿using BaseLibrary.UI.New;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace BaseLibrary.UI.Elements
 {

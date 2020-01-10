@@ -1,5 +1,3 @@
-using BaseLibrary.UI.New;
-
 namespace BaseLibrary.UI
 {
 	public class TestUI : BaseElement

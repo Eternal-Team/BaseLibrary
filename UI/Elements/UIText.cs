@@ -5,7 +5,7 @@ using System;
 using Terraria;
 using Terraria.Localization;
 
-namespace BaseLibrary.UI.New
+namespace BaseLibrary.UI
 {
 	public class UIText : BaseElement
 	{

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BaseLibrary.UI.New
+namespace BaseLibrary.UI
 {
 	public interface IGridElement<T> where T : BaseElement
 	{

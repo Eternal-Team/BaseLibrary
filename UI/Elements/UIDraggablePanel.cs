@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.UI;
 
-namespace BaseLibrary.UI.New
+namespace BaseLibrary.UI
 {
 	public class UIDraggablePanel : UIPanel
 	{

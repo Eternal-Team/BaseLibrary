@@ -7,15 +7,16 @@ using Terraria;
 
 namespace BaseLibrary.Input.Mouse
 {
-	public static class MouseEvents
+	public static class MouseInput
 	{
+		private static GameTime time;
+
 		private static MouseState previous;
+		public static MouseState Mouse;
+		public static KeyboardState Keyboard;
 
 		private static Dictionary<MouseButton, (TimeSpan Time, Vector2 Position)> lastClicks;
-
 		private static Dictionary<MouseButton, (TimeSpan Time, Vector2 Position)> lastDoubleClicks;
-
-		private static GameTime time;
 
 		public static int DoubleClickTime { get; set; }
 
@@ -24,19 +25,12 @@ namespace BaseLibrary.Input.Mouse
 		public static bool MoveRaisedOnDrag { get; set; }
 
 		public static event Action<MouseButtonEventArgs> ButtonReleased;
-
 		public static event Action<MouseButtonEventArgs> ButtonPressed;
-
 		public static event Action<MouseButtonEventArgs> ButtonClicked;
-
 		public static event Action<MouseButtonEventArgs> ButtonDoubleClicked;
-
 		public static event Action<MouseButtonEventArgs> ButtonTripleClicked;
-
 		public static event Action<MouseMoveEventArgs> MouseMoved;
-
 		public static event Action<MouseEventArgs> MouseDragged;
-
 		public static event Action<MouseScrollEventArgs> MouseScroll;
 
 		internal static void Load()
@@ -64,8 +58,14 @@ namespace BaseLibrary.Input.Mouse
 			};
 		}
 
-		public static MouseState Mouse;
-		public static KeyboardState Keyboard;
+		public static IEnumerable<MouseButton> GetHeldButtons()
+		{
+			if (Mouse.LeftButton == ButtonState.Pressed) yield return MouseButton.Left;
+			if (Mouse.RightButton == ButtonState.Pressed) yield return MouseButton.Right;
+			if (Mouse.MiddleButton == ButtonState.Pressed) yield return MouseButton.Middle;
+			if (Mouse.XButton1 == ButtonState.Pressed) yield return MouseButton.XButton1;
+			if (Mouse.XButton2 == ButtonState.Pressed) yield return MouseButton.XButton2;
+		}
 
 		public static bool IsMouseDown(MouseButton button)
 		{
@@ -93,7 +93,7 @@ namespace BaseLibrary.Input.Mouse
 			time = gameTime;
 
 			Mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
-			Keyboard= Microsoft.Xna.Framework.Input.Keyboard.GetState();
+			Keyboard = Microsoft.Xna.Framework.Input.Keyboard.GetState();
 
 			Modifiers modifiers = KeyboardUtil.GetModifiers(Keyboard);
 			Vector2 position = new Vector2(Mouse.X, Mouse.Y);

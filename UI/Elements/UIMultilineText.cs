@@ -1,9 +1,7 @@
 ﻿using BaseLibrary.Input;
-using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
-using Steamworks;
 using System.Linq;
 using Terraria;
 using Terraria.Localization;
@@ -129,7 +127,7 @@ namespace BaseLibrary.UI.Elements
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			if (DrawBackground) spriteBatch.DrawPanel(Dimensions, BaseLibrary.texturePanelBackground, Utility.ColorPanel_Selected * 0.75f);
-			
+
 			Utils.DrawBorderStringFourWay(spriteBatch, font, actualText, textPosition.X, textPosition.Y - scrollbar.ViewPosition, TextColor, BorderColor, Vector2.Zero, textScale);
 		}
 	}
