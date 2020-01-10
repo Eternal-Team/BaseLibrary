@@ -1,4 +1,6 @@
 ﻿using BaseLibrary.UI.Intro;
+using BaseLibrary.UI.New;
+using Microsoft.Xna.Framework;
 using MonoMod.Cil;
 using Newtonsoft.Json;
 using System;
@@ -7,6 +9,7 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace BaseLibrary
 {
@@ -17,6 +20,31 @@ namespace BaseLibrary
 		private static List<Mod> newOrUpdated = new List<Mod>();
 
 		private static string LastVersionsPath => ModLoader.ModPath + "/LastVersionCache.json";
+
+		private static void UserInterface_Draw(On.Terraria.UI.UserInterface.orig_Draw orig, UserInterface self, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, GameTime time)
+		{
+			orig(self, spriteBatch, time);
+
+			if (Main.gameMenu && BaseLibrary.Layers != null)
+			{
+				foreach (Layer layer in BaseLibrary.Layers)
+				{
+					if (layer.Enabled) layer.OnDraw(Main.spriteBatch);
+				}
+			}
+		}
+
+		private static void UserInterface_Update(On.Terraria.UI.UserInterface.orig_Update orig, UserInterface self, GameTime time)
+		{
+			orig(self, time);
+
+			if (Main.gameMenu && BaseLibrary.Layers != null)
+			{
+				foreach (Layer layer in BaseLibrary.Layers)
+					if (layer.Enabled)
+						layer.OnUpdate(time);
+			}
+		}
 
 		private static void ShowIntroMessage(ILContext il)
 		{
@@ -37,7 +65,7 @@ namespace BaseLibrary
 						if (o != null && !o.GetValue<object>("properties").GetValue<string>("author").Contains("Itorius")) return false;
 
 						// todo: setup server-side
-						return false;
+						return true;
 
 //#if DEBUG
 //						return false;
@@ -45,13 +73,15 @@ namespace BaseLibrary
 //						return previousVersions.ContainsKey(mod.Name) && previousVersions[mod.Name] != mod.Version || !previousVersions.ContainsKey(mod.Name);
 //#endif
 					}).ToList();
-					if (newOrUpdated.Count > 0 && Utility.PingHost("terraria.itorius.com", 443))
+					if (newOrUpdated.Count > 0 && Utility.PingHost("localhost", 59035))
 					{
 						Dispatcher.Dispatch(() =>
 						{
-							Main.menuMode = 888;
+							//Main.menuMode = 888;
 
 							//uiIntroMessage = new UIIntroMessage();
+							//uiIntroMessage.Recalculate();
+							//(BaseLibrary.Layers.First(x => x is UILayer) as UILayer)?.Add(uiIntroMessage);
 							//UserInterface.ActiveInstance.SetState(uiIntroMessage);
 						});
 					}

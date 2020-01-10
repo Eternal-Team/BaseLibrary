@@ -1,6 +1,9 @@
 ﻿using BaseLibrary.Input;
+using BaseLibrary.Input.Keyboard;
+using BaseLibrary.Input.Mouse;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,15 +42,17 @@ namespace BaseLibrary.UI.New
 		}
 	}
 
-	public class PanelUI : BaseElement
+	public class PanelUI : BaseState
 	{
 		private static Dictionary<Type, Type> UICache;
 		public static PanelUI Instance;
 
+		public override bool Enabled => !Main.ingameOptionsWindow && !Main.gameMenu;
+
 		public PanelUI()
 		{
-			Width.Percent = 10000;
-			Height.Percent = 10000;
+			Width.Percent = 100;
+			Height.Percent = 100;
 
 			UICache = new Dictionary<Type, Type>();
 			Instance = this;
@@ -65,8 +70,7 @@ namespace BaseLibrary.UI.New
 			if (entity.UI != null) CloseUI(entity);
 			else
 			{
-				/*if (!BaseLibrary.ClosedUICache.Contains(entity))*/
-				OpenUI(entity);
+				if (!BaseLibrary.ClosedUICache.Contains(entity)) OpenUI(entity);
 
 				if (!Main.playerInventory) Main.playerInventory = true;
 			}
@@ -143,27 +147,36 @@ namespace BaseLibrary.UI.New
 	// note: when capturing mouse click events mouse down/up still gets run
 	public class UILayer : Layer
 	{
-		public override bool Enabled => !Main.ingameOptionsWindow && !Main.gameMenu;
+		public override bool Enabled => /*!Main.ingameOptionsWindow && !Main.gameMenu*/true;
 
-		private List<BaseElement> Elements;
+		internal List<BaseState> Elements = new List<BaseState>();
 		private BaseElement Current;
 
 		internal UILayer()
 		{
-			PanelUI panelUI = new PanelUI();
-			panelUI.Recalculate();
+			Add(new PanelUI());
+			Add(new ChatUI());
 
-			ChatUI chatUI = new ChatUI();
-			chatUI.Recalculate();
+			//PanelUI panelUI = new PanelUI();
+			//panelUI.Recalculate();
 
-			Elements = new List<BaseElement> {  panelUI , chatUI };
+			//ChatUI chatUI = new ChatUI();
+			//chatUI.Recalculate();
+
+			//Elements = new List<BaseState> { panelUI , chatUI };
+		}
+
+		public void Add(BaseState ui)
+		{
+			ui.Recalculate();
+			Elements.Add(ui);
 		}
 
 		private BaseElement MouseDownElement;
 
 		public override void OnDraw(SpriteBatch spriteBatch)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None).Reverse())
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None).Reverse())
 			{
 				element.InternalDraw(spriteBatch);
 			}
@@ -171,16 +184,48 @@ namespace BaseLibrary.UI.New
 
 		public override void OnUpdate(GameTime gameTime)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
 			{
 				element.InternalUpdate(gameTime);
+			}
+
+			// todo: handle middle, xbutton1,2, prevent code duplication
+			if (MouseEvents.IsMouseDown(MouseButton.Left))
+			{
+				MouseButtonEventArgs args = new MouseButtonEventArgs
+				{
+					Modifiers = KeyboardUtil.GetModifiers(MouseEvents.Keyboard),
+					Position = new Vector2(MouseEvents.Mouse.X, MouseEvents.Mouse.Y),
+					Button = MouseButton.Left
+				};
+
+				foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+				{
+					element.InternalMouseHeld(args);
+					if (args.Handled) break;
+				}
+			}
+			else if (MouseEvents.IsMouseDown(MouseButton.Right))
+			{
+				MouseButtonEventArgs args = new MouseButtonEventArgs
+				{
+					Modifiers = KeyboardUtil.GetModifiers(MouseEvents.Keyboard),
+					Position = new Vector2(MouseEvents.Mouse.X, MouseEvents.Mouse.Y),
+					Button = MouseButton.Right
+				};
+
+				foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+				{
+					element.InternalMouseHeld(args);
+					if (args.Handled) break;
+				}
 			}
 		}
 
 		public override void OnMouseDown(MouseButtonEventArgs args)
 		{
 			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
-			foreach (BaseElement element in elements)
+			foreach (BaseState element in elements)
 			{
 				MouseDownElement = element.InternalMouseDown(args);
 				if (args.Handled) break;
@@ -199,7 +244,7 @@ namespace BaseLibrary.UI.New
 			}
 
 			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
-			foreach (BaseElement element in elements)
+			foreach (BaseState element in elements)
 			{
 				element.InternalMouseUp(args);
 				if (args.Handled) break;
@@ -208,14 +253,14 @@ namespace BaseLibrary.UI.New
 
 		public override void OnMouseMove(MouseMoveEventArgs args)
 		{
-			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
-			foreach (BaseElement element in elements)
+			var elements = Elements.Where(element =>element.Enabled&& element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
+			foreach (BaseState element in elements)
 			{
 				element.InternalMouseMove(args);
 				if (args.Handled) break;
 			}
 
-			BaseElement at = Elements.Select(baseElement => baseElement.GetElementAt(args.Position)).FirstOrDefault(baseElement => baseElement != null);
+			BaseElement at = Elements.Where(baseElement=>baseElement.Enabled).Select(baseElement =>  baseElement.GetElementAt(args.Position)).FirstOrDefault(baseElement => baseElement != null);
 			if (Current != at)
 			{
 				Current?.InternalMouseLeave(args);
@@ -239,7 +284,7 @@ namespace BaseLibrary.UI.New
 
 		public override void OnMouseScroll(MouseScrollEventArgs args)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
 				element.InternalMouseScroll(args);
 				if (args.Handled) break;
@@ -248,7 +293,7 @@ namespace BaseLibrary.UI.New
 
 		public override void OnClick(MouseButtonEventArgs args)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
 				element.InternalMouseClick(args);
 				if (args.Handled) break;
@@ -257,7 +302,7 @@ namespace BaseLibrary.UI.New
 
 		public override void OnDoubleClick(MouseButtonEventArgs args)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
 				element.InternalDoubleClick(args);
 				if (args.Handled) break;
@@ -266,7 +311,7 @@ namespace BaseLibrary.UI.New
 
 		public override void OnTripleClick(MouseButtonEventArgs args)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
 				element.InternalTripleClick(args);
 				if (args.Handled) break;
@@ -275,7 +320,7 @@ namespace BaseLibrary.UI.New
 
 		public override void OnKeyPressed(KeyboardEventArgs args)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
 			{
 				element.InternalKeyPressed(args);
 				if (args.Handled) break;
@@ -284,7 +329,7 @@ namespace BaseLibrary.UI.New
 
 		public override void OnKeyReleased(KeyboardEventArgs args)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
 			{
 				element.InternalKeyReleased(args);
 				if (args.Handled) break;
@@ -293,7 +338,7 @@ namespace BaseLibrary.UI.New
 
 		public override void OnKeyTyped(KeyboardEventArgs args)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
 			{
 				element.InternalKeyTyped(args);
 				if (args.Handled) break;
@@ -302,7 +347,7 @@ namespace BaseLibrary.UI.New
 
 		public override void OnWindowResize(WindowResizedEventArgs args)
 		{
-			foreach (BaseElement element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
 			{
 				element.Recalculate();
 			}

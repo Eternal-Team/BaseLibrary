@@ -2,6 +2,7 @@
 using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,16 +11,17 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Terraria;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace BaseLibrary.UI.Intro
 {
-	internal class UIIntroMessage : BaseElement
+	internal class UIIntroMessage : BaseState
 	{
+		public override bool Enabled => Main.gameMenu && Main.menuMode == 888;
+
 		private HttpClient client;
 
-		private List<GithubRepository> GithubRepositories = new List<GithubRepository>();
+		private List<Repository> GithubRepositories = new List<Repository>();
 
 		private List<PatreonPatron> PatreonPatrons = new List<PatreonPatron>();
 		private List<PatreonTier> PatreonTiers = new List<PatreonTier>();
@@ -47,8 +49,8 @@ namespace BaseLibrary.UI.Intro
 
 		public UIIntroMessage()
 		{
-			Width.Percent = 10000;
-			Height.Percent = 10000;
+			Width.Percent = 100;
+			Height.Percent = 100;
 
 			Initialize();
 		}
@@ -79,7 +81,7 @@ namespace BaseLibrary.UI.Intro
 			Add(panelMain);
 
 			int width = (int)(panelMain.Dimensions.Width * 0.31f);
-			buttonMain = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Main"))
+			buttonMain = new UITextButton(Terraria.Localization.Language.GetText("Mods.BaseLibrary.UI.Main"))
 			{
 				Width = { Pixels = width },
 				Height = { Pixels = 40 },
@@ -98,7 +100,7 @@ namespace BaseLibrary.UI.Intro
 			};
 			Insert(0, buttonMain);
 
-			buttonChangelogs = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Changelogs"))
+			buttonChangelogs = new UITextButton(Terraria.Localization.Language.GetText("Mods.BaseLibrary.UI.Changelogs"))
 			{
 				Width = { Pixels = width },
 				Height = { Pixels = 40 },
@@ -115,7 +117,7 @@ namespace BaseLibrary.UI.Intro
 				panelMain.AddRange(tabChangelogs);
 
 				response = await client.GetAsync("github/getrepositories");
-				if (response.IsSuccessStatusCode) GithubRepositories = (await response.Content.ReadAsAsync<List<GithubRepository>>()).Where(repository => ModLoader.GetMod(repository.Name) != null).ToList();
+				if (response.IsSuccessStatusCode) GithubRepositories = (await response.Content.ReadAsAsync<List<Repository>>()).Where(repository => ModLoader.GetMod(repository.Name) != null).ToList();
 
 				if (GithubRepositories.Count == 0) return;
 
@@ -123,7 +125,7 @@ namespace BaseLibrary.UI.Intro
 			};
 			Insert(1, buttonChangelogs);
 
-			buttonCredits = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.Credits"))
+			buttonCredits = new UITextButton(Terraria.Localization.Language.GetText("Mods.BaseLibrary.UI.Credits"))
 			{
 				Width = { Pixels = width },
 				Height = { Pixels = 40 },
@@ -144,6 +146,7 @@ namespace BaseLibrary.UI.Intro
 
 					foreach (PatreonPatron patron in PatreonPatrons.Where(patron => patron.Status != null)) patron.Tier = PatreonTiers.OrderByDescending(x => x.AmountCents).First(x => x.AmountCents <= patron.CurrentCents);
 
+					int i = 0;
 					foreach (PatreonTier tier in PatreonTiers)
 					{
 						UITextButton buttonTier = new UITextButton(tier.Title)
@@ -151,7 +154,7 @@ namespace BaseLibrary.UI.Intro
 							Width = { Percent = 100 },
 							Height = { Pixels = 40 },
 							Toggleable = true,
-							Margin = new Margin(0, 8, 0, 0),
+							Margin = i++ == 0 ? Margin.Zero : new Margin(0, 8, 0, 0),
 							Padding = new Padding(6)
 						};
 						buttonTier.OnClick += _ =>
@@ -175,7 +178,7 @@ namespace BaseLibrary.UI.Intro
 									Height = { Pixels = height },
 									DrawBackground = true,
 									Padding = new Padding(8, 8, 8, 8),
-									Margin = new Margin(0, -2, 0, 0)
+									Margin = Margin.Zero
 								};
 								gridPatrons.Insert(index, textPatrons);
 							}
@@ -191,7 +194,7 @@ namespace BaseLibrary.UI.Intro
 			};
 			Insert(2, buttonCredits);
 
-			buttonReturnToMenu = new UITextButton(Language.GetText("Mods.BaseLibrary.UI.ReturnToMenu"))
+			buttonReturnToMenu = new UITextButton(Terraria.Localization.Language.GetText("Mods.BaseLibrary.UI.ReturnToMenu"))
 			{
 				Width = { Percent = 20 },
 				Height = { Pixels = 40 },
@@ -218,7 +221,7 @@ namespace BaseLibrary.UI.Intro
 					{
 						Width = { Percent = 50 },
 						Height = { Percent = 50 },
-						Y = { Percent = 50 },
+						Y = { Percent = 100 },
 						Padding = new Padding(8, 8, 8, 8),
 						BorderColor = Color.Transparent,
 						BackgroundColor = Utility.ColorPanel_Selected * 0.75f
@@ -306,7 +309,7 @@ namespace BaseLibrary.UI.Intro
 					{
 						Width = { Percent = 50 },
 						Height = { Percent = 50 },
-						Y = { Percent = 50 },
+						Y = { Percent = 100 },
 						X = { Percent = 100 },
 						Padding = new Padding(8, 8, 8, 8),
 						BorderColor = Color.Transparent,
@@ -462,8 +465,8 @@ namespace BaseLibrary.UI.Intro
 				};
 				tabChangelogs.Add(textCommits);
 
-				textCommits.scrollbar.Height = new New.StyleDimension { Pixels = -64, Percent = 100 };
-				textCommits.scrollbar.Y = new New.StyleDimension { Pixels = 56 };
+				textCommits.scrollbar.Height = new StyleDimension { Pixels = -64, Percent = 100 };
+				textCommits.scrollbar.Y = new StyleDimension { Pixels = 56 };
 				textCommits.scrollbar.X.Percent = 100;
 				tabChangelogs.Add(textCommits.scrollbar);
 			}
@@ -492,25 +495,25 @@ namespace BaseLibrary.UI.Intro
 			Point position = new Point((int)panelMain.Position.X, (int)panelMain.Position.Y);
 
 			int width = (int)(dimensions.Width * 0.31f);
-			buttonMain.X = new New.StyleDimension { Pixels = position.X + 8 };
-			buttonMain.Y = new New.StyleDimension { Pixels = position.Y - 30 };
-			buttonMain.Width = new New.StyleDimension { Pixels = width };
+			buttonMain.X = new StyleDimension { Pixels = position.X + 8 };
+			buttonMain.Y = new StyleDimension { Pixels = position.Y - 30 };
+			buttonMain.Width = new StyleDimension { Pixels = width };
 			buttonMain.Recalculate();
 
-			buttonChangelogs.Y = new New.StyleDimension { Pixels = position.Y - 30 };
-			buttonChangelogs.Width = new New.StyleDimension { Pixels = width };
+			buttonChangelogs.Y = new StyleDimension { Pixels = position.Y - 30 };
+			buttonChangelogs.Width = new StyleDimension { Pixels = width };
 			buttonChangelogs.Recalculate();
 
-			buttonCredits.X = new New.StyleDimension { Pixels = position.X + dimensions.Width - width - 8 };
-			buttonCredits.Y = new New.StyleDimension { Pixels = position.Y - 30 };
-			buttonCredits.Width = new New.StyleDimension { Pixels = width };
+			buttonCredits.X = new StyleDimension { Pixels = position.X + dimensions.Width - width - 8 };
+			buttonCredits.Y = new StyleDimension { Pixels = position.Y - 30 };
+			buttonCredits.Width = new StyleDimension { Pixels = width };
 			buttonCredits.Recalculate();
 
-			buttonReturnToMenu.Y = new New.StyleDimension { Pixels = dimensions.Y + dimensions.Height + 8 };
+			buttonReturnToMenu.Y = new StyleDimension { Pixels = dimensions.Y + dimensions.Height + 8 };
 			buttonReturnToMenu.Recalculate();
 		}
 
-		private async Task SetRepository(GithubRepository repository)
+		private async Task SetRepository(Repository repository)
 		{
 			loadingWheelChangelogs.Enabled = true;
 			textCommits.Text = "";
@@ -520,7 +523,7 @@ namespace BaseLibrary.UI.Intro
 			HttpResponseMessage response = await client.GetAsync("github/getreleases/" + repository.Id);
 			if (response.IsSuccessStatusCode)
 			{
-				var releases = await response.Content.ReadAsAsync<List<GithubRelease>>();
+				var releases = await response.Content.ReadAsAsync<List<Release>>();
 				if (releases.Count == 0)
 				{
 					textCommits.Text = $"No releases found for mod {repository.Name}";
@@ -528,15 +531,15 @@ namespace BaseLibrary.UI.Intro
 					return;
 				}
 
-				GithubRelease currentRelease = releases[0];
-				GithubRelease previousRelease = releases.Skip(1).Take(1).FirstOrDefault();
+				Release currentRelease = releases[0];
+				Release previousRelease = releases.Skip(1).Take(1).FirstOrDefault();
 
 				if (previousRelease == null) response = await client.GetAsync($"github/getcommits/{repository.Id}");
 				else response = await client.GetAsync($"github/getcommits/{repository.Id}/{previousRelease.Id}/{currentRelease.Id}");
 
 				if (response.IsSuccessStatusCode)
 				{
-					var commits = await response.Content.ReadAsAsync<List<GithubCommit>>();
+					var commits = await response.Content.ReadAsAsync<List<GitHubCommit>>();
 					if (commits.Count == 0)
 					{
 						textCommits.Text = $"No commits found for release {currentRelease.TagName}";

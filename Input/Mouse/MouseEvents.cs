@@ -64,22 +64,23 @@ namespace BaseLibrary.Input.Mouse
 			};
 		}
 
-		private static MouseState mouse;
+		public static MouseState Mouse;
+		public static KeyboardState Keyboard;
 
 		public static bool IsMouseDown(MouseButton button)
 		{
 			switch (button)
 			{
 				case MouseButton.Left:
-					return mouse.LeftButton == ButtonState.Pressed;
+					return Mouse.LeftButton == ButtonState.Pressed;
 				case MouseButton.Middle:
-					return mouse.MiddleButton == ButtonState.Pressed;
+					return Mouse.MiddleButton == ButtonState.Pressed;
 				case MouseButton.Right:
-					return mouse.RightButton == ButtonState.Pressed;
+					return Mouse.RightButton == ButtonState.Pressed;
 				case MouseButton.XButton1:
-					return mouse.XButton1 == ButtonState.Pressed;
+					return Mouse.XButton1 == ButtonState.Pressed;
 				case MouseButton.XButton2:
-					return mouse.XButton2 == ButtonState.Pressed;
+					return Mouse.XButton2 == ButtonState.Pressed;
 			}
 
 			return false;
@@ -91,13 +92,13 @@ namespace BaseLibrary.Input.Mouse
 
 			time = gameTime;
 
-			mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
-			KeyboardState keyboard = Microsoft.Xna.Framework.Input.Keyboard.GetState();
+			Mouse = Microsoft.Xna.Framework.Input.Mouse.GetState();
+			Keyboard= Microsoft.Xna.Framework.Input.Keyboard.GetState();
 
-			Modifiers modifiers = KeyboardUtil.GetModifiers(keyboard);
-			Vector2 position = new Vector2(mouse.X, mouse.Y);
+			Modifiers modifiers = KeyboardUtil.GetModifiers(Keyboard);
+			Vector2 position = new Vector2(Mouse.X, Mouse.Y);
 
-			if (mouse.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released)
+			if (Mouse.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released)
 				OnButtonPressed(new MouseButtonEventArgs
 				{
 					Button = MouseButton.Left,
@@ -105,7 +106,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released)
+			if (Mouse.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released)
 				OnButtonPressed(new MouseButtonEventArgs
 				{
 					Button = MouseButton.Middle,
@@ -113,7 +114,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released)
+			if (Mouse.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released)
 				OnButtonPressed(new MouseButtonEventArgs
 				{
 					Button = MouseButton.Right,
@@ -121,7 +122,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released)
+			if (Mouse.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released)
 				OnButtonPressed(new MouseButtonEventArgs
 				{
 					Button = MouseButton.XButton1,
@@ -129,7 +130,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released)
+			if (Mouse.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released)
 				OnButtonPressed(new MouseButtonEventArgs
 				{
 					Button = MouseButton.XButton2,
@@ -137,7 +138,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released)
+			if (Mouse.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released)
 				OnButtonClicked(new MouseButtonEventArgs
 				{
 					Button = MouseButton.Left,
@@ -145,7 +146,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released)
+			if (Mouse.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released)
 				OnButtonClicked(new MouseButtonEventArgs
 				{
 					Button = MouseButton.Middle,
@@ -153,7 +154,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released)
+			if (Mouse.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released)
 				OnButtonClicked(new MouseButtonEventArgs
 				{
 					Button = MouseButton.Right,
@@ -161,7 +162,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released)
+			if (Mouse.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released)
 				OnButtonClicked(new MouseButtonEventArgs
 				{
 					Button = MouseButton.XButton1,
@@ -169,7 +170,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released)
+			if (Mouse.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released)
 				OnButtonClicked(new MouseButtonEventArgs
 				{
 					Button = MouseButton.XButton2,
@@ -177,7 +178,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.LeftButton == ButtonState.Released && previous.LeftButton == ButtonState.Pressed)
+			if (Mouse.LeftButton == ButtonState.Released && previous.LeftButton == ButtonState.Pressed)
 				OnButtonReleased(new MouseButtonEventArgs
 				{
 					Button = MouseButton.Left,
@@ -185,7 +186,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.MiddleButton == ButtonState.Released && previous.MiddleButton == ButtonState.Pressed)
+			if (Mouse.MiddleButton == ButtonState.Released && previous.MiddleButton == ButtonState.Pressed)
 				OnButtonReleased(new MouseButtonEventArgs
 				{
 					Button = MouseButton.Middle,
@@ -193,7 +194,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.RightButton == ButtonState.Released && previous.RightButton == ButtonState.Pressed)
+			if (Mouse.RightButton == ButtonState.Released && previous.RightButton == ButtonState.Pressed)
 				OnButtonReleased(new MouseButtonEventArgs
 				{
 					Button = MouseButton.Right,
@@ -201,7 +202,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.XButton1 == ButtonState.Released && previous.XButton1 == ButtonState.Pressed)
+			if (Mouse.XButton1 == ButtonState.Released && previous.XButton1 == ButtonState.Pressed)
 				OnButtonReleased(new MouseButtonEventArgs
 				{
 					Button = MouseButton.XButton1,
@@ -209,7 +210,7 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			if (mouse.XButton2 == ButtonState.Released && previous.XButton2 == ButtonState.Pressed)
+			if (Mouse.XButton2 == ButtonState.Released && previous.XButton2 == ButtonState.Pressed)
 				OnButtonReleased(new MouseButtonEventArgs
 				{
 					Button = MouseButton.XButton2,
@@ -217,9 +218,9 @@ namespace BaseLibrary.Input.Mouse
 					Position = position
 				});
 
-			bool buttonDown = mouse.LeftButton == ButtonState.Pressed || mouse.MiddleButton == ButtonState.Pressed || mouse.RightButton == ButtonState.Pressed || mouse.XButton1 == ButtonState.Pressed || mouse.XButton2 == ButtonState.Pressed;
+			bool buttonDown = Mouse.LeftButton == ButtonState.Pressed || Mouse.MiddleButton == ButtonState.Pressed || Mouse.RightButton == ButtonState.Pressed || Mouse.XButton1 == ButtonState.Pressed || Mouse.XButton2 == ButtonState.Pressed;
 
-			if (previous.X != mouse.X || previous.Y != mouse.Y)
+			if (previous.X != Mouse.X || previous.Y != Mouse.Y)
 			{
 				if (buttonDown)
 					OnMouseDragged(new MouseEventArgs
@@ -231,14 +232,14 @@ namespace BaseLibrary.Input.Mouse
 					OnMouseMoved(new MouseMoveEventArgs
 					{
 						Position = position,
-						Delta = new Vector2(mouse.X - previous.X, mouse.Y - previous.Y)
+						Delta = new Vector2(Mouse.X - previous.X, Mouse.Y - previous.Y)
 					});
 			}
 
-			if (previous.ScrollWheelValue != mouse.ScrollWheelValue)
+			if (previous.ScrollWheelValue != Mouse.ScrollWheelValue)
 			{
-				int value = mouse.ScrollWheelValue;
-				int delta = mouse.ScrollWheelValue - previous.ScrollWheelValue;
+				int value = Mouse.ScrollWheelValue;
+				int delta = Mouse.ScrollWheelValue - previous.ScrollWheelValue;
 				OnMouseScroll(new MouseScrollEventArgs
 				{
 					Position = position,
@@ -246,7 +247,7 @@ namespace BaseLibrary.Input.Mouse
 				});
 			}
 
-			previous = mouse;
+			previous = Mouse;
 		}
 
 		private static float DistanceBetween(Vector2 a, Vector2 b) => Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);

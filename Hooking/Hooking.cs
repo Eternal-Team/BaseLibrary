@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
+using On.Terraria;
+using On.Terraria.GameInput;
 using On.Terraria.UI;
 using System;
 using Terraria.ModLoader;
@@ -9,34 +11,41 @@ namespace BaseLibrary
 {
 	public static partial class Hooking
 	{
-		public static bool BlockScrolling;
-
 		public static GameTime time;
 
 		internal static void Load()
 		{
 			ItemSlot.LeftClick_ItemArray_int_int += CloseUI_ItemSlot;
-			On.Terraria.Player.DropSelectedItem += CloseUI_Drop;
-			//BaseElement.GetElementAt += BaseElement_GetElementAt;
+			Player.DropSelectedItem += CloseUI_Drop;
 
 			IL.Terraria.Main.DrawInterface_36_Cursor += DrawCursor;
 
-			On.Terraria.GameInput.PlayerInput.UpdateInput += ReplaceInput;
-			On.Terraria.GameInput.PlayerInput.KeyboardInput += PlayerInput_KeyboardInput;
-			On.Terraria.GameInput.PlayerInput.MouseInput += PlayerInput_MouseInput;
-			On.Terraria.Main.DoUpdate_HandleInput += Main_DoUpdate_HandleInput;
+			PlayerInput.UpdateInput += ReplaceInput;
+			PlayerInput.KeyboardInput += PlayerInput_KeyboardInput;
+			PlayerInput.MouseInput += PlayerInput_MouseInput;
+			Main.DoUpdate_HandleInput += Main_DoUpdate_HandleInput;
 
-			On.Terraria.Main.DoUpdate_Enter_ToggleChat += Main_DoUpdate_Enter_ToggleChat;
-			On.Terraria.Main.DoUpdate_HandleChat += Main_DoUpdate_HandleChat;
-			On.Terraria.Main.DrawInterface_34_PlayerChat += Main_DrawInterface_34_PlayerChat;
+			Main.DoUpdate_Enter_ToggleChat += Main_DoUpdate_Enter_ToggleChat;
+			Main.DoUpdate_HandleChat += Main_DoUpdate_HandleChat;
+			Main.DrawInterface_34_PlayerChat += Main_DrawInterface_34_PlayerChat;
 
-			On.Terraria.Main.DoUpdate += (orig, self, gameTime) =>
+			PlayerInput.UpdateMainMouse += PlayerInput_UpdateMainMouse;
+
+			UserInterface.Update += UserInterface_Update;
+
+			UserInterface.Draw += UserInterface_Draw;
+
+			Main.DoUpdate += (orig, self, gameTime) =>
 			{
 				time = gameTime;
 				orig(self, gameTime);
 			};
 
 			HookEndpointManager.Modify(typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.UILoadMods").GetMethod("OnDeactivate", Utility.defaultFlags), new Action<ILContext>(ShowIntroMessage));
+		}
+
+		private static void PlayerInput_UpdateMainMouse(PlayerInput.orig_UpdateMainMouse orig)
+		{
 		}
 	}
 }

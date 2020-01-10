@@ -12,8 +12,10 @@ using Terraria.UI.Chat;
 
 namespace BaseLibrary
 {
-	public class ChatUI : BaseElement
+	public class ChatUI : BaseState
 	{
+		public override bool Enabled => !Main.ingameOptionsWindow && !Main.gameMenu;
+
 		private UITextInput input;
 		private Ref<string> chat = new Ref<string>("[item:2] getting [item:666] tags [c/FF0000:This text is red.] working [a:NO_HOBO]. was a real pain in the ass [g:4]");
 		private bool justOpened;

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -127,18 +128,25 @@ namespace BaseLibrary
 
 		public static bool PingHost(string hostUri, int portNumber)
 		{
+			bool pingable = false;
+			Ping pinger = null;
+
 			try
 			{
-				using (var client = new TcpClient())
-				{
-					client.Connect(hostUri, portNumber);
-					return true;
-				}
+				pinger = new Ping();
+				PingReply reply = pinger.Send(hostUri);
+				pingable = reply.Status == IPStatus.Success;
 			}
-			catch
+			catch (PingException)
 			{
-				return false;
+				// Discard PingExceptions and return false;
 			}
+			finally
+			{
+				pinger?.Dispose();
+			}
+
+			return pingable;
 		}
 
 		public static bool CheckAABBvAABBCollision(Rectangle a, Rectangle b) => a.X < b.X + b.Width && a.X + a.Width > b.X && a.Y < b.Y + b.Height && a.Y + a.Height > b.Y;

@@ -43,6 +43,7 @@ namespace BaseLibrary.UI.New
 			foreach (T item in items)
 			{
 				if (item is IGridElement<T> element) element.Grid = this;
+				item.Parent = this;
 				Children.Add(item);
 			}
 
@@ -53,6 +54,7 @@ namespace BaseLibrary.UI.New
 		public void Add(T item)
 		{
 			if (item is IGridElement<T> element) element.Grid = this;
+			item.Parent = this;
 			Children.Add(item);
 
 			Children.Sort(SortMethod);
@@ -62,6 +64,7 @@ namespace BaseLibrary.UI.New
 		public void Insert(int index, T item)
 		{
 			if (item is IGridElement<T> element) element.Grid = this;
+			item.Parent = this;
 			Children.Insert(index, item);
 
 			Children.Sort(SortMethod);
@@ -71,6 +74,7 @@ namespace BaseLibrary.UI.New
 		public void Remove(T item)
 		{
 			if (item is IGridElement<T> element) element.Grid = null;
+			item.Parent = null;
 			Children.Remove(item);
 
 			Children.Sort(SortMethod);
@@ -79,29 +83,29 @@ namespace BaseLibrary.UI.New
 
 		public override void RecalculateChildren()
 		{
-			int left = InnerDimensions.X;
-			int top = InnerDimensions.Y + yOffset;
-
 			List<BaseElement> visible = Children.Where(item => item.Display != Display.None).ToList();
+
+			int left = 0;
+			int top = yOffset;
 
 			for (int i = 0; i < visible.Count; i++)
 			{
 				BaseElement item = visible[i];
 
 				item.X.Pixels = left;
-				item.Y.Pixels = top;
+				item.Y.Pixels = top + item.Margin.Top;
 				item.Recalculate();
 				Rectangle dimensions = item.OuterDimensions;
 
 				if (i % columns == columns - 1 || i == visible.Count - 1)
 				{
 					top += dimensions.Height + ListPadding;
-					left = InnerDimensions.X;
+					left = 0;
 				}
 				else left += dimensions.Width + ListPadding;
 			}
 
-			innerListHeight = top - InnerDimensions.Y - yOffset;
+			innerListHeight = top - yOffset;
 
 			scrollbar?.SetView(InnerDimensions.Height, innerListHeight);
 		}

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
-using Terraria.UI;
 
 namespace BaseLibrary.UI.New
 {
@@ -65,9 +64,14 @@ namespace BaseLibrary.UI.New
 		}
 	}
 
+	public abstract class BaseState : BaseElement
+	{
+		public abstract bool Enabled { get; }
+	}
+
 	public class BaseElement : IComparable<BaseElement>
 	{
-		public BaseElement Parent { get; private set; }
+		public BaseElement Parent { get; protected internal set; }
 
 		public List<BaseElement> Children = new List<BaseElement>();
 		public int Count => Children.Count;
@@ -152,6 +156,11 @@ namespace BaseLibrary.UI.New
 					if (element.Display != Display.None && Utility.CheckAABBvAABBCollision(Parent.Dimensions, element.Dimensions)) element.InternalDraw(spriteBatch);
 				}
 			}
+		}
+
+		protected virtual void MouseHeld(MouseButtonEventArgs args)
+		{
+
 		}
 
 		protected virtual void MouseDown(MouseButtonEventArgs args)
@@ -250,6 +259,12 @@ namespace BaseLibrary.UI.New
 			Rectangle original = device.ScissorRectangle;
 
 			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
+
+
+			Draw(spriteBatch);
+
+			spriteBatch.End();
 
 			if (Overflow == Overflow.Hidden)
 			{
@@ -260,7 +275,6 @@ namespace BaseLibrary.UI.New
 
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-			Draw(spriteBatch);
 			DrawChildren(spriteBatch);
 			if (IsMouseHovering && HoverText != null) Utility.DrawMouseText(HoverText, Color.White);
 
@@ -269,6 +283,25 @@ namespace BaseLibrary.UI.New
 			device.ScissorRectangle = original;
 
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
+
+			if (debugDraw && false)
+			{
+				if (OuterDimensions != Dimensions) spriteBatch.Draw(Main.magicPixel, OuterDimensions, Color.Goldenrod * 0.5f);
+				spriteBatch.Draw(Main.magicPixel, Dimensions, Color.LimeGreen * 0.5f);
+				if (InnerDimensions != Dimensions) spriteBatch.Draw(Main.magicPixel, InnerDimensions, Color.LightBlue * 0.5f);
+			}
+
+		}
+
+		internal void InternalMouseHeld(MouseButtonEventArgs args)
+		{
+			foreach (BaseElement element in ElementsAt(args.Position))
+			{
+				element.MouseHeld(args);
+				if (args.Handled) return;
+			}
+
+			MouseHeld(args);
 		}
 
 		internal BaseElement InternalMouseDown(MouseButtonEventArgs args)
@@ -348,13 +381,21 @@ namespace BaseLibrary.UI.New
 			MouseScroll(args);
 		}
 
+		private bool debugDraw;
+
 		internal void InternalMouseEnter(MouseMoveEventArgs args)
 		{
+			debugDraw = true;
+			args.Handled = true;
+
 			MouseEnter(args);
 		}
 
 		internal void InternalMouseLeave(MouseMoveEventArgs args)
 		{
+			debugDraw = false;
+			args.Handled = true;
+
 			MouseLeave(args);
 		}
 
@@ -414,7 +455,7 @@ namespace BaseLibrary.UI.New
 
 		public virtual void Recalculate()
 		{
-			Rectangle parent = Parent?.InnerDimensions ?? UserInterface.ActiveInstance.GetDimensions().ToRectangle();
+			Rectangle parent = Parent?.InnerDimensions ?? new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
 
 			Rectangle dimensions = Rectangle.Empty;
 
@@ -474,7 +515,7 @@ namespace BaseLibrary.UI.New
 		{
 			List<BaseElement> elements = new List<BaseElement>();
 
-			foreach (BaseElement element in Children.Where(element => element.ContainsPoint(point)&&element.Display!=Display.None))
+			foreach (BaseElement element in Children.Where(element => element.ContainsPoint(point) && element.Display != Display.None))
 			{
 				elements.Add(element);
 				elements.AddRange(element.ElementsAt(point));

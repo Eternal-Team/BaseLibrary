@@ -3,6 +3,7 @@ using BaseLibrary.UI.New;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
+using Steamworks;
 using System.Linq;
 using Terraria;
 using Terraria.Localization;
@@ -50,6 +51,8 @@ namespace BaseLibrary.UI.Elements
 
 			scrollbar = new UIScrollbar();
 			scrollbar.SetView(100, 1000);
+
+			Overflow = Overflow.Hidden;
 		}
 
 		public UIMultilineText(LocalizedText text, float scale = 1f)
@@ -126,17 +129,8 @@ namespace BaseLibrary.UI.Elements
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
 			if (DrawBackground) spriteBatch.DrawPanel(Dimensions, BaseLibrary.texturePanelBackground, Utility.ColorPanel_Selected * 0.75f);
-
-			spriteBatch.End();
-			Rectangle prev = spriteBatch.GraphicsDevice.ScissorRectangle;
-			spriteBatch.GraphicsDevice.ScissorRectangle = new Rectangle(InnerDimensions.X, InnerDimensions.Y, InnerDimensions.Width, InnerDimensions.Height);
-			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Utility.DefaultSamplerState, DepthStencilState.None, Utility.OverflowHiddenState);
-
+			
 			Utils.DrawBorderStringFourWay(spriteBatch, font, actualText, textPosition.X, textPosition.Y - scrollbar.ViewPosition, TextColor, BorderColor, Vector2.Zero, textScale);
-
-			spriteBatch.End();
-			spriteBatch.GraphicsDevice.ScissorRectangle = prev;
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Utility.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise);
 		}
 	}
 }
