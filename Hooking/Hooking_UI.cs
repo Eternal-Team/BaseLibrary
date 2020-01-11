@@ -40,27 +40,6 @@ namespace BaseLibrary
 			orig(self);
 		}
 
-		//private static BaseElement BaseElement_GetElementAt(On.Terraria.UI.UIElement.orig_GetElementAt orig, BaseElement self, Vector2 point)
-		//{
-		//	if (self is PanelUI ui)
-		//	{
-		//		BaseElement BaseElement = null;
-		//		for (int i = ui.Elements.Count - 1; i >= 0; i--)
-		//		{
-		//			BaseElement current = ui.Elements[i];
-		//			if (current.ContainsPoint(point))
-		//			{
-		//				BaseElement = current;
-		//				break;
-		//			}
-		//		}
-
-		//		return BaseElement?.GetElementAt(point);
-		//	}
-
-		//	return orig(self, point);
-		//}
-
 		private static void DrawCursor(ILContext il)
 		{
 			ILCursor cursor = new ILCursor(il);

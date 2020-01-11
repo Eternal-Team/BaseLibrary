@@ -4,42 +4,17 @@ using System;
 
 namespace BaseLibrary.Input.GamePad
 {
-	/// <summary>
-	///     An event args class for events related to a game pad's thumbsticks.
-	/// </summary>
 	public class GamePadThumbstickEventArgs : GamePadEventArgs
 	{
-		/// <summary>
-		///     The thumbstick involved in the event.
-		/// </summary>
 		public GamePadThumbsticks Thumbstick { get; set; }
 
-		/// <summary>
-		///     The current position of the thumbstick as a Cartesian coordinate.
-		/// </summary>
 		public Vector2 Position { get; set; }
 
-		/// <summary>
-		///     The angle that the thumbstick is currently making. This may be unreliable or inaccurate if the
-		///     Amount property reports a very small or 0 value.
-		/// </summary>
 		public float Angle { get; set; }
 
-		/// <summary>
-		///     The amount that the thumbstick is being pushed in the current direction.
-		/// </summary>
 		public float Amount { get; set; }
 
-		/// <summary>
-		///     Creates a new GamePadThumbstickEventArgs object.
-		/// </summary>
-		/// <param name="gameTime"></param>
-		/// <param name="logicalIndex"></param>
-		/// <param name="thumbstick"></param>
-		/// <param name="position"></param>
-		/// <param name="current"></param>
-		public GamePadThumbstickEventArgs(TimeSpan gameTime, PlayerIndex logicalIndex, GamePadThumbsticks thumbstick, Vector2 position, GamePadState current)
-			: base(gameTime, logicalIndex, current)
+		public GamePadThumbstickEventArgs(TimeSpan gameTime, PlayerIndex logicalIndex, GamePadThumbsticks thumbstick, Vector2 position, GamePadState current) : base(gameTime, logicalIndex, current)
 		{
 			Thumbstick = thumbstick;
 			Position = position;

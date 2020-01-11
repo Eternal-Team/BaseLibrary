@@ -24,13 +24,11 @@ namespace BaseLibrary
 		public void PushLayer(Layer layer)
 		{
 			layers.Insert(layerInsertIndex++, layer);
-			//layer.OnAttach();
 		}
 
 		public void PushOverlay(Layer layer)
 		{
 			layers.Add(layer);
-			//layer.OnAttach();
 		}
 
 		public void PopLayer(Layer layer)
@@ -38,7 +36,6 @@ namespace BaseLibrary
 			int index = layers.IndexOf(layer);
 			if (index >= 0 && index < layerInsertIndex)
 			{
-				//layer.OnDetach();
 				layers.Remove(layer);
 				layerInsertIndex--;
 			}
@@ -49,7 +46,6 @@ namespace BaseLibrary
 			int index = layers.IndexOf(layer);
 			if (index >= layerInsertIndex && index < layers.Count)
 			{
-				//layer.OnDetach();
 				layers.Remove(layer);
 			}
 		}

@@ -104,6 +104,11 @@ namespace BaseLibrary.UI
 				entity.UI.X = new StyleDimension { Pixels = (int)(position.X * Dimensions.Width) };
 				entity.UI.Y = new StyleDimension { Pixels = (int)(position.Y * Dimensions.Height) };
 			}
+			else
+			{
+				entity.UI.X.Percent = 50;
+				entity.UI.Y.Percent = 50;
+			}
 
 			entity.UI.OnMouseDown += args =>
 			{

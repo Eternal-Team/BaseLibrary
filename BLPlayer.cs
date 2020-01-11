@@ -21,7 +21,6 @@ namespace BaseLibrary
 			UIPositions = new Dictionary<Guid, Vector2>();
 		}
 
-		// bug: possibly doesn't work with overhaul
 		public override void ProcessTriggers(TriggersSet triggersSet)
 		{
 			if (BaseLibrary.hotkey.JustPressed)
@@ -61,7 +60,6 @@ namespace BaseLibrary
 		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
 		{
 			BaseLibrary.ClosedUICache.Clear();
-			//BaseLibrary.PanelGUI?.UI.CloseAllUIs();
 
 			PanelUI.Instance.CloseAllUIs();
 		}

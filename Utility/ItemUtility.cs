@@ -140,8 +140,8 @@ namespace BaseLibrary
 			if (Main.netMode == 1) return item;
 			for (int i = 0; i < Main.chest.Length; i++)
 			{
-				//bool hasItem = false;
-				//bool emptySlot = false;
+				bool hasItem = false;
+				bool emptySlot = false;
 				if (Main.chest[i] != null && !IsPlayerInChest(i) && !Chest.isLocked(Main.chest[i].x, Main.chest[i].y))
 				{
 					Vector2 value = new Vector2(Main.chest[i].x * 16 + 16, Main.chest[i].y * 16 + 16);
@@ -153,7 +153,7 @@ namespace BaseLibrary
 							{
 								if (item.IsTheSameAs(Main.chest[i].item[j]))
 								{
-									//hasItem = true;
+									hasItem = true;
 									int num = item.maxStack - item.stack;
 									if (num > 0)
 									{
@@ -165,21 +165,21 @@ namespace BaseLibrary
 								}
 							}
 
-							//else emptySlot = true;
+							else emptySlot = true;
 						}
 
-						//if (hasItem && emptySlot && item.stack > 0)
-						//{
-						//	for (int k = 0; k < Main.chest[i].item.Length; k++)
-						//	{
-						//		if (Main.chest[i].item[k].type == 0 || Main.chest[i].item[k].stack == 0)
-						//		{
-						//			Main.chest[i].item[k] = item.Clone();
-						//			item.SetDefaults();
-						//			return item;
-						//		}
-						//	}
-						//}
+						if (hasItem && emptySlot && item.stack > 0)
+						{
+							for (int k = 0; k < Main.chest[i].item.Length; k++)
+							{
+								if (Main.chest[i].item[k].type == 0 || Main.chest[i].item[k].stack == 0)
+								{
+									Main.chest[i].item[k] = item.Clone();
+									item.SetDefaults();
+									return item;
+								}
+							}
+						}
 					}
 				}
 			}
