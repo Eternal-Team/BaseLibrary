@@ -13,7 +13,7 @@ float4 main(float4 color : COLOR0, float2 uv : TEXCOORD0) : SV_TARGET
     float b = -roundedRect(uv * u_Dimensions - u_Dimensions * 0.5, u_Dimensions * 0.5, u_Radius);
    
 	if (b < 0) return 0;
-    else return tex2D(TextureSampler, uv) * color;
+    else return tex2D(TextureSampler, uv);
 }
 
 

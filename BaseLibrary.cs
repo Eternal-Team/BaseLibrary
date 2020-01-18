@@ -35,6 +35,8 @@ namespace BaseLibrary
 
 	public class BaseLibrary : Mod
 	{
+		public static bool ServerReachable;
+
 		internal static List<IHasUI> ClosedUICache = new List<IHasUI>();
 		public static LayerStack Layers;
 
@@ -54,6 +56,8 @@ namespace BaseLibrary
 
 			Dispatcher.Load();
 			Hooking.Load();
+
+			ServerReachable = Utility.PingHost("terraria.itorius.com", 443);
 
 			if (!Main.dedServ)
 			{

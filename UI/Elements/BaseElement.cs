@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace BaseLibrary.UI
 {
@@ -71,6 +72,9 @@ namespace BaseLibrary.UI
 
 	public class BaseElement : IComparable<BaseElement>
 	{
+		public static int SlotSize => ModContent.GetInstance<BaseLibraryConfig>().SlotSize;
+		public static int SlotMargin => ModContent.GetInstance<BaseLibraryConfig>().SlotMargin;
+
 		public BaseElement Parent { get; protected internal set; }
 
 		public List<BaseElement> Children = new List<BaseElement>();

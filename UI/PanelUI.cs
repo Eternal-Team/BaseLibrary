@@ -81,7 +81,7 @@ namespace BaseLibrary.UI
 			BaseElement element = entity.UI;
 			if (element == null) return;
 
-			Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[entity.UUID] = new Vector2(element.Dimensions.X / (float)Dimensions.Width, element.Dimensions.Y / (float)Dimensions.Height);
+			Main.LocalPlayer.GetModPlayer<BaseLibraryPlayer>().UIPositions[entity.UUID] = new Vector2(element.Dimensions.X / (float)Dimensions.Width, element.Dimensions.Y / (float)Dimensions.Height);
 			element.InternalDeactivate();
 
 			Remove(element);
@@ -99,7 +99,7 @@ namespace BaseLibrary.UI
 			entity.UI = (BaseUIPanel)Activator.CreateInstance(UICache[entityType], entity);
 			entity.UI.InternalActivate();
 
-			if (Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions.TryGetValue(entity.UUID, out Vector2 position))
+			if (Main.LocalPlayer.GetModPlayer<BaseLibraryPlayer>().UIPositions.TryGetValue(entity.UUID, out Vector2 position))
 			{
 				entity.UI.X = new StyleDimension { Pixels = (int)(position.X * Dimensions.Width) };
 				entity.UI.Y = new StyleDimension { Pixels = (int)(position.Y * Dimensions.Height) };
@@ -130,7 +130,7 @@ namespace BaseLibrary.UI
 				BaseElement element = Children[i];
 				if (element is BaseUIPanel panel)
 				{
-					Main.LocalPlayer.GetModPlayer<BLPlayer>().UIPositions[panel.Container.UUID] = new Vector2(element.X.Percent, element.Y.Percent);
+					Main.LocalPlayer.GetModPlayer<BaseLibraryPlayer>().UIPositions[panel.Container.UUID] = new Vector2(element.X.Percent, element.Y.Percent);
 					panel.Container.UI = null;
 				}
 			}
