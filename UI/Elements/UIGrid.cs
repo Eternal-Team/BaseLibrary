@@ -17,7 +17,7 @@ namespace BaseLibrary.UI
 
 		private float innerListHeight;
 
-		public int ListPadding = 4;
+		public int ItemMargin = 4;
 		public UIScrollbar scrollbar;
 
 		public Func<T, bool> SearchSelector;
@@ -99,10 +99,10 @@ namespace BaseLibrary.UI
 
 				if (i % columns == columns - 1 || i == visible.Count - 1)
 				{
-					top += dimensions.Height + ListPadding;
+					top += dimensions.Height + ItemMargin;
 					left = 0;
 				}
-				else left += dimensions.Width + ListPadding;
+				else left += dimensions.Width + ItemMargin;
 			}
 
 			innerListHeight = top - yOffset;

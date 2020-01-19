@@ -107,7 +107,7 @@ namespace BaseLibrary.UI
 			else
 			{
 				entity.UI.X.Percent = 50;
-				entity.UI.Y.Percent = 50;
+				entity.UI.Y.Percent = 25;
 			}
 
 			entity.UI.OnMouseDown += args =>

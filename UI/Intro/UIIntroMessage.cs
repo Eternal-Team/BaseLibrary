@@ -476,7 +476,7 @@ namespace BaseLibrary.UI.Intro
 				{
 					Width = { Percent = 100 },
 					Height = { Percent = 100 },
-					ListPadding = 0
+					ItemMargin = 0
 				};
 				tabCredits.Add(gridPatrons);
 			}

@@ -287,12 +287,14 @@ namespace BaseLibrary.UI
 
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-			if (debugDraw && false)
+#if DEBUG
+			if (debugDraw && debug)
 			{
 				if (OuterDimensions != Dimensions) spriteBatch.Draw(Main.magicPixel, OuterDimensions, Color.Goldenrod * 0.5f);
 				spriteBatch.Draw(Main.magicPixel, Dimensions, Color.LimeGreen * 0.5f);
 				if (InnerDimensions != Dimensions) spriteBatch.Draw(Main.magicPixel, InnerDimensions, Color.LightBlue * 0.5f);
 			}
+#endif
 		}
 
 		internal void InternalMouseHeld(MouseButtonEventArgs args)
@@ -384,6 +386,7 @@ namespace BaseLibrary.UI
 		}
 
 		private bool debugDraw;
+		internal static bool debug;
 
 		internal void InternalMouseEnter(MouseMoveEventArgs args)
 		{

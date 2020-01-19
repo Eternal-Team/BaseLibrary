@@ -130,6 +130,8 @@ namespace BaseLibrary
 				}
 			}
 
+			// bug: check if IHasUI entity still exists 
+
 			if (!Main.playerInventory)
 			{
 				List<BaseUIPanel> panels = gui.Children.Cast<BaseUIPanel>().ToList();

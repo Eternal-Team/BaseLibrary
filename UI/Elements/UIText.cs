@@ -36,8 +36,6 @@ namespace BaseLibrary.UI
 
 		public UIText(string text, float scale = 1f)
 		{
-			Height.Pixels = 20;
-
 			this.text = text;
 			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
 			textScale = scale > 1f ? scale * 0.5f : scale;
@@ -45,8 +43,6 @@ namespace BaseLibrary.UI
 
 		public UIText(LocalizedText text, float scale = 1f)
 		{
-			Height.Pixels = 20;
-
 			this.text = text;
 			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
 			textScale = scale > 1f ? scale * 0.5f : scale;
@@ -54,8 +50,6 @@ namespace BaseLibrary.UI
 
 		public UIText(Ref<string> text, float scale = 1f)
 		{
-			Height.Pixels = 20;
-
 			this.text = text;
 			font = scale > 1f ? Main.fontDeathText : Main.fontMouseText;
 			textScale = scale > 1f ? scale * 0.5f : scale;

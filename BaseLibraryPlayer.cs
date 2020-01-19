@@ -25,17 +25,8 @@ namespace BaseLibrary
 		{
 			if (BaseLibrary.hotkey.JustPressed)
 			{
-				Main.NewText("Just pressed");
-			}
-
-			if (BaseLibrary.hotkey.JustReleased)
-			{
-				Main.NewText("Just released");
-			}
-
-			if (BaseLibrary.hotkey.Current)
-			{
-				Main.NewText("Held down");
+				BaseElement.debug = !BaseElement.debug;
+				Main.NewText("UI debug " + (BaseElement.debug ? "enabled" : "disabled"));
 			}
 		}
 
