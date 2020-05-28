@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria;
 using Terraria.GameInput;
 
 namespace BaseLibrary.UI
@@ -21,14 +22,6 @@ namespace BaseLibrary.UI
 		{
 			Add(new PanelUI());
 			Add(new ChatUI());
-
-			//PanelUI panelUI = new PanelUI();
-			//panelUI.Recalculate();
-
-			//ChatUI chatUI = new ChatUI();
-			//chatUI.Recalculate();
-
-			//Elements = new List<BaseState> { panelUI , chatUI };
 		}
 
 		public void Add(BaseState ui)
@@ -61,7 +54,7 @@ namespace BaseLibrary.UI
 				MouseButtonEventArgs args = new MouseButtonEventArgs
 				{
 					Modifiers = modifiers,
-					Position = mousePos,
+					Position = mousePos * (1f / Main.UIScale),
 					Button = button
 				};
 
@@ -75,16 +68,22 @@ namespace BaseLibrary.UI
 
 		public override void OnMouseDown(MouseButtonEventArgs args)
 		{
+			args.Position *= 1f / Main.UIScale;
+
 			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
 			foreach (BaseState element in elements)
 			{
 				MouseDownElement = element.InternalMouseDown(args);
 				if (args.Handled) break;
 			}
+
+			args.Position *= Main.UIScale;
 		}
 
 		public override void OnMouseUp(MouseButtonEventArgs args)
 		{
+			args.Position *= 1f / Main.UIScale;
+
 			if (MouseDownElement != null)
 			{
 				MouseDownElement.InternalMouseUp(args);
@@ -100,10 +99,14 @@ namespace BaseLibrary.UI
 				element.InternalMouseUp(args);
 				if (args.Handled) break;
 			}
+
+			args.Position *= Main.UIScale;
 		}
 
 		public override void OnMouseMove(MouseMoveEventArgs args)
 		{
+			args.Position *= 1f / Main.UIScale;
+
 			var elements = Elements.Where(element => element.Enabled && element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
 			foreach (BaseState element in elements)
 			{
@@ -131,24 +134,34 @@ namespace BaseLibrary.UI
 
 				PlayerInput.MouseKeys.Clear();
 			}
+
+			args.Position *= Main.UIScale;
 		}
 
 		public override void OnMouseScroll(MouseScrollEventArgs args)
 		{
+			args.Position *= 1f / Main.UIScale;
+
 			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
 				element.InternalMouseScroll(args);
 				if (args.Handled) break;
 			}
+
+			args.Position *= Main.UIScale;
 		}
 
 		public override void OnClick(MouseButtonEventArgs args)
 		{
+			args.Position *= 1f / Main.UIScale;
+
 			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
 				element.InternalMouseClick(args);
 				if (args.Handled) break;
 			}
+
+			args.Position *= Main.UIScale;
 		}
 
 		public override void OnDoubleClick(MouseButtonEventArgs args)
@@ -198,10 +211,14 @@ namespace BaseLibrary.UI
 
 		public override void OnWindowResize(WindowResizedEventArgs args)
 		{
+			args.Size *= 1f / Main.UIScale;
+
 			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
 			{
 				element.Recalculate();
 			}
+
+			args.Size *= Main.UIScale;
 		}
 	}
 }

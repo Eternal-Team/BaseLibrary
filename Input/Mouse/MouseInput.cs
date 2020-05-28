@@ -22,7 +22,7 @@ namespace BaseLibrary.Input.Mouse
 
 		public static int DoubleClickMaxMove { get; set; }
 
-		public static bool MoveRaisedOnDrag { get; set; }
+		public static bool MoveRaisedOnDrag { get; set; } = true;
 
 		public static event Action<MouseButtonEventArgs> ButtonReleased;
 		public static event Action<MouseButtonEventArgs> ButtonPressed;

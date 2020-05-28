@@ -460,14 +460,14 @@ namespace BaseLibrary.UI
 
 		public virtual void Recalculate()
 		{
-			Rectangle parent = Parent?.InnerDimensions ?? new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
+			Rectangle parent = Parent?.InnerDimensions ?? new Rectangle(0, 0, (int)(Main.screenWidth * (1f / Main.UIScale)), (int)(Main.screenHeight * (1f / Main.UIScale)));
 
 			Rectangle dimensions = Rectangle.Empty;
 
 			int minWidth = Math.Max(0, MinWidth ?? 0);
 			int minHeight = Math.Max(0, MinHeight ?? 0);
-			int maxWidth = Math.Min(Main.screenWidth, MaxWidth ?? Main.screenWidth);
-			int maxHeight = Math.Min(Main.screenHeight, MaxHeight ?? Main.screenHeight);
+			int maxWidth = (int)Math.Min(Main.screenWidth * (1f / Main.UIScale), MaxWidth ?? Main.screenWidth * (1f / Main.UIScale));
+			int maxHeight = (int)Math.Min(Main.screenHeight * (1f / Main.UIScale), MaxHeight ?? Main.screenHeight * (1f / Main.UIScale));
 
 			dimensions.Width = Width.Percent * parent.Width / 100 + Width.Pixels;
 			if (dimensions.Width < minWidth) dimensions.Width = minWidth;

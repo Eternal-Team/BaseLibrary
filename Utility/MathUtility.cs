@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Utilities;
 
 namespace BaseLibrary
 {
@@ -118,5 +119,7 @@ namespace BaseLibrary
 		public static Vector2 ToScreenCoordinates(this Point point, bool addOffscreenRange = true) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen || !addOffscreenRange ? Vector2.Zero : new Vector2(Main.offScreenRange));
 
 		public static Vector2 ToScreenCoordinates(this Point16 point, bool addOffscreenRange = true) => point.ToVector2() * 16 - Main.screenPosition + (Main.drawToScreen || !addOffscreenRange ? Vector2.Zero : new Vector2(Main.offScreenRange));
+
+		public static int NextInclusive(this UnifiedRandom random, int max) => random.Next(max + 1);
 	}
 }

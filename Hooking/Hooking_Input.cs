@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Diagnostics;
+using Terraria;
 using Terraria.GameInput;
 
 namespace BaseLibrary
@@ -18,7 +19,7 @@ namespace BaseLibrary
 			if (typeof(PlayerInput).GetValue<bool>("reinitialize")) typeof(PlayerInput).InvokeMethod("ReInitialize");
 
 			PlayerInput.Triggers.Old = PlayerInput.Triggers.Current.Clone();
-
+			
 			Input.Input.Update(time);
 
 			PlayerInput.Triggers.Update();

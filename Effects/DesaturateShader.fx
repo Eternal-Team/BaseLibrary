@@ -1,4 +1,4 @@
-﻿sampler TextureSampler : register(s0);
+sampler TextureSampler : register(s0);
 
 float4 main(float2 coords : TEXCOORD0) : SV_TARGET
 {

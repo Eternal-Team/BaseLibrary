@@ -55,9 +55,6 @@ namespace BaseLibrary
 			TagSerializer.AddSerializer(new GUIDSerializer());
 
 			Dispatcher.Load();
-			Hooking.Load();
-
-			ServerReachable = Utility.PingHost("terraria.itorius.com", 443);
 
 			if (!Main.dedServ)
 			{
@@ -80,6 +77,10 @@ namespace BaseLibrary
 
 				MouseInterface = new LegacyGameInterfaceLayer("BaseLibrary: MouseText", Utility.DrawMouseText, InterfaceScaleType.UI);
 			}
+
+			Hooking.Load();
+
+			ServerReachable = Utility.PingHost("terraria.itorius.com", 443);
 		}
 
 		public override void Unload()

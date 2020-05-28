@@ -1,7 +1,9 @@
 ﻿using BaseLibrary.Input.Keyboard;
 using BaseLibrary.Input.Mouse;
 using Microsoft.Xna.Framework;
+using On.Terraria.GameContent.UI;
 using Terraria;
+using Terraria.GameInput;
 
 namespace BaseLibrary.Input
 {
@@ -22,10 +24,15 @@ namespace BaseLibrary.Input
 
 			MouseInput.MouseMoved += args =>
 			{
+				if (Layers == null) return;
+
 				foreach (Layer layer in Layers)
 				{
 					layer.OnMouseMove(args);
 				}
+
+				PlayerInput.CurrentInputMode = InputMode.Mouse;
+				PlayerInput.Triggers.Current.UsedMovementKey = false;
 			};
 
 			MouseInput.MouseScroll += args =>

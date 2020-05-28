@@ -14,7 +14,7 @@ namespace BaseLibrary
 {
 	public static partial class Hooking
 	{
-		private static UIIntroMessage uiIntroMessage;
+		// private static UIIntroMessage uiIntroMessage;
 
 		private static List<Mod> newOrUpdated = new List<Mod>();
 

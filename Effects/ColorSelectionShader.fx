@@ -1,4 +1,4 @@
-﻿float3 HSV2RGB(float3 HSV)
+float3 HSV2RGB(float3 HSV)
 {
 	float3 RGB = HSV.z;
 

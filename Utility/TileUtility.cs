@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
@@ -9,6 +11,48 @@ namespace BaseLibrary
 {
 	public static partial class Utility
 	{
+		public static IEnumerable<Point> GetCircle(int centerX, int centerY, int radius)
+		{
+			int x = radius, y = 0;
+
+			yield return new Point(x + centerX, centerY);
+
+			if (radius > 0)
+			{
+				yield return new Point(-x + centerX, centerY);
+				yield return new Point(centerX, x + centerY);
+				yield return new Point(centerX, -x + centerY);
+			}
+
+			int P = 1 - radius;
+			while (x > y)
+			{
+				y++;
+
+				if (P <= 0) P = P + 2 * y + 1;
+				else
+				{
+					x--;
+					P = P + 2 * y - 2 * x + 1;
+				}
+
+				if (x < y) break;
+
+				yield return new Point(x + centerX, y + centerY);
+				yield return new Point(-x + centerX, y + centerY);
+				yield return new Point(x + centerX, -y + centerY);
+				yield return new Point(-x + centerX, -y + centerY);
+
+				if (x != y)
+				{
+					yield return new Point(y + centerX, x + centerY);
+					yield return new Point(-y + centerX, x + centerY);
+					yield return new Point(y + centerX, -x + centerY);
+					yield return new Point(-y + centerX, -x + centerY);
+				}
+			}
+		}
+		
 		public static Point16 TileTopLeft(Point16 position)
 		{
 			if (position.X >= 0 && position.X <= Main.maxTilesX && position.Y >= 0 && position.Y <= Main.maxTilesY)
@@ -21,10 +65,13 @@ namespace BaseLibrary
 				if (tile != null)
 				{
 					TileObjectData data = TileObjectData.GetTileData(tile.type, 0);
+					
 					if (data != null)
 					{
-						fX = tile.frameX % (18 * data.Width) / 18;
-						fY = tile.frameY % (18 * data.Height) / 18;
+						int size = 16 + data.CoordinatePadding;
+						
+						fX = tile.frameX % (size * data.Width) / size;
+						fY = tile.frameY % (size * data.Height) / size;
 					}
 				}
 
@@ -33,6 +80,8 @@ namespace BaseLibrary
 
 			return Point16.NegativeOne;
 		}
+
+		public static bool InWorldBounds(int i, int j) => i >= 0 && i < Main.maxTilesX && j >= 0 && j < Main.maxTilesY;
 
 		public static T GetTileEntity<T>(int i, int j) where T : ModTileEntity => GetTileEntity<T>(new Point16(i, j));
 

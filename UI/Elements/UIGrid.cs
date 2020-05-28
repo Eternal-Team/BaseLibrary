@@ -112,6 +112,8 @@ namespace BaseLibrary.UI
 
 		protected override void MouseScroll(MouseScrollEventArgs args)
 		{
+			// bug: first apply scroll to children
+		
 			scrollbar.ViewPosition -= args.OffsetY;
 
 			args.Handled = true;

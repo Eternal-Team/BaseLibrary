@@ -15,6 +15,12 @@ namespace BaseLibrary
 
 		internal static void Load()
 		{
+			Main.DoUpdate += (orig, self, gameTime) =>
+			{
+				time = gameTime;
+				orig(self, gameTime);
+			};
+			
 			ItemSlot.LeftClick_ItemArray_int_int += CloseUI_ItemSlot;
 			Player.DropSelectedItem += CloseUI_Drop;
 
@@ -35,11 +41,7 @@ namespace BaseLibrary
 
 			UserInterface.Draw += UserInterface_Draw;
 
-			Main.DoUpdate += (orig, self, gameTime) =>
-			{
-				time = gameTime;
-				orig(self, gameTime);
-			};
+		
 
 			HookEndpointManager.Modify(typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.UI.UILoadMods").GetMethod("OnDeactivate", Utility.defaultFlags), new Action<ILContext>(ShowIntroMessage));
 		}
