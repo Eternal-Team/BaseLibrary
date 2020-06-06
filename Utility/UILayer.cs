@@ -13,8 +13,10 @@ namespace BaseLibrary.UI
 	// note: when capturing mouse click events mouse down/up still gets run
 	public class UILayer : Layer
 	{
-		public override bool Enabled => true;
+		public override bool Enabled => !Main.gameMenu;
 
+		private static float Scale => Main.gameMenu ? 1f : Main.UIScale;
+		
 		internal List<BaseState> Elements = new List<BaseState>();
 		private BaseElement Current;
 
@@ -54,7 +56,7 @@ namespace BaseLibrary.UI
 				MouseButtonEventArgs args = new MouseButtonEventArgs
 				{
 					Modifiers = modifiers,
-					Position = mousePos * (1f / Main.UIScale),
+					Position = mousePos * (1f / Scale),
 					Button = button
 				};
 
@@ -68,7 +70,7 @@ namespace BaseLibrary.UI
 
 		public override void OnMouseDown(MouseButtonEventArgs args)
 		{
-			args.Position *= 1f / Main.UIScale;
+			args.Position *= 1f / Scale;
 
 			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
 			foreach (BaseState element in elements)
@@ -77,12 +79,12 @@ namespace BaseLibrary.UI
 				if (args.Handled) break;
 			}
 
-			args.Position *= Main.UIScale;
+			args.Position *= Scale;
 		}
 
 		public override void OnMouseUp(MouseButtonEventArgs args)
 		{
-			args.Position *= 1f / Main.UIScale;
+			args.Position *= 1f / Scale;
 
 			if (MouseDownElement != null)
 			{
@@ -100,12 +102,12 @@ namespace BaseLibrary.UI
 				if (args.Handled) break;
 			}
 
-			args.Position *= Main.UIScale;
+			args.Position *= Scale;
 		}
 
 		public override void OnMouseMove(MouseMoveEventArgs args)
 		{
-			args.Position *= 1f / Main.UIScale;
+			args.Position *= 1f / Scale;
 
 			var elements = Elements.Where(element => element.Enabled && element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
 			foreach (BaseState element in elements)
@@ -135,12 +137,12 @@ namespace BaseLibrary.UI
 				PlayerInput.MouseKeys.Clear();
 			}
 
-			args.Position *= Main.UIScale;
+			args.Position *= Scale;
 		}
 
 		public override void OnMouseScroll(MouseScrollEventArgs args)
 		{
-			args.Position *= 1f / Main.UIScale;
+			args.Position *= 1f / Scale;
 
 			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
@@ -148,12 +150,12 @@ namespace BaseLibrary.UI
 				if (args.Handled) break;
 			}
 
-			args.Position *= Main.UIScale;
+			args.Position *= Scale;
 		}
 
 		public override void OnClick(MouseButtonEventArgs args)
 		{
-			args.Position *= 1f / Main.UIScale;
+			args.Position *= 1f / Scale;
 
 			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
 			{
@@ -161,7 +163,7 @@ namespace BaseLibrary.UI
 				if (args.Handled) break;
 			}
 
-			args.Position *= Main.UIScale;
+			args.Position *= Scale;
 		}
 
 		public override void OnDoubleClick(MouseButtonEventArgs args)
@@ -211,14 +213,14 @@ namespace BaseLibrary.UI
 
 		public override void OnWindowResize(WindowResizedEventArgs args)
 		{
-			args.Size *= 1f / Main.UIScale;
+			args.Size *= 1f / Scale;
 
 			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
 			{
 				element.Recalculate();
 			}
 
-			args.Size *= Main.UIScale;
+			args.Size *= Scale;
 		}
 	}
 }

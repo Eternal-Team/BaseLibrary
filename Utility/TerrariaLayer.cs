@@ -2,13 +2,17 @@
 using BaseLibrary.Input.Mouse;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Reflection;
 using Terraria;
 using Terraria.GameInput;
+using Terraria.ModLoader;
 
 namespace BaseLibrary
 {
 	public class TerrariaLayer : Layer
 	{
+		public override bool Enabled => true;
+
 		private KeyConfiguration KeyConfiguration
 		{
 			get
@@ -17,6 +21,11 @@ namespace BaseLibrary
 				return PlayerInput.CurrentProfile.InputModes[InputMode.Keyboard];
 			}
 		}
+
+		private static FieldInfo originalMouseX = typeof(PlayerInput).GetField("_originalMouseX", Utility.defaultFlags);
+		private static FieldInfo originalMouseY = typeof(PlayerInput).GetField("_originalMouseY", Utility.defaultFlags);
+		private static FieldInfo originalLastMouseX = typeof(PlayerInput).GetField("_originalLastMouseX", Utility.defaultFlags);
+		private static FieldInfo originalLastMouseY = typeof(PlayerInput).GetField("_originalLastMouseY", Utility.defaultFlags);
 
 		public override void OnMouseMove(MouseMoveEventArgs args)
 		{
@@ -27,12 +36,19 @@ namespace BaseLibrary
 			Main.lastMouseY = Main.mouseY;
 			Main.mouseX = PlayerInput.MouseX;
 			Main.mouseY = PlayerInput.MouseY;
+
+			// originalMouseX.SetValue(Main.mouseX);
+			// originalMouseY.SetValue(Main.mouseY);
+			// originalLastMouseX.SetValue(Main.lastMouseX);
+			// originalLastMouseY.SetValue(Main.lastMouseY);
 		}
 
 		public override void OnUpdate(GameTime gameTime)
 		{
 			PlayerInput.ScrollWheelDelta = 0;
-			PlayerInput.ScrollWheelDeltaForUI = 0;
+			// PlayerInput.ScrollWheelDeltaForUI = 0;
+
+			ModContent.GetInstance<BaseLibrary>().Logger.Debug($"w:{originalScreenWidth.GetValue(null)} h:{originalScreenHeight.GetValue(null)}");
 		}
 
 		public override void OnMouseScroll(MouseScrollEventArgs args)
@@ -170,6 +186,15 @@ namespace BaseLibrary
 				}
 			}
 		}
+
+		private static FieldInfo originalScreenWidth = typeof(PlayerInput).GetField("_originalScreenWidth", Utility.defaultFlags);
+		private static FieldInfo originalScreenHeight = typeof(PlayerInput).GetField("_originalScreenHeight", Utility.defaultFlags);
+
+		// public override void OnWindowResize(WindowResizedEventArgs args)
+		// {
+		// 	originalScreenWidth.SetValue((int)args.Width);
+		// 	originalScreenHeight.SetValue((int)args.Height);
+		// }
 
 		public override void OnKeyReleased(KeyboardEventArgs args)
 		{

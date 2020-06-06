@@ -59,5 +59,10 @@ namespace BaseLibrary.Input
 		public float DeltaX => Delta.X;
 
 		public float DeltaY => Delta.Y;
+
+		public override string ToString()
+		{
+			return $"MouseMove: X={X}, Y={Y}";
+		}
 	}
 }
