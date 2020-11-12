@@ -8,6 +8,8 @@ namespace BaseLibrary
 	{
 		public override void Load()
 		{
+			Hooking.Initialize();
+			
 			TagSerializer.AddSerializer(new GuidSerializer());
 		}
 	}
