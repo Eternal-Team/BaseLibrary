@@ -14,5 +14,7 @@ namespace BaseLibrary.Utility
 		}
 
 		public static void SetValue(this object obj, string name, object value, BindingFlags flags = DefaultFlags) => obj.GetType().SetValue(name, value, obj, flags);
+
+		public static T Invoke<T>(this MethodInfo info, object target, params object[] args) => (T)info.Invoke(target, args);
 	}
 }
