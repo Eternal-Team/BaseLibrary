@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil.Cil;
@@ -11,18 +11,26 @@ namespace BaseLibrary
 {
 	public interface ICraftingStorage : IItemHandler
 	{
-		ItemHandler GetItemHandlerForCrafting();
+		IEnumerable<int> GetSlotsForCrafting();
 	}
 
-	public static class Hooking
+	internal static class Hooking
 	{
 		internal static void Initialize()
 		{
 			IL.Terraria.Recipe.FindRecipes += Recipe_FindRecipes;
 			IL.Terraria.Recipe.Create += Recipe_Create;
-			// IL.Terraria.Player.AdjTiles += Player_AdjTiles;
 
 			// if (ModLoader.GetMod("BaseLibrary") != null) ItemSlot.OverrideHover += ItemSlot_OverrideHover;
+		}
+
+		private static IEnumerable<ICraftingStorage> GetCraftingStorages(Player player)
+		{
+			foreach (Item item in player.inventory)
+			{
+				if (item.IsAir || !(item.modItem is ICraftingStorage storage)) continue;
+				yield return storage;
+			}
 		}
 
 		private static void Recipe_FindRecipes(ILContext il)
@@ -35,14 +43,13 @@ namespace BaseLibrary
 
 				cursor.EmitDelegate<Func<Dictionary<int, int>, Dictionary<int, int>>>(availableItems =>
 				{
-					foreach (Item pItem in Main.LocalPlayer.inventory)
+					foreach (ICraftingStorage storage in GetCraftingStorages(Main.LocalPlayer))
 					{
-						if (!(pItem.modItem is ICraftingStorage storage)) continue;
-						ItemHandler handler = storage.GetItemHandlerForCrafting();
+						ItemHandler handler = storage.GetItemHandler();
 
-						for (int i = 0; i < handler.Slots; i++)
+						foreach (int slot in storage.GetSlotsForCrafting())
 						{
-							Item item = handler.GetItemInSlot(i);
+							Item item = handler.GetItemInSlot(slot);
 							if (item.stack > 0)
 							{
 								if (availableItems.ContainsKey(item.netID)) availableItems[item.netID] += item.stack;
@@ -79,21 +86,20 @@ namespace BaseLibrary
 
 				cursor.EmitDelegate<Func<Recipe, Item, int, int>>((self, ingredient, amount) =>
 				{
-					foreach (Item pItem in Main.LocalPlayer.inventory)
+					foreach (ICraftingStorage storage in GetCraftingStorages(Main.LocalPlayer))
 					{
-						if (!(pItem.modItem is ICraftingStorage storage)) continue;
-						ItemHandler handler = storage.GetItemHandlerForCrafting();
+						ItemHandler handler = storage.GetItemHandler();
 
-						for (int i = 0; i < handler.Slots; i++)
+						foreach (int slot in storage.GetSlotsForCrafting())
 						{
 							if (amount <= 0) return amount;
-							Item item = handler.GetItemInSlot(i);
+							Item item = handler.GetItemInSlot(slot);
 
 							if (!item.IsTheSameAs(ingredient) && !AcceptedByItemGroups(self, item.type, ingredient.type)) continue;
 
 							int count = Math.Min(amount, item.stack);
 							amount -= count;
-							handler.ExtractItem(i, out _, count);
+							handler.ExtractItem(slot, out _, count);
 						}
 					}
 
