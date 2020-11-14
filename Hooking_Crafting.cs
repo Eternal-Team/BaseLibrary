@@ -78,7 +78,7 @@ namespace BaseLibrary
 
 			ILCursor cursor = new ILCursor(il);
 
-			if (cursor.TryGotoNext(MoveType.AfterLabel, i => i.MatchLdarg(0), i => i.MatchCall<AchievementsHelper>("NotifyItemCraft")))
+			if (cursor.TryGotoNext(MoveType.AfterLabel, i => i.MatchLdloc(3),i=>i.MatchLdcI4(1), i => i.MatchAdd()))
 			{
 				cursor.Emit(OpCodes.Ldarg, 0);
 				cursor.Emit(OpCodes.Ldloc, 2);
