@@ -4,26 +4,17 @@ using System.Linq;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Terraria;
-using Terraria.GameContent.Achievements;
 using Terraria.ModLoader.Container;
 
 namespace BaseLibrary
 {
-	public interface ICraftingStorage : IItemHandler
+	public interface ICraftingStorage : IItemStorage
 	{
 		IEnumerable<int> GetSlotsForCrafting();
 	}
 
-	internal static class Hooking
+	internal static partial class Hooking
 	{
-		internal static void Initialize()
-		{
-			IL.Terraria.Recipe.FindRecipes += Recipe_FindRecipes;
-			IL.Terraria.Recipe.Create += Recipe_Create;
-
-			// if (ModLoader.GetMod("BaseLibrary") != null) ItemSlot.OverrideHover += ItemSlot_OverrideHover;
-		}
-
 		private static IEnumerable<ICraftingStorage> GetCraftingStorages(Player player)
 		{
 			foreach (Item item in player.inventory)
@@ -43,13 +34,13 @@ namespace BaseLibrary
 
 				cursor.EmitDelegate<Func<Dictionary<int, int>, Dictionary<int, int>>>(availableItems =>
 				{
-					foreach (ICraftingStorage storage in GetCraftingStorages(Main.LocalPlayer))
+					foreach (ICraftingStorage craftingStorage in GetCraftingStorages(Main.LocalPlayer))
 					{
-						ItemHandler handler = storage.GetItemHandler();
+						ItemStorage storage = craftingStorage.GetItemStorage();
 
-						foreach (int slot in storage.GetSlotsForCrafting())
+						foreach (int slot in craftingStorage.GetSlotsForCrafting())
 						{
-							Item item = handler.GetItemInSlot(slot);
+							Item item = storage[slot];
 							if (item.stack > 0)
 							{
 								if (availableItems.ContainsKey(item.netID)) availableItems[item.netID] += item.stack;
@@ -78,7 +69,7 @@ namespace BaseLibrary
 
 			ILCursor cursor = new ILCursor(il);
 
-			if (cursor.TryGotoNext(MoveType.AfterLabel, i => i.MatchLdloc(3),i=>i.MatchLdcI4(1), i => i.MatchAdd()))
+			if (cursor.TryGotoNext(MoveType.AfterLabel, i => i.MatchLdloc(3), i => i.MatchLdcI4(1), i => i.MatchAdd()))
 			{
 				cursor.Emit(OpCodes.Ldarg, 0);
 				cursor.Emit(OpCodes.Ldloc, 2);
@@ -86,20 +77,20 @@ namespace BaseLibrary
 
 				cursor.EmitDelegate<Func<Recipe, Item, int, int>>((self, ingredient, amount) =>
 				{
-					foreach (ICraftingStorage storage in GetCraftingStorages(Main.LocalPlayer))
+					foreach (ICraftingStorage craftingStorage in GetCraftingStorages(Main.LocalPlayer))
 					{
-						ItemHandler handler = storage.GetItemHandler();
+						ItemStorage storage = craftingStorage.GetItemStorage();
 
-						foreach (int slot in storage.GetSlotsForCrafting())
+						foreach (int slot in craftingStorage.GetSlotsForCrafting())
 						{
 							if (amount <= 0) return amount;
-							Item item = handler.GetItemInSlot(slot);
+							Item item = storage[slot];
 
 							if (!item.IsTheSameAs(ingredient) && !AcceptedByItemGroups(self, item.type, ingredient.type)) continue;
 
 							int count = Math.Min(amount, item.stack);
 							amount -= count;
-							handler.ExtractItem(slot, out _, count);
+							storage.ModifyStackSize(Main.LocalPlayer, slot, -count);
 						}
 					}
 

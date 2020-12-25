@@ -6,11 +6,11 @@ namespace BaseLibrary
 {
 	public class BaseLibrary : Mod
 	{
+		public const string PlaceholderTexture = "BaseLibrary/Assets/PlaceholderTexture";
+		
 		public override void Load()
 		{
 			Hooking.Initialize();
-
-			TagSerializer.AddSerializer(new GuidSerializer());
 		}
 	}
 
