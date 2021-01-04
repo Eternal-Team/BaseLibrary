@@ -19,9 +19,9 @@ namespace BaseLibrary.UI
 {
 	public class UIContainerSlot : BaseElement
 	{
-		public struct Options
+		public struct Settings
 		{
-			public static readonly Options Default = new Options
+			public static readonly Settings Default = new Settings
 			{
 				ShortStackSize = false,
 				GhostItem = null,
@@ -36,19 +36,14 @@ namespace BaseLibrary.UI
 		}
 
 		private ItemStorage storage;
-		private Options options;
-
-		public Item Item
-		{
-			get => storage[slot];
-			// set => storage[slot] = value;
-		}
-
+		private Settings settings;
 		private int slot;
 
-		public UIContainerSlot(ItemStorage itemStorage, int slot, Options? options = null)
+		public Item Item => storage[slot];
+
+		public UIContainerSlot(ItemStorage itemStorage, int slot, Settings? settings = null)
 		{
-			this.options = options ?? Options.Default;
+			this.settings = settings ?? Settings.Default;
 
 			Width.Pixels = 44;
 			Height.Pixels = 44;
@@ -133,7 +128,7 @@ namespace BaseLibrary.UI
 			if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(TextureAssets.Wire.Value, position + new Vector2(40f, 40f) * scale, new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
 			if (item.stack > 1)
 			{
-				string text = !options.ShortStackSize || item.stack < 1000 ? item.stack.ToString() : TextUtility.ToSI(item.stack, "N1");
+				string text = !settings.ShortStackSize || item.stack < 1000 ? item.stack.ToString() : TextUtility.ToSI(item.stack, "N1");
 				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, text, InnerDimensions.TopLeft() + new Vector2(8, InnerDimensions.Height - FontAssets.MouseText.Value.MeasureString(text).Y * scale), Color.White, 0f, Vector2.Zero, new Vector2(0.85f), -1f, scale);
 			}
 
@@ -150,7 +145,7 @@ namespace BaseLibrary.UI
 
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
-			var texture = !Item.IsAir && Item.favorited ? options.FavoritedSlotTexture : options.SlotTexture;
+			var texture = !Item.IsAir && Item.favorited ? settings.FavoritedSlotTexture : settings.SlotTexture;
 			DrawingUtility.DrawSlot(spriteBatch, Dimensions, texture, Color.White);
 
 			float scale = Math.Min(InnerDimensions.Width / (float)texture.Width, InnerDimensions.Height / (float)texture.Height);

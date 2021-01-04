@@ -490,16 +490,16 @@ namespace BaseLibrary.UI
 			int maxWidth = (int)Math.Min(Main.screenWidth * (1f / Main.UIScale), MaxWidth ?? Main.screenWidth * (1f / Main.UIScale));
 			int maxHeight = (int)Math.Min(Main.screenHeight * (1f / Main.UIScale), MaxHeight ?? Main.screenHeight * (1f / Main.UIScale));
 
-			dimensions.Width = Width.Percent * parent.Width / 100 + Width.Pixels;
+			dimensions.Width = (int)(Width.Percent * parent.Width / 100f + Width.Pixels);
 			if (dimensions.Width < minWidth) dimensions.Width = minWidth;
 			else if (dimensions.Width > maxWidth) dimensions.Width = maxWidth;
 
-			dimensions.Height = Height.Percent * parent.Height / 100 + Height.Pixels;
+			dimensions.Height = (int)(Height.Percent * parent.Height / 100f + Height.Pixels);
 			if (dimensions.Height < minHeight) dimensions.Height = minHeight;
 			else if (dimensions.Height > maxHeight) dimensions.Height = maxHeight;
 
-			dimensions.X = parent.X + (X.Percent * parent.Width / 100 - dimensions.Width * X.Percent / 100) + X.Pixels;
-			dimensions.Y = parent.Y + (Y.Percent * parent.Height / 100 - dimensions.Height * Y.Percent / 100) + Y.Pixels;
+			dimensions.X = (int)(parent.X + (X.Percent * parent.Width / 100f - dimensions.Width * X.Percent / 100f) + X.Pixels);
+			dimensions.Y = (int)(parent.Y + (Y.Percent * parent.Height / 100f - dimensions.Height * Y.Percent / 100f) + Y.Pixels);
 
 			Dimensions = dimensions;
 			InnerDimensions = new Rectangle(dimensions.X + Padding.Left, dimensions.Y + Padding.Top, dimensions.Width - Padding.Left - Padding.Right, dimensions.Height - Padding.Top - Padding.Bottom);
@@ -526,7 +526,13 @@ namespace BaseLibrary.UI
 			int width = spriteBatch.GraphicsDevice.Viewport.Width;
 			int height = spriteBatch.GraphicsDevice.Viewport.Height;
 
-			Rectangle result = new Rectangle { X = (int)Utils.Clamp(topLeft.X, 0, width), Y = (int)Utils.Clamp(topLeft.Y, 0, height), Width = (int)Utils.Clamp(bottomRight.X - topLeft.X, 0, width - topLeft.X), Height = (int)Utils.Clamp(bottomRight.Y - topLeft.Y, 0, height - topLeft.Y) };
+			Rectangle result = new Rectangle
+			{
+				X = (int)Utils.Clamp(topLeft.X, 0, width),
+				Y = (int)Utils.Clamp(topLeft.Y, 0, height),
+				Width = (int)Utils.Clamp(bottomRight.X - topLeft.X, 0, width - topLeft.X),
+				Height = (int)Utils.Clamp(bottomRight.Y - topLeft.Y, 0, height - topLeft.Y)
+			};
 
 			return result;
 		}
@@ -599,10 +605,6 @@ namespace BaseLibrary.UI
 			Children.Clear();
 		}
 
-		public BaseElement this[int index]
-		{
-			get => Children[index];
-			set => Children[index] = value;
-		}
+		public BaseElement this[int index] => Children[index];
 	}
 }
