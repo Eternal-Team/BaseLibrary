@@ -1,5 +1,8 @@
 using System;
+using BaseLibrary.UI;
+using Terraria;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Input;
 using Terraria.ModLoader.IO;
 
 namespace BaseLibrary
@@ -7,10 +10,15 @@ namespace BaseLibrary
 	public class BaseLibrary : Mod
 	{
 		public const string PlaceholderTexture = "BaseLibrary/Assets/PlaceholderTexture";
-		
+
 		public override void Load()
 		{
 			Hooking.Initialize();
+
+			if (!Main.dedServ)
+			{
+				Input.Layers.PushLayer(new UILayer());
+			}
 		}
 	}
 
