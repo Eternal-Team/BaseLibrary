@@ -1,4 +1,5 @@
-﻿using BaseLibrary.Utility;
+﻿using System.Collections.Generic;
+using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,31 +10,54 @@ using Terraria.UI;
 
 namespace BaseLibrary.UI
 {
+	public class DragZone
+	{
+		public static readonly DragZone Panel = new DragZone { Width = { Percent = 100 }, Height = { Percent = 100 } };
+		public static readonly DragZone LeftBorder = new DragZone { Width = { Pixels = 8 }, Height = { Percent = 100 } };
+		public static readonly DragZone RightBorder = new DragZone { X = { Percent = 100 }, Width = { Pixels = 8 }, Height = { Percent = 100 } };
+		public static readonly DragZone TopBorder = new DragZone { Width = { Percent = 100 }, Height = { Pixels = 8 } };
+		public static readonly DragZone BottomBorder = new DragZone { Y = { Percent = 100 }, Width = { Percent = 100 }, Height = { Pixels = 8 } };
+
+		public static readonly List<DragZone> Border = new List<DragZone>
+		{
+			LeftBorder,
+			RightBorder,
+			TopBorder,
+			BottomBorder
+		};
+
+		public StyleDimension X = new StyleDimension();
+		public StyleDimension Y = new StyleDimension();
+		public StyleDimension Width = new StyleDimension();
+		public StyleDimension Height = new StyleDimension();
+	}
+
+	public struct UIPanelSettings
+	{
+		public static readonly UIPanelSettings Default = new UIPanelSettings
+		{
+			BackgroundColor = UICommon.DefaultUIBlue,
+			BorderColor = Color.Black,
+			Draggable = false,
+			Resizeable = false,
+			DragZones = new List<DragZone> { DragZone.Panel },
+			Texture = null
+		};
+
+		public Color BackgroundColor;
+		public Color BorderColor;
+		public bool Draggable;
+		public List<DragZone> DragZones;
+		public bool Resizeable;
+		public Texture2D Texture;
+	}
+
 	public class UIPanel : BaseElement
 	{
-		public struct Settings
+		public UIPanelSettings Settings = UIPanelSettings.Default;
+
+		public UIPanel()
 		{
-			public static readonly Settings Default = new Settings
-			{
-				BackgroundColor = UICommon.DefaultUIBlue,
-				BorderColor = Color.Black,
-				Draggable = false,
-				Resizeable = false
-			};
-
-			public Color BackgroundColor;
-			public Color BorderColor;
-			public bool Draggable;
-			public bool Resizeable;
-			// public Texture2D customTexture;
-		}
-
-		public Settings settings;
-
-		public UIPanel(Settings? settings = null)
-		{
-			this.settings = settings ?? Settings.Default;
-
 			Padding = new Padding(8);
 		}
 
@@ -43,18 +67,34 @@ namespace BaseLibrary.UI
 
 		protected override void MouseDown(MouseButtonEventArgs args)
 		{
-			if (!settings.Draggable || args.Button != MouseButton.Left) return;
+			if (!Settings.Draggable || args.Button != MouseButton.Left || GetElementAt(args.Position) != this) return;
 
-			offset = args.Position - Position;
+			foreach (var zone in Settings.DragZones)
+			{
+				Rectangle parent = Dimensions;
 
-			dragging = true;
+				Rectangle dimensions = Rectangle.Empty;
+				dimensions.Width = (int)(zone.Width.Percent * parent.Width / 100f + zone.Width.Pixels);
+				dimensions.Height = (int)(zone.Height.Percent * parent.Height / 100f + zone.Height.Pixels);
+				dimensions.X = (int)(parent.X + (zone.X.Percent * parent.Width / 100f - dimensions.Width * zone.X.Percent / 100f) + zone.X.Pixels);
+				dimensions.Y = (int)(parent.Y + (zone.Y.Percent * parent.Height / 100f - dimensions.Height * zone.Y.Percent / 100f) + zone.Y.Pixels);
 
-			args.Handled = true;
+				if (dimensions.Contains(args.Position))
+				{
+					offset = args.Position - Position;
+
+					dragging = true;
+
+					args.Handled = true;
+
+					return;
+				}
+			}
 		}
 
 		protected override void MouseUp(MouseButtonEventArgs args)
 		{
-			if (!settings.Draggable || args.Button != MouseButton.Left) return;
+			if (!Settings.Draggable || args.Button != MouseButton.Left) return;
 
 			dragging = false;
 
@@ -63,8 +103,6 @@ namespace BaseLibrary.UI
 
 		protected override void Update(GameTime gameTime)
 		{
-			if (!settings.Draggable) return;
-
 			if (IsMouseHovering)
 			{
 				Main.LocalPlayer.mouseInterface = true;
@@ -91,9 +129,8 @@ namespace BaseLibrary.UI
 
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
-			// if (customTexture != null) spriteBatch.Draw(customTexture, Dimensions);
-			// else
-			DrawingUtility.DrawPanel(spriteBatch, Dimensions, settings.BackgroundColor, settings.BorderColor);
+			if (Settings.Texture != null) spriteBatch.Draw(Settings.Texture, Dimensions);
+			else DrawingUtility.DrawPanel(spriteBatch, Dimensions, Settings.BackgroundColor, Settings.BorderColor);
 
 			if (IsMouseHovering)
 			{
