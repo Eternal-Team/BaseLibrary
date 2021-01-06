@@ -16,6 +16,11 @@ namespace BaseLibrary.Utility
 			public static readonly Color Slot = new Color(63, 65, 151);
 			public static readonly Color Outline = new Color(18, 18, 38);
 		}
+
+		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Rectangle dimensions)
+		{
+			spriteBatch.Draw(texture, dimensions, Color.White);
+		}
 		
 		public static void DrawSlot(SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color? color = null)
 		{

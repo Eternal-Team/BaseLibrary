@@ -29,5 +29,7 @@ namespace BaseLibrary.Utility
 		}
 
 		public static bool CheckAABBvAABBCollision(Rectangle a, Rectangle b) => a.X < b.X + b.Width && a.X + a.Width > b.X && a.Y < b.Y + b.Height && a.Y + a.Height > b.Y;
+
+		public static bool Contains(this Rectangle rectangle, Vector2 point) => rectangle.X <= point.X && point.X < rectangle.X + rectangle.Width && rectangle.Y <= point.Y && point.Y < rectangle.Y + rectangle.Height;
 	}
 }
