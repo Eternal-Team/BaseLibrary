@@ -91,6 +91,21 @@ namespace BaseLibrary.UI
 		// public static int SlotSize => ModContent.GetInstance<BaseLibraryConfig>().SlotSize;
 		// public static int SlotMargin => ModContent.GetInstance<BaseLibraryConfig>().SlotMargin;
 
+		// public BaseElement With<T>(Action<T> action) where T : BaseElement
+		// {
+		// 	T element = ReflectionUtility.CreateInstance<T>();
+		// 	action(element);
+		// 	Add(element);
+		//
+		// 	return this;
+		// }
+		
+		public BaseElement With(Action action)
+		{
+			action();
+			return this;
+		}
+		
 		public BaseElement Parent { get; protected internal set; }
 
 		public List<BaseElement> Children = new List<BaseElement>();
@@ -278,7 +293,7 @@ namespace BaseLibrary.UI
 		internal void InternalDraw(SpriteBatch spriteBatch)
 		{
 			GraphicsDevice device = spriteBatch.GraphicsDevice;
-			SamplerState sampler = SamplerState.LinearClamp;
+			SamplerState sampler = SamplerState.PointClamp;
 			RasterizerState rasterizer = new RasterizerState { CullMode = CullMode.None, ScissorTestEnable = true };
 
 			Rectangle original = device.ScissorRectangle;
