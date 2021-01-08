@@ -18,17 +18,16 @@ namespace BaseLibrary.UI
 
 		private static float Scale => Main.gameMenu ? 1f : Main.UIScale;
 
-		internal List<BaseState> Elements = new List<BaseState>();
+		private List<BaseState> Elements = new List<BaseState>();
 		private BaseElement current;
 		private BaseElement mouseDownElement;
+
+		private IEnumerable<BaseState> VisibleElements() => Elements.Where(element => element.Display != Display.None);
+		private IEnumerable<BaseState> HoveredElements(Vector2 mouse) => Elements.Where(element => element.Display != Display.None && element.ContainsPoint(mouse));
 
 		internal UILayer()
 		{
 			Instance = this;
-
-			// Add(new Doot());
-			// Add(new PanelUI());
-			// Add(new ChatUI());
 		}
 
 		public void Add(BaseState ui)
@@ -37,9 +36,14 @@ namespace BaseLibrary.UI
 			Elements.Add(ui);
 		}
 
+		public void Remove(BaseState ui)
+		{
+			Elements.Remove(ui);
+		}
+
 		public override void OnDraw(SpriteBatch spriteBatch, GameTime gameTime)
 		{
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None).Reverse())
+			foreach (BaseState element in VisibleElements().Reverse())
 			{
 				element.InternalDraw(spriteBatch);
 			}
@@ -47,7 +51,7 @@ namespace BaseLibrary.UI
 
 		public override void OnUpdate(GameTime gameTime)
 		{
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in VisibleElements())
 			{
 				element.InternalUpdate(gameTime);
 			}
@@ -58,7 +62,7 @@ namespace BaseLibrary.UI
 			{
 				MouseButtonEventArgs args = new MouseButtonEventArgs(mousePos * (1f / Scale), button, modifiers);
 
-				foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+				foreach (BaseState element in HoveredElements(args.Position))
 				{
 					element.InternalMouseHeld(args);
 					if (args.Handled) break;
@@ -70,8 +74,7 @@ namespace BaseLibrary.UI
 		{
 			MouseButtonEventArgs args = new MouseButtonEventArgs(inArgs.Position * (1f / Scale), inArgs.Button, inArgs.Modifiers);
 
-			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
-			foreach (BaseState element in elements)
+			foreach (BaseState element in HoveredElements(args.Position))
 			{
 				mouseDownElement = element.InternalMouseDown(args);
 				if (args.Handled) break;
@@ -93,8 +96,7 @@ namespace BaseLibrary.UI
 				return;
 			}
 
-			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
-			foreach (BaseState element in elements)
+			foreach (BaseState element in HoveredElements(args.Position))
 			{
 				element.InternalMouseUp(args);
 				if (args.Handled) break;
@@ -107,8 +109,7 @@ namespace BaseLibrary.UI
 		{
 			MouseMoveEventArgs args = new MouseMoveEventArgs(inArgs.Position * (1f / Scale), inArgs.Delta);
 
-			var elements = Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)).ToList();
-			foreach (BaseState element in elements)
+			foreach (BaseState element in HoveredElements(args.Position))
 			{
 				element.InternalMouseMove(args);
 				if (args.Handled) break;
@@ -142,7 +143,7 @@ namespace BaseLibrary.UI
 		{
 			MouseScrollEventArgs args = new MouseScrollEventArgs(inArgs.Position * (1f / Scale), inArgs.Offset);
 
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+			foreach (BaseState element in HoveredElements(args.Position))
 			{
 				element.InternalMouseScroll(args);
 				if (args.Handled) break;
@@ -155,7 +156,7 @@ namespace BaseLibrary.UI
 		{
 			MouseButtonEventArgs args = new MouseButtonEventArgs(inArgs.Position * (1f / Scale), inArgs.Button, inArgs.Modifiers);
 
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+			foreach (BaseState element in HoveredElements(args.Position))
 			{
 				element.InternalMouseClick(args);
 				if (args.Handled) break;
@@ -168,7 +169,7 @@ namespace BaseLibrary.UI
 		{
 			MouseButtonEventArgs args = new MouseButtonEventArgs(inArgs.Position * (1f / Scale), inArgs.Button, inArgs.Modifiers);
 
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+			foreach (BaseState element in HoveredElements(args.Position))
 			{
 				element.InternalDoubleClick(args);
 				if (args.Handled) break;
@@ -181,7 +182,7 @@ namespace BaseLibrary.UI
 		{
 			MouseButtonEventArgs args = new MouseButtonEventArgs(inArgs.Position * (1f / Scale), inArgs.Button, inArgs.Modifiers);
 
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None && element.ContainsPoint(args.Position)))
+			foreach (BaseState element in HoveredElements(args.Position))
 			{
 				element.InternalTripleClick(args);
 				if (args.Handled) break;
@@ -192,7 +193,7 @@ namespace BaseLibrary.UI
 
 		public override void OnKeyPressed(KeyboardEventArgs args)
 		{
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in VisibleElements())
 			{
 				element.InternalKeyPressed(args);
 				if (args.Handled) break;
@@ -201,7 +202,7 @@ namespace BaseLibrary.UI
 
 		public override void OnKeyReleased(KeyboardEventArgs args)
 		{
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in VisibleElements())
 			{
 				element.InternalKeyReleased(args);
 				if (args.Handled) break;
@@ -210,7 +211,7 @@ namespace BaseLibrary.UI
 
 		public override void OnKeyTyped(KeyboardEventArgs args)
 		{
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in VisibleElements())
 			{
 				element.InternalKeyTyped(args);
 				if (args.Handled) break;
@@ -221,7 +222,7 @@ namespace BaseLibrary.UI
 		{
 			WindowResizedEventArgs args = new WindowResizedEventArgs(inArgs.Size * (1f / Scale));
 
-			foreach (BaseState element in Elements.Where(element => element.Display != Display.None))
+			foreach (BaseState element in VisibleElements())
 			{
 				element.Recalculate();
 			}
