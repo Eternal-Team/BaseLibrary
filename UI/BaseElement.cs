@@ -99,13 +99,13 @@ namespace BaseLibrary.UI
 		//
 		// 	return this;
 		// }
-		
+
 		public BaseElement With(Action action)
 		{
 			action();
 			return this;
 		}
-		
+
 		public BaseElement Parent { get; protected internal set; }
 
 		public List<BaseElement> Children = new List<BaseElement>();
@@ -172,6 +172,8 @@ namespace BaseLibrary.UI
 		public event Action<KeyboardEventArgs> OnKeyPressed;
 		public event Action<KeyboardEventArgs> OnKeyReleased;
 		public event Action<KeyboardEventArgs> OnKeyTyped;
+
+		public event Action<SpriteBatch> OnPreDraw;
 		#endregion
 
 		#region Virtual methods
@@ -301,6 +303,7 @@ namespace BaseLibrary.UI
 			spriteBatch.End();
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
+			OnPreDraw?.Invoke(spriteBatch);
 			Draw(spriteBatch);
 
 			spriteBatch.End();
@@ -426,17 +429,11 @@ namespace BaseLibrary.UI
 
 		internal void InternalMouseEnter(MouseMoveEventArgs args)
 		{
-			debugDraw = true;
-			args.Handled = true;
-
 			MouseEnter(args);
 		}
 
 		internal void InternalMouseLeave(MouseMoveEventArgs args)
 		{
-			debugDraw = false;
-			args.Handled = true;
-
 			MouseLeave(args);
 		}
 
@@ -580,6 +577,7 @@ namespace BaseLibrary.UI
 		public void Add(BaseElement item)
 		{
 			if (item == null) throw new ArgumentNullException(nameof(item));
+			if (Children.Contains(item)) throw new Exception($"Element {item} is already added");
 
 			Children.Add(item);
 			item.Parent = this;
