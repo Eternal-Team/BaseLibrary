@@ -115,11 +115,14 @@ namespace BaseLibrary.UI
 				if (args.Handled) break;
 			}
 
-			BaseElement at = Elements.Where(baseElement => baseElement.Display != Display.None).Select(baseElement => baseElement.GetElementAt(args.Position)).FirstOrDefault(baseElement => baseElement != null);
+			BaseElement at = Elements.Where(baseElement => baseElement.Display != Display.None)
+				.Select(baseElement => baseElement.GetElementAt(args.Position))
+				.FirstOrDefault(baseElement => baseElement != null && baseElement.Display != Display.None);
 			if (current != at)
 			{
 				current?.InternalMouseLeave(args);
 				at?.InternalMouseEnter(args);
+
 				current = at;
 
 				foreach (string key in PlayerInput.MouseKeys)
