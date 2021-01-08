@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ModLoader;
 using Terraria.ModLoader.UI;
 using Terraria.UI;
 
@@ -17,11 +18,21 @@ namespace BaseLibrary.Utility
 			public static readonly Color Outline = new Color(18, 18, 38);
 		}
 
+		public static Texture2D GetTexturePremultiplied(string path)
+		{
+			Texture2D texture = ModContent.GetTexture(path).Value;
+			Color[] buffer = new Color[texture.Width * texture.Height];
+			texture.GetData(buffer);
+			for (int i = 0; i < buffer.Length; i++) buffer[i] = Color.FromNonPremultiplied(buffer[i].R, buffer[i].G, buffer[i].B, buffer[i].A);
+			texture.SetData(buffer);
+			return texture;
+		}
+
 		public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Rectangle dimensions)
 		{
 			spriteBatch.Draw(texture, dimensions, Color.White);
 		}
-		
+
 		public static void DrawSlot(SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color? color = null)
 		{
 			Point point = new Point(dimensions.X, dimensions.Y);
@@ -45,7 +56,7 @@ namespace BaseLibrary.Utility
 		{
 			DrawSlot(spriteBatch, dimensions.ToRectangle(), texture, color);
 		}
-		
+
 		public static void DrawPanel(SpriteBatch spriteBatch, Rectangle dimensions, Texture2D texture, Color color)
 		{
 			Point point = new Point(dimensions.X, dimensions.Y);
