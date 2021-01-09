@@ -131,12 +131,6 @@ namespace BaseLibrary.UI
 		{
 			if (Settings.Texture != null) spriteBatch.Draw(Settings.Texture, Dimensions);
 			else DrawingUtility.DrawPanel(spriteBatch, Dimensions, Settings.BackgroundColor, Settings.BorderColor);
-
-			if (IsMouseHovering)
-			{
-				Main.LocalPlayer.cursorItemIconEnabled = false;
-				Main.ItemIconCacheUpdate(0);
-			}
 		}
 	}
 }
