@@ -6,12 +6,13 @@ namespace BaseLibrary
 {
 	public abstract class BaseItem : ModItem
 	{
-		public override string Texture => "BaseLibrary/Assets/PlaceholderTexture";
+		public override string Texture => BaseLibrary.TexturePath + "PlaceholderTexture";
 	}
-	
+
 	public class DevItem : BaseItem
 	{
-		public override void SetDefaults() {
+		public override void SetDefaults()
+		{
 			item.width = 24;
 			item.height = 28;
 			item.value = Item.buyPrice(10);
@@ -23,7 +24,8 @@ namespace BaseLibrary
 			item.healMana = 10;
 		}
 
-		public override void UpdateAccessory(Player player, bool hideVisual) {
+		public override void UpdateAccessory(Player player, bool hideVisual)
+		{
 			player.statLifeMax2 += 1000;
 			player.statManaMax2 += 1000;
 
@@ -31,7 +33,8 @@ namespace BaseLibrary
 			player.statMana = player.statManaMax2;
 		}
 
-		public override void AddRecipes() {
+		public override void AddRecipes()
+		{
 			CreateRecipe()
 				.AddIngredient(ItemID.DirtBlock)
 				.Register();

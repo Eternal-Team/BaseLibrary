@@ -1,5 +1,7 @@
 using System;
 using BaseLibrary.UI;
+using BaseLibrary.Utility;
+using ReLogic.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Input;
@@ -9,7 +11,9 @@ namespace BaseLibrary
 {
 	public class BaseLibrary : Mod
 	{
-		public const string PlaceholderTexture = "BaseLibrary/Assets/PlaceholderTexture";
+		public const string AssetPath = "BaseLibrary/Assets/";
+		public const string TexturePath = AssetPath + "Textures/";
+		public const string PlaceholderTexture = TexturePath + "PlaceholderTexture";
 
 		public override void Load()
 		{
@@ -17,6 +21,9 @@ namespace BaseLibrary
 
 			if (!Main.dedServ)
 			{
+				UITextInput.Font = GetFont("Assets/Fonts/Mouse_Text.xnb").Value;
+				typeof(DynamicSpriteFont).SetValue("_characterSpacing", 1f, UITextInput.Font);
+
 				Input.Layers.PushLayer(new UILayer());
 			}
 		}
