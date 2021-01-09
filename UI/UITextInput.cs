@@ -25,7 +25,8 @@ namespace BaseLibrary.UI
 			AllowMultiline = false,
 			MaxLength = null,
 			HorizontalAlignment = HorizontalAlignment.Left,
-			VerticalAlignment = VerticalAlignment.Top
+			VerticalAlignment = VerticalAlignment.Top,
+			SelectOnFirstClick=false
 		};
 
 		public Color CaretColor;
@@ -35,20 +36,18 @@ namespace BaseLibrary.UI
 		public int? MaxLength;
 		public HorizontalAlignment HorizontalAlignment;
 		public VerticalAlignment VerticalAlignment;
+		public bool SelectOnFirstClick;
 	}
 
+	// todo: selection of text when dragging
+	// todo: control Z/Y
 	public class UITextInput : BaseElement
 	{
 		public UITextInputSettings Settings = UITextInputSettings.Default;
 		public static DynamicSpriteFont Font { get; internal set; }
 
-		// public Color PanelColor = Utility.ColorPanel;
-		// public bool RenderPanel;
-
 		public Action OnTextChange;
 		public bool Focused;
-
-		private Ref<string> text;
 
 		public string Text
 		{
@@ -79,20 +78,23 @@ namespace BaseLibrary.UI
 				Text = Text.Insert(Math.Min(selectionStart, selectionEnd), value);
 			}
 		}
+	
+		private static string Clipboard
+		{
+			get => Platform.Get<IClipboard>().Value;
+			set => Platform.Get<IClipboard>().Value = value;
+		}
 
+		private Ref<string> text;
 		private int caretTimer;
 		private bool caretVisible;
-
 		private bool selecting;
 		private int selectionEnd;
 		private int selectionStart;
-
-		// public bool SelectOnFirstClick;
-		// public bool SizeToText;
-
 		private Vector2 textPosition;
 		private Vector2 textSize;
-
+		private TextSnippet selected;
+		
 		public UITextInput(ref Ref<string> text)
 		{
 			this.text = text;
@@ -100,43 +102,19 @@ namespace BaseLibrary.UI
 			if (text?.Value == null) throw new ArgumentNullException(nameof(text));
 		}
 
-		private void CalculateTextMetrics()
-		{
-			string text = Text ?? Settings.HintText;
-			if (string.IsNullOrWhiteSpace(text)) text = "I";
-
-			textSize = ChatManager.GetStringSize(Font, text, Vector2.One);
-			textSize.Y -= 8f;
-			// if (SizeToText)
-			// {
-			// 	Width.Pixels = (int)textSize.X;
-			// 	Height.Pixels = (int)textSize.Y;
-			// }
-
-			var hAlign = Settings.HorizontalAlignment;
-			var vAlign = Settings.VerticalAlignment;
-
-			if (hAlign == HorizontalAlignment.Left) textPosition.X = InnerDimensions.X;
-			else if (hAlign == HorizontalAlignment.Center) textPosition.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
-			else if (hAlign == HorizontalAlignment.Right) textPosition.X = InnerDimensions.X + InnerDimensions.Width - textSize.X;
-
-			if (vAlign == VerticalAlignment.Top) textPosition.Y = InnerDimensions.Y;
-			else if (vAlign == VerticalAlignment.Center) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f;
-			else if (vAlign == VerticalAlignment.Bottom) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
-		}
-
+		#region Mouse events
 		protected override void MouseClick(MouseButtonEventArgs args)
 		{
 			if (args.Button != MouseButton.Left) return;
 
 			args.Handled = true;
 
-			// if (!Focused && SelectOnFirstClick)
-			// {
-			// 	selectionEnd = 0;
-			// 	selectionStart = Text.Length;
-			// 	selecting = true;
-			// }
+			if (!Focused && Settings.SelectOnFirstClick)
+			{
+				selectionEnd = 0;
+				selectionStart = Text.Length;
+				selecting = true;
+			}
 
 			selecting = false;
 
@@ -174,8 +152,6 @@ namespace BaseLibrary.UI
 			caretTimer = 0;
 		}
 
-		private TextSnippet selected;
-
 		protected override void DoubleClick(MouseButtonEventArgs args)
 		{
 			if (args.Button != MouseButton.Left) return;
@@ -211,10 +187,7 @@ namespace BaseLibrary.UI
 			selectionStart = Text.Length;
 			selecting = true;
 		}
-
-		// selection of text when dragging
-		// control Z/Y
-
+		
 		protected override void MouseDown(MouseButtonEventArgs args)
 		{
 			if (args.Button != MouseButton.Left) return;
@@ -232,79 +205,9 @@ namespace BaseLibrary.UI
 
 			base.MouseUp(args);
 		}
+		#endregion
 
-		protected override void Draw(SpriteBatch spriteBatch)
-		{
-			// if (RenderPanel) spriteBatch.DrawPanel(Dimensions, PanelColor, Color.Black);
-
-			if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(Settings.HintText) && !Focused)
-			{
-				Utils.DrawBorderStringFourWay(spriteBatch, Font, Settings.HintText, textPosition.X, textPosition.Y, new Color(150, 150, 150), Color.Black, Vector2.Zero);
-			}
-			else
-			{
-				GraphicsDevice device = spriteBatch.GraphicsDevice;
-				SamplerState sampler = SamplerState.LinearClamp;
-				RasterizerState rasterizer = new RasterizerState
-				{
-					CullMode = CullMode.None,
-					ScissorTestEnable = true
-				};
-
-				Rectangle original = device.ScissorRectangle;
-
-				spriteBatch.End();
-
-				Rectangle clippingRectangle = GetClippingRectangle(spriteBatch);
-				Rectangle adjustedClippingRectangle = Rectangle.Intersect(clippingRectangle, device.ScissorRectangle);
-				device.ScissorRectangle = adjustedClippingRectangle;
-
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
-
-				DrawText(spriteBatch);
-
-				spriteBatch.End();
-
-				device.ScissorRectangle = original;
-
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
-			}
-
-			if (IsMouseHovering) Hooking.SetCursor(BaseLibrary.TexturePath + "UI/TextCursor", new Vector2(3.5f, 8.5f), false);
-		}
-
-		private void DrawText(SpriteBatch spriteBatch)
-		{
-			if (selecting)
-			{
-				float x = ChatManager.GetStringSize(Font, Text.Substring(0, Math.Min(selectionStart, selectionEnd)), Vector2.One).X;
-				float width = ChatManager.GetStringSize(Font, Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)), Vector2.One).X;
-
-				spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(
-					(int)(textPosition.X + x),
-					(int)textPosition.Y,
-					(int)width,
-					20
-				), Settings.SelectionColor);
-			}
-
-			//Utils.DrawBorderStringFourWay(spriteBatch, Utility.Font, Text, textPosition.X, textPosition.Y, Color.White, Color.Black, Vector2.Zero);
-			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Font, Text, textPosition, Color.White, 0f, Vector2.Zero, Vector2.One);
-
-			if (++caretTimer > 30)
-			{
-				caretVisible = !caretVisible;
-				caretTimer = 0;
-			}
-
-			if (caretVisible && Focused)
-			{
-				float size = ChatManager.GetStringSize(Font, Text.Substring(0, selectionStart), Vector2.One).X;
-				spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(textPosition.X + size) + 1, (int)textPosition.Y, 1, 20), Settings.CaretColor);
-				spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(textPosition.X + size) + 2, (int)textPosition.Y, 1, 20), Settings.CaretColor * 0.25f);
-			}
-		}
-
+		#region Key events
 		protected override void KeyPressed(KeyboardEventArgs args)
 		{
 			args.Handled = Focused;
@@ -342,6 +245,7 @@ namespace BaseLibrary.UI
 			else if (args.Key == Keys.Back) HandleBackspace();
 			else if (args.Key == Keys.Left) HandleGoLeft(args);
 			else if (args.Key == Keys.Right) HandleGoRight(args);
+			// todo: up, down
 			else
 			{
 				if (args.Character != null)
@@ -365,7 +269,9 @@ namespace BaseLibrary.UI
 				}
 			}
 		}
+		#endregion
 
+		#region Action handling
 		private void HandleGoRight(KeyboardEventArgs args)
 		{
 			string next = Text.Substring(selectionStart, Text.Length - selectionStart);
@@ -422,12 +328,6 @@ namespace BaseLibrary.UI
 
 			// ctrl - move index to previous word
 			// ctrl + shift - (un)select previous word
-		}
-
-		private string Clipboard
-		{
-			get => Platform.Get<IClipboard>().Value;
-			set => Platform.Get<IClipboard>().Value = value;
 		}
 
 		private void HandleBackspace()
@@ -531,7 +431,33 @@ namespace BaseLibrary.UI
 			selectionStart = Text.Length;
 			selecting = true;
 		}
+		#endregion
 
+		private void CalculateTextMetrics()
+		{
+			string text = Text ?? Settings.HintText;
+			if (string.IsNullOrWhiteSpace(text)) text = "I";
+
+			textSize = ChatManager.GetStringSize(Font, text, Vector2.One);
+			textSize.Y -= 8f;
+			// if (SizeToText)
+			// {
+			// 	Width.Pixels = (int)textSize.X;
+			// 	Height.Pixels = (int)textSize.Y;
+			// }
+
+			var hAlign = Settings.HorizontalAlignment;
+			var vAlign = Settings.VerticalAlignment;
+
+			if (hAlign == HorizontalAlignment.Left) textPosition.X = InnerDimensions.X;
+			else if (hAlign == HorizontalAlignment.Center) textPosition.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
+			else if (hAlign == HorizontalAlignment.Right) textPosition.X = InnerDimensions.X + InnerDimensions.Width - textSize.X;
+
+			if (vAlign == VerticalAlignment.Top) textPosition.Y = InnerDimensions.Y;
+			else if (vAlign == VerticalAlignment.Center) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f;
+			else if (vAlign == VerticalAlignment.Bottom) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
+		}
+		
 		public override void Recalculate()
 		{
 			base.Recalculate();
@@ -544,6 +470,76 @@ namespace BaseLibrary.UI
 			{
 				selecting = false;
 				Focused = false;
+			}
+		}
+		
+		protected override void Draw(SpriteBatch spriteBatch)
+		{
+			if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(Settings.HintText) && !Focused)
+			{
+				Utils.DrawBorderStringFourWay(spriteBatch, Font, Settings.HintText, textPosition.X, textPosition.Y, new Color(150, 150, 150), Color.Black, Vector2.Zero);
+			}
+			else
+			{
+				GraphicsDevice device = spriteBatch.GraphicsDevice;
+				SamplerState sampler = SamplerState.LinearClamp;
+				RasterizerState rasterizer = new RasterizerState
+				{
+					CullMode = CullMode.None,
+					ScissorTestEnable = true
+				};
+
+				Rectangle original = device.ScissorRectangle;
+
+				spriteBatch.End();
+
+				Rectangle clippingRectangle = GetClippingRectangle(spriteBatch);
+				Rectangle adjustedClippingRectangle = Rectangle.Intersect(clippingRectangle, device.ScissorRectangle);
+				device.ScissorRectangle = adjustedClippingRectangle;
+
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
+
+				DrawText(spriteBatch);
+
+				spriteBatch.End();
+
+				device.ScissorRectangle = original;
+
+				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
+			}
+
+			if (IsMouseHovering) Hooking.SetCursor(BaseLibrary.TexturePath + "UI/TextCursor", new Vector2(3.5f, 8.5f), false);
+		}
+
+		private void DrawText(SpriteBatch spriteBatch)
+		{
+			if (selecting)
+			{
+				float x = ChatManager.GetStringSize(Font, Text.Substring(0, Math.Min(selectionStart, selectionEnd)), Vector2.One).X;
+				float width = ChatManager.GetStringSize(Font, Text.Substring(Math.Min(selectionStart, selectionEnd), Math.Abs(selectionStart - selectionEnd)), Vector2.One).X;
+
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(
+					(int)(textPosition.X + x),
+					(int)textPosition.Y,
+					(int)width,
+					20
+				), Settings.SelectionColor);
+			}
+
+			//Utils.DrawBorderStringFourWay(spriteBatch, Utility.Font, Text, textPosition.X, textPosition.Y, Color.White, Color.Black, Vector2.Zero);
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Font, Text, textPosition, Color.White, 0f, Vector2.Zero, Vector2.One);
+
+			if (++caretTimer > 30)
+			{
+				caretVisible = !caretVisible;
+				caretTimer = 0;
+			}
+
+			if (caretVisible && Focused)
+			{
+				float size = ChatManager.GetStringSize(Font, Text.Substring(0, selectionStart), Vector2.One).X;
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(textPosition.X + size) + 1, (int)textPosition.Y, 1, 20), Settings.CaretColor);
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(textPosition.X + size) + 2, (int)textPosition.Y, 1, 20), Settings.CaretColor * 0.25f);
 			}
 		}
 	}
