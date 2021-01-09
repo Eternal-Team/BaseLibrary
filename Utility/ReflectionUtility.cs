@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace BaseLibrary.Utility
 {
@@ -22,6 +19,11 @@ namespace BaseLibrary.Utility
 
 		public static T Invoke<T>(this MethodInfo info, object target, params object[] args) => (T)info.Invoke(target, args);
 		public static void Invoke(this MethodInfo info, object target, params object[] args) => info.Invoke(target, args);
+
+		public static void Invoke(this object obj, string name, BindingFlags flags = DefaultFlags, params object[] args)
+		{
+			obj.GetType().GetMethod(name, flags)?.Invoke(obj, args);
+		}
 
 		// public static T CreateInstance<T>(params object[] args)
 		// {
