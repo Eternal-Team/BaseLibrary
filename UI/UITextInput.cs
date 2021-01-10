@@ -26,7 +26,7 @@ namespace BaseLibrary.UI
 			MaxLength = null,
 			HorizontalAlignment = HorizontalAlignment.Left,
 			VerticalAlignment = VerticalAlignment.Top,
-			SelectOnFirstClick=false
+			SelectOnFirstClick = false
 		};
 
 		public Color CaretColor;
@@ -78,7 +78,7 @@ namespace BaseLibrary.UI
 				Text = Text.Insert(Math.Min(selectionStart, selectionEnd), value);
 			}
 		}
-	
+
 		private static string Clipboard
 		{
 			get => Platform.Get<IClipboard>().Value;
@@ -94,7 +94,7 @@ namespace BaseLibrary.UI
 		private Vector2 textPosition;
 		private Vector2 textSize;
 		private TextSnippet selected;
-		
+
 		public UITextInput(ref Ref<string> text)
 		{
 			this.text = text;
@@ -187,7 +187,7 @@ namespace BaseLibrary.UI
 			selectionStart = Text.Length;
 			selecting = true;
 		}
-		
+
 		protected override void MouseDown(MouseButtonEventArgs args)
 		{
 			if (args.Button != MouseButton.Left) return;
@@ -457,7 +457,7 @@ namespace BaseLibrary.UI
 			else if (vAlign == VerticalAlignment.Center) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f;
 			else if (vAlign == VerticalAlignment.Bottom) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y;
 		}
-		
+
 		public override void Recalculate()
 		{
 			base.Recalculate();
@@ -472,41 +472,37 @@ namespace BaseLibrary.UI
 				Focused = false;
 			}
 		}
-		
+
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
+			GraphicsDevice device = spriteBatch.GraphicsDevice;
+			SamplerState sampler = SamplerState.LinearClamp;
+			RasterizerState rasterizer = new RasterizerState
+			{
+				CullMode = CullMode.None,
+				ScissorTestEnable = true
+			};
+
+			Rectangle original = device.ScissorRectangle;
+
+			spriteBatch.End();
+
+			Rectangle clippingRectangle = GetClippingRectangle(spriteBatch);
+			Rectangle adjustedClippingRectangle = Rectangle.Intersect(clippingRectangle, device.ScissorRectangle);
+			device.ScissorRectangle = adjustedClippingRectangle;
+
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
+
 			if (string.IsNullOrWhiteSpace(Text) && !string.IsNullOrWhiteSpace(Settings.HintText) && !Focused)
-			{
 				Utils.DrawBorderStringFourWay(spriteBatch, Font, Settings.HintText, textPosition.X, textPosition.Y, new Color(150, 150, 150), Color.Black, Vector2.Zero);
-			}
 			else
-			{
-				GraphicsDevice device = spriteBatch.GraphicsDevice;
-				SamplerState sampler = SamplerState.LinearClamp;
-				RasterizerState rasterizer = new RasterizerState
-				{
-					CullMode = CullMode.None,
-					ScissorTestEnable = true
-				};
-
-				Rectangle original = device.ScissorRectangle;
-
-				spriteBatch.End();
-
-				Rectangle clippingRectangle = GetClippingRectangle(spriteBatch);
-				Rectangle adjustedClippingRectangle = Rectangle.Intersect(clippingRectangle, device.ScissorRectangle);
-				device.ScissorRectangle = adjustedClippingRectangle;
-
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
-
 				DrawText(spriteBatch);
 
-				spriteBatch.End();
+			spriteBatch.End();
 
-				device.ScissorRectangle = original;
+			device.ScissorRectangle = original;
 
-				spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
-			}
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
 			if (IsMouseHovering) Hooking.SetCursor(BaseLibrary.TexturePath + "UI/TextCursor", new Vector2(3.5f, 8.5f), false);
 		}

@@ -17,34 +17,32 @@ using Terraria.UI.Chat;
 
 namespace BaseLibrary.UI
 {
+	public struct UIContainerSlotSettings
+	{
+		public static readonly UIContainerSlotSettings Default = new UIContainerSlotSettings
+		{
+			ShortStackSize = false,
+			GhostItem = null,
+			SlotTexture = TextureAssets.InventoryBack.Value,
+			FavoritedSlotTexture = TextureAssets.InventoryBack10.Value
+		};
+
+		public bool ShortStackSize;
+		public Item GhostItem;
+		public Texture2D SlotTexture;
+		public Texture2D FavoritedSlotTexture;
+	}
+	
 	public class UIContainerSlot : BaseElement
 	{
-		public struct Settings
-		{
-			public static readonly Settings Default = new Settings
-			{
-				ShortStackSize = false,
-				GhostItem = null,
-				SlotTexture = TextureAssets.InventoryBack.Value,
-				FavoritedSlotTexture = TextureAssets.InventoryBack10.Value
-			};
-
-			public bool ShortStackSize;
-			public Item GhostItem;
-			public Texture2D SlotTexture;
-			public Texture2D FavoritedSlotTexture;
-		}
-
 		private ItemStorage storage;
-		private Settings settings;
+		public UIContainerSlotSettings Settings=UIContainerSlotSettings.Default;
 		private int slot;
 
 		public Item Item => storage[slot];
 
-		public UIContainerSlot(ItemStorage itemStorage, int slot, Settings? settings = null)
+		public UIContainerSlot(ItemStorage itemStorage, int slot)
 		{
-			this.settings = settings ?? Settings.Default;
-
 			Width.Pixels = 44;
 			Height.Pixels = 44;
 
@@ -128,7 +126,7 @@ namespace BaseLibrary.UI
 			if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(TextureAssets.Wire.Value, position + new Vector2(40f, 40f) * scale, new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
 			if (item.stack > 1)
 			{
-				string text = !settings.ShortStackSize || item.stack < 1000 ? item.stack.ToString() : TextUtility.ToSI(item.stack, "N1");
+				string text = !Settings.ShortStackSize || item.stack < 1000 ? item.stack.ToString() : TextUtility.ToSI(item.stack, "N1");
 				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, text, InnerDimensions.TopLeft() + new Vector2(8, InnerDimensions.Height - FontAssets.MouseText.Value.MeasureString(text).Y * scale), Color.White, 0f, Vector2.Zero, new Vector2(0.85f), -1f, scale);
 			}
 
@@ -139,13 +137,13 @@ namespace BaseLibrary.UI
 				Main.HoverItem = item.Clone();
 				Main.hoverItemName = Main.HoverItem.Name;
 
-				// if (ItemSlot.ShiftInUse) BaseLibrary.Hooking.SetCursor("Terraria/UI/Cursor_7");
+				if (ItemSlot.ShiftInUse) Hooking.SetCursor("Terraria/Images/UI/Cursor_7");
 			}
 		}
 
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
-			var texture = !Item.IsAir && Item.favorited ? settings.FavoritedSlotTexture : settings.SlotTexture;
+			var texture = !Item.IsAir && Item.favorited ? Settings.FavoritedSlotTexture : Settings.SlotTexture;
 			DrawingUtility.DrawSlot(spriteBatch, Dimensions, texture, Color.White);
 
 			float scale = Math.Min(InnerDimensions.Width / (float)texture.Width, InnerDimensions.Height / (float)texture.Height);
@@ -162,7 +160,6 @@ namespace BaseLibrary.UI
 			{
 				args.Handled = true;
 
-				Player player = Main.LocalPlayer;
 				Item.newAndShiny = false;
 
 				if (Main.stackSplit <= 1)

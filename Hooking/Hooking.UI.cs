@@ -1,4 +1,5 @@
 ﻿using System;
+using BaseLibrary.UI;
 using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -50,6 +51,65 @@ namespace BaseLibrary
 				cursor.Emit(OpCodes.Ret);
 
 				cursor.MarkLabel(label);
+			}
+		}
+
+		private static void ItemSlot_OverrideHover(ILContext il)
+		{
+			ILCursor cursor = new ILCursor(il);
+
+			if (cursor.TryGotoNext(MoveType.AfterLabel, i => i.MatchLdarg(1), i => i.MatchBrtrue(out _), i => i.MatchLdsfld<Main>("InReforgeMenu")))
+			{
+				ILLabel label = cursor.Instrs[cursor.Index - 2].Operand as ILLabel;
+
+				cursor.Emit(OpCodes.Ldloc, 0);
+				cursor.EmitDelegate<Func<Item, bool>>(item =>
+				{
+					foreach (BaseElement element in PanelUI.Instance.Children)
+					{
+						if (element.Display == Display.Visible && element is IItemStorageUI ui && ui.GetItemStorage().CanInsertItem(Main.LocalPlayer, item))
+						{
+							string texture = ui.GetTexture(item);
+
+							if (!string.IsNullOrWhiteSpace(texture))
+							{
+								SetCursor(texture);
+								return true;
+							}
+						}
+					}
+
+					return false;
+				});
+
+				cursor.Emit(OpCodes.Brtrue, label);
+			}
+
+			if (cursor.TryGotoNext(MoveType.AfterLabel, i => i.MatchCall<Main>("get_npcShop")))
+			{
+				ILLabel label = cursor.Instrs[cursor.Index - 1].Operand as ILLabel;
+
+				cursor.Emit(OpCodes.Ldloc, 0);
+				cursor.EmitDelegate<Func<Item, bool>>(item =>
+				{
+					foreach (BaseElement element in PanelUI.Instance.Children)
+					{
+						if (element.Display == Display.Visible && element is IItemStorageUI ui && ui.GetItemStorage().CanInsertItem(Main.LocalPlayer, item))
+						{
+							string texture = ui.GetTexture(item);
+
+							if (!string.IsNullOrWhiteSpace(texture))
+							{
+								SetCursor(texture);
+								return true;
+							}
+						}
+					}
+
+					return false;
+				});
+
+				cursor.Emit(OpCodes.Brtrue, label);
 			}
 		}
 	}

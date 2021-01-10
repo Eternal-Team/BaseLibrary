@@ -1,14 +1,17 @@
-﻿namespace BaseLibrary
+﻿using IL.Terraria;
+using IL.Terraria.UI;
+
+namespace BaseLibrary
 {
 	internal static partial class Hooking
 	{
 		internal static void Initialize()
 		{
-			IL.Terraria.Recipe.FindRecipes += Recipe_FindRecipes;
-			IL.Terraria.Recipe.Create += Recipe_Create;
-			IL.Terraria.Main.DrawInterface_36_Cursor += DrawCursor;
+			Recipe.FindRecipes += Recipe_FindRecipes;
+			Recipe.Create += Recipe_Create;
+			Main.DrawInterface_36_Cursor += DrawCursor;
 
-			// if (ModLoader.GetMod("BaseLibrary") != null) ItemSlot.OverrideHover += ItemSlot_OverrideHover;
+			ItemSlot.OverrideHover_ItemArray_int_int += ItemSlot_OverrideHover;
 		}
 	}
 }
