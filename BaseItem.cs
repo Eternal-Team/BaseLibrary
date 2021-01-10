@@ -20,8 +20,6 @@ namespace BaseLibrary
 			item.accessory = true;
 
 			item.defense = 100;
-			item.lifeRegen = 10;
-			item.healMana = 10;
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
@@ -31,6 +29,9 @@ namespace BaseLibrary
 
 			player.statLife = player.statLifeMax2;
 			player.statMana = player.statManaMax2;
+
+			player.pickSpeed *= 0.01f;
+			player.noKnockback = true;
 		}
 
 		public override void AddRecipes()

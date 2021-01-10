@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameInput;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Input;
 using Terraria.ModLoader.Input.Keyboard;
 using Terraria.ModLoader.Input.Mouse;
@@ -28,6 +29,8 @@ namespace BaseLibrary.UI
 		internal UILayer()
 		{
 			Instance = this;
+			
+			Add(new PanelUI());
 		}
 
 		public void Add(BaseState ui)
