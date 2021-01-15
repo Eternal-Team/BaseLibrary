@@ -25,7 +25,7 @@ namespace BaseLibrary
 				if (element.Display == Display.Visible && element is IItemStorageUI ui)
 				{
 					ItemStorage storage = ui.GetItemStorage();
-					if (storage.InsertItem(player, ref item)) block = true;
+					if (storage.InsertItem(Player, ref item)) block = true;
 				}
 			}
 

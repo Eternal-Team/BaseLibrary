@@ -19,7 +19,7 @@ namespace BaseLibrary
 		{
 			foreach (Item item in player.inventory)
 			{
-				if (item.IsAir || !(item.modItem is ICraftingStorage storage)) continue;
+				if (item.IsAir || !(item.ModItem is ICraftingStorage storage)) continue;
 				yield return storage;
 			}
 		}
