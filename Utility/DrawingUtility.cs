@@ -13,6 +13,7 @@ namespace BaseLibrary.Utility
 		{
 			public static readonly Color Panel = new Color(73, 94, 171);
 			public static readonly Color PanelSelected = new Color(51, 65, 119);
+			public static readonly Color PanelDisabled = new Color(71, 78, 102);
 			public static readonly Color PanelHovered = new Color(94, 120, 221);
 			public static readonly Color Slot = new Color(63, 65, 151);
 			public static readonly Color Outline = new Color(18, 18, 38);

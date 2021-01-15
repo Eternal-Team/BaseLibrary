@@ -35,8 +35,15 @@ namespace BaseLibrary.Utility
 		public static int Clamp(int value, int min, int max)
 		{
 			if (value < min) return min;
-			if (value > max) return max;
-			return value;
+			return value > max ? max : value;
+		}
+		
+		public static float AngleBetween(Vector2 vector1, Vector2 vector2)
+		{
+			double sin = vector1.X * vector2.Y - vector2.X * vector1.Y;
+			double cos = vector1.X * vector2.X + vector1.Y * vector2.Y;
+
+			return (float)Math.Atan2(sin, cos);
 		}
 	}
 }
