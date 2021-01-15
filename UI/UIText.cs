@@ -99,7 +99,8 @@ namespace BaseLibrary.UI
 			SamplerState samplerText = SamplerState.LinearClamp;
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, samplerText, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-			Utils.DrawBorderStringFourWay(spriteBatch, Settings.Font, text.ToString(), textPosition.X, textPosition.Y, Settings.TextColor, Settings.BorderColor, Vector2.Zero, textScale);
+			string s = text.ToString().Replace("\t", "    ");
+			Utils.DrawBorderStringFourWay(spriteBatch, Settings.Font, s, textPosition.X, textPosition.Y, Settings.TextColor, Settings.BorderColor, Vector2.Zero, textScale);
 
 			spriteBatch.End();
 
