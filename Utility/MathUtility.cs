@@ -14,6 +14,11 @@ public static class MathUtility
 	public const float Rad2Deg = 180f / PI;
 	public const float Deg2Rad = PI / 180f;
 
+	public static bool Contains(this Rectangle rectangle, Vector2 point)
+	{
+		return point.X >= rectangle.Left && point.X <= rectangle.Right && point.Y >= rectangle.Top && point.Y <= rectangle.Bottom;
+	}
+	
 	public static ulong Min(ulong a, ulong b, ulong c)
 	{
 		return Math.Min(a, Math.Min(b, c));

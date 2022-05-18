@@ -22,7 +22,7 @@
 // 			bool block = false;
 // 			foreach (BaseElement element in PanelUI.Instance.Children)
 // 			{
-// 				if (element.Display == Display.Visible && element is IItemStorageUI ui)
+// 				if (element.Display == Display.Visible && element is	IItemStorageUI ui)
 // 				{
 // 					ItemStorage storage = ui.GetItemStorage();
 // 					if (storage.InsertItem(Player, ref item)) block = true;

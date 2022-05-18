@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using BaseLibrary.Utility;
-using Microsoft.Xna.Framework.Input;
 using Terraria;
 using Terraria.GameInput;
 
