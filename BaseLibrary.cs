@@ -1,5 +1,8 @@
 using System;
 using BaseLibrary.UI;
+using BaseLibrary.Utility;
+using ReLogic.Content;
+using ReLogic.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -18,8 +21,8 @@ public class BaseLibrary : Mod
 
 		if (!Main.dedServ)
 		{
-			// UITextInput.Font = Assets.Request<DynamicSpriteFont>("Assets/Fonts/Mouse_Text.xnb");
-			// UITextInput.Font.Value.SetValue("_characterSpacing", 1f);
+			UITextInput.Font = ModContent.Request<DynamicSpriteFont>(AssetPath + "Fonts/Mouse_Text", AssetRequestMode.ImmediateLoad);
+			UITextInput.Font.Value.SetValue("_characterSpacing", 1f);
 
 			Input.Layers.PushLayer(new UILayer());
 		}
