@@ -54,7 +54,7 @@ public class PanelUISystem : ModSystem
 			{
 				// todo: draw layer system
 				PanelUI.Instance.InternalDraw(Main.spriteBatch);
-					
+
 				return true;
 			}, InterfaceScaleType.UI));
 		}
@@ -72,7 +72,7 @@ public class PanelUISystem : ModSystem
 			foreach (BaseUIPanel ui in panels)
 			{
 				if (ui.Display != Display.Visible) continue;
-					
+
 				ClosedUICache.Add(ui.Container);
 				gui.CloseUI(ui.Container);
 			}
@@ -83,7 +83,7 @@ public class PanelUISystem : ModSystem
 
 			ClosedUICache.Clear();
 		}
-			
+
 		PanelUI.Instance.InternalUpdate(gameTime);
 	}
 
@@ -166,7 +166,7 @@ public class PanelUI : BaseState
 
 			Add(ui);
 			Panels.Add(entity.GetID(), ui);
-				
+
 			SoundEngine.PlaySound(entity.OpenSound);
 		}
 	}

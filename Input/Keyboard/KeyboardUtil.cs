@@ -4,7 +4,7 @@ namespace BaseLibrary;
 
 public static class KeyboardUtil
 {
-	// todo: proper IME (once on FNA)
+	// todo: IME works afaik, only problem is with my UITextInput
 	public static char? ToChar(Keys key, Modifiers modifiers = Modifiers.None)
 	{
 		switch (key)
