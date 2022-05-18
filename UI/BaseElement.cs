@@ -5,13 +5,12 @@ using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ModLoader.Input;
 
 namespace BaseLibrary.UI
 {
 	public readonly struct Padding
 	{
-		public static readonly Padding Zero = new Padding(0);
+		public static readonly Padding Zero = new(0);
 
 		public readonly int Left, Top, Right, Bottom;
 
@@ -31,7 +30,7 @@ namespace BaseLibrary.UI
 
 	public readonly struct Margin
 	{
-		public static readonly Margin Zero = new Margin(0);
+		public static readonly Margin Zero = new(0);
 
 		public readonly int Left, Top, Right, Bottom;
 
@@ -108,7 +107,7 @@ namespace BaseLibrary.UI
 
 		public BaseElement Parent { get; protected internal set; }
 
-		public List<BaseElement> Children = new List<BaseElement>();
+		public List<BaseElement> Children = new();
 		public int Count => Children.Count;
 
 		public bool IsMouseHovering { get; private set; }
@@ -143,10 +142,10 @@ namespace BaseLibrary.UI
 		public Display Display = Display.Visible;
 		public Overflow Overflow = Overflow.Visible;
 
-		public StyleDimension Width = new StyleDimension();
-		public StyleDimension Height = new StyleDimension();
-		public StyleDimension X = new StyleDimension();
-		public StyleDimension Y = new StyleDimension();
+		public StyleDimension Width = new();
+		public StyleDimension Height = new();
+		public StyleDimension X = new();
+		public StyleDimension Y = new();
 
 		public Padding Padding;
 		public Margin Margin;

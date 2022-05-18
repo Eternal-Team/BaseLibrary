@@ -1,17 +1,19 @@
 ﻿using IL.Terraria;
-using IL.Terraria.UI;
+using On.Terraria.GameInput;
 
-namespace BaseLibrary
+namespace BaseLibrary;
+
+internal static partial class Hooking
 {
-	internal static partial class Hooking
+	internal static void Initialize()
 	{
-		internal static void Initialize()
-		{
-			Recipe.FindRecipes += Recipe_FindRecipes;
-			Recipe.Create += Recipe_Create;
-			Main.DrawInterface_36_Cursor += DrawCursor;
+		// Recipe.FindRecipes += Recipe_FindRecipes;
+		// Recipe.Create += Recipe_Create;
+		Main.DrawInterface_36_Cursor += DrawCursor;
 
-			ItemSlot.OverrideHover_ItemArray_int_int += ItemSlot_OverrideHover;
-		}
+		Input.Load();
+		PlayerInput.UpdateInput += PlayerInputOnUpdateInput;
+
+		// ItemSlot.OverrideHover_ItemArray_int_int += ItemSlot_OverrideHover;
 	}
 }
