@@ -136,7 +136,7 @@ public class UIContainerSlot : BaseElement
 			Main.HoverItem = item.Clone();
 			Main.hoverItemName = Main.HoverItem.Name;
 
-			if (ItemSlot.ShiftInUse) Hooking.SetCursor("Terraria/Images/UI/Cursor_7");
+			if (ItemSlot.ShiftInUse) CustomCursor.CustomCursor.SetCursor("Terraria/Images/UI/Cursor_7");
 		}
 	}
 

@@ -502,7 +502,7 @@ public class UITextInput : BaseElement
 
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-		if (IsMouseHovering) Hooking.SetCursor(BaseLibrary.TexturePath + "UI/TextCursor", new Vector2(3.5f, 8.5f), false);
+		if (IsMouseHovering) CustomCursor.CustomCursor.SetCursor(BaseLibrary.TexturePath + "UI/TextCursor", new Vector2(3.5f, 8.5f), false);
 	}
 
 	private void DrawText(SpriteBatch spriteBatch)
