@@ -40,13 +40,15 @@ public readonly struct Margin
 	}
 }
 
-public class StyleDimension
+public struct StyleDimension
 {
 	public int Pixels;
 	public int Percent;
 
 	public StyleDimension()
 	{
+		Pixels = 0;
+		Percent = 0;
 	}
 
 	public StyleDimension(int pixels, int percent)

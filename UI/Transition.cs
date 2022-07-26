@@ -1,7 +1,7 @@
 ﻿namespace BaseLibrary.UI;
 
 // note: add different interpolations?
-public class Transition
+public struct Transition
 {
 	private float start;
 	private float end;
@@ -33,6 +33,7 @@ public class Transition
 		this.start = start;
 		this.end = end;
 		Rate = rate;
+		Value = 0;
 	}
 
 	public void Update(bool trigger)
