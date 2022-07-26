@@ -15,9 +15,9 @@ public interface IHasUI
 {
 	Guid GetID();
 
-	LegacySoundStyle CloseSound { get; }
+	SoundStyle? CloseSound { get; }
 
-	LegacySoundStyle OpenSound { get; }
+	SoundStyle? OpenSound { get; }
 }
 
 public class BaseUIPanel : UIPanel
@@ -133,7 +133,7 @@ public class PanelUI : BaseState
 		panel.Display = Display.None;
 		panel.InternalDeactivate();
 
-		SoundEngine.PlaySound(entity.CloseSound);
+		if (entity.CloseSound != null) SoundEngine.PlaySound(entity.CloseSound.Value);
 	}
 
 	public void OpenUI(IHasUI entity)
@@ -145,7 +145,7 @@ public class PanelUI : BaseState
 			ui.Display = Display.Visible;
 			ui.InternalActivate();
 
-			SoundEngine.PlaySound(entity.OpenSound);
+			if (entity.OpenSound != null) SoundEngine.PlaySound(entity.OpenSound.Value);
 		}
 		else if (!Panels.ContainsKey(entity.GetID()))
 		{
@@ -167,7 +167,7 @@ public class PanelUI : BaseState
 			Add(ui);
 			Panels.Add(entity.GetID(), ui);
 
-			SoundEngine.PlaySound(entity.OpenSound);
+			if (entity.OpenSound != null) SoundEngine.PlaySound(entity.OpenSound.Value);
 		}
 	}
 
