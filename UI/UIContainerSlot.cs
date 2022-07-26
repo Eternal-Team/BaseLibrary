@@ -127,6 +127,7 @@ public class UIContainerSlot : BaseElement
 		{
 			string text = !Settings.ShortStackSize || item.stack < 1000 ? item.stack.ToString() : TextUtility.ToSI(item.stack, "N1");
 			float texscale = 0.75f;
+			// note: i dont think this will scale well with larger slot sizes
 			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, text, InnerDimensions.TopLeft() + new Vector2(8, InnerDimensions.Height - FontAssets.MouseText.Value.MeasureString(text).Y * texscale), Color.White, 0f, Vector2.Zero, new Vector2(texscale));
 		}
 

@@ -112,13 +112,21 @@ public class UIText : BaseElement
 
 		var hAlign = Settings.HorizontalAlignment;
 		var vAlign = Settings.VerticalAlignment;
- 
-		if (hAlign == HorizontalAlignment.Left) textPosition.X = InnerDimensions.X;
-		else if (hAlign == HorizontalAlignment.Center) textPosition.X = InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f;
-		else if (hAlign == HorizontalAlignment.Right) textPosition.X = InnerDimensions.X + InnerDimensions.Width - textSize.X;
 
-		if (vAlign == VerticalAlignment.Top) textPosition.Y = InnerDimensions.Y;
-		else if (vAlign == VerticalAlignment.Center) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f + 8f * textScale;
-		else if (vAlign == VerticalAlignment.Bottom) textPosition.Y = InnerDimensions.Y + InnerDimensions.Height - textSize.Y + 8f * textScale;
+		textPosition.X = hAlign switch
+		{
+			HorizontalAlignment.Left => InnerDimensions.X,
+			HorizontalAlignment.Center => InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f,
+			HorizontalAlignment.Right => InnerDimensions.X + InnerDimensions.Width - textSize.X,
+			_ => textPosition.X
+		};
+
+		textPosition.Y = vAlign switch
+		{
+			VerticalAlignment.Top => InnerDimensions.Y,
+			VerticalAlignment.Center => InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f + 8f * textScale,
+			VerticalAlignment.Bottom => InnerDimensions.Y + InnerDimensions.Height - textSize.Y + 8f * textScale,
+			_ => textPosition.Y
+		};
 	}
 }

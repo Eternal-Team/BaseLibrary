@@ -1,5 +1,4 @@
-﻿using IL.Terraria;
-using On.Terraria.GameInput;
+﻿using On.Terraria.GameInput;
 
 namespace BaseLibrary;
 
