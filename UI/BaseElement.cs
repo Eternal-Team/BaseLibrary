@@ -226,7 +226,7 @@ public class BaseElement : IComparable<BaseElement>
 	internal void InternalDraw(SpriteBatch spriteBatch)
 	{
 		GraphicsDevice device = spriteBatch.GraphicsDevice;
-		SamplerState sampler = SamplerState.PointClamp;
+		SamplerState sampler = SamplerState.LinearClamp;
 		RasterizerState rasterizer = new RasterizerState { CullMode = CullMode.None, ScissorTestEnable = true };
 
 		Rectangle original = device.ScissorRectangle;
