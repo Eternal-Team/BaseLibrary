@@ -1,4 +1,5 @@
-﻿using On.Terraria.GameInput;
+﻿using On.Terraria.GameContent.UI.Elements;
+using On.Terraria.GameInput;
 
 namespace BaseLibrary;
 
@@ -8,5 +9,6 @@ internal static partial class Hooking
 	{
 		Input.Load();
 		PlayerInput.UpdateInput += PlayerInputOnUpdateInput;
+		UIKeybindingListItem.OnClickMethod += UIKeybindingListItemOnOnClickMethod;
 	}
 }
