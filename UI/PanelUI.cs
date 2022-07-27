@@ -15,9 +15,15 @@ public interface IHasUI
 {
 	Guid GetID();
 
-	SoundStyle? CloseSound { get; }
-
-	SoundStyle? OpenSound { get; }
+	SoundStyle? GetOpenSound()
+	{
+		return null;
+	}
+	
+	SoundStyle? GetCloseSound()
+	{
+		return null;
+	}
 }
 
 public class BaseUIPanel : UIPanel
@@ -133,19 +139,22 @@ public class PanelUI : BaseState
 		panel.Display = Display.None;
 		panel.InternalDeactivate();
 
-		if (entity.CloseSound != null) SoundEngine.PlaySound(entity.CloseSound.Value);
+		var closeSound = entity.GetCloseSound();
+		if (closeSound != null) SoundEngine.PlaySound(closeSound.Value);
 	}
 
 	public void OpenUI(IHasUI entity)
 	{
 		if (Main.netMode == NetmodeID.Server || entity == null) return;
 
+		var openSound = entity.GetOpenSound();
+		
 		if (Panels.TryGetValue(entity.GetID(), out BaseUIPanel ui) && ui.Display == Display.None)
 		{
 			ui.Display = Display.Visible;
 			ui.InternalActivate();
 
-			if (entity.OpenSound != null) SoundEngine.PlaySound(entity.OpenSound.Value);
+			if (openSound != null) SoundEngine.PlaySound(openSound.Value);
 		}
 		else if (!Panels.ContainsKey(entity.GetID()))
 		{
@@ -167,7 +176,7 @@ public class PanelUI : BaseState
 			Add(ui);
 			Panels.Add(entity.GetID(), ui);
 
-			if (entity.OpenSound != null) SoundEngine.PlaySound(entity.OpenSound.Value);
+			if (openSound != null) SoundEngine.PlaySound(openSound.Value);
 		}
 	}
 
