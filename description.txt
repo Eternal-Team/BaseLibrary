@@ -1,1 +1,3 @@
+HIGHLY EXPERIMENTAL, please report any bugs to my Discord server (discord.gg/EP9nfZV #bug-reports channel)
+
 Non-specific library for my mods
