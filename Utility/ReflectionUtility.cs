@@ -20,6 +20,7 @@ public static class ReflectionUtility
 	public static T Invoke<T>(this MethodInfo info, object target, params object[] args) => (T)info.Invoke(target, args);
 
 	public static T InvokeStatic<T>(this MethodInfo info, params object[] args) => (T)info.Invoke(null, args);
+	public static void InvokeStatic(this MethodInfo info, params object[] args) => info.Invoke(null, args);
 
 	public static TRet InvokeGeneric<TGen, TRet>(this MethodInfo info, object target, params object[] args)
 	{
