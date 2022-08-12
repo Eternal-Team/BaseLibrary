@@ -43,7 +43,7 @@ public class BaseElement : IComparable<BaseElement>
 	public int Count => Children.Count;
 
 	public bool IsMouseHovering { get; private set; }
-	public object HoverText = null;
+	public object? HoverText;
 
 	public Vector2 Position
 	{
@@ -249,8 +249,14 @@ public class BaseElement : IComparable<BaseElement>
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
 		DrawChildren(spriteBatch);
-		if (IsMouseHovering && HoverText != null) Main.instance.MouseText(HoverText.ToString());
-
+		if (IsMouseHovering)
+		{
+			Main.LocalPlayer.cursorItemIconEnabled = false;
+			Main.ItemIconCacheUpdate(0);
+			
+			if (HoverText is not null) Main.instance.MouseText(HoverText.ToString());
+		}
+		
 		spriteBatch.End();
 
 		device.ScissorRectangle = original;
