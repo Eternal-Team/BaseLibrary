@@ -116,7 +116,7 @@ public class TerrariaLayer : Layer
 			Main.hideUI = !Main.hideUI;
 
 			SoundEngine.PlaySound(SoundID.MenuTick);
-				
+
 			return;
 		}
 
@@ -129,7 +129,7 @@ public class TerrariaLayer : Layer
 				Main.drawDiag = false;
 			else
 				Main.drawDiag = true;
-				
+
 			return;
 		}
 
@@ -137,23 +137,29 @@ public class TerrariaLayer : Layer
 		{
 			SoundEngine.PlaySound(SoundID.MenuTick);
 			Main.shouldDrawNetDiagnosticsUI = !Main.shouldDrawNetDiagnosticsUI;
-				
+
 			return;
 		}
-			
+
 		if (args.Key == Keys.F9 && KeyboardUtil.ShiftDown(args.Modifiers) && !Main.drawingPlayerChat && !Main.editSign && !Main.editChest)
 		{
 			SoundEngine.PlaySound(SoundID.MenuTick);
 			Lighting.NextLightMode();
-				
+
 			return;
 		}
-			
+
 		if (args.Key == Keys.F10 && !Main.drawingPlayerChat && !Main.editSign && !Main.editChest)
 		{
 			SoundEngine.PlaySound(SoundID.MenuTick);
 			Main.showFrameRate = !Main.showFrameRate;
-				
+
+			return;
+		}
+
+		if (args.Key.ToString() == Main.blockKey)
+		{
+			Main.blockKey = Keys.None.ToString();
 			return;
 		}
 

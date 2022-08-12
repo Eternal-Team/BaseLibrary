@@ -86,6 +86,8 @@ internal static partial class Hooking
 			Input.Layers.PopOverlay(this);
 			_rebindingLayer = null;
 			PlayerInput.ListenFor(null, inputMode);
+			Main.ChromaPainter.CollectBoundKeys();
+			typeof(PlayerInput).GetMethod("FixDerpedRebinds", ReflectionUtility.DefaultFlags_Static).InvokeStatic();
 		}
 
 		public override void OnMouseDown(MouseButtonEventArgs args)
@@ -110,6 +112,8 @@ internal static partial class Hooking
 			Input.Layers.PopOverlay(this);
 			_rebindingLayer = null;
 			PlayerInput.ListenFor(null, inputMode);
+			Main.ChromaPainter.CollectBoundKeys();
+			typeof(PlayerInput).GetMethod("FixDerpedRebinds", ReflectionUtility.DefaultFlags_Static).InvokeStatic();
 		}
 	}
 
