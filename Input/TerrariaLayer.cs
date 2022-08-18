@@ -163,6 +163,9 @@ public class TerrariaLayer : Layer
 			return;
 		}
 
+		if (PlayerInput.WritingText)
+			return;
+
 		KeyConfiguration.Processkey(PlayerInput.Triggers.Current, args.Key.ToString(), InputMode.Keyboard);
 	}
 
