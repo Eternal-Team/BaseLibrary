@@ -249,14 +249,18 @@ public class BaseElement : IComparable<BaseElement>
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
 		DrawChildren(spriteBatch);
-		if (IsMouseHovering)
+		if (this is not BaseState && IsMouseHovering)
 		{
 			Main.LocalPlayer.cursorItemIconEnabled = false;
 			Main.ItemIconCacheUpdate(0);
-			
-			if (HoverText is not null) Main.instance.MouseText(HoverText.ToString());
+
+			if (HoverText is not null)
+			{
+				if (HoverText is Func<string> func) Main.instance.MouseText(func());
+				else Main.instance.MouseText(HoverText.ToString());
+			}
 		}
-		
+
 		spriteBatch.End();
 
 		device.ScissorRectangle = original;
