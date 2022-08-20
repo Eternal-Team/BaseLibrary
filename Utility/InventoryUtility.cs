@@ -33,4 +33,15 @@ public static class InventoryUtility
 
 		return false;
 	}
+	
+	public static IEnumerable<T> OfModItemType<T>(this IEnumerable<Item> source)
+	{
+		foreach (Item obj in source)
+		{
+			if (!obj.IsAir && obj.ModItem is T result)
+			{
+				yield return result;
+			}
+		}
+	}
 }
