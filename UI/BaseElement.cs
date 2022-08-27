@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameInput;
 
 namespace BaseLibrary.UI;
 
@@ -434,7 +435,8 @@ public class BaseElement : IComparable<BaseElement>
 
 	public virtual void Recalculate()
 	{
-		Rectangle parent = Parent?.InnerDimensions ?? new Rectangle(0, 0, (int)(Main.screenWidth * (1f / Main.UIScale)), (int)(Main.screenHeight * (1f / Main.UIScale)));
+		Vector2 originalScreenSize = PlayerInput.OriginalScreenSize;
+		Rectangle parent = Parent?.InnerDimensions ?? new Rectangle(0, 0, (int)(originalScreenSize.X / Main.UIScale), (int)(originalScreenSize.Y / Main.UIScale));
 
 		Rectangle dimensions = Rectangle.Empty;
 
