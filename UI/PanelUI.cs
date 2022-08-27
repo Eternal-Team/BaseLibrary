@@ -185,10 +185,16 @@ public class PanelUI : BaseState
 		for (int i = 0; i < Children.Count; i++)
 		{
 			BaseElement element = Children[i];
-			if (element is BaseUIPanel panel) panel.Display = Display.None;
+			if (element is BaseUIPanel panel)
+			{
+				panel.Display = Display.None;
+				panel.InternalDeactivate();
+			}
 		}
 
 		Clear();
+		
+		Panels.Clear();
 	}
 
 	public override BaseElement GetElementAt(Vector2 point)
