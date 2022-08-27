@@ -19,7 +19,7 @@ public interface IHasUI
 	{
 		return null;
 	}
-	
+
 	SoundStyle? GetCloseSound()
 	{
 		return null;
@@ -58,8 +58,10 @@ public class PanelUISystem : ModSystem
 		{
 			layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer("Layers", delegate
 			{
-				// todo: draw layer system
-				PanelUI.Instance.InternalDraw(Main.spriteBatch);
+				foreach (Layer layer in Input.Layers)
+				{
+					layer.OnDraw(Main.spriteBatch, Main._drawInterfaceGameTime);
+				}
 
 				return true;
 			}, InterfaceScaleType.UI));
@@ -90,7 +92,10 @@ public class PanelUISystem : ModSystem
 			ClosedUICache.Clear();
 		}
 
-		PanelUI.Instance.InternalUpdate(gameTime);
+		foreach (Layer layer in Input.Layers)
+		{
+			layer.OnUpdate(gameTime);
+		}
 	}
 
 	public override void PreSaveAndQuit()
@@ -148,7 +153,7 @@ public class PanelUI : BaseState
 		if (Main.netMode == NetmodeID.Server || entity == null) return;
 
 		var openSound = entity.GetOpenSound();
-		
+
 		if (Panels.TryGetValue(entity.GetID(), out BaseUIPanel ui) && ui.Display == Display.None)
 		{
 			ui.Display = Display.Visible;
@@ -193,7 +198,7 @@ public class PanelUI : BaseState
 		}
 
 		Clear();
-		
+
 		Panels.Clear();
 	}
 
