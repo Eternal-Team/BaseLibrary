@@ -49,14 +49,14 @@ public class UIContainerSlot : BaseElement
 		storage = itemStorage;
 	}
 
-	protected override void MouseClick(MouseButtonEventArgs args)
+	protected override void MouseDown(MouseButtonEventArgs args)
 	{
 		if (args.Button != MouseButton.Left) return;
 
+		args.Handled = true;
+
 		if (storage.IsItemValid(slot, Main.mouseItem) || Main.mouseItem.IsAir)
 		{
-			args.Handled = true;
-
 			Item.newAndShiny = false;
 			Player player = Main.LocalPlayer;
 
@@ -88,6 +88,46 @@ public class UIContainerSlot : BaseElement
 			}
 		}
 	}
+
+	// protected override void MouseClick(MouseButtonEventArgs args)
+	// {
+	// 	if (args.Button != MouseButton.Left) return;
+	//
+	// 	args.Handled = true;
+	//
+	// 	if (storage.IsItemValid(slot, Main.mouseItem) || Main.mouseItem.IsAir)
+	// 	{
+	// 		Item.newAndShiny = false;
+	// 		Player player = Main.LocalPlayer;
+	//
+	// 		if (ItemSlot.ShiftInUse)
+	// 		{
+	// 			Main.LocalPlayer.Loot(storage, slot);
+	// 			return;
+	// 		}
+	//
+	// 		if (Main.mouseItem.IsAir) storage.RemoveItem(Main.LocalPlayer, slot, out Main.mouseItem, Item.maxStack);
+	// 		else
+	// 		{
+	// 			if (Item.type == Main.mouseItem.type) storage.InsertItem(Main.LocalPlayer, slot, ref Main.mouseItem);
+	// 			else
+	// 			{
+	// 				if (Item.stack <= Item.maxStack)
+	// 				{
+	// 					storage.SwapStacks(Main.LocalPlayer, slot, ref Main.mouseItem);
+	// 				}
+	// 			}
+	// 		}
+	//
+	// 		if (Item.stack > 0) AchievementsHelper.NotifyItemPickup(player, Item);
+	//
+	// 		if (Main.mouseItem.type > ItemID.None || Item.type > ItemID.None)
+	// 		{
+	// 			Recipe.FindRecipes();
+	// 			SoundEngine.PlaySound(SoundID.Grab);
+	// 		}
+	// 	}
+	// }
 
 	public override int CompareTo(BaseElement other) => other is UIContainerSlot uiSlot ? slot.CompareTo(uiSlot.slot) : 0;
 
@@ -157,10 +197,10 @@ public class UIContainerSlot : BaseElement
 	{
 		if (args.Button != MouseButton.Right) return;
 
+		args.Handled = true;
+		
 		if (storage.IsItemValid(slot, Main.mouseItem) || Main.mouseItem.IsAir)
 		{
-			args.Handled = true;
-
 			Item.newAndShiny = false;
 
 			if (Main.stackSplit <= 1)
