@@ -30,12 +30,12 @@ public struct UIContainerSlotSettings
 	public Texture2D SlotTexture;
 	public Texture2D FavoritedSlotTexture;
 }
-	
+
 [ExtendsFromMod("ContainerLibrary")]
 public class UIContainerSlot : BaseElement
 {
 	private ItemStorage storage;
-	public UIContainerSlotSettings Settings=UIContainerSlotSettings.Default;
+	public UIContainerSlotSettings Settings = UIContainerSlotSettings.Default;
 	private int slot;
 
 	public Item Item => storage[slot];
@@ -158,7 +158,7 @@ public class UIContainerSlot : BaseElement
 		if (args.Button != MouseButton.Right) return;
 
 		args.Handled = true;
-		
+
 		if (storage.IsItemValid(slot, Main.mouseItem) || Main.mouseItem.IsAir)
 		{
 			Item.newAndShiny = false;
@@ -190,7 +190,7 @@ public class UIContainerSlot : BaseElement
 		if (!Main.keyState.IsKeyDown(Keys.LeftAlt)) return;
 
 		args.Handled = true;
-		
+
 		if (args.OffsetY > 0)
 		{
 			if (Main.mouseItem.type == Item.type && Main.mouseItem.stack < Main.mouseItem.maxStack)
