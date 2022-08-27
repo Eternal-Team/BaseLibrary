@@ -66,4 +66,8 @@ public abstract class Layer
 	public virtual void OnWindowResize(WindowResizedEventArgs args)
 	{
 	}
+	
+	public virtual void OnScaleChanged()
+	{
+	}
 }

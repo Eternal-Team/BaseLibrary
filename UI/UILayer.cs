@@ -9,7 +9,7 @@ namespace BaseLibrary.UI;
 
 public class UILayer : Layer
 {
-	public override bool Enabled => !Main.gameMenu && !Main.ingameOptionsWindow;
+	public override bool Enabled => !Main.gameMenu;
 
 	public static UILayer Instance;
 
@@ -221,6 +221,14 @@ public class UILayer : Layer
 	}
 
 	public override void OnWindowResize(WindowResizedEventArgs inArgs)
+	{
+		foreach (BaseState element in VisibleElements())
+		{
+			element.Recalculate();
+		}
+	}
+
+	public override void OnScaleChanged()
 	{
 		foreach (BaseState element in VisibleElements())
 		{

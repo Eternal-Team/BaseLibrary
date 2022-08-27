@@ -436,14 +436,14 @@ public class BaseElement : IComparable<BaseElement>
 	public virtual void Recalculate()
 	{
 		Vector2 originalScreenSize = PlayerInput.OriginalScreenSize;
-		Rectangle parent = Parent?.InnerDimensions ?? new Rectangle(0, 0, (int)(originalScreenSize.X / Main.UIScale), (int)(originalScreenSize.Y / Main.UIScale));
+		Rectangle parent = Parent?.InnerDimensions ?? new Rectangle(0, 0, (int)(originalScreenSize.X / Main.UIScaleWanted), (int)(originalScreenSize.Y / Main.UIScaleWanted));
 
 		Rectangle dimensions = Rectangle.Empty;
 
 		int minWidth = Math.Max(0, MinWidth ?? 0);
 		int minHeight = Math.Max(0, MinHeight ?? 0);
-		int maxWidth = (int)Math.Min(Main.screenWidth * (1f / Main.UIScale), MaxWidth ?? Main.screenWidth * (1f / Main.UIScale));
-		int maxHeight = (int)Math.Min(Main.screenHeight * (1f / Main.UIScale), MaxHeight ?? Main.screenHeight * (1f / Main.UIScale));
+		int maxWidth = (int)Math.Min(Main.screenWidth / Main.UIScaleWanted, MaxWidth ?? Main.screenWidth / Main.UIScaleWanted);
+		int maxHeight = (int)Math.Min(Main.screenHeight / Main.UIScaleWanted, MaxHeight ?? Main.screenHeight / Main.UIScaleWanted);
 
 		dimensions.Width = (int)(Width.Percent * parent.Width / 100f + Width.Pixels);
 		if (dimensions.Width < minWidth) dimensions.Width = minWidth;

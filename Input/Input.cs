@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameInput;
 
@@ -111,6 +112,7 @@ public static class Input
 
 	private static int oldScreenWidth;
 	private static int oldScreenHeight;
+	private static float oldUIScale;
 
 	internal static void Update(GameTime time)
 	{
@@ -122,6 +124,13 @@ public static class Input
 
 			oldScreenWidth = Main.screenWidth;
 			oldScreenHeight = Main.screenHeight;
+		}
+
+		if (Math.Abs(Main.UIScaleWanted - oldUIScale) > float.Epsilon)
+		{
+			foreach (Layer layer in Layers) layer.OnScaleChanged();
+
+			oldUIScale = Main.UIScaleWanted;
 		}
 
 		PlayerInput.ScrollWheelDelta = 0;
