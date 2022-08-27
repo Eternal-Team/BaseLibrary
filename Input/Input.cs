@@ -107,17 +107,23 @@ public static class Input
 				if (args.Handled) break;
 			}
 		};
-
-		Main.OnRenderTargetsInitialized += (width, height) =>
-		{
-			WindowResizedEventArgs args = new WindowResizedEventArgs(new Vector2(width, height));
-
-			foreach (Layer layer in Layers) layer.OnWindowResize(args);
-		};
 	}
+
+	private static int oldScreenWidth;
+	private static int oldScreenHeight;
 
 	internal static void Update(GameTime time)
 	{
+		if (oldScreenWidth != Main.screenWidth || oldScreenHeight != Main.screenHeight)
+		{
+			WindowResizedEventArgs args = new WindowResizedEventArgs(new Vector2(Main.screenWidth, Main.screenHeight));
+
+			foreach (Layer layer in Layers) layer.OnWindowResize(args);
+
+			oldScreenWidth = Main.screenWidth;
+			oldScreenHeight = Main.screenHeight;
+		}
+
 		PlayerInput.ScrollWheelDelta = 0;
 		PlayerInput.ScrollWheelDeltaForUI = 0;
 

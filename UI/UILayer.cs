@@ -25,7 +25,7 @@ public class UILayer : Layer
 	internal UILayer()
 	{
 		Instance = this;
-			
+
 		Add(new PanelUI());
 	}
 
@@ -222,8 +222,6 @@ public class UILayer : Layer
 
 	public override void OnWindowResize(WindowResizedEventArgs inArgs)
 	{
-		WindowResizedEventArgs args = new WindowResizedEventArgs(inArgs.Size * (1f / Scale));
-
 		foreach (BaseState element in VisibleElements())
 		{
 			element.Recalculate();
