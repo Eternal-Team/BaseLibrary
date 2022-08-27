@@ -101,15 +101,6 @@ public class UIPanel : BaseElement
 
 	protected override void Update(GameTime gameTime)
 	{
-		if (IsMouseHovering)
-		{
-			Main.LocalPlayer.mouseInterface = true;
-			Main.LocalPlayer.cursorItemIconEnabled = false;
-			Main.ItemIconCacheUpdate(0);
-			Main.mouseText = false;
-			Main.HoverItem = new Item();
-		}
-
 		if (dragging)
 		{
 			X.Percent = 0;
@@ -127,6 +118,19 @@ public class UIPanel : BaseElement
 
 	protected override void Draw(SpriteBatch spriteBatch)
 	{
+		if (IsMouseHovering)
+		{
+			Main.LocalPlayer.mouseInterface = true;
+			Main.instance.SetMouseNPC(-1, -1);
+			Main.LocalPlayer.cursorItemIconEnabled = false;
+			Main.LocalPlayer.cursorItemIconText = string.Empty;
+			Main.signHover = -1;
+			Main.ItemIconCacheUpdate(0);
+			Main.mouseText = true;
+			Main.HoverItem = new Item();
+			Main.hoverItemName = "";
+		}
+
 		if (Settings.Texture != null) spriteBatch.Draw(Settings.Texture, Dimensions);
 		else DrawingUtility.DrawPanel(spriteBatch, Dimensions, Settings.BackgroundColor, Settings.BorderColor);
 	}

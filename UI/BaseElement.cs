@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary.Utility;
@@ -250,11 +250,8 @@ public class BaseElement : IComparable<BaseElement>
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
 		DrawChildren(spriteBatch);
-		if (this is not BaseState && IsMouseHovering)
+		if (IsMouseHovering)
 		{
-			Main.LocalPlayer.cursorItemIconEnabled = false;
-			Main.ItemIconCacheUpdate(0);
-
 			if (HoverText is not null)
 			{
 				if (HoverText is Func<string> func) Main.instance.MouseText(func());
