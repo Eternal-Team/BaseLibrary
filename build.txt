@@ -1,5 +1,5 @@
 author = Itorius & team
-version = 2.0.4
+version = 2.0.5
 displayName = Base Library
 homepage = https://terraria.itorius.com/
 hideCode = false

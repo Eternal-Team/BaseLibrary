@@ -59,6 +59,8 @@ public class UIPanel : BaseElement
 		Padding = new Padding(8);
 	}
 
+	// note: block all event from going through?
+	
 	#region Dragging
 	private Vector2 offset;
 	private bool dragging;
