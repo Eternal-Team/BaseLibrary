@@ -20,5 +20,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\ContainerLibrary\ContainerLibrary.csproj" />
+		<ProjectReference Include="..\FluidLibrary\FluidLibrary.csproj" />
 	</ItemGroup>
 </Project>
