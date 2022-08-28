@@ -34,9 +34,9 @@ public struct UIContainerSlotSettings
 [ExtendsFromMod("ContainerLibrary")]
 public class UIContainerSlot : BaseElement
 {
-	private ItemStorage storage;
+	protected ItemStorage storage;
 	public UIContainerSlotSettings Settings = UIContainerSlotSettings.Default;
-	private int slot;
+	protected int slot;
 
 	public Item Item => storage[slot];
 
@@ -91,7 +91,7 @@ public class UIContainerSlot : BaseElement
 
 	public override int CompareTo(BaseElement other) => other is UIContainerSlot uiSlot ? slot.CompareTo(uiSlot.slot) : 0;
 
-	private void DrawItem(SpriteBatch spriteBatch, Item item, float scale)
+	protected void DrawItem(SpriteBatch spriteBatch, Item item, float scale)
 	{
 		Main.instance.LoadItem(item.type);
 		Texture2D itemTexture = TextureAssets.Item[item.type].Value;
