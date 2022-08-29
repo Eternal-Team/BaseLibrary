@@ -120,7 +120,7 @@ public class UITank : BaseElement
 		// Draw border of slot
 		DrawingUtility.DrawSlot(spriteBatch, Dimensions, ModContent.Request<Texture2D>(BaseLibrary.AssetPath + "Textures/UI/SlotBorder").Value, Color.White);
 
-		if (IsMouseHovering)
+		if (IsMouseHovering && HoveredElement == this)
 		{
 			// todo: draw BG
 			

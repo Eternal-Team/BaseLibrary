@@ -11,13 +11,13 @@ public class UILayer : Layer
 {
 	public override bool Enabled => !Main.gameMenu;
 
-	public static UILayer Instance;
+	public static UILayer Instance = null!;
 
 	private static float Scale => Main.gameMenu ? 1f : Main.UIScale;
 
 	private List<BaseState> Elements = new();
-	private BaseElement current;
-	private BaseElement mouseDownElement;
+	private BaseElement? current;
+	private BaseElement? mouseDownElement;
 
 	private IEnumerable<BaseState> VisibleElements() => Elements.Where(element => element.Display != Display.None);
 	private IEnumerable<BaseState> HoveredElements(Vector2 mouse) => Elements.Where(element => element.Display != Display.None && element.ContainsPoint(mouse));
@@ -67,6 +67,8 @@ public class UILayer : Layer
 				if (args.Handled) break;
 			}
 		}
+
+		// Main.NewText(BaseElement.HoveredElement is not null ? BaseElement.HoveredElement.GetType().Name : "NONE");
 	}
 
 	public override void OnMouseDown(MouseButtonEventArgs inArgs)
@@ -104,6 +106,13 @@ public class UILayer : Layer
 		inArgs.Handled = args.Handled;
 	}
 
+	private BaseElement? GetElementAt(Vector2 point)
+	{
+		BaseElement? element = Elements.LastOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
+
+		return element?.GetElementAt(point);
+	}
+	
 	public override void OnMouseMove(MouseMoveEventArgs inArgs)
 	{
 		MouseMoveEventArgs args = new MouseMoveEventArgs(inArgs.Position * (1f / Scale), inArgs.Delta);
@@ -114,13 +123,12 @@ public class UILayer : Layer
 			if (args.Handled) break;
 		}
 
-		BaseElement at = Elements.Where(baseElement => baseElement.Display != Display.None)
-			.Select(baseElement => baseElement.GetElementAt(args.Position))
-			.FirstOrDefault(baseElement => baseElement != null && baseElement.Display != Display.None);
+		BaseElement? at = GetElementAt(args.Position);
 		if (current != at)
 		{
 			current?.InternalMouseLeave(args);
 			at?.InternalMouseEnter(args);
+			BaseElement.HoveredElement = at;
 
 			current = at;
 
