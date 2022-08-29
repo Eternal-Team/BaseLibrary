@@ -38,7 +38,7 @@ public class BaseElement : IComparable<BaseElement>
 		return this;
 	}
 
-	public BaseElement? Parent { get; protected internal set; }
+	public BaseElement Parent { get; protected internal set; }
 
 	public List<BaseElement> Children = new();
 	public int Count => Children.Count;
@@ -89,21 +89,23 @@ public class BaseElement : IComparable<BaseElement>
 	public int? MaxHeight;
 
 	#region Events
-	public event Action<MouseMoveEventArgs>? OnMouseMove;
-	public event Action<MouseScrollEventArgs>? OnMouseScroll;
-	public event Action<MouseButtonEventArgs>? OnClick;
-	public event Action<MouseButtonEventArgs>? OnDoubleClick;
-	public event Action<MouseButtonEventArgs>? OnTripleClick;
-	public event Action<MouseButtonEventArgs>? OnMouseDown;
-	public event Action<MouseButtonEventArgs>? OnMouseUp;
-	public event Action<MouseEventArgs>? OnMouseEnter;
-	public event Action<MouseEventArgs>? OnMouseLeave;
+	public event Action<MouseMoveEventArgs> OnMouseMove;
+	public event Action<MouseScrollEventArgs> OnMouseScroll;
+	public event Action<MouseButtonEventArgs> OnClick;
+	public event Action<MouseButtonEventArgs> OnDoubleClick;
+	public event Action<MouseButtonEventArgs> OnTripleClick;
+	public event Action<MouseButtonEventArgs> OnMouseDown;
+	public event Action<MouseButtonEventArgs> OnMouseUp;
+	public event Action<MouseEventArgs> OnMouseOut;
+	public event Action<MouseEventArgs> OnMouseOver;
+	public event Action<MouseEventArgs> OnMouseEnter;
+	public event Action<MouseEventArgs> OnMouseLeave;
 
-	public event Action<KeyboardEventArgs>? OnKeyPressed;
-	public event Action<KeyboardEventArgs>? OnKeyReleased;
-	public event Action<KeyboardEventArgs>? OnKeyTyped;
+	public event Action<KeyboardEventArgs> OnKeyPressed;
+	public event Action<KeyboardEventArgs> OnKeyReleased;
+	public event Action<KeyboardEventArgs> OnKeyTyped;
 
-	public event Action<SpriteBatch>? OnPreDraw;
+	public event Action<SpriteBatch> OnPreDraw;
 	#endregion
 
 	#region Virtual methods
@@ -130,7 +132,7 @@ public class BaseElement : IComparable<BaseElement>
 			for (int i = 0; i < Children.Count; i++)
 			{
 				BaseElement element = this[i];
-				if (element.Display != Display.None && MathUtility.CheckAABBvAABBCollision( /*Parent.*/Dimensions, element.Dimensions)) element.InternalDraw(spriteBatch);
+				if (element.Display != Display.None && MathUtility.CheckAABBvAABBCollision(Parent.Dimensions, element.Dimensions)) element.InternalDraw(spriteBatch);
 			}
 		}
 	}
@@ -361,8 +363,8 @@ public class BaseElement : IComparable<BaseElement>
 		MouseScroll(args);
 	}
 
-	// private bool debugDraw;
-	// internal static bool debug;
+	private bool debugDraw;
+	internal static bool debug;
 
 	internal void InternalMouseEnter(MouseMoveEventArgs args)
 	{
@@ -501,16 +503,16 @@ public class BaseElement : IComparable<BaseElement>
 		return elements;
 	}
 
-	public virtual BaseElement? GetElementAt(Vector2 point)
+	public virtual BaseElement GetElementAt(Vector2 point)
 	{
-		BaseElement? element = Children.FirstOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
+		BaseElement element = Children.FirstOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
 
 		if (element != null) return element.GetElementAt(point);
 
 		return ContainsPoint(point) && Display != Display.None ? this : null;
 	}
 
-	public virtual int CompareTo(BaseElement? other) => 0;
+	public virtual int CompareTo(BaseElement other) => 0;
 
 	public void Add(BaseElement item)
 	{
