@@ -46,23 +46,25 @@ public class UITank : BaseElement
 			ReferenceStencil = 1,
 			DepthBufferEnable = false
 		};
-		
+
 		RasterizerState rasterizerState = new RasterizerState { CullMode = CullMode.None, ScissorTestEnable = true };
 
-		var m = Matrix.CreateOrthographicOffCenter(0,
-			Main.graphics.GraphicsDevice.PresentationParameters.BackBufferWidth,
-			Main.graphics.GraphicsDevice.PresentationParameters.BackBufferHeight,
+		var projection = Matrix.CreateOrthographicOffCenter(0,
+			Main.graphics.GraphicsDevice.PresentationParameters.BackBufferWidth / Main.UIScale,
+			Main.graphics.GraphicsDevice.PresentationParameters.BackBufferHeight / Main.UIScale,
 			0, 0, 1
 		);
-		
-		var a = new AlphaTestEffect(Main.graphics.GraphicsDevice) {
-			Projection = m
+
+		var shader = new AlphaTestEffect(Main.graphics.GraphicsDevice)
+		{
+			Projection = projection
 		};
-		
+
 		var texture = TextureAssets.InventoryBack.Value;
 
+		// Draw slot to color and stencil buffer
 		spriteBatch.End();
-		spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, stencilMask, rasterizerState, a, Main.UIScaleMatrix);
+		spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, stencilMask, rasterizerState, shader, Main.UIScaleMatrix);
 		DrawingUtility.DrawSlot(spriteBatch, Dimensions, texture, Color.White);
 		spriteBatch.End();
 
@@ -74,14 +76,16 @@ public class UITank : BaseElement
 		float fill = FluidStack.Volume / (float)storage.MaxVolumeFor(slot);
 
 		spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, stencilLiquid, rasterizerState, null, Main.UIScaleMatrix);
-		
+
+		// Draw fluid (use stencil)
 		int height = (int)(Dimensions.Height * fill);
 		spriteBatch.Draw(fluidTexture, new Rectangle((int)Dimensions.BottomLeft().X, (int)Dimensions.BottomLeft().Y - height, Dimensions.Width, height), Color.White);
-		
+
 		spriteBatch.End();
 
-		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, rasterizerState, a, Main.UIScaleMatrix);
-		
-		DrawingUtility.DrawSlot(spriteBatch, Dimensions, ModContent.Request<Texture2D>(BaseLibrary.AssetPath+"Textures/UI/SlotBorder").Value, Color.White);
+		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, rasterizerState, shader, Main.UIScaleMatrix);
+
+		// Draw border of slot
+		DrawingUtility.DrawSlot(spriteBatch, Dimensions, ModContent.Request<Texture2D>(BaseLibrary.AssetPath + "Textures/UI/SlotBorder").Value, Color.White);
 	}
 }
