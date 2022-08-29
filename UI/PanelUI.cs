@@ -204,7 +204,7 @@ public class PanelUI : BaseState
 
 	public override BaseElement? GetElementAt(Vector2 point)
 	{
-		BaseElement? element = Children.FirstOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
+		BaseElement? element = Children.LastOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
 
 		return element?.GetElementAt(point);
 	}
