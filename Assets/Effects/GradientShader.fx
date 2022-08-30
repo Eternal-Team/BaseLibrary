@@ -22,9 +22,14 @@ float3 HSV2RGB(float h,float s, float v)
 	return RGB;
 }
 
+float2 uImageSize0;
+
 float4 main(float2 coords : TEXCOORD0) : SV_TARGET
 {
-	return float4(HSV2RGB(coords.x, 1.0, 1.0), 1.0);
+	if(uImageSize0.x > uImageSize0.y)
+		return float4(HSV2RGB(coords.x, 1.0, 1.0), 1.0);
+	else
+		return float4(HSV2RGB(coords.y, 1.0, 1.0), 1.0);
 }
 
 technique Technique1
