@@ -18,14 +18,14 @@
 		<None Remove="README.md" />
 		<None Remove=".gitignore" />
 	</ItemGroup>
-	<Target Name="CompileShaders" BeforeTargets="Build">
+<!--	<Target Name="CompileShaders" BeforeTargets="Build">-->
 
-		<ItemGroup>
-			<ShaderFiles Include="$(ProjectDir)/**/*.fx" />
-		</ItemGroup>
+<!--		<ItemGroup>-->
+<!--			<ShaderFiles Include="$(ProjectDir)/**/*.fx" />-->
+<!--		</ItemGroup>-->
 
-		<Exec Command="/home/itorius/Downloads/EasyXnb/compile.sh %(ShaderFiles.Identity)" />
-	</Target>
+<!--		<Exec Command="/home/itorius/Downloads/EasyXnb/compile.sh %(ShaderFiles.Identity)" />-->
+<!--	</Target>-->
 	<ItemGroup>
 		<ProjectReference Include="..\ContainerLibrary\ContainerLibrary.csproj" />
 		<ProjectReference Include="..\FluidLibrary\FluidLibrary.csproj" />

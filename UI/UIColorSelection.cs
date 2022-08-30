@@ -6,6 +6,8 @@ using Terraria;
 
 namespace BaseLibrary.UI;
 
+// todo: add different styles
+
 public struct UIColorSelectionSettings
 {
 	public static readonly UIColorSelectionSettings Default = new()
@@ -81,7 +83,7 @@ public class UIColorSelection : BaseElement
 		if (colorDot.Parent != null)
 		{
 			colorDot.X.Pixels = (int)(colorDot.Parent.Dimensions.Width * hsv.X);
-			colorDot.Y.Pixels = (int)(colorDot.Parent.Dimensions.Height * 0.5f);
+			colorDot.Y.Pixels = colorDot.Parent.Dimensions.Height / 2;
 		}
 
 		colorDot.Recalculate();
