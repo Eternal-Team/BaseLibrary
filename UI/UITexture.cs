@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -57,24 +57,19 @@ namespace BaseLibrary.UI
 			if (Texture is null)
 				return;
 
-			Vector2 scale = Vector2.Zero;
-
 			Texture2D texture = Texture.Value;
-			
-			if (Settings.ScaleMode == ScaleMode.Stretch) scale = new Vector2(Dimensions.Width / (float)texture.Width, Dimensions.Height / (float)texture.Height);
-			else if (Settings.ScaleMode == ScaleMode.Zoom)
-			{
-				float s = Math.Min(Dimensions.Width / (float)texture.Width, Dimensions.Height / (float)texture.Height);
-				scale = new Vector2(s);
-			}
-			else if (Settings.ScaleMode == ScaleMode.None) scale = Vector2.One;
+			Vector2 textureSize = Settings.SourceRectangle?.Size() ?? texture.Size();
+
+			Vector2 scale = Vector2.One;
+			if (Settings.ScaleMode == ScaleMode.Stretch) scale = new Vector2(Dimensions.Width / textureSize.X, Dimensions.Height / textureSize.Y);
+			else if (Settings.ScaleMode == ScaleMode.Zoom) scale = new Vector2(Math.Min(Dimensions.Width / textureSize.X, Dimensions.Height / textureSize.Y));
 
 			scale *= Settings.Scale;
-			Vector2 texSize = Texture.Size() * scale;
+
 			Vector2 position = new Vector2
 			{
-				X = Dimensions.X + Settings.ImageX.Percent * Dimensions.Width / 100f - Settings.ImageX.Percent * texSize.X / 100f + Settings.ImageX.Pixels,
-				Y = Dimensions.Y + Settings.ImageY.Percent * Dimensions.Height / 100f - Settings.ImageY.Percent * texSize.Y / 100f + Settings.ImageY.Pixels
+				X = Dimensions.X + Settings.ImageX.Percent * Dimensions.Width / 100f - Settings.ImageX.Percent * (textureSize.X * scale.X) / 100f + Settings.ImageX.Pixels,
+				Y = Dimensions.Y + Settings.ImageY.Percent * Dimensions.Height / 100f - Settings.ImageY.Percent * (textureSize.Y * scale.Y) / 100f + Settings.ImageY.Pixels
 			};
 
 			spriteBatch.Draw(texture, position, Settings.SourceRectangle, Settings.Color, Settings.Rotation, Settings.Origin, scale, Settings.SpriteEffects, 0f);
