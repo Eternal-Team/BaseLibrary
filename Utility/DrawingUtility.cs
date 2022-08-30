@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
@@ -157,5 +158,22 @@ public static class DrawingUtility
 
 		ItemLoader.PostDrawInWorld(item, spriteBatch, item.GetColor(Color.White), item.GetAlpha(newColor), rotation, totalScale, item.whoAmI);
 		if (ItemID.Sets.TrapSigned[item.type]) spriteBatch.Draw(TextureAssets.Wire.Value, position + new Vector2(40f, 40f), new Rectangle(4, 58, 8, 8), Color.White, 0f, new Vector2(4f), 1f, SpriteEffects.None, 0f);
+	}
+	
+	public static void DrawOutline(this SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color, int lineSize = 2)
+	{
+		int width = (int)Math.Abs(start.X - end.X);
+		int height = (int)Math.Abs(start.Y - end.Y);
+
+		Point topleft = Vector2.Min(start, end).ToPoint();
+
+		// top
+		spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(topleft.X, topleft.Y, width, lineSize), color);
+		// left
+		spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(topleft.X, topleft.Y, lineSize, height), color);
+		// bottom
+		spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(topleft.X, topleft.Y + height - lineSize, width, lineSize), color);
+		// right
+		spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(topleft.X + width - lineSize, topleft.Y, lineSize, height), color);
 	}
 }
