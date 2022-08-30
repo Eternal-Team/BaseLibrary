@@ -167,7 +167,6 @@ public class PanelUI : BaseState
 
 			ui = (BaseUIPanel)Activator.CreateInstance(UICache[entityType], entity);
 			ui.Display = Display.Visible;
-			ui.InternalActivate();
 
 			ui.X.Percent = 50;
 			ui.Y.Percent = 25;
@@ -179,6 +178,7 @@ public class PanelUI : BaseState
 			};
 
 			Add(ui);
+			ui.InternalActivate();
 			Panels.Add(entity.GetID(), ui);
 
 			if (openSound != null) SoundEngine.PlaySound(openSound.Value);
