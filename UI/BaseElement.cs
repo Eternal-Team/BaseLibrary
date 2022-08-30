@@ -98,6 +98,7 @@ public class BaseElement : IComparable<BaseElement>
 	public event Action<MouseButtonEventArgs>? OnTripleClick;
 	public event Action<MouseButtonEventArgs>? OnMouseDown;
 	public event Action<MouseButtonEventArgs>? OnMouseUp;
+	public event Action<MouseButtonEventArgs>? OnMouseHeld;
 	public event Action<MouseEventArgs>? OnMouseEnter;
 	public event Action<MouseEventArgs>? OnMouseLeave;
 
@@ -139,6 +140,7 @@ public class BaseElement : IComparable<BaseElement>
 
 	protected virtual void MouseHeld(MouseButtonEventArgs args)
 	{
+		OnMouseHeld?.Invoke(args);
 	}
 
 	protected virtual void MouseDown(MouseButtonEventArgs args)
