@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -24,7 +24,8 @@ namespace BaseLibrary.UI
 			Color = Color.White,
 			ImageX = new StyleDimension(0, 50),
 			ImageY = new StyleDimension(0, 50),
-			Origin = Vector2.Zero
+			Origin = Vector2.Zero,
+			SourceRectangle = null
 		};
 
 		public ScaleMode ScaleMode;
@@ -33,7 +34,9 @@ namespace BaseLibrary.UI
 		public float Scale;
 		public Color Color;
 		public Vector2 Origin;
-		
+
+		public Rectangle? SourceRectangle;
+
 		public StyleDimension ImageX;
 		public StyleDimension ImageY;
 	}
@@ -74,7 +77,7 @@ namespace BaseLibrary.UI
 				Y = Dimensions.Y + Settings.ImageY.Percent * Dimensions.Height / 100f - Settings.ImageY.Percent * texSize.Y / 100f + Settings.ImageY.Pixels
 			};
 
-			spriteBatch.Draw(texture, position, null, Settings.Color, Settings.Rotation, Settings.Origin, scale, Settings.SpriteEffects, 0f);
+			spriteBatch.Draw(texture, position, Settings.SourceRectangle, Settings.Color, Settings.Rotation, Settings.Origin, scale, Settings.SpriteEffects, 0f);
 		}
 	}
 }
