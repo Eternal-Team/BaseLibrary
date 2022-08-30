@@ -67,6 +67,8 @@ public class ColorUtility
 
 	public static Color FromHSV(float h, float s, float v)
 	{
+		if (h >= 1f) h -= 1f;
+
 		h *= 6f;
 
 		int i = (int)Math.Floor(h);
@@ -102,13 +104,14 @@ public class ColorUtility
 
 		float h = 0f;
 		if (Math.Abs(cMax - r) < float.Epsilon)
-			h = (g - b) / delta % 6;
+			h = 60f * ((g - b) / delta % 6);
 		else if (Math.Abs(cMax - g) < float.Epsilon)
-			h = (b - r) / delta + 2f;
+			h = 60f * ((b - r) / delta + 2f);
 		else if (Math.Abs(cMax - b) < float.Epsilon)
-			h = (r - g) / delta + 4f;
+			h = 60f * ((r - g) / delta + 4f);
 
-		h = h * 60f / 360f;
+		h /= 360f;
+		if (h < 0f) h += 1f;
 
 		float s = cMax == 0f ? 0f : delta / cMax;
 
