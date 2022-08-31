@@ -1,6 +1,8 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -22,6 +24,8 @@ public static class DrawingUtility
 		public static readonly Color Slot = new(63, 65, 151);
 		public static readonly Color Outline = new(18, 18, 38);
 	}
+
+	public static Asset<Texture2D> Pixel = ModContent.Request<Texture2D>(BaseLibrary.TexturePath + "UI/Pixel");
 
 	public static Texture2D GetTexturePremultiplied(string path)
 	{
