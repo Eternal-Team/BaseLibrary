@@ -25,11 +25,16 @@ public static class MathUtility
 		return new Point16(a.X < b.X ? a.X : b.X, a.Y < b.Y ? a.Y : b.Y);
 	}
 
+	public static Point16 Max(Point16 a, Point16 b)
+	{
+		return new Point16(a.X > b.X ? a.X : b.X, a.Y > b.Y ? a.Y : b.Y);
+	}
+
 	public static ulong Min(ulong a, ulong b, ulong c)
 	{
 		return Math.Min(a, Math.Min(b, c));
 	}
-	
+
 	public static float Min(float a, float b, float c)
 	{
 		return Math.Min(a, Math.Min(b, c));
@@ -39,7 +44,7 @@ public static class MathUtility
 	{
 		return Math.Min(a, Math.Min(b, Math.Min(c, d)));
 	}
-	
+
 	public static float Max(float a, float b, float c)
 	{
 		return Math.Max(a, Math.Max(b, c));
