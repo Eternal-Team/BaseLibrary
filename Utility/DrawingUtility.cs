@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -175,5 +175,16 @@ public static class DrawingUtility
 		spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(topleft.X, topleft.Y + height - lineSize, width, lineSize), color);
 		// right
 		spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(topleft.X + width - lineSize, topleft.Y, lineSize, height), color);
+	}
+	
+	public static void DrawTextWithBorder(SpriteBatch sb, DynamicSpriteFont font, string text, Vector2 position, Color textColor, Color borderColor, Vector2 origin, float rotation, float scale = 1f)
+	{
+		// shadows
+		sb.DrawString(font, text, position + new Vector2(-2f, 0f), borderColor, rotation, origin, scale, SpriteEffects.None, 0.0f);
+		sb.DrawString(font, text, position + new Vector2(2f, 0f), borderColor, rotation, origin, scale, SpriteEffects.None, 0.0f);
+		sb.DrawString(font, text, position + new Vector2(0f, -2f), borderColor, rotation, origin, scale, SpriteEffects.None, 0.0f);
+		sb.DrawString(font, text, position + new Vector2(0f, 2f), borderColor, rotation, origin, scale, SpriteEffects.None, 0.0f);
+
+		sb.DrawString(font, text, position, textColor, rotation, origin, scale, SpriteEffects.None, 0.0f);
 	}
 }
