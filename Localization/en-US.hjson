@@ -1,0 +1,7 @@
+﻿Mods: {
+	BaseLibrary: {
+		UI: {
+			Close: Close
+		}
+	}
+}
