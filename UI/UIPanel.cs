@@ -67,7 +67,11 @@ public class UIPanel : BaseElement
 
 	protected override void MouseDown(MouseButtonEventArgs args)
 	{
-		if (!Settings.Draggable || args.Button != MouseButton.Left || GetElementAt(args.Position) != this) return;
+		if (!Settings.Draggable || args.Button != MouseButton.Left || GetElementAt(args.Position) != this)
+		{
+			base.MouseDown(args);
+			return;
+		}
 
 		foreach (var zone in Settings.DragZones)
 		{
@@ -94,7 +98,11 @@ public class UIPanel : BaseElement
 
 	protected override void MouseUp(MouseButtonEventArgs args)
 	{
-		if (!Settings.Draggable || args.Button != MouseButton.Left) return;
+		if (!Settings.Draggable || args.Button != MouseButton.Left)
+		{
+			base.MouseUp(args);
+			return;
+		}
 
 		dragging = false;
 
