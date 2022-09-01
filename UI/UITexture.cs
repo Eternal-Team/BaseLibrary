@@ -25,7 +25,8 @@ namespace BaseLibrary.UI
 			ImageX = new StyleDimension(0, 50),
 			ImageY = new StyleDimension(0, 50),
 			Origin = Vector2.Zero,
-			SourceRectangle = null
+			SourceRectangle = null,
+			SamplerState = SamplerState.LinearClamp
 		};
 
 		public ScaleMode ScaleMode;
@@ -34,6 +35,7 @@ namespace BaseLibrary.UI
 		public float Scale;
 		public Color Color;
 		public Vector2 Origin;
+		public SamplerState SamplerState;
 
 		public Rectangle? SourceRectangle;
 
@@ -45,7 +47,7 @@ namespace BaseLibrary.UI
 	{
 		public UITextureSettings Settings = UITextureSettings.Default;
 
-		private Asset<Texture2D>? Texture;
+		public Asset<Texture2D>? Texture;
 
 		public UITexture(Asset<Texture2D>? texture)
 		{
@@ -56,6 +58,11 @@ namespace BaseLibrary.UI
 		{
 			if (Texture is null)
 				return;
+
+			RasterizerState rasterizer = new RasterizerState { CullMode = CullMode.None, ScissorTestEnable = true };
+
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Settings.SamplerState, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
 			Texture2D texture = Texture.Value;
 			Vector2 textureSize = Settings.SourceRectangle?.Size() ?? texture.Size();
@@ -73,6 +80,9 @@ namespace BaseLibrary.UI
 			};
 
 			spriteBatch.Draw(texture, position, Settings.SourceRectangle, Settings.Color, Settings.Rotation, Settings.Origin, scale, Settings.SpriteEffects, 0f);
+
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 		}
 	}
 }
