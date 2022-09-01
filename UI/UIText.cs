@@ -35,7 +35,7 @@ public class UIText : BaseElement
 {
 	public UITextOptions Settings = UITextOptions.Default;
 
-	public object Text
+	public object? Text
 	{
 		get => text;
 		set
@@ -45,7 +45,7 @@ public class UIText : BaseElement
 		}
 	}
 
-	private object text;
+	private object? text;
 
 	private float textScale;
 	private Vector2 textSize;
@@ -81,6 +81,9 @@ public class UIText : BaseElement
 
 	protected override void Draw(SpriteBatch spriteBatch)
 	{
+		if (text is null || string.IsNullOrWhiteSpace(text.ToString()))
+			return;
+
 		RasterizerState rasterizer = new RasterizerState { CullMode = CullMode.None, ScissorTestEnable = true };
 
 		spriteBatch.End();
@@ -88,7 +91,7 @@ public class UIText : BaseElement
 		SamplerState samplerText = SamplerState.LinearClamp;
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, samplerText, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-		string s = text.ToString().Replace("\t", "    ");
+		string s = text!.ToString()!.Replace("\t", "    ");
 		Utils.DrawBorderStringFourWay(spriteBatch, Settings.Font.Value, s, textPosition.X, textPosition.Y, Settings.TextColor, Settings.BorderColor, Vector2.Zero, textScale);
 
 		spriteBatch.End();
@@ -99,7 +102,7 @@ public class UIText : BaseElement
 
 	private void CalculateTextMetrics()
 	{
-		if (text == null || string.IsNullOrWhiteSpace(text.ToString()))
+		if (text is null || string.IsNullOrWhiteSpace(text.ToString()))
 		{
 			textSize = Vector2.Zero;
 			textPosition = Vector2.Zero;
@@ -121,10 +124,11 @@ public class UIText : BaseElement
 			_ => textPosition.X
 		};
 
+		// note: text size Y is a bit off
 		textPosition.Y = vAlign switch
 		{
 			VerticalAlignment.Top => InnerDimensions.Y,
-			VerticalAlignment.Center => InnerDimensions.Y + InnerDimensions.Height * 0.5f - textSize.Y * 0.5f + 8f * textScale,
+			VerticalAlignment.Center => InnerDimensions.Y + InnerDimensions.Height * 0.5f - (textSize.Y - 8f) * 0.5f,
 			VerticalAlignment.Bottom => InnerDimensions.Y + InnerDimensions.Height - textSize.Y + 8f * textScale,
 			_ => textPosition.Y
 		};
