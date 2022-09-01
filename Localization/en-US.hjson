@@ -2,6 +2,8 @@
 	BaseLibrary: {
 		UI: {
 			Close: Close
+			Reset: Reset
+			Initialize: Initialize
 		}
 	}
 }
