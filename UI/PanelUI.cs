@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Core;
 using Terraria.UI;
 
 namespace BaseLibrary.UI;
@@ -74,22 +75,25 @@ public class PanelUISystem : ModSystem
 
 		// bug: check if IHasUI entity still exists 
 
-		if (!Main.playerInventory)
+		if (gui != null)
 		{
-			List<BaseUIPanel> panels = gui.Children.Cast<BaseUIPanel>().ToList();
-			foreach (BaseUIPanel ui in panels)
+			if (!Main.playerInventory)
 			{
-				if (ui.Display != Display.Visible) continue;
+				List<BaseUIPanel> panels = gui.Children.Cast<BaseUIPanel>().ToList();
+				foreach (BaseUIPanel ui in panels)
+				{
+					if (ui.Display != Display.Visible) continue;
 
-				ClosedUICache.Add(ui.Container);
-				gui.CloseUI(ui.Container);
+					ClosedUICache.Add(ui.Container);
+					gui.CloseUI(ui.Container);
+				}
 			}
-		}
-		else
-		{
-			foreach (IHasUI ui in ClosedUICache) gui.OpenUI(ui);
+			else
+			{
+				foreach (IHasUI ui in ClosedUICache) gui.OpenUI(ui);
 
-			ClosedUICache.Clear();
+				ClosedUICache.Clear();
+			}
 		}
 
 		foreach (Layer layer in Input.Layers)
@@ -101,33 +105,39 @@ public class PanelUISystem : ModSystem
 	public override void PreSaveAndQuit()
 	{
 		ClosedUICache.Clear();
-		PanelUI.Instance.CloseAllUIs();
+		PanelUI.Instance?.CloseAllUIs();
 	}
 }
 
 public class PanelUI : BaseState
 {
-	public static PanelUI Instance;
+	public static PanelUI? Instance;
 
-	private Dictionary<Type, Type> UICache = new();
+	private Dictionary<Type, Type> EntityToUIMap = new();
 	private Dictionary<Guid, BaseUIPanel> Panels = new();
 
 	public PanelUI()
 	{
 		Instance = this;
 
-		foreach (Type type in ModLoader.Mods.Where(mod => mod.Name != "ModLoader").SelectMany(mod => mod.Code?.GetTypes()))
+		foreach (Mod mod in ModLoader.Mods.Where(mod => mod.Name != "ModLoader"))
 		{
-			if (ReflectionUtility.IsSubclassOfRawGeneric(type, typeof(BaseUIPanel<>)) && type.BaseType != null && type.BaseType.GenericTypeArguments.Length > 0)
-				UICache[type.BaseType.GenericTypeArguments[0]] = type;
+			var types = AssemblyManager.GetLoadableTypes(mod.Code);
+			if (types is null) continue;
+
+			foreach (Type type in types)
+			{
+				if (ReflectionUtility.IsSubclassOfRawGeneric(type, typeof(BaseUIPanel<>)) && type.BaseType != null && type.BaseType.GenericTypeArguments.Length > 0)
+					EntityToUIMap[type.BaseType.GenericTypeArguments[0]] = type;
+			}
 		}
 	}
 
-	public void HandleUI(IHasUI entity)
+	public void HandleUI(IHasUI? entity)
 	{
-		if (Main.netMode == NetmodeID.Server || entity == null) return;
+		if (Main.netMode == NetmodeID.Server || entity is null) return;
 
-		if (Panels.TryGetValue(entity.GetID(), out BaseUIPanel panel) && panel.Display == Display.Visible) CloseUI(entity);
+		if (Panels.TryGetValue(entity.GetID(), out BaseUIPanel? panel) && panel.Display == Display.Visible) CloseUI(entity);
 		else
 		{
 			if (!PanelUISystem.ClosedUICache.Contains(entity)) OpenUI(entity);
@@ -136,10 +146,10 @@ public class PanelUI : BaseState
 		}
 	}
 
-	public void CloseUI(IHasUI entity)
+	public void CloseUI(IHasUI? entity)
 	{
-		if (Main.netMode == NetmodeID.Server || entity == null) return;
-		if (!Panels.TryGetValue(entity.GetID(), out BaseUIPanel panel) || panel.Display != Display.Visible) return;
+		if (Main.netMode == NetmodeID.Server || entity is null) return;
+		if (!Panels.TryGetValue(entity.GetID(), out BaseUIPanel? panel) || panel.Display != Display.Visible) return;
 
 		panel.Display = Display.None;
 		panel.InternalDeactivate();
@@ -148,30 +158,34 @@ public class PanelUI : BaseState
 		if (closeSound != null) SoundEngine.PlaySound(closeSound.Value);
 	}
 
-	public void OpenUI(IHasUI entity)
+	public void OpenUI(IHasUI? entity)
 	{
-		if (Main.netMode == NetmodeID.Server || entity == null) return;
+		if (Main.netMode == NetmodeID.Server || entity is null) return;
 
 		var openSound = entity.GetOpenSound();
+		Guid id = entity.GetID();
 
-		if (Panels.TryGetValue(entity.GetID(), out BaseUIPanel ui) && ui.Display == Display.None)
+		if (Panels.TryGetValue(id, out BaseUIPanel? ui) && ui.Display == Display.None)
 		{
 			ui.Display = Display.Visible;
 			ui.InternalActivate();
 
 			if (openSound != null) SoundEngine.PlaySound(openSound.Value);
 		}
-		else if (!Panels.ContainsKey(entity.GetID()))
+		else if (!Panels.ContainsKey(id))
 		{
-			Type entityType = UICache.ContainsKey(entity.GetType()) ? entity.GetType() : entity.GetType().BaseType;
+			Type type = entity.GetType();
+			Type? entityType = EntityToUIMap.ContainsKey(type) ? type : type.BaseType;
+			if (entityType is null) return;
 
-			ui = (BaseUIPanel)Activator.CreateInstance(UICache[entityType], entity);
+			ui = (BaseUIPanel?)Activator.CreateInstance(EntityToUIMap[entityType], entity);
+			if (ui is null) return;
 			ui.Display = Display.Visible;
 
 			ui.X.Percent = 50;
 			ui.Y.Percent = 25;
 
-			ui.OnMouseDown += args =>
+			ui.OnMouseDown += _ =>
 			{
 				Children.Remove(ui);
 				Children.Add(ui);
@@ -179,7 +193,7 @@ public class PanelUI : BaseState
 
 			Add(ui);
 			ui.InternalActivate();
-			Panels.Add(entity.GetID(), ui);
+			Panels.Add(id, ui);
 
 			if (openSound != null) SoundEngine.PlaySound(openSound.Value);
 		}
