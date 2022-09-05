@@ -16,15 +16,9 @@ public interface IHasUI
 {
 	Guid GetID();
 
-	SoundStyle? GetOpenSound()
-	{
-		return null;
-	}
+	SoundStyle? GetOpenSound() => null;
 
-	SoundStyle? GetCloseSound()
-	{
-		return null;
-	}
+	SoundStyle? GetCloseSound() => null;
 }
 
 public class BaseUIPanel : UIPanel
@@ -49,7 +43,7 @@ public class BaseUIPanel<T> : BaseUIPanel where T : IHasUI
 
 public class PanelUISystem : ModSystem
 {
-	internal static List<IHasUI> ClosedUICache = new();
+	internal List<IHasUI> ClosedUICache = new();
 
 	public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 	{
@@ -140,7 +134,7 @@ public class PanelUI : BaseState
 		if (Panels.TryGetValue(entity.GetID(), out BaseUIPanel? panel) && panel.Display == Display.Visible) CloseUI(entity);
 		else
 		{
-			if (!PanelUISystem.ClosedUICache.Contains(entity)) OpenUI(entity);
+			if (!ModContent.GetInstance<PanelUISystem>().ClosedUICache.Contains(entity)) OpenUI(entity);
 
 			if (!Main.playerInventory) Main.playerInventory = true;
 		}

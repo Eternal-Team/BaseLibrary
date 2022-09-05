@@ -18,7 +18,7 @@ public abstract class BaseTileEntity : ModTileEntity
 {
 	protected abstract Type TileType { get; }
 
-	private static MethodInfo TileTypeMethod;
+	private static MethodInfo? TileTypeMethod;
 
 	public override bool IsTileValidForEntity(int x, int y)
 	{
