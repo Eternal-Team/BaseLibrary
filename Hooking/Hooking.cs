@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using BaseLibrary.UI;
 using BaseLibrary.Utility;
@@ -8,12 +9,15 @@ using MonoMod.RuntimeDetour.HookGen;
 using On.Terraria.GameContent.UI.Elements;
 using On.Terraria.GameInput;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace BaseLibrary;
 
 internal static partial class Hooking
 {
+	private static List<TitleLinkButton> TitleLinks;
+
 	internal static void Initialize()
 	{
 		Input.Load();
@@ -22,6 +26,16 @@ internal static partial class Hooking
 
 		MethodInfo methodInfo = typeof(ItemLoader).GetMethod("RightClick", ReflectionUtility.DefaultFlags_Static);
 		HookEndpointManager.Modify(methodInfo, ItemLoaderRightClick);
+
+		// todo: nginx redirects on my VPS
+		TitleLinks = new List<TitleLinkButton>
+		{
+			MakeSimpleButton("TitleLinks.Discord", "https://discord.gg/EP9nfZV", 0),
+			MakeSimpleButton("TitleLinks.Patreon", "https://www.patreon.com/Itorius", 7)
+		};
+
+		IL.Terraria.Main.DrawMenu += MainOnDrawMenu;
+		IL.Terraria.Main.DrawVersionNumber += MainOnDrawVersionNumber;
 	}
 
 	private static void ItemLoaderRightClick(ILContext il)

@@ -24,7 +24,7 @@ internal static partial class Hooking
 		ReinitializeMethod ??= typeof(PlayerInput).GetMethod("ReInitialize", ReflectionUtility.DefaultFlags_Static);
 		ReinitializeField ??= typeof(PlayerInput).GetField("reinitialize", ReflectionUtility.DefaultFlags_Static);
 
-		if (ReinitializeField.GetValue<bool>(null))
+		if (ReinitializeField.GetValueStatic<bool>())
 			ReinitializeMethod!.Invoke(null, null);
 
 		PlayerInput.Triggers.Old = PlayerInput.Triggers.Current.Clone();
