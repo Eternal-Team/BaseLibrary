@@ -27,11 +27,10 @@ internal static partial class Hooking
 		MethodInfo methodInfo = typeof(ItemLoader).GetMethod("RightClick", ReflectionUtility.DefaultFlags_Static);
 		HookEndpointManager.Modify(methodInfo, ItemLoaderRightClick);
 
-		// todo: nginx redirects on my VPS
 		TitleLinks = new List<TitleLinkButton>
 		{
-			MakeSimpleButton("TitleLinks.Discord", "https://discord.gg/EP9nfZV", 0),
-			MakeSimpleButton("TitleLinks.Patreon", "https://www.patreon.com/Itorius", 7)
+			MakeSimpleButton("TitleLinks.Discord", "https://terraria.itorius.com/discord", 0),
+			MakeSimpleButton("TitleLinks.Patreon", "https://www.itorius.com/patreon", 7)
 		};
 
 		IL.Terraria.Main.DrawMenu += MainOnDrawMenu;
