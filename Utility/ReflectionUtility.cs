@@ -8,18 +8,53 @@ public static class ReflectionUtility
 	public const BindingFlags DefaultFlags_Static = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 	public const BindingFlags DefaultFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-	public static void SetValue(this Type type, string name, object value, object obj = null, BindingFlags flags = DefaultFlags)
+	#region SetValue
+	public static void SetValue(this Type type, string name, object value, object? obj = null, BindingFlags flags = DefaultFlags)
 	{
-		PropertyInfo propertyInfo = type.GetProperty(name, flags);
-		if (propertyInfo != null) propertyInfo.SetValue(obj, value);
-		else type.GetField(name, flags)?.SetValue(obj, value);
+		PropertyInfo? propertyInfo = type.GetProperty(name, flags);
+		if (propertyInfo is not null)
+		{
+			propertyInfo.SetValue(obj, value);
+			return;
+		}
+
+		FieldInfo? fieldInfo = type.GetField(name, flags);
+		if (fieldInfo is not null)
+		{
+			fieldInfo.SetValue(obj, value);
+			return;
+		}
+
+		throw new Exception("Unknown field or property " + name);
 	}
 
 	public static void SetValue(this object obj, string name, object value, BindingFlags flags = DefaultFlags) => obj.GetType().SetValue(name, value, obj, flags);
+	#endregion
 
-	public static T Invoke<T>(this MethodInfo info, object target, params object[] args) => (T)info.Invoke(target, args);
+	#region GetValue
+	public static T? GetValue<T>(this FieldInfo fieldInfo, object obj) => (T?)fieldInfo.GetValue(obj);
 
-	public static T InvokeStatic<T>(this MethodInfo info, params object[] args) => (T)info.Invoke(null, args);
+	public static T? GetValueStatic<T>(this FieldInfo fieldInfo) => (T?)fieldInfo.GetValue(null);
+
+	public static T? GetValue<T>(this PropertyInfo propertyInfo, object obj) => (T?)propertyInfo.GetValue(obj);
+
+	public static T? GetValueStatic<T>(this PropertyInfo propertyInfo) => (T?)propertyInfo.GetValue(null);
+
+	public static T? GetValue<T>(this Type type, string name, object? obj = null, BindingFlags flags = DefaultFlags)
+	{
+		PropertyInfo? propertyInfo = type.GetProperty(name, flags);
+		if (propertyInfo is not null)
+			return (T?)propertyInfo.GetValue(obj);
+
+		return (T?)type.GetField(name, flags)?.GetValue(obj);
+	}
+
+	public static T? GetValue<T>(this object obj, string name, BindingFlags flags = DefaultFlags) => obj.GetType().GetValue<T>(name, obj, flags);
+	#endregion
+
+	public static T? Invoke<T>(this MethodInfo info, object target, params object[] args) => (T)info.Invoke(target, args);
+
+	public static T? InvokeStatic<T>(this MethodInfo info, params object[] args) => (T)info.Invoke(null, args);
 	public static void InvokeStatic(this MethodInfo info, params object[] args) => info.Invoke(null, args);
 
 	public static TRet InvokeGeneric<TGen, TRet>(this MethodInfo info, object target, params object[] args)
@@ -28,8 +63,6 @@ public static class ReflectionUtility
 	}
 
 	public static void Invoke(this MethodInfo info, object target, params object[] args) => info.Invoke(target, args);
-
-	public static T GetValue<T>(this FieldInfo info, object target) => (T)info.GetValue(target);
 
 	public static void Invoke(this object obj, string name, BindingFlags flags = DefaultFlags, params object[] args)
 	{
