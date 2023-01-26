@@ -55,10 +55,14 @@ public class UIContainerSlot : BaseElement
 
 		args.Handled = true;
 
+		Player player = Main.LocalPlayer;
+		
+		if (player.itemAnimation != 0 || player.itemTime != 0)
+			return;
+
 		if (storage.IsItemValid(slot, Main.mouseItem) || Main.mouseItem.IsAir)
 		{
 			Item.newAndShiny = false;
-			Player player = Main.LocalPlayer;
 
 			if (ItemSlot.ShiftInUse)
 			{
