@@ -33,6 +33,7 @@ public struct UITextOptions
 
 public class UIText : BaseElement
 {
+	// todo: add an option to "loop" text in case it doesnt fit
 	public UITextOptions Settings = UITextOptions.Default;
 
 	public object? Text

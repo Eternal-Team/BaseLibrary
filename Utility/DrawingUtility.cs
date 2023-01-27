@@ -29,7 +29,7 @@ public static class DrawingUtility
 
 	public static Texture2D GetTexturePremultiplied(string path)
 	{
-		Texture2D texture = ModContent.Request<Texture2D>(path).Value;
+		Texture2D texture = ModContent.Request<Texture2D>(path, AssetRequestMode.ImmediateLoad).Value;
 		Color[] buffer = new Color[texture.Width * texture.Height];
 		texture.GetData(buffer);
 		for (int i = 0; i < buffer.Length; i++) buffer[i] = Color.FromNonPremultiplied(buffer[i].R, buffer[i].G, buffer[i].B, buffer[i].A);
