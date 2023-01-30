@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary.Utility;
@@ -258,6 +258,7 @@ public class BaseElement : IComparable<BaseElement>
 			if (HoverText is not null)
 			{
 				if (HoverText is Func<string> func) Main.instance.MouseText(func());
+				else if (HoverText is ModTranslation translation) Main.instance.MouseText(translation.Get());
 				else Main.instance.MouseText(HoverText.ToString());
 			}
 		}
