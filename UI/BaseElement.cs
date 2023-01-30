@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary.Utility;
@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameInput;
+using Terraria.ModLoader;
 
 namespace BaseLibrary.UI;
 
@@ -447,10 +448,13 @@ public class BaseElement : IComparable<BaseElement>
 		int maxHeight = (int)Math.Min(Main.screenHeight / Main.UIScaleWanted, MaxHeight ?? Main.screenHeight / Main.UIScaleWanted);
 
 		dimensions.Width = (int)(Width.Percent * parent.Width / 100f + Width.Pixels);
+		dimensions.Height = (int)(Height.Percent * parent.Height / 100f + Height.Pixels);
+
+		if (Width.Percent == -1) dimensions.Width = dimensions.Height;
+		else if (Height.Percent == -1) dimensions.Height = dimensions.Width;
+
 		if (dimensions.Width < minWidth) dimensions.Width = minWidth;
 		else if (dimensions.Width > maxWidth) dimensions.Width = maxWidth;
-
-		dimensions.Height = (int)(Height.Percent * parent.Height / 100f + Height.Pixels);
 		if (dimensions.Height < minHeight) dimensions.Height = minHeight;
 		else if (dimensions.Height > maxHeight) dimensions.Height = maxHeight;
 
