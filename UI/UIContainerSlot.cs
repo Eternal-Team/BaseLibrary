@@ -56,7 +56,7 @@ public class UIContainerSlot : BaseElement
 		args.Handled = true;
 
 		Player player = Main.LocalPlayer;
-		
+
 		if (player.itemAnimation != 0 || player.itemTime != 0)
 			return;
 
@@ -148,7 +148,7 @@ public class UIContainerSlot : BaseElement
 
 	protected override void Draw(SpriteBatch spriteBatch)
 	{
-		var texture = !Item.IsAir && Item.favorited ? Settings.FavoritedSlotTexture : Settings.SlotTexture;
+		var texture = Item is { IsAir: false, favorited: true } ? Settings.FavoritedSlotTexture : Settings.SlotTexture;
 		DrawingUtility.DrawSlot(spriteBatch, Dimensions, texture, Color.White);
 
 		float scale = Math.Min(InnerDimensions.Width / (float)texture.Width, InnerDimensions.Height / (float)texture.Height);
@@ -219,8 +219,10 @@ public class UIContainerSlot : BaseElement
 			{
 				Item cloned = Main.mouseItem.Clone();
 				cloned.stack = 1;
-				storage.InsertItem(Main.LocalPlayer, slot, ref cloned);
-				if (--Main.mouseItem.stack <= 0) Main.mouseItem.TurnToAir();
+				if (storage.InsertItem(Main.LocalPlayer, slot, ref cloned))
+				{
+					if (--Main.mouseItem.stack <= 0) Main.mouseItem.TurnToAir();
+				}
 			}
 		}
 	}
