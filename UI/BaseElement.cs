@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameInput;
+using Terraria.ModLoader;
 
 namespace BaseLibrary.UI;
 
@@ -45,7 +46,7 @@ public class BaseElement : IComparable<BaseElement>
 
 	public bool IsMouseHovering { get; private set; }
 	public static BaseElement? HoveredElement;
-	
+
 	public object? HoverText;
 
 	public Vector2 Position
@@ -81,6 +82,7 @@ public class BaseElement : IComparable<BaseElement>
 	public StyleDimension Height = new();
 	public StyleDimension X = new();
 	public StyleDimension Y = new();
+	public bool PositionIncludeDims = true;
 
 	public Padding Padding;
 	public Margin Margin;
@@ -257,6 +259,7 @@ public class BaseElement : IComparable<BaseElement>
 			if (HoverText is not null)
 			{
 				if (HoverText is Func<string> func) Main.instance.MouseText(func());
+				else if (HoverText is ModTranslation translation) Main.instance.MouseText(translation.Get());
 				else Main.instance.MouseText(HoverText.ToString());
 			}
 		}
@@ -445,15 +448,26 @@ public class BaseElement : IComparable<BaseElement>
 		int maxHeight = (int)Math.Min(Main.screenHeight / Main.UIScaleWanted, MaxHeight ?? Main.screenHeight / Main.UIScaleWanted);
 
 		dimensions.Width = (int)(Width.Percent * parent.Width / 100f + Width.Pixels);
+		dimensions.Height = (int)(Height.Percent * parent.Height / 100f + Height.Pixels);
+
+		if (Width.Percent == -1) dimensions.Width = dimensions.Height;
+		else if (Height.Percent == -1) dimensions.Height = dimensions.Width;
+
 		if (dimensions.Width < minWidth) dimensions.Width = minWidth;
 		else if (dimensions.Width > maxWidth) dimensions.Width = maxWidth;
-
-		dimensions.Height = (int)(Height.Percent * parent.Height / 100f + Height.Pixels);
 		if (dimensions.Height < minHeight) dimensions.Height = minHeight;
 		else if (dimensions.Height > maxHeight) dimensions.Height = maxHeight;
 
-		dimensions.X = (int)(parent.X + (X.Percent * parent.Width / 100f - dimensions.Width * X.Percent / 100f) + X.Pixels);
-		dimensions.Y = (int)(parent.Y + (Y.Percent * parent.Height / 100f - dimensions.Height * Y.Percent / 100f) + Y.Pixels);
+		if (PositionIncludeDims)
+		{
+			dimensions.X = (int)(parent.X + (X.Percent * parent.Width / 100f - dimensions.Width * X.Percent / 100f) + X.Pixels);
+			dimensions.Y = (int)(parent.Y + (Y.Percent * parent.Height / 100f - dimensions.Height * Y.Percent / 100f) + Y.Pixels);
+		}
+		else
+		{
+			dimensions.X = (int)(parent.X + X.Percent * parent.Width / 100f + X.Pixels);
+			dimensions.Y = (int)(parent.Y + Y.Percent * parent.Height / 100f + Y.Pixels);
+		}
 
 		Dimensions = dimensions;
 		InnerDimensions = new Rectangle(dimensions.X + Padding.Left, dimensions.Y + Padding.Top, dimensions.Width - Padding.Left - Padding.Right, dimensions.Height - Padding.Top - Padding.Bottom);

@@ -56,7 +56,7 @@ public class UIContainerSlot : BaseElement
 		args.Handled = true;
 
 		Player player = Main.LocalPlayer;
-		
+
 		if (player.itemAnimation != 0 || player.itemTime != 0)
 			return;
 
@@ -148,7 +148,7 @@ public class UIContainerSlot : BaseElement
 
 	protected override void Draw(SpriteBatch spriteBatch)
 	{
-		var texture = !Item.IsAir && Item.favorited ? Settings.FavoritedSlotTexture : Settings.SlotTexture;
+		var texture = Item is { IsAir: false, favorited: true } ? Settings.FavoritedSlotTexture : Settings.SlotTexture;
 		DrawingUtility.DrawSlot(spriteBatch, Dimensions, texture, Color.White);
 
 		float scale = Math.Min(InnerDimensions.Width / (float)texture.Width, InnerDimensions.Height / (float)texture.Height);
@@ -175,7 +175,7 @@ public class UIContainerSlot : BaseElement
 					{
 						Main.mouseItem = Item.Clone();
 						Main.mouseItem.stack = 0;
-						if (Item.favorited && Item.maxStack == 1) Main.mouseItem.favorited = true;
+						if (Item is { favorited: true, maxStack: 1 }) Main.mouseItem.favorited = true;
 						Main.mouseItem.favorited = false;
 					}
 
@@ -195,18 +195,19 @@ public class UIContainerSlot : BaseElement
 
 		args.Handled = true;
 
+		// note: this might need some redesigning
 		if (args.OffsetY > 0)
 		{
-			if (Main.mouseItem.type == Item.type && Main.mouseItem.stack < Main.mouseItem.maxStack)
+			if (Main.mouseItem.type == Item.type && Main.mouseItem.stack < Main.mouseItem.maxStack && storage.ModifyStackSize(Main.LocalPlayer, slot, -1))
 			{
 				Main.mouseItem.stack++;
-				storage.ModifyStackSize(Main.LocalPlayer, slot, -1);
 			}
 			else if (Main.mouseItem.IsAir)
 			{
-				Main.mouseItem = Item.Clone();
-				Main.mouseItem.stack = 1;
-				storage.ModifyStackSize(Main.LocalPlayer, slot, -1);
+				Item cloned = Item.Clone();
+				cloned.stack = 1;
+				if (storage.ModifyStackSize(Main.LocalPlayer, slot, -1))
+					Main.mouseItem = cloned;
 			}
 		}
 		else if (args.OffsetY < 0)
@@ -219,8 +220,10 @@ public class UIContainerSlot : BaseElement
 			{
 				Item cloned = Main.mouseItem.Clone();
 				cloned.stack = 1;
-				storage.InsertItem(Main.LocalPlayer, slot, ref cloned);
-				if (--Main.mouseItem.stack <= 0) Main.mouseItem.TurnToAir();
+				if (storage.InsertItem(Main.LocalPlayer, slot, ref cloned))
+				{
+					if (--Main.mouseItem.stack <= 0) Main.mouseItem.TurnToAir();
+				}
 			}
 		}
 	}
