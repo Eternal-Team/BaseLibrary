@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using BaseLibrary.Utility;
-using On.Terraria.GameContent.UI.Elements;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.UI;
@@ -12,14 +12,14 @@ namespace BaseLibrary;
 
 internal static partial class Hooking
 {
-	private static MethodInfo ReinitializeMethod;
-	private static FieldInfo ReinitializeField;
+	private static MethodInfo? ReinitializeMethod;
+	private static FieldInfo? ReinitializeField;
 
-	private static KeybindingLayer _rebindingLayer;
-	private static FieldInfo InputModeField = typeof(Terraria.GameContent.UI.Elements.UIKeybindingListItem).GetField("_inputmode", ReflectionUtility.DefaultFlags);
-	private static FieldInfo KeybindField = typeof(Terraria.GameContent.UI.Elements.UIKeybindingListItem).GetField("_keybind", ReflectionUtility.DefaultFlags);
+	private static KeybindingLayer? _rebindingLayer;
+	private static FieldInfo InputModeField = typeof(UIKeybindingListItem).GetField("_inputmode", ReflectionUtility.DefaultFlags);
+	private static FieldInfo KeybindField = typeof(UIKeybindingListItem).GetField("_keybind", ReflectionUtility.DefaultFlags);
 
-	private static void PlayerInputOnUpdateInput(On.Terraria.GameInput.PlayerInput.orig_UpdateInput orig)
+	private static void PlayerInputOnUpdateInput(On_PlayerInput.orig_UpdateInput orig)
 	{
 		ReinitializeMethod ??= typeof(PlayerInput).GetMethod("ReInitialize", ReflectionUtility.DefaultFlags_Static);
 		ReinitializeField ??= typeof(PlayerInput).GetField("reinitialize", ReflectionUtility.DefaultFlags_Static);
@@ -27,7 +27,7 @@ internal static partial class Hooking
 		if (ReinitializeField.GetValueStatic<bool>())
 			ReinitializeMethod!.Invoke(null, null);
 
-		PlayerInput.Triggers.Old = PlayerInput.Triggers.Current.Clone();
+		PlayerInput.Triggers.Old.CloneFrom(PlayerInput.Triggers.Current);
 
 		PlayerInput.VerifyBuildingMode();
 
@@ -54,12 +54,12 @@ internal static partial class Hooking
 			set => PlayerInput.CurrentProfile.InputModes[inputMode].KeyStatus[keybind] = value;
 		}
 
-		private Terraria.GameContent.UI.Elements.UIKeybindingListItem item;
-		
+		private UIKeybindingListItem item;
+
 		public InputMode inputMode => InputModeField.GetValue<InputMode>(item);
 		public string keybind => KeybindField.GetValue<string>(item);
-		
-		public KeybindingLayer(Terraria.GameContent.UI.Elements.UIKeybindingListItem item)
+
+		public KeybindingLayer(UIKeybindingListItem item)
 		{
 			this.item = item;
 		}
@@ -117,7 +117,7 @@ internal static partial class Hooking
 		}
 	}
 
-	private static void UIKeybindingListItemOnOnClickMethod(UIKeybindingListItem.orig_OnClickMethod orig, Terraria.GameContent.UI.Elements.UIKeybindingListItem self, UIMouseEvent evt, UIElement listeningelement)
+	private static void UIKeybindingListItemOnOnClickMethod(On_UIKeybindingListItem.orig_OnClickMethod orig, UIKeybindingListItem self, UIMouseEvent evt, UIElement listeningelement)
 	{
 		if (_rebindingLayer == null)
 		{

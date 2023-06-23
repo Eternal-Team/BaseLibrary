@@ -48,7 +48,7 @@ public static class TextUtility
 
 	public static string ToSI(int value, string format = null) => ToSI((double)value, format);
 
-	public static string Get(this ModTranslation translation) => translation.GetTranslation(Language.ActiveCulture);
+	// public static string Get(this ModTranslation translation) => translation.GetTranslation(Language.ActiveCulture);
 
 	public static IEnumerable<int> Search(string text, string pattern)
 	{
