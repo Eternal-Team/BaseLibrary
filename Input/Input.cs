@@ -7,7 +7,7 @@ namespace BaseLibrary.Input;
 
 internal static class Input
 {
-	private static LayerStack LayerStack;
+	public static LayerStack LayerStack;
 	
 	internal static void Load()
 	{
