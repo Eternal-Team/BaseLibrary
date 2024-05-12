@@ -52,9 +52,9 @@ public static class MouseInput
 	private static bool MoveRaisedOnDrag { get; set; } = true;
 	
 	private static MouseState previousMouseState;
-	private static MouseState currentMouseState;
+	internal static MouseState currentMouseState;
 
-	private static KeyboardState Keyboard;
+	internal static KeyboardState Keyboard;
 
 	internal static void Load()
 	{

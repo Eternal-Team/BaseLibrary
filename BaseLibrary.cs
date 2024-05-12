@@ -1,3 +1,5 @@
+using BaseLibrary.Input;
+using Terraria;
 using Terraria.ModLoader;
 
 // TODO: UI framework
@@ -15,7 +17,11 @@ public class BaseLibrary : Mod
 {
 	public override void Load()
 	{
-		Input.Input.Load();
 		Hooking.Load();
+
+		if (!Main.dedServ)
+		{
+			InputSystem.Load();
+		}
 	}
 }
