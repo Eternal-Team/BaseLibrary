@@ -42,6 +42,8 @@ public struct Margin
 
 public struct Dimension(int pixelsX, int pixelsY, int percentX, int percentY)
 {
+	public static readonly Dimension Zero = new(0, 0, 0, 0);
+
 	public int PixelsX = pixelsX, PixelsY = pixelsY;
 	public int PercentX = percentX, PercentY = percentY;
 

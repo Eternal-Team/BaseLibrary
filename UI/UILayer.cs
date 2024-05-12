@@ -36,6 +36,11 @@ public class UILayer : Layer
 	private BaseElement? current;
 	private BaseElement? mouseDownElement;
 
+	public UILayer()
+	{
+		Element.Recalculate();
+	}
+	
 	public void Add(BaseElement element)
 	{
 		Element.Add(element);

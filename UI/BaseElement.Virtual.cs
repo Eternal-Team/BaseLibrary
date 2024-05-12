@@ -28,7 +28,7 @@ public partial class BaseElement
 		}
 		else if (Overflow == Overflow.Hidden)
 		{
-			foreach (BaseElement element in _children.Where(element => element.Display != Display.None && Dimensions.Intersects(element.Dimensions)))
+			foreach (BaseElement element in _children.Where(element => element.Display != Display.None && Dimensions.Intersects(element.Dimensions))) // bug: this seems broken
 			{
 				element.InternalDraw(spriteBatch);
 			}

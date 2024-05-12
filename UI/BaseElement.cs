@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using BaseLibrary.Input;
 using Microsoft.Xna.Framework;
-using Terraria;
 using Terraria.UI;
 
 namespace BaseLibrary.UI;
@@ -25,11 +24,11 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 	public int? MinHeight = null, MaxHeight = null;
 
 	public Rectangle Dimensions { get; set; }
-	private Rectangle InnerDimensions { get; set; }
-	private Rectangle OuterDimensions { get; set; }
+	internal Rectangle InnerDimensions { get; set; }
+	internal Rectangle OuterDimensions { get; set; }
 
 	public Display Display = Display.Visible;
-	public Overflow Overflow = Overflow.Hidden;
+	public Overflow Overflow = Overflow.Visible;
 	
 	public event Action<MouseMoveEventArgs>? OnMouseMove;
 	public event Action<MouseScrollEventArgs>? OnMouseScroll;
@@ -50,7 +49,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 
 	public object? HoverText;
     
-	public void Recalculate()
+	public virtual void Recalculate()
 	{
 		// NOTE: defer recalculation based on dirty flag?
 
