@@ -1,13 +1,21 @@
-using System;
 using Terraria.ModLoader;
 
-namespace BaseLibrary
+// TODO: UI framework
+
+namespace BaseLibrary;
+
+public class Program
 {
-    public class BaseLibrary : Mod
-    {
-        public override void Load()
-        {
-            Console.WriteLine("test");
-        }
-    }
+	public static void Main(string[] args)
+	{
+	}
+}
+
+public class BaseLibrary : Mod
+{
+	public override void Load()
+	{
+		Input.Input.Load();
+		Hooking.Load();
+	}
 }
