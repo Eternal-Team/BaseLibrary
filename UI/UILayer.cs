@@ -69,33 +69,39 @@ public class UILayer : Layer
 
 	public override void OnMouseDown(MouseButtonEventArgs args)
 	{
-		mouseDownElement = Element.InternalMouseDown(args);
+		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		
+		mouseDownElement = Element.InternalMouseDown(a);
 	}
 
 	public override void OnMouseUp(MouseButtonEventArgs args)
 	{
+		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		
 		if (mouseDownElement is not null)
 		{
-			mouseDownElement.InternalMouseUp(args);
+			mouseDownElement.InternalMouseUp(a);
 			mouseDownElement = null;
 
 			return;
 		}
 
-		Element.InternalMouseUp(args);
+		Element.InternalMouseUp(a);
 	}
 
 	private static BaseElement? HoveredElement;
 
 	public override void OnMouseMove(MouseMoveEventArgs args)
 	{
-		Element.InternalMouseMove(args);
+		MouseMoveEventArgs a = new(args.Position * (1f / Main.UIScale), args.Delta );
+		
+		Element.InternalMouseMove(a);
 
-		BaseElement? at = Element.GetElementAt(args.Position);
+		BaseElement? at = Element.GetElementAt(a.Position);
 		if (current == at) return;
 
-		current?.InternalMouseLeave(args);
-		at?.InternalMouseEnter(args);
+		current?.InternalMouseLeave(a);
+		at?.InternalMouseEnter(a);
 		HoveredElement = at;
 
 		current = at;
@@ -110,22 +116,26 @@ public class UILayer : Layer
 
 	public override void OnMouseScroll(MouseScrollEventArgs args)
 	{
-		Element.InternalMouseScroll(args);
+		MouseScrollEventArgs a = new(args.Position * (1f / Main.UIScale), args.Offset);
+		Element.InternalMouseScroll(a);
 	}
 
 	public override void OnClick(MouseButtonEventArgs args)
 	{
-		Element.InternalMouseClick(args);
+		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		Element.InternalMouseClick(a);
 	}
 
 	public override void OnDoubleClick(MouseButtonEventArgs args)
 	{
-		Element.InternalDoubleClick(args);
+		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		Element.InternalDoubleClick(a);
 	}
 
 	public override void OnTripleClick(MouseButtonEventArgs args)
 	{
-		Element.InternalTripleClick(args);
+		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		Element.InternalTripleClick(a);
 	}
 
 	public override void OnKeyPressed(KeyboardEventArgs args)

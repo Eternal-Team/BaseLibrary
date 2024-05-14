@@ -5,6 +5,7 @@ using Terraria.GameInput;
 
 namespace BaseLibrary.Input;
 
+// BUG: window bar shouldn't trigger input
 internal static class InputSystem
 {
 	public static LayerStack LayerStack;
