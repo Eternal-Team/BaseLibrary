@@ -24,7 +24,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 	public int? MinHeight = null, MaxHeight = null;
 
 	public Rectangle Dimensions { get; set; }
-	internal Rectangle InnerDimensions { get; set; }
+	public Rectangle InnerDimensions { get; set; }
 	internal Rectangle OuterDimensions { get; set; }
 
 	public Display Display = Display.Visible;
@@ -77,7 +77,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 		RecalculateChildren();
 	}
 
-	public void RecalculateChildren()
+	private void RecalculateChildren()
 	{
 		foreach (BaseElement element in _children)
 		{
@@ -93,7 +93,21 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 		_children.Add(element);
 		element.Recalculate();
 	}
+	
+	public void Remove(BaseElement element)
+	{
+		if (!_children.Contains(element)) throw new Exception($"Element {element} is not contained");
 
+		_children.Remove(element);
+		element.Parent = null;
+	}
+
+	public BaseElement AddOnClick(Action<MouseButtonEventArgs> onClick)
+	{
+		OnClick += onClick;
+		return this;
+	}
+	
 	public IEnumerator<BaseElement> GetEnumerator() => _children.GetEnumerator();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

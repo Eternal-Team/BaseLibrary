@@ -97,6 +97,7 @@ public class UIText : BaseElement
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, samplerText, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
 		string s = actualText.Replace("\t", "    ");
+		// BUG: this will fail with multiple lines
 		Utils.DrawBorderStringFourWay(spriteBatch, Settings.Font.Value, s, textPosition.X, textPosition.Y, Settings.TextColor, Settings.BorderColor, Vector2.Zero, textScale);
 
 		spriteBatch.End();

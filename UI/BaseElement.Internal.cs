@@ -5,6 +5,7 @@ using BaseLibrary.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Localization;
 
 namespace BaseLibrary.UI;
@@ -71,14 +72,14 @@ public partial class BaseElement
 
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-// #if DEBUG
-// 			if (debugDraw && debug)
-// 			{
-// 				if (OuterDimensions != Dimensions) spriteBatch.Draw(TextureAssets.MagicPixel.Value, OuterDimensions, Color.Goldenrod * 0.5f);
-// 				spriteBatch.Draw(TextureAssets.MagicPixel.Value, Dimensions, Color.LimeGreen * 0.5f);
-// 				if (InnerDimensions != Dimensions) spriteBatch.Draw(TextureAssets.MagicPixel.Value, InnerDimensions, Color.LightBlue * 0.5f);
-// 			}
-// #endif
+#if DEBUG
+			// if (debugDraw && debug)
+			// {
+				// if (OuterDimensions != Dimensions) spriteBatch.Draw(TextureAssets.MagicPixel.Value, OuterDimensions, Color.Goldenrod * 0.5f);
+				// spriteBatch.Draw(TextureAssets.MagicPixel.Value, Dimensions, Color.LimeGreen * 0.2f);
+				// if (InnerDimensions != Dimensions) spriteBatch.Draw(TextureAssets.MagicPixel.Value, InnerDimensions, Color.LightBlue * 0.5f);
+			// }
+#endif
 	}
 
 	internal void InternalMouseHeld(MouseButtonEventArgs args)
@@ -254,12 +255,16 @@ public partial class BaseElement
 		return result;
 	}
 
+	internal bool ContainsPoint(Vector2 point) => point.X >= Dimensions.X && point.X <= Dimensions.X + Dimensions.Width && point.Y >= Dimensions.Y && point.Y <= Dimensions.Y + Dimensions.Height;
+	
 	private List<BaseElement> ElementsAt(Vector2 point)
 	{
 		List<BaseElement> elements = [];
 
-		foreach (BaseElement element in Children.Where(element => element.Dimensions.Contains(point) && element.Display != Display.None))
+		foreach (BaseElement element in Children)
 		{
+			if (!element.ContainsPoint(point) || element.Display == Display.None) continue;
+			
 			elements.Add(element);
 			elements.AddRange(element.ElementsAt(point));
 		}
@@ -271,7 +276,7 @@ public partial class BaseElement
 	
 	public virtual BaseElement? GetElementAt(Vector2 point)
 	{
-		BaseElement? element = Children.LastOrDefault(current => current.Dimensions.Contains(point) && current.Display != Display.None);
+		BaseElement? element = Children.LastOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
 
 		if (element != null) return element.GetElementAt(point);
 
