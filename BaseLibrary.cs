@@ -15,6 +15,8 @@ public class Program
 
 public class BaseLibrary : Mod
 {
+	public static string PlaceholderTexture = "BaseLibrary/Assets/Textures/Placeholder";
+	
 	public override void Load()
 	{
 		Hooking.Load();
