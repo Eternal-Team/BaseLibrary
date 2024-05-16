@@ -77,7 +77,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 		RecalculateChildren();
 	}
 
-	private void RecalculateChildren()
+	protected virtual void RecalculateChildren()
 	{
 		foreach (BaseElement element in _children)
 		{

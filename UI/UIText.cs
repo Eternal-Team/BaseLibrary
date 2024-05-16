@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -6,6 +6,7 @@ using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Localization;
+using Terraria.UI.Chat;
 
 namespace BaseLibrary.UI;
 
@@ -33,24 +34,10 @@ public struct UITextOptions
 
 public class UIText : BaseElement
 {
-	// todo: add an option to "loop" text in case it doesnt fit
+	private readonly List<TextLine> _snippets = [];
+	private readonly float textScale;
 	public UITextOptions Settings = UITextOptions.Default;
-
-	public object? Text
-	{
-		get => text;
-		set
-		{
-			text = value;
-			CalculateTextMetrics();
-		}
-	}
-
 	private object? text;
-
-	private float textScale;
-	private Vector2 textSize;
-	private Vector2 textPosition;
 
 	public UIText(string text, float scale = 1f)
 	{
@@ -71,6 +58,16 @@ public class UIText : BaseElement
 		this.text = text;
 		Settings.Font = scale > 1f ? FontAssets.DeathText : FontAssets.MouseText;
 		textScale = scale > 1f ? scale * 0.5f : scale;
+	}
+
+	public object? Text
+	{
+		get => text;
+		set
+		{
+			text = value;
+			CalculateTextMetrics();
+		}
 	}
 
 	public override void Recalculate()
@@ -96,9 +93,10 @@ public class UIText : BaseElement
 		SamplerState samplerText = SamplerState.LinearClamp;
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, samplerText, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-		string s = actualText.Replace("\t", "    ");
-		// BUG: this will fail with multiple lines
-		Utils.DrawBorderStringFourWay(spriteBatch, Settings.Font.Value, s, textPosition.X, textPosition.Y, Settings.TextColor, Settings.BorderColor, Vector2.Zero, textScale);
+		foreach (TextLine snippets in _snippets)
+		{
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Settings.Font.Value, snippets.Snippets.ToArray(), snippets.Position, 0f, Settings.TextColor, Settings.BorderColor, Vector2.Zero, new Vector2(textScale), out int _);
+		}
 
 		spriteBatch.End();
 
@@ -108,36 +106,51 @@ public class UIText : BaseElement
 
 	private void CalculateTextMetrics()
 	{
+		_snippets.Clear();
 		string? actualText = text?.ToString();
-		if (string.IsNullOrWhiteSpace(actualText))
-		{
-			textSize = Vector2.Zero;
-			textPosition = Vector2.Zero;
-			return;
-		}
-
-		textSize = Settings.Font.Value.MeasureString(actualText);
-		if (Settings.ScaleToFit) textScale = Math.Min(InnerDimensions.Width / textSize.X, InnerDimensions.Height / textSize.Y);
-		textSize *= textScale;
+		if (string.IsNullOrWhiteSpace(actualText)) return;
 
 		HorizontalAlignment hAlign = Settings.HorizontalAlignment;
 		VerticalAlignment vAlign = Settings.VerticalAlignment;
 
-		textPosition.X = hAlign switch
+		if (InnerDimensions.Width > 0)
 		{
-			HorizontalAlignment.Left => InnerDimensions.X,
-			HorizontalAlignment.Center => InnerDimensions.X + InnerDimensions.Width * 0.5f - textSize.X * 0.5f,
-			HorizontalAlignment.Right => InnerDimensions.X + InnerDimensions.Width - textSize.X,
-			_ => textPosition.X
-		};
+			float totalHeight = 0;
+			foreach (List<TextSnippet> snippets in Utils.WordwrapStringSmart(actualText, Settings.TextColor, Settings.Font.Value, InnerDimensions.Width, -1))
+			{
+				Vector2 size = ChatManager.GetStringSize(Settings.Font.Value, snippets.ToArray(), new Vector2(textScale));
+				_snippets.Add(new TextLine(snippets, size, Vector2.Zero));
+				totalHeight += size.Y;
+			}
 
-		// note: text size Y is a bit off
-		textPosition.Y = vAlign switch
-		{
-			VerticalAlignment.Top => InnerDimensions.Y,
-			VerticalAlignment.Center => InnerDimensions.Y + InnerDimensions.Height * 0.5f - (textSize.Y - 8f) * 0.5f,
-			VerticalAlignment.Bottom => InnerDimensions.Y + InnerDimensions.Height - textSize.Y + 8f * textScale,
-			_ => textPosition.Y
-		};
+			float top = 0;
+			foreach (TextLine line in _snippets)
+			{
+				Vector2 size = line.Size;
+				line.Position.X = hAlign switch
+				{
+					HorizontalAlignment.Left => InnerDimensions.X,
+					HorizontalAlignment.Center => InnerDimensions.X + InnerDimensions.Width * 0.5f - size.X * 0.5f,
+					HorizontalAlignment.Right => InnerDimensions.X + InnerDimensions.Width - size.X
+				};
+
+				// NOTE: there is still some discrepancy with line height 
+				line.Position.Y = vAlign switch
+				{
+					VerticalAlignment.Top => InnerDimensions.Y,
+					VerticalAlignment.Center => InnerDimensions.Y + InnerDimensions.Height * 0.5f - totalHeight * 0.5f + top,
+					VerticalAlignment.Bottom => InnerDimensions.Y + InnerDimensions.Height - totalHeight + top
+				};
+
+				top += size.Y;
+			}
+		}
+	}
+
+	private class TextLine(List<TextSnippet> snippets, Vector2 size, Vector2 position)
+	{
+		public readonly Vector2 Size = size;
+		public readonly List<TextSnippet> Snippets = snippets;
+		public Vector2 Position = position;
 	}
 }

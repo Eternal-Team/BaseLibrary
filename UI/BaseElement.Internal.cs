@@ -256,8 +256,8 @@ public partial class BaseElement
 	}
 
 	internal bool ContainsPoint(Vector2 point) => point.X >= Dimensions.X && point.X <= Dimensions.X + Dimensions.Width && point.Y >= Dimensions.Y && point.Y <= Dimensions.Y + Dimensions.Height;
-	
-	private List<BaseElement> ElementsAt(Vector2 point)
+
+	protected List<BaseElement> ElementsAt(Vector2 point)
 	{
 		List<BaseElement> elements = [];
 

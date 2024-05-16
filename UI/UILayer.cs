@@ -63,8 +63,6 @@ public class UILayer : Layer
 
 			Element.InternalMouseHeld(args);
 		}
-
-		// Main.NewText(BaseElement.HoveredElement is not null ? BaseElement.HoveredElement.GetType().Name : "NONE");
 	}
 
 	public override void OnMouseDown(MouseButtonEventArgs args)
@@ -72,6 +70,7 @@ public class UILayer : Layer
 		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
 		
 		mouseDownElement = Element.InternalMouseDown(a);
+		args.Handled = a.Handled;
 	}
 
 	public override void OnMouseUp(MouseButtonEventArgs args)
@@ -87,6 +86,7 @@ public class UILayer : Layer
 		}
 
 		Element.InternalMouseUp(a);
+		args.Handled = a.Handled;
 	}
 
 	private static BaseElement? HoveredElement;
@@ -112,30 +112,35 @@ public class UILayer : Layer
 		}
 
 		PlayerInput.MouseKeys.Clear();
+		args.Handled = a.Handled;
 	}
 
 	public override void OnMouseScroll(MouseScrollEventArgs args)
 	{
 		MouseScrollEventArgs a = new(args.Position * (1f / Main.UIScale), args.Offset);
 		Element.InternalMouseScroll(a);
+		args.Handled = a.Handled;
 	}
 
 	public override void OnClick(MouseButtonEventArgs args)
 	{
 		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
 		Element.InternalMouseClick(a);
+		args.Handled = a.Handled;
 	}
 
 	public override void OnDoubleClick(MouseButtonEventArgs args)
 	{
 		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
 		Element.InternalDoubleClick(a);
+		args.Handled = a.Handled;
 	}
 
 	public override void OnTripleClick(MouseButtonEventArgs args)
 	{
 		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
 		Element.InternalTripleClick(a);
+		args.Handled = a.Handled;
 	}
 
 	public override void OnKeyPressed(KeyboardEventArgs args)
