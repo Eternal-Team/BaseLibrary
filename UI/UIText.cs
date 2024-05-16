@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -123,6 +124,8 @@ public class UIText : BaseElement
 				totalHeight += size.Y;
 			}
 
+			totalHeight -= 8f;
+			
 			float top = 0;
 			foreach (TextLine line in _snippets)
 			{
@@ -131,7 +134,8 @@ public class UIText : BaseElement
 				{
 					HorizontalAlignment.Left => InnerDimensions.X,
 					HorizontalAlignment.Center => InnerDimensions.X + InnerDimensions.Width * 0.5f - size.X * 0.5f,
-					HorizontalAlignment.Right => InnerDimensions.X + InnerDimensions.Width - size.X
+					HorizontalAlignment.Right => InnerDimensions.X + InnerDimensions.Width - size.X,
+					_ => throw new ArgumentOutOfRangeException()
 				};
 
 				// NOTE: there is still some discrepancy with line height 
@@ -139,7 +143,8 @@ public class UIText : BaseElement
 				{
 					VerticalAlignment.Top => InnerDimensions.Y,
 					VerticalAlignment.Center => InnerDimensions.Y + InnerDimensions.Height * 0.5f - totalHeight * 0.5f + top,
-					VerticalAlignment.Bottom => InnerDimensions.Y + InnerDimensions.Height - totalHeight + top
+					VerticalAlignment.Bottom => InnerDimensions.Y + InnerDimensions.Height - totalHeight + top,
+					_ => throw new ArgumentOutOfRangeException()
 				};
 
 				top += size.Y;
