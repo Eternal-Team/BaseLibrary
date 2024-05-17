@@ -26,11 +26,12 @@ public struct UIGridSettings
 
 public class UIGrid<T> : BaseElement where T : BaseElement
 {
+	public UIGridSettings Settings = UIGridSettings.Default;
+	public UIScrollbar Scrollbar { get; }
+
 	private readonly int wrapping;
 	private float innerListSize;
 	private int offset;
-
-	public UIGridSettings Settings = UIGridSettings.Default;
 
 	public UIGrid(int wrapping = 1)
 	{
@@ -44,8 +45,6 @@ public class UIGrid<T> : BaseElement where T : BaseElement
 			RecalculateChildren();
 		};
 	}
-
-	public UIScrollbar Scrollbar { get; }
 
 	protected override void RecalculateChildren()
 	{
@@ -107,6 +106,22 @@ public class UIGrid<T> : BaseElement where T : BaseElement
 			innerListSize = left - offset - Settings.ItemMargin;
 			Scrollbar.SetView(InnerDimensions.Width, innerListSize);
 		}
+	}
+
+	public void Add(T item)
+	{
+		base.Add(item);
+
+		RecalculateChildren();
+	}
+
+	public new void Clear()
+	{
+		base.Clear();
+
+		innerListSize = 0f;
+		offset = 0;
+		Scrollbar.SetView(0f, 0f);
 	}
 
 	protected override void MouseScroll(MouseScrollEventArgs args)

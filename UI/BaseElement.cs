@@ -101,6 +101,11 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 		_children.Remove(element);
 		element.Parent = null;
 	}
+	
+	public void Clear()
+	{
+		_children.Clear();
+	}
 
 	public BaseElement AddOnClick(Action<MouseButtonEventArgs> onClick)
 	{
