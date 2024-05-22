@@ -1,0 +1,18 @@
+Mods: {
+	BaseLibrary: {  
+		Items: {
+			ThePreciousOne: {
+				DisplayName: The Precious One
+				Tooltip: Corrupts the mind
+			},
+			LightedWallItem: {
+                DisplayName: Lighted Wall
+                Tooltip: Produces light
+            },
+            LightedBlackWallItem: {
+                DisplayName: Lighted Black Wall
+                Tooltip: Produces light
+            }
+		}
+	}
+}
