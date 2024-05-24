@@ -105,6 +105,8 @@ public class UIText : BaseElement
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 	}
 
+	public float TotalHeight { get; private set; }
+    
 	private void CalculateTextMetrics()
 	{
 		_snippets.Clear();
@@ -114,41 +116,39 @@ public class UIText : BaseElement
 		HorizontalAlignment hAlign = Settings.HorizontalAlignment;
 		VerticalAlignment vAlign = Settings.VerticalAlignment;
 
-		if (InnerDimensions.Width > 0)
+		if (InnerDimensions.Width <= 0) return;
+		
+		TotalHeight = 0;
+		foreach (List<TextSnippet> snippets in Utils.WordwrapStringSmart(actualText, Settings.TextColor, Settings.Font.Value, InnerDimensions.Width, -1))
 		{
-			float totalHeight = 0;
-			foreach (List<TextSnippet> snippets in Utils.WordwrapStringSmart(actualText, Settings.TextColor, Settings.Font.Value, InnerDimensions.Width, -1))
-			{
-				Vector2 size = ChatManager.GetStringSize(Settings.Font.Value, snippets.ToArray(), new Vector2(textScale));
-				_snippets.Add(new TextLine(snippets, size, Vector2.Zero));
-				totalHeight += size.Y;
-			}
+			Vector2 size = ChatManager.GetStringSize(Settings.Font.Value, snippets.ToArray(), new Vector2(textScale));
+			_snippets.Add(new TextLine(snippets, size, Vector2.Zero));
+			TotalHeight += size.Y;
+		}
 
-			totalHeight -= 8f;
+		TotalHeight -= 8f;
 			
-			float top = 0;
-			foreach (TextLine line in _snippets)
+		float top = 0;
+		foreach (TextLine line in _snippets)
+		{
+			Vector2 size = line.Size;
+			line.Position.X = hAlign switch
 			{
-				Vector2 size = line.Size;
-				line.Position.X = hAlign switch
-				{
-					HorizontalAlignment.Left => InnerDimensions.X,
-					HorizontalAlignment.Center => InnerDimensions.X + InnerDimensions.Width * 0.5f - size.X * 0.5f,
-					HorizontalAlignment.Right => InnerDimensions.X + InnerDimensions.Width - size.X,
-					_ => throw new ArgumentOutOfRangeException()
-				};
+				HorizontalAlignment.Left => InnerDimensions.X,
+				HorizontalAlignment.Center => InnerDimensions.X + InnerDimensions.Width * 0.5f - size.X * 0.5f,
+				HorizontalAlignment.Right => InnerDimensions.X + InnerDimensions.Width - size.X,
+				_ => throw new ArgumentOutOfRangeException()
+			};
 
-				// NOTE: there is still some discrepancy with line height 
-				line.Position.Y = vAlign switch
-				{
-					VerticalAlignment.Top => InnerDimensions.Y,
-					VerticalAlignment.Center => InnerDimensions.Y + InnerDimensions.Height * 0.5f - totalHeight * 0.5f + top,
-					VerticalAlignment.Bottom => InnerDimensions.Y + InnerDimensions.Height - totalHeight + top,
-					_ => throw new ArgumentOutOfRangeException()
-				};
+			line.Position.Y = vAlign switch
+			{
+				VerticalAlignment.Top => InnerDimensions.Y + top,
+				VerticalAlignment.Center => InnerDimensions.Y + InnerDimensions.Height * 0.5f - TotalHeight * 0.5f + top,
+				VerticalAlignment.Bottom => InnerDimensions.Y + InnerDimensions.Height - TotalHeight + top,
+				_ => throw new ArgumentOutOfRangeException()
+			};
 
-				top += size.Y;
-			}
+			top += size.Y;
 		}
 	}
 
