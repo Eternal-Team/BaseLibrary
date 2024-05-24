@@ -108,14 +108,14 @@ public class UIGrid<T> : BaseElement where T : BaseElement
 		}
 	}
 
-	public void Add(T item)
+	public override void Add(BaseElement item)
 	{
 		base.Add(item);
 
 		RecalculateChildren();
 	}
 
-	public new void Clear()
+	public override void Clear()
 	{
 		base.Clear();
 

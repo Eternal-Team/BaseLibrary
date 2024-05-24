@@ -49,10 +49,9 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 
 	public object? HoverText;
     
+	// NOTE: defer recalculation based on dirty flag?
 	public virtual void Recalculate()
 	{
-		// NOTE: defer recalculation based on dirty flag?
-
 		Rectangle parent = Parent?.InnerDimensions ?? UserInterface.ActiveInstance.GetDimensions().ToRectangle();
 
 		Rectangle dimensions = Rectangle.Empty;
@@ -85,7 +84,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 		}
 	}
 
-	public void Add(BaseElement element)
+	public virtual void Add(BaseElement element)
 	{
 		if (_children.Contains(element)) throw new Exception($"Element {element} is already added");
 
@@ -94,7 +93,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 		element.Recalculate();
 	}
 	
-	public void Remove(BaseElement element)
+	public virtual void Remove(BaseElement element)
 	{
 		if (!_children.Contains(element)) throw new Exception($"Element {element} is not contained");
 
@@ -102,7 +101,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 		element.Parent = null;
 	}
 	
-	public void Clear()
+	public virtual void Clear()
 	{
 		_children.Clear();
 	}
