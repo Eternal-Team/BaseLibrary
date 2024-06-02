@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary.Input;
 using Microsoft.Xna.Framework;
@@ -48,7 +49,7 @@ public class UIGrid<T> : BaseElement where T : BaseElement
 
 	protected override void RecalculateChildren()
 	{
-		var visible = Children.Where(item => item.Display != Display.None).ToList();
+		List<BaseElement> visible = Children.Where(item => item.Display != Display.None).ToList();
 
 		if (Settings.Direction == Direction.Vertical)
 		{
@@ -75,7 +76,7 @@ public class UIGrid<T> : BaseElement where T : BaseElement
 				}
 			}
 
-			innerListSize = top - offset - Settings.ItemMargin;
+			innerListSize = top - offset - Settings.ItemMargin + 4;
 			Scrollbar.SetView(InnerDimensions.Height, innerListSize);
 		}
 		else
