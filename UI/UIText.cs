@@ -19,25 +19,41 @@ public struct UITextOptions
 		BorderColor = Color.Black,
 		HorizontalAlignment = HorizontalAlignment.Left,
 		VerticalAlignment = VerticalAlignment.Top,
-		ScaleToFit = false,
 		Font = FontAssets.MouseText,
-		Ellipsis = false
+		// ScaleToFit = false,
+		// Ellipsis = false
 	};
 
 	public Color TextColor;
 	public Color BorderColor;
 	public HorizontalAlignment HorizontalAlignment;
 	public VerticalAlignment VerticalAlignment;
-	public bool ScaleToFit;
 	public Asset<DynamicSpriteFont> Font;
-	public bool Ellipsis;
+
+	// public bool ScaleToFit;
+	// public bool Ellipsis;
 }
 
 public class UIText : BaseElement
 {
+	public UITextOptions Settings = UITextOptions.Default;
+
+	public float TotalHeight { get; private set; }
+
+	public object? Text
+	{
+		get => text;
+		set
+		{
+			text = value;
+			dirty = true;
+			CalculateTextMetrics();
+		}
+	}
+
+	private bool dirty = true;
 	private readonly List<TextLine> _snippets = [];
 	private readonly float textScale;
-	public UITextOptions Settings = UITextOptions.Default;
 	private object? text;
 
 	public UIText(string text, float scale = 1f)
@@ -61,21 +77,72 @@ public class UIText : BaseElement
 		textScale = scale > 1f ? scale * 0.5f : scale;
 	}
 
-	public object? Text
-	{
-		get => text;
-		set
-		{
-			text = value;
-			CalculateTextMetrics();
-		}
-	}
-
 	public override void Recalculate()
 	{
+		int previousWidth = InnerDimensions.Width;
+
 		base.Recalculate();
 
+		if (previousWidth != InnerDimensions.Width) dirty = true;
+
 		CalculateTextMetrics();
+	}
+
+	private string? previousText;
+	
+	private void CalculateTextMetrics()
+	{
+		string? actualText = text?.ToString();
+		if (string.IsNullOrWhiteSpace(actualText)) return;
+
+		if (previousText != actualText)
+		{
+			previousText = actualText;
+			dirty = true;
+		}
+		
+		if (!dirty) return;
+		if (InnerDimensions.Width <= 0) return;
+
+		dirty = false;
+
+		_snippets.Clear();
+
+		HorizontalAlignment hAlign = Settings.HorizontalAlignment;
+		VerticalAlignment vAlign = Settings.VerticalAlignment;
+
+		TotalHeight = 0;
+		foreach (List<TextSnippet> snippets in Utils.WordwrapStringSmart(actualText, Settings.TextColor, Settings.Font.Value, InnerDimensions.Width, -1))
+		{
+			Vector2 size = ChatManager.GetStringSize(Settings.Font.Value, snippets.ToArray(), new Vector2(textScale));
+			_snippets.Add(new TextLine(snippets, size, Vector2.Zero));
+			TotalHeight += size.Y;
+		}
+
+		TotalHeight -= 8f;
+
+		float top = 0;
+		foreach (TextLine line in _snippets)
+		{
+			Vector2 size = line.Size;
+			line.Position.X = hAlign switch
+			{
+				HorizontalAlignment.Left => 0,
+				HorizontalAlignment.Center => InnerDimensions.Width * 0.5f - size.X * 0.5f,
+				HorizontalAlignment.Right => InnerDimensions.Width - size.X,
+				_ => throw new ArgumentOutOfRangeException()
+			};
+
+			line.Position.Y = vAlign switch
+			{
+				VerticalAlignment.Top => top,
+				VerticalAlignment.Center => InnerDimensions.Height * 0.5f - TotalHeight * 0.5f + top,
+				VerticalAlignment.Bottom => InnerDimensions.Height - TotalHeight + top,
+				_ => throw new ArgumentOutOfRangeException()
+			};
+
+			top += size.Y;
+		}
 	}
 
 	protected override void Draw(SpriteBatch spriteBatch)
@@ -96,60 +163,13 @@ public class UIText : BaseElement
 
 		foreach (TextLine snippets in _snippets)
 		{
-			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Settings.Font.Value, snippets.Snippets.ToArray(), snippets.Position, 0f, Settings.TextColor, Settings.BorderColor, Vector2.Zero, new Vector2(textScale), out int _);
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Settings.Font.Value, snippets.Snippets.ToArray(), InnerDimensions.TopLeft() + snippets.Position, 0f, Settings.TextColor, Settings.BorderColor, Vector2.Zero, new Vector2(textScale), out int _);
 		}
 
 		spriteBatch.End();
 
 		SamplerState sampler = SamplerState.PointClamp;
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, sampler, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
-	}
-
-	public float TotalHeight { get; private set; }
-    
-	private void CalculateTextMetrics()
-	{
-		_snippets.Clear();
-		string? actualText = text?.ToString();
-		if (string.IsNullOrWhiteSpace(actualText)) return;
-
-		HorizontalAlignment hAlign = Settings.HorizontalAlignment;
-		VerticalAlignment vAlign = Settings.VerticalAlignment;
-
-		if (InnerDimensions.Width <= 0) return;
-		
-		TotalHeight = 0;
-		foreach (List<TextSnippet> snippets in Utils.WordwrapStringSmart(actualText, Settings.TextColor, Settings.Font.Value, InnerDimensions.Width, -1))
-		{
-			Vector2 size = ChatManager.GetStringSize(Settings.Font.Value, snippets.ToArray(), new Vector2(textScale));
-			_snippets.Add(new TextLine(snippets, size, Vector2.Zero));
-			TotalHeight += size.Y;
-		}
-
-		TotalHeight -= 8f;
-			
-		float top = 0;
-		foreach (TextLine line in _snippets)
-		{
-			Vector2 size = line.Size;
-			line.Position.X = hAlign switch
-			{
-				HorizontalAlignment.Left => InnerDimensions.X,
-				HorizontalAlignment.Center => InnerDimensions.X + InnerDimensions.Width * 0.5f - size.X * 0.5f,
-				HorizontalAlignment.Right => InnerDimensions.X + InnerDimensions.Width - size.X,
-				_ => throw new ArgumentOutOfRangeException()
-			};
-
-			line.Position.Y = vAlign switch
-			{
-				VerticalAlignment.Top => InnerDimensions.Y + top,
-				VerticalAlignment.Center => InnerDimensions.Y + InnerDimensions.Height * 0.5f - TotalHeight * 0.5f + top,
-				VerticalAlignment.Bottom => InnerDimensions.Y + InnerDimensions.Height - TotalHeight + top,
-				_ => throw new ArgumentOutOfRangeException()
-			};
-
-			top += size.Y;
-		}
 	}
 
 	private class TextLine(List<TextSnippet> snippets, Vector2 size, Vector2 position)
