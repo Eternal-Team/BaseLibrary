@@ -32,4 +32,6 @@ public static class MathUtility
 	{
 		return rectangle.X <= point.X && point.X < rectangle.X + rectangle.Width && rectangle.Y <= point.Y && point.Y < rectangle.Y + rectangle.Height;
 	}
+
+	public static Vector2 OffsetBy(this Vector2 vector, float x, float y) => new(vector.X + x, vector.Y + y);
 }
