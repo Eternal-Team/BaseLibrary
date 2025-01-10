@@ -10,7 +10,7 @@ public static class KeyboardInput
 	public static event Action<KeyboardEventArgs>? KeyPressed;
 	public static event Action<KeyboardEventArgs>? KeyReleased;
 	public static event Action<KeyboardEventArgs>? KeyTyped;
-	
+
 	private static bool isInitial;
 	private static Keys lastKey;
 	private static TimeSpan lastPress;
@@ -42,7 +42,7 @@ public static class KeyboardInput
 		foreach (Keys key in Enum.GetValues(typeof(Keys)))
 		{
 			if (!currentKeyboardState.IsKeyDown(key) || !previousKeyboardState.IsKeyUp(key)) continue;
-			
+
 			OnKeyPressed(new KeyboardEventArgs(modifiers, key, KeyboardUtil.ToChar(key, modifiers)));
 			OnKeyTyped(new KeyboardEventArgs(modifiers, key, KeyboardUtil.ToChar(key, modifiers)));
 

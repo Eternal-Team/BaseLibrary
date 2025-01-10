@@ -13,8 +13,7 @@ namespace BaseLibrary.UI;
 
 public struct UITextOptions
 {
-	public static readonly UITextOptions Default = new()
-	{
+	public static readonly UITextOptions Default = new() {
 		TextColor = Color.White,
 		BorderColor = Color.Black,
 		HorizontalAlignment = HorizontalAlignment.Left,
@@ -89,7 +88,7 @@ public class UIText : BaseElement
 	}
 
 	private string? previousText;
-	
+
 	private void CalculateTextMetrics()
 	{
 		string? actualText = text?.ToString();
@@ -100,7 +99,7 @@ public class UIText : BaseElement
 			previousText = actualText;
 			dirty = true;
 		}
-		
+
 		if (!dirty) return;
 		if (InnerDimensions.Width <= 0) return;
 
@@ -125,16 +124,16 @@ public class UIText : BaseElement
 		foreach (TextLine line in _snippets)
 		{
 			Vector2 size = line.Size;
-			line.Position.X = hAlign switch
-			{
+			if (size == Vector2.Zero) size = new Vector2(0, 20);
+
+			line.Position.X = hAlign switch {
 				HorizontalAlignment.Left => 0,
 				HorizontalAlignment.Center => InnerDimensions.Width * 0.5f - size.X * 0.5f,
 				HorizontalAlignment.Right => InnerDimensions.Width - size.X,
 				_ => throw new ArgumentOutOfRangeException()
 			};
 
-			line.Position.Y = vAlign switch
-			{
+			line.Position.Y = vAlign switch {
 				VerticalAlignment.Top => top,
 				VerticalAlignment.Center => InnerDimensions.Height * 0.5f - TotalHeight * 0.5f + top,
 				VerticalAlignment.Bottom => InnerDimensions.Height - TotalHeight + top,

@@ -5,7 +5,6 @@ using Terraria.GameInput;
 
 namespace BaseLibrary.Input;
 
-// BUG: window bar shouldn't trigger input
 internal static class InputSystem
 {
 	public static LayerStack LayerStack;
@@ -19,8 +18,7 @@ internal static class InputSystem
 		KeyboardInput.Load();
 		On_PlayerInput.UpdateInput += On_PlayerInputOnUpdateInput;
 
-		MouseInput.MouseMoved += args =>
-		{
+		MouseInput.MouseMoved += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnMouseMove(args);
@@ -28,8 +26,7 @@ internal static class InputSystem
 			}
 		};
 
-		MouseInput.ButtonPressed += args =>
-		{
+		MouseInput.ButtonPressed += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnMouseDown(args);
@@ -37,8 +34,7 @@ internal static class InputSystem
 			}
 		};
 
-		MouseInput.ButtonReleased += args =>
-		{
+		MouseInput.ButtonReleased += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnMouseUp(args);
@@ -46,8 +42,7 @@ internal static class InputSystem
 			}
 		};
 
-		MouseInput.ButtonClicked += args =>
-		{
+		MouseInput.ButtonClicked += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnClick(args);
@@ -55,8 +50,7 @@ internal static class InputSystem
 			}
 		};
 
-		MouseInput.ButtonDoubleClicked += args =>
-		{
+		MouseInput.ButtonDoubleClicked += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnDoubleClick(args);
@@ -64,8 +58,7 @@ internal static class InputSystem
 			}
 		};
 
-		MouseInput.ButtonTripleClicked += args =>
-		{
+		MouseInput.ButtonTripleClicked += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnTripleClick(args);
@@ -73,8 +66,7 @@ internal static class InputSystem
 			}
 		};
 
-		MouseInput.MouseScroll += args =>
-		{
+		MouseInput.MouseScroll += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnMouseScroll(args);
@@ -82,8 +74,7 @@ internal static class InputSystem
 			}
 		};
 
-		KeyboardInput.KeyPressed += args =>
-		{
+		KeyboardInput.KeyPressed += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnKeyPressed(args);
@@ -91,8 +82,7 @@ internal static class InputSystem
 			}
 		};
 
-		KeyboardInput.KeyReleased += args =>
-		{
+		KeyboardInput.KeyReleased += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnKeyReleased(args);
@@ -100,8 +90,7 @@ internal static class InputSystem
 			}
 		};
 
-		KeyboardInput.KeyTyped += args =>
-		{
+		KeyboardInput.KeyTyped += args => {
 			foreach (Layer layer in LayerStack)
 			{
 				layer.OnKeyTyped(args);

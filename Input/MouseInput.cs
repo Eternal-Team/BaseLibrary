@@ -50,7 +50,7 @@ public static class MouseInput
 	private static int DoubleClickTime { get; set; }
 	private static int DoubleClickMaxMove { get; set; }
 	private static bool MoveRaisedOnDrag { get; set; } = true;
-	
+
 	private static MouseState previousMouseState;
 	internal static MouseState currentMouseState;
 
@@ -62,8 +62,7 @@ public static class MouseInput
 		DoubleClickMaxMove = 2;
 		MoveRaisedOnDrag = true;
 
-		lastClicks = new Dictionary<MouseButton, LastClick>
-		{
+		lastClicks = new Dictionary<MouseButton, LastClick> {
 			{ MouseButton.Left, new LastClick(TimeSpan.Zero, Vector2.Zero) },
 			{ MouseButton.Right, new LastClick(TimeSpan.Zero, Vector2.Zero) },
 			{ MouseButton.Middle, new LastClick(TimeSpan.Zero, Vector2.Zero) },
@@ -71,8 +70,7 @@ public static class MouseInput
 			{ MouseButton.XButton2, new LastClick(TimeSpan.Zero, Vector2.Zero) }
 		};
 
-		lastDoubleClicks = new Dictionary<MouseButton, LastClick>
-		{
+		lastDoubleClicks = new Dictionary<MouseButton, LastClick> {
 			{ MouseButton.Left, new LastClick(TimeSpan.Zero, Vector2.Zero) },
 			{ MouseButton.Right, new LastClick(TimeSpan.Zero, Vector2.Zero) },
 			{ MouseButton.Middle, new LastClick(TimeSpan.Zero, Vector2.Zero) },
@@ -90,8 +88,7 @@ public static class MouseInput
 		if (currentMouseState.XButton2 == ButtonState.Pressed) yield return MouseButton.XButton2;
 	}
 
-	public static bool IsMouseDown(MouseButton button) => button switch
-	{
+	public static bool IsMouseDown(MouseButton button) => button switch {
 		MouseButton.Left => currentMouseState.LeftButton == ButtonState.Pressed,
 		MouseButton.Middle => currentMouseState.MiddleButton == ButtonState.Pressed,
 		MouseButton.Right => currentMouseState.RightButton == ButtonState.Pressed,

@@ -40,7 +40,7 @@ public class UILayer : Layer
 	{
 		Element.Recalculate();
 	}
-	
+
 	public void Add(BaseElement element)
 	{
 		Element.Add(element);
@@ -68,7 +68,7 @@ public class UILayer : Layer
 	public override void OnMouseDown(MouseButtonEventArgs args)
 	{
 		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
-		
+
 		mouseDownElement = Element.InternalMouseDown(a);
 		args.Handled = a.Handled;
 	}
@@ -76,7 +76,7 @@ public class UILayer : Layer
 	public override void OnMouseUp(MouseButtonEventArgs args)
 	{
 		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
-		
+
 		if (mouseDownElement is not null)
 		{
 			mouseDownElement.InternalMouseUp(a);
@@ -93,8 +93,8 @@ public class UILayer : Layer
 
 	public override void OnMouseMove(MouseMoveEventArgs args)
 	{
-		MouseMoveEventArgs a = new(args.Position * (1f / Main.UIScale), args.Delta );
-		
+		MouseMoveEventArgs a = new(args.Position * (1f / Main.UIScale), args.Delta);
+
 		Element.InternalMouseMove(a);
 
 		BaseElement? at = Element.GetElementAt(a.Position);
@@ -169,5 +169,10 @@ public class UILayer : Layer
 		// {
 		// 	element.Recalculate();
 		// }
+	}
+
+	public void Remove(BaseElement element)
+	{
+		Element.Remove(element);
 	}
 }
