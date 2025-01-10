@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace BaseLibrary.UI;
 
@@ -41,28 +42,37 @@ public struct UITextureSettings
 	public Dimension ImagePos;
 }
 
-public class UITexture(Asset<Texture2D>? texture) : BaseElement
+public class UITexture : BaseElement
 {
+	protected static Asset<Texture2D> MissingTexture;
+	
 	public UITextureSettings Settings = UITextureSettings.Default;
 
-	public readonly Asset<Texture2D>? Texture = texture;
+	public readonly Asset<Texture2D>? Texture;
+
+	public UITexture(Asset<Texture2D>? texture)
+	{
+		MissingTexture ??= ModContent.Request<Texture2D>(BaseLibrary.PlaceholderTexture);
+
+		Texture = texture;
+	}
 
 	protected override void Draw(SpriteBatch spriteBatch)
 	{
-		if (Texture is null)
-			return;
+		Texture2D texture = Texture is null ? MissingTexture.Value : Texture.Value;
 
 		RasterizerState rasterizer = new() { CullMode = CullMode.None, ScissorTestEnable = true };
 
 		spriteBatch.End();
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Settings.SamplerState, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-		Texture2D texture = Texture.Value;
 		Vector2 textureSize = Settings.SourceRectangle?.Size() ?? texture.Size();
 
-		Vector2 scale = Vector2.One;
-		if (Settings.ScaleMode == ScaleMode.Stretch) scale = new Vector2(Dimensions.Width / textureSize.X, Dimensions.Height / textureSize.Y);
-		else if (Settings.ScaleMode == ScaleMode.Zoom) scale = new Vector2(Math.Min(Dimensions.Width / textureSize.X, Dimensions.Height / textureSize.Y));
+		Vector2 scale = Settings.ScaleMode switch {
+			ScaleMode.Stretch => new Vector2(Dimensions.Width / textureSize.X, Dimensions.Height / textureSize.Y),
+			ScaleMode.Zoom => new Vector2(Math.Min(Dimensions.Width / textureSize.X, Dimensions.Height / textureSize.Y)),
+			_ => Vector2.One
+		};
 
 		scale *= Settings.Scale;
 
