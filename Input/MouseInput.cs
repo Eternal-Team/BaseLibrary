@@ -172,7 +172,7 @@ public static class MouseInput
 		{
 			int value = currentMouseState.ScrollWheelValue;
 			int delta = currentMouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue;
-			OnMouseScroll(new MouseScrollEventArgs(position, new Vector2(0, delta)));
+			OnMouseScroll(Keyboard.IsKeyDown(Keys.LeftShift) || Keyboard.IsKeyDown(Keys.RightShift) ? new MouseScrollEventArgs(position, new Vector2(delta, 0)) : new MouseScrollEventArgs(position, new Vector2(0, delta)));
 		}
 
 		previousMouseState = currentMouseState;
