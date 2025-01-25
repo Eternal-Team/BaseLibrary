@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace BaseLibrary;
@@ -80,6 +81,35 @@ public static class DrawingUtility
 	{
 		DrawPanel(spriteBatch, rectangle, Main.Assets.Request<Texture2D>("Images/UI/PanelBackground").Value, bgColor ?? Colors.Panel);
 		DrawPanel(spriteBatch, rectangle, Main.Assets.Request<Texture2D>("Images/UI/PanelBorder").Value, borderColor ?? Color.Black);
+	}
+
+	private static Asset<Texture2D> AchievementTexture;
+
+	// TODO: this could be generalized for any border type
+	public static void DrawAchievementBorder(SpriteBatch spriteBatch, Vector2 position, Vector2 size)
+	{
+		AchievementTexture ??= Main.Assets.Request<Texture2D>("Images/UI/Achievement_Borders");
+
+		Texture2D texture = AchievementTexture.Value;
+
+		spriteBatch.Draw(texture, position, new Rectangle(0, 0, 24, 24), Color.White);
+		spriteBatch.Draw(texture, position.OffsetBy(size.X - 24f, 0f), new Rectangle(48, 0, 24, 24), Color.White);
+		spriteBatch.Draw(texture, position.OffsetBy(0f, size.Y - 24f), new Rectangle(0, 48, 24, 24), Color.White);
+		spriteBatch.Draw(texture, position.OffsetBy(size.X - 24f, size.Y - 24f), new Rectangle(48, 48, 24, 24), Color.White);
+
+		int width = (int)(size.X - 48);
+		if (width > 0)
+		{
+			spriteBatch.Draw(texture, new Rectangle((int)position.X + 24, (int)position.Y, width, 6), new Rectangle(36, 0, 2, 6), Color.White);
+			spriteBatch.Draw(texture, new Rectangle((int)position.X + 24, (int)((int)position.Y + size.Y - 6), width, 6), new Rectangle(36, 66, 2, 6), Color.White);
+		}
+
+		int height = (int)(size.Y - 48);
+		if (height > 0)
+		{
+			spriteBatch.Draw(texture, new Rectangle((int)position.X, (int)position.Y + 24, 6, height), new Rectangle(0, 36, 6, 2), Color.White);
+			spriteBatch.Draw(texture, new Rectangle((int)((int)position.X + size.X - 6), (int)position.Y + 24, 6, height), new Rectangle(66, 36, 6, 2), Color.White);
+		}
 	}
 
 	// public static void DrawItemInInventory(SpriteBatch spriteBatch, Item item, Vector2 position, Vector2 size, float scale, bool drawStackSize)
