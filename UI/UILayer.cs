@@ -59,7 +59,7 @@ public class UILayer : Layer
 		Vector2 mouse = new(MouseInput.currentMouseState.X, MouseInput.currentMouseState.Y);
 		foreach (MouseButton button in MouseInput.GetHeldButtons())
 		{
-			MouseButtonEventArgs args = new(mouse, button, modifiers);
+			MouseButtonEventArgs args = new(mouse * (1f / Main.UIScale), button, modifiers);
 
 			Element.InternalMouseHeld(args);
 		}
