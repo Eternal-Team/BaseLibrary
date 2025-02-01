@@ -3,6 +3,7 @@
 		<Nullable>enable</Nullable>
 		<OutputType>Exe</OutputType>
 		<GenerateProgramFile>false</GenerateProgramFile>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<Import Project="..\Mods.targets"/>
 </Project>

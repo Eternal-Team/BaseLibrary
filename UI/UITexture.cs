@@ -9,8 +9,17 @@ namespace BaseLibrary.UI;
 
 public enum ScaleMode
 {
+	/// <summary>
+	/// Contents will be stretched out to the entire element
+	/// </summary>
 	Stretch,
+	/// <summary>
+	/// Contents will be stretched out to the smallest dimension (width/height)
+	/// </summary>
 	Zoom,
+	/// <summary>
+	/// Content will be displayed as is
+	/// </summary>
 	None
 }
 

@@ -29,7 +29,8 @@ public class ThePreciousOne : BaseItem
 		player.maxMinions += 9;
 		player.statDefense += 200;
 
-		player.wallSpeed *= 100;
-		player.tileSpeed *= 100;
+		player.wallSpeed *= 1000;
+		player.tileSpeed *= 1000;
+		player.pickSpeed *= 0.25f;
 	}
 }

@@ -111,6 +111,7 @@ public class UIText : BaseElement
 		VerticalAlignment vAlign = Settings.VerticalAlignment;
 
 		TotalHeight = 0;
+		// BUG: leading whitespaces are not trimmed
 		foreach (List<TextSnippet> snippets in Utils.WordwrapStringSmart(actualText, Settings.TextColor, Settings.Font.Value, InnerDimensions.Width, -1))
 		{
 			Vector2 size = ChatManager.GetStringSize(Settings.Font.Value, snippets.ToArray(), new Vector2(textScale));

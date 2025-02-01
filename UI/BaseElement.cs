@@ -25,7 +25,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 
 	public Rectangle Dimensions { get; set; }
 	public Rectangle InnerDimensions { get; set; }
-	internal Rectangle OuterDimensions { get; set; }
+	public Rectangle OuterDimensions { get; set; }
 
 	public Display Display = Display.Visible;
 	public Overflow Overflow = Overflow.Visible;
@@ -60,14 +60,15 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 
 		int minWidth = MinWidth ?? 0;
 		int minHeight = MinHeight ?? 0;
-		int maxWidth = MaxWidth ?? parent.Width;
-		int maxHeight = MaxHeight ?? parent.Height;
+		int maxWidth = MaxWidth ?? int.MaxValue;
+		int maxHeight = MaxHeight ?? int.MaxValue;
 		
 		MathUtility.Clamp(ref dimensions.Width, minWidth, maxWidth);
 		MathUtility.Clamp(ref dimensions.Height, minHeight, maxHeight);
 
-		dimensions.X = (int)(parent.X + (Position.PercentX * parent.Width * 0.01f - dimensions.Width * Position.PercentX * 0.01f) + Position.PixelsX);
-		dimensions.Y = (int)(parent.Y + (Position.PercentY * parent.Height * 0.01f - dimensions.Height * Position.PercentY * 0.01f) + Position.PixelsY);
+		// BUG: shouldn't position be based on outer dimensions?
+		dimensions.X = (int)(parent.X + (Position.PercentX * parent.Width * 0.01f - dimensions.Width * Position.PercentX * 0.01f) + Position.PixelsX) + Margin.Left;
+		dimensions.Y = (int)(parent.Y + (Position.PercentY * parent.Height * 0.01f - dimensions.Height * Position.PercentY * 0.01f) + Position.PixelsY) + Margin.Top;
 
 		Dimensions = dimensions;
 		InnerDimensions = new Rectangle(dimensions.X + Padding.Left, dimensions.Y + Padding.Top, dimensions.Width - Padding.Left - Padding.Right, dimensions.Height - Padding.Top - Padding.Bottom);
