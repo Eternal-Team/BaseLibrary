@@ -38,7 +38,7 @@ public static class ReflectionUtility
 		if (methodInfo is null) throw new Exception($"Failed to find method '{method}' in {typeof(T).FullName}");
 		return new StaticMethod<K>(methodInfo);
 	}
-	
+
 	public static StaticMethod GetMethod<T>(string method, BindingFlags flags = DefaultFlags | BindingFlags.Static)
 	{
 		MethodInfo? methodInfo = typeof(T).GetMethod(method, flags);
