@@ -9,10 +9,8 @@ namespace BaseLibrary.UI;
 
 public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseElement>
 {
-	private readonly List<BaseElement> _children = [];
-
 	internal BaseElement? Parent;
-	public BaseElement Children => this;
+	public List<BaseElement> Children { get; } = [];
 
 	public Dimension Size;
 	public Dimension Position;
@@ -79,7 +77,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 
 	protected virtual void RecalculateChildren()
 	{
-		foreach (BaseElement element in _children)
+		foreach (BaseElement element in Children)
 		{
 			element.Recalculate();
 		}
@@ -87,24 +85,24 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 
 	public virtual void Add(BaseElement element)
 	{
-		if (_children.Contains(element)) throw new Exception($"Element {element} is already added");
+		if (Children.Contains(element)) throw new Exception($"Element {element} is already added");
 
 		element.Parent = this;
-		_children.Add(element);
+		Children.Add(element);
 		element.Recalculate();
 	}
 	
 	public virtual void Remove(BaseElement element)
 	{
-		if (!_children.Contains(element)) throw new Exception($"Element {element} is not contained");
+		if (!Children.Contains(element)) throw new Exception($"Element {element} is not contained");
 
-		_children.Remove(element);
+		Children.Remove(element);
 		element.Parent = null;
 	}
 	
 	public virtual void Clear()
 	{
-		_children.Clear();
+		Children.Clear();
 	}
 
 	public BaseElement AddOnClick(Action<MouseButtonEventArgs> onClick)
@@ -113,7 +111,7 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 		return this;
 	}
 	
-	public IEnumerator<BaseElement> GetEnumerator() => _children.GetEnumerator();
+	public IEnumerator<BaseElement> GetEnumerator() => Children.GetEnumerator();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

@@ -16,7 +16,7 @@ public partial class BaseElement
 	{
 		Update(gameTime);
 
-		foreach (BaseElement current in _children.Where(current => current.Display != Display.None))
+		foreach (BaseElement current in Children.Where(current => current.Display != Display.None))
 		{
 			current.InternalUpdate(gameTime);
 		}
@@ -266,10 +266,11 @@ public partial class BaseElement
 			if (!element.ContainsPoint(point) || element.Display == Display.None) continue;
 			
 			elements.Add(element);
-			elements.AddRange(element.ElementsAt(point));
+			List<BaseElement> elementsAt = element.ElementsAt(point);
+			elementsAt.Reverse();
+			elements.AddRange(elementsAt);
 		}
 
-		elements.Reverse();
 		return elements;
 	}
 	

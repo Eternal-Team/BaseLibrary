@@ -21,14 +21,14 @@ public partial class BaseElement
 	{
 		if (Overflow == Overflow.Visible)
 		{
-			foreach (BaseElement element in _children.Where(element => element.Display != Display.None))
+			foreach (BaseElement element in Children.Where(element => element.Display != Display.None))
 			{
 				element.InternalDraw(spriteBatch);
 			}
 		}
 		else if (Overflow == Overflow.Hidden)
 		{
-			foreach (BaseElement element in _children.Where(element => element.Display != Display.None && Dimensions.Intersects(element.Dimensions))) // bug: this seems broken
+			foreach (BaseElement element in Children.Where(element => element.Display != Display.None && Dimensions.Intersects(element.Dimensions))) // bug: this seems broken
 			{
 				element.InternalDraw(spriteBatch);
 			}
