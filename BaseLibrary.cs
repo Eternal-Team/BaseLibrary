@@ -1,4 +1,5 @@
 using BaseLibrary.Input;
+using BaseLibrary.UI;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using ReLogic.Content.Sources;
@@ -31,6 +32,8 @@ public class BaseLibrary : Mod
 			MissingTexture = ModContent.Request<Texture2D>(PlaceholderTexture);
 
 			InputSystem.Load();
+			
+			UISystem.UILayer.Add(new PanelUI());
 		}
 	}
 
