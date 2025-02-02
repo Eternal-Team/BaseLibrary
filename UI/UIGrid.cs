@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary.Input;
@@ -13,16 +14,17 @@ public enum Direction
 
 public struct UIGridSettings
 {
-	public static readonly UIGridSettings Default = new()
-	{
+	public static readonly UIGridSettings Default = new UIGridSettings {
 		ItemMargin = 8,
 		MaxSelectedItems = 0,
-		Direction = Direction.Vertical
+		Direction = Direction.Vertical,
+		ItemAlignment = HorizontalAlignment.Left
 	};
 
 	public Direction Direction;
 	public int ItemMargin;
 	public int MaxSelectedItems;
+	public HorizontalAlignment ItemAlignment;
 }
 
 public class UIGrid<T> : BaseElement where T : BaseElement
@@ -36,12 +38,14 @@ public class UIGrid<T> : BaseElement where T : BaseElement
 
 	public UIGrid(int wrapping = 1)
 	{
+		if (wrapping < 1)
+			throw new Exception("UIGrid wrapping must be greater than zero.");
+
 		this.wrapping = wrapping;
 		Overflow = Overflow.Hidden;
 
 		Scrollbar = new UIScrollbar();
-		Scrollbar.OnScroll += () =>
-		{
+		Scrollbar.OnScroll += () => {
 			offset = (int)-Scrollbar.ViewPosition;
 			RecalculateChildren();
 		};
@@ -49,31 +53,33 @@ public class UIGrid<T> : BaseElement where T : BaseElement
 
 	protected override void RecalculateChildren()
 	{
-		List<BaseElement> visible = Children.Where(item => item.Display != Display.None).ToList();
+		List<BaseElement[]> visible = Children.Where(item => item.Display != Display.None).Chunk(wrapping).ToList();
 
 		if (Settings.Direction == Direction.Vertical)
 		{
-			int left = 0;
 			int top = offset;
 
-			for (int i = 0; i < visible.Count; i++)
+			foreach (BaseElement[] elements in visible)
 			{
-				BaseElement item = visible[i];
+				int totalWidth = elements.Sum(x => x.OuterDimensions.Width) + (elements.Length - 1) * Settings.ItemMargin;
+				int left = Settings.ItemAlignment switch {
+					HorizontalAlignment.Left => 0,
+					HorizontalAlignment.Center => InnerDimensions.Width / 2 - totalWidth / 2,
+					_ => InnerDimensions.Width - totalWidth
+				};
+				int tallestElement = 0;
 
-				item.Position.PixelsX = left;
-				item.Position.PixelsY = top + item.Margin.Top;
-				item.Recalculate();
-				Rectangle dimensions = item.OuterDimensions;
-
-				if (i % wrapping == wrapping - 1 || i == visible.Count - 1)
+				foreach (BaseElement item in elements)
 				{
-					top += dimensions.Height + Settings.ItemMargin;
-					left = 0;
-				}
-				else
-				{
+					item.Position.PixelsX = left;
+					item.Position.PixelsY = top + item.Margin.Top;
+					item.Recalculate();
+					Rectangle dimensions = item.OuterDimensions;
 					left += dimensions.Width + Settings.ItemMargin;
+					if (dimensions.Height > tallestElement) tallestElement = dimensions.Height;
 				}
+
+				top += tallestElement + Settings.ItemMargin;
 			}
 
 			innerListSize = top - offset - Settings.ItemMargin + 4;
@@ -82,29 +88,31 @@ public class UIGrid<T> : BaseElement where T : BaseElement
 		else
 		{
 			int left = offset;
-			int top = 0;
 
-			for (int i = 0; i < visible.Count; i++)
+			foreach (BaseElement[] elements in visible)
 			{
-				BaseElement item = visible[i];
+				int totalHeight = elements.Sum(x => x.OuterDimensions.Height) + (elements.Length - 1) * Settings.ItemMargin;
+				int top = Settings.ItemAlignment switch {
+					HorizontalAlignment.Left => 0,
+					HorizontalAlignment.Center => InnerDimensions.Height / 2 - totalHeight / 2,
+					_ => InnerDimensions.Height - totalHeight
+				};
+				int widestElement = 0;
 
-				item.Position.PixelsX = left + item.Margin.Left;
-				item.Position.PixelsY = top;
-				item.Recalculate();
-				Rectangle dimensions = item.OuterDimensions;
-
-				if (i % wrapping == wrapping - 1 || i == visible.Count - 1)
+				foreach (BaseElement item in elements)
 				{
-					left += dimensions.Width + Settings.ItemMargin;
-					top = 0;
-				}
-				else
-				{
+					item.Position.PixelsX = left + item.Margin.Left;
+					item.Position.PixelsY = top;
+					item.Recalculate();
+					Rectangle dimensions = item.OuterDimensions;
 					top += dimensions.Height + Settings.ItemMargin;
+					if (dimensions.Width > widestElement) widestElement = dimensions.Width;
 				}
+
+				left += widestElement + Settings.ItemMargin;
 			}
 
-			innerListSize = left - offset - Settings.ItemMargin;
+			innerListSize = left - offset - Settings.ItemMargin + 4;
 			Scrollbar.SetView(InnerDimensions.Width, innerListSize);
 		}
 	}
