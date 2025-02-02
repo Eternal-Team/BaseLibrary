@@ -1,4 +1,6 @@
 using BaseLibrary.Input;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using ReLogic.Content.Sources;
 using Terraria;
 using Terraria.ModLoader;
@@ -17,7 +19,8 @@ public class Program
 
 public class BaseLibrary : Mod
 {
-	public static string PlaceholderTexture = "BaseLibrary/Assets/Textures/Placeholder";
+	public const string PlaceholderTexture = "BaseLibrary/Assets/Textures/Placeholder";
+	public static Asset<Texture2D> MissingTexture = null!;
 
 	public override void Load()
 	{
@@ -25,6 +28,8 @@ public class BaseLibrary : Mod
 
 		if (!Main.dedServ)
 		{
+			MissingTexture = ModContent.Request<Texture2D>(PlaceholderTexture);
+
 			InputSystem.Load();
 		}
 	}
