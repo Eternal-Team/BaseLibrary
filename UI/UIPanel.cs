@@ -111,13 +111,13 @@ public class UIPanel : BaseElement
 	{
 		if (!dragging) return;
 
-		Size.PercentX = 0;
-		Size.PercentY = 0;
+		Position.PercentX = 0;
+		Position.PercentY = 0;
 
 		Rectangle parent = Parent?.InnerDimensions ?? UserInterface.ActiveInstance.GetDimensions().ToRectangle();
 
-		Size.PixelsX = Utils.Clamp((int)(Main.mouseX - offset.X - parent.X), 0, parent.Width - OuterDimensions.Width);
-		Size.PixelsY = Utils.Clamp((int)(Main.mouseY - offset.Y - parent.Y), 0, parent.Height - OuterDimensions.Height);
+		Position.PixelsX = Utils.Clamp((int)(Main.mouseX - offset.X - parent.X), 0, parent.Width - OuterDimensions.Width);
+		Position.PixelsY = Utils.Clamp((int)(Main.mouseY - offset.Y - parent.Y), 0, parent.Height - OuterDimensions.Height);
 
 		Recalculate();
 	}
