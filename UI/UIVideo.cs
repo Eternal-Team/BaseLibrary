@@ -8,13 +8,15 @@ namespace BaseLibrary.UI;
 
 public struct UIVideoSettings
 {
-	public static readonly UIVideoSettings Default = new() {
+	public static readonly UIVideoSettings Default = new UIVideoSettings {
 		ScaleMode = ScaleMode.None,
-		LoopVideo = true
+		LoopVideo = true,
+		ResizeToContent = true
 	};
 
 	public ScaleMode ScaleMode;
 	public bool LoopVideo;
+	public bool ResizeToContent;
 }
 
 public class UIVideo : BaseElement
@@ -40,12 +42,13 @@ public class UIVideo : BaseElement
 
 	public override void Recalculate()
 	{
-		if (video is not null)
+		if (video is not null && Settings.ResizeToContent)
 		{
-			Size.PercentY = 0;
-			Size.PixelsY = video.Value.Height;
 			Size.PercentX = 0;
+			Size.PercentY = 0;
+
 			Size.PixelsX = video.Value.Width;
+			Size.PixelsY = video.Value.Height;
 		}
 
 		base.Recalculate();
@@ -65,7 +68,7 @@ public class UIVideo : BaseElement
 		{
 			Vector2 size = new Vector2(video.Value.Width, video.Value.Height);
 			Vector2 position = Dimensions.TopLeft();
-			
+
 			spriteBatch.Draw(frameTexture, position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
 			DrawingUtility.DrawAchievementBorder(spriteBatch, position, size);

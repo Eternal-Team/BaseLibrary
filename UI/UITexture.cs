@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace BaseLibrary.UI;
 
@@ -13,10 +12,12 @@ public enum ScaleMode
 	/// Contents will be stretched out to the entire element
 	/// </summary>
 	Stretch,
+
 	/// <summary>
 	/// Contents will be stretched out to the smallest dimension (width/height)
 	/// </summary>
 	Zoom,
+
 	/// <summary>
 	/// Content will be displayed as is
 	/// </summary>
@@ -25,8 +26,7 @@ public enum ScaleMode
 
 public struct UITextureSettings
 {
-	public static readonly UITextureSettings Default = new()
-	{
+	public static readonly UITextureSettings Default = new UITextureSettings {
 		ScaleMode = ScaleMode.None,
 		SpriteEffects = SpriteEffects.None,
 		Rotation = 0f,
@@ -35,10 +35,12 @@ public struct UITextureSettings
 		ImagePos = Dimension.FromPercent(50),
 		Origin = Vector2.Zero,
 		SourceRectangle = null,
-		SamplerState = SamplerState.LinearClamp
+		SamplerState = SamplerState.LinearClamp,
+		ResizeToContent = false
 	};
 
 	public ScaleMode ScaleMode;
+	public bool ResizeToContent;
 	public SpriteEffects SpriteEffects;
 	public float Rotation;
 	public float Scale;
@@ -51,31 +53,34 @@ public struct UITextureSettings
 	public Dimension ImagePos;
 }
 
-public class UITexture : BaseElement
+public class UITexture(Asset<Texture2D>? texture) : BaseElement
 {
-	protected static Asset<Texture2D> MissingTexture;
-	
 	public UITextureSettings Settings = UITextureSettings.Default;
 
-	public readonly Asset<Texture2D>? Texture;
+	protected Texture2D Texture => texture is null ? BaseLibrary.MissingTexture.Value : texture.Value;
 
-	public UITexture(Asset<Texture2D>? texture)
+	public override void Recalculate()
 	{
-		MissingTexture ??= ModContent.Request<Texture2D>(BaseLibrary.PlaceholderTexture);
+		if (Settings.ResizeToContent)
+		{
+			Size.PercentX = 0;
+			Size.PercentY = 0;
 
-		Texture = texture;
+			Size.PixelsX = Texture.Width;
+			Size.PixelsY = Texture.Height;
+		}
+
+		base.Recalculate();
 	}
 
 	protected override void Draw(SpriteBatch spriteBatch)
 	{
-		Texture2D texture = Texture is null ? MissingTexture.Value : Texture.Value;
-
-		RasterizerState rasterizer = new() { CullMode = CullMode.None, ScissorTestEnable = true };
+		RasterizerState rasterizer = new RasterizerState { CullMode = CullMode.None, ScissorTestEnable = true };
 
 		spriteBatch.End();
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Settings.SamplerState, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
 
-		Vector2 textureSize = Settings.SourceRectangle?.Size() ?? texture.Size();
+		Vector2 textureSize = Settings.SourceRectangle?.Size() ?? Texture.Size();
 
 		Vector2 scale = Settings.ScaleMode switch {
 			ScaleMode.Stretch => new Vector2(Dimensions.Width / textureSize.X, Dimensions.Height / textureSize.Y),
@@ -85,13 +90,12 @@ public class UITexture : BaseElement
 
 		scale *= Settings.Scale;
 
-		Vector2 position = new()
-		{
+		Vector2 position = new Vector2 {
 			X = Dimensions.X + Settings.ImagePos.PercentX * Dimensions.Width * 0.01f - Settings.ImagePos.PercentX * (textureSize.X * scale.X) * 0.01f + Settings.ImagePos.PixelsX,
 			Y = Dimensions.Y + Settings.ImagePos.PercentY * Dimensions.Height * 0.01f - Settings.ImagePos.PercentY * (textureSize.Y * scale.Y) * 0.01f + Settings.ImagePos.PixelsY
 		};
 
-		spriteBatch.Draw(texture, position, Settings.SourceRectangle, Settings.Color, Settings.Rotation, Settings.Origin, scale, Settings.SpriteEffects, 0f);
+		spriteBatch.Draw(Texture, position, Settings.SourceRectangle, Settings.Color, Settings.Rotation, Settings.Origin, scale, Settings.SpriteEffects, 0f);
 
 		spriteBatch.End();
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
