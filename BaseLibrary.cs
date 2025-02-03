@@ -33,7 +33,7 @@ public class BaseLibrary : Mod
 
 			InputSystem.Load();
 			
-			UISystem.UILayer.Add(new PanelUI());
+			UISystem.UILayer.Add(new WindowUI());
 		}
 	}
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BaseLibrary.Input;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -24,7 +25,6 @@ public class BaseUIPanel : UIPanel
 
 	public BaseUIPanel(IHasUI container)
 	{
-		Settings.Draggable = true;
 		Container = container;
 	}
 }
@@ -38,19 +38,19 @@ public class PanelUISystem : ModSystem
 {
 	public override void PreSaveAndQuit()
 	{
-		PanelUI.Instance?.CloseAllUIs();
+		WindowUI.Instance?.CloseAllUIs();
 	}
 }
 
-public class PanelUI : BaseElement
+public class WindowUI : BaseElement
 {
-	public static PanelUI? Instance;
+	public static WindowUI? Instance;
 
 	private Dictionary<Type, Type> EntityToUIMap = [];
 	private Dictionary<Guid, BaseElement> Panels = [];
 	private List<IHasUI> ClosedUICache = [];
 
-	public PanelUI()
+	public WindowUI()
 	{
 		Instance = this;
 
@@ -76,7 +76,8 @@ public class PanelUI : BaseElement
 		if (Panels.TryGetValue(entity.GetID(), out BaseElement? panel) && panel.Display == Display.Visible) CloseUI(entity);
 		else
 		{
-			/*if (!ModContent.GetInstance<PanelUISystem>().ClosedUICache.Contains(entity))*/ OpenUI(entity);
+			/*if (!ModContent.GetInstance<PanelUISystem>().ClosedUICache.Contains(entity))*/
+			OpenUI(entity);
 
 			// if (!Main.playerInventory) Main.playerInventory = true;
 		}
@@ -89,7 +90,7 @@ public class PanelUI : BaseElement
 
 		Remove(panel);
 		Panels.Remove(entity.GetID());
-		
+
 		/*panel.Display = Display.None;
 		panel.InternalDeactivate();
 
@@ -146,6 +147,41 @@ public class PanelUI : BaseElement
 		}*/
 	}
 
+	private Vector2 offset;
+	private bool dragging;
+	private BaseUIPanel? draggedPanel;
+
+	protected override void MouseDown(MouseButtonEventArgs args)
+	{
+		if (args.Button != MouseButton.Left || GetElementAt(args.Position) is not BaseUIPanel panel)
+		{
+			base.MouseDown(args);
+			return;
+		}
+
+		offset = (args.Position - panel.Dimensions.TopLeft()).Floor();
+		dragging = true;
+		draggedPanel = panel;
+		Remove(panel);
+		Add(panel);
+
+		args.Handled = true;
+	}
+
+	protected override void MouseUp(MouseButtonEventArgs args)
+	{
+		if (args.Button != MouseButton.Left)
+		{
+			base.MouseUp(args);
+			return;
+		}
+
+		dragging = false;
+		draggedPanel = null;
+
+		args.Handled = true;
+	}
+
 	public void CloseAllUIs()
 	{
 		for (int i = 0; i < Children.Count; i++)
@@ -166,6 +202,60 @@ public class PanelUI : BaseElement
 
 	protected override void Update(GameTime gameTime)
 	{
+		if (!dragging || draggedPanel is null) return;
+
+		Rectangle draggedDim = draggedPanel.OuterDimensions;
+
+		draggedPanel.Position.PercentX = 0;
+		draggedPanel.Position.PercentY = 0;
+
+		draggedPanel.Position.PixelsX = Utils.Clamp((int)(Main.mouseX - offset.X - InnerDimensions.X), 0, InnerDimensions.Width - draggedDim.Width);
+		draggedPanel.Position.PixelsY = Utils.Clamp((int)(Main.mouseY - offset.Y - InnerDimensions.Y), 0, InnerDimensions.Height - draggedDim.Height);
+
+		// https://github.com/Flupp/sticky-window-snapping/blob/master/package/contents/code/main.js
+
+		int l1 = draggedPanel.Position.PixelsX;
+		int r1 = l1 + draggedDim.Width;
+		int t1 = draggedPanel.Position.PixelsY;
+		int b1 = t1 + draggedDim.Height;
+
+		int threshold = ModContent.GetInstance<BaseLibraryConfig>().WindowSnapDistance;
+
+		foreach (BaseElement element in Children.Except(draggedPanel))
+		{
+			Rectangle otherDim = element.OuterDimensions;
+			int l2 = otherDim.Left;
+			int r2 = otherDim.Right;
+			int t2 = otherDim.Top;
+			int b2 = otherDim.Bottom;
+
+			if (Math.Max(l1, l2) < Math.Min(r1, r2))
+			{
+				if (Math.Abs(t1 - b2) <= threshold)
+				{
+					draggedPanel.Position.PixelsY = b2;
+				}
+				else if (Math.Abs(b1 - t2) <= threshold)
+				{
+					draggedPanel.Position.PixelsY = t2 - draggedDim.Height;
+				}
+			}
+
+			if (Math.Max(t1, t2) < Math.Min(b1, b2))
+			{
+				if (Math.Abs(l1 - r2) <= threshold)
+				{
+					draggedPanel.Position.PixelsX = r2;
+				}
+				else if (Math.Abs(r1 - l2) <= threshold)
+				{
+					draggedPanel.Position.PixelsX = l2 - draggedDim.Width;
+				}
+			}
+		}
+
+		Recalculate();
+
 		/*PanelUI? gui = PanelUI.Instance;
 
 		// bug: check if IHasUI entity still exists
@@ -193,11 +283,4 @@ public class PanelUI : BaseElement
 
 		base.Update(gameTime);
 	}
-
-	/*public override BaseElement? GetElementAt(Vector2 point)
-	{
-		BaseElement? element = Children.LastOrDefault(current => current.ContainsPoint(point) && current.Display != Display.None);
-
-		return element?.GetElementAt(point);
-	}*/
 }
