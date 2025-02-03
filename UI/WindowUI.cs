@@ -63,8 +63,8 @@ public class WindowUI : BaseElement
 
 			foreach (Type type in types)
 			{
-				// if (ReflectionUtility.IsSubclassOfRawGeneric(type, typeof(BaseUIPanel<>)) && type.BaseType != null && type.BaseType.GenericTypeArguments.Length > 0)
-				// EntityToUIMap[type.BaseType.GenericTypeArguments[0]] = type;
+				if (ReflectionUtility.IsSubclassOfRawGeneric(type, typeof(BaseUIPanel<>)) && type.BaseType is { GenericTypeArguments.Length: > 0 })
+					EntityToUIMap[type.BaseType.GenericTypeArguments[0]] = type;
 			}
 		}
 	}
@@ -104,10 +104,16 @@ public class WindowUI : BaseElement
 
 		if (Panels.ContainsKey(entity.GetID())) return;
 
-		BaseUIPanel panel = new BaseUIPanel(entity) {
-			Size = Dimension.FromPixels(200),
-			Position = Dimension.FromPercent(50)
-		};
+		Type type = entity.GetType();
+		Type? entityType = EntityToUIMap.ContainsKey(type) ? type : type.BaseType;
+		if (entityType is null) return;
+
+		BaseUIPanel? panel = (BaseUIPanel?)Activator.CreateInstance(EntityToUIMap[entityType], entity);
+		if (panel is null) return;
+
+		panel.Position = Dimension.FromPercent(50);
+		panel.Size = Dimension.FromPixels(532, 880);
+
 		Add(panel);
 		Panels.Add(entity.GetID(), panel);
 
@@ -153,19 +159,30 @@ public class WindowUI : BaseElement
 
 	protected override void MouseDown(MouseButtonEventArgs args)
 	{
-		if (args.Button != MouseButton.Left || GetElementAt(args.Position) is not BaseUIPanel panel)
+		BaseElement? element = GetElementAt(args.Position);
+
+		if (element is BaseUIPanel panel && args.Button == MouseButton.Left)
 		{
-			base.MouseDown(args);
-			return;
+			offset = (args.Position - panel.Dimensions.TopLeft()).Floor();
+			dragging = true;
+			draggedPanel = panel;
+			Remove(panel);
+			Add(panel);
+
+			args.Handled = true;
 		}
+		else if (element is not null)
+		{
+			while (element is not BaseUIPanel)
+			{
+				element = element.Parent;
+			}
 
-		offset = (args.Position - panel.Dimensions.TopLeft()).Floor();
-		dragging = true;
-		draggedPanel = panel;
-		Remove(panel);
-		Add(panel);
+			Remove(element);
+			Add(element);
 
-		args.Handled = true;
+			base.MouseDown(args);
+		}
 	}
 
 	protected override void MouseUp(MouseButtonEventArgs args)
