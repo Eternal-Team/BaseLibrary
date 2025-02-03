@@ -68,7 +68,7 @@ public class UIPanel : BaseElement
 
 	protected override void MouseDown(MouseButtonEventArgs args)
 	{
-		if (!Settings.Draggable || args.Button != MouseButton.Left || GetElementAt(args.Position) != this)
+		if (!Settings.Draggable || args.Button != MouseButton.Left /*|| GetElementAt(args.Position) != this*/)
 		{
 			base.MouseDown(args);
 			return;
@@ -86,7 +86,7 @@ public class UIPanel : BaseElement
 
 			if (!dimensions.Contains(args.Position)) continue;
 
-			offset = args.Position - dimensions.TopLeft();
+			offset = (args.Position - dimensions.TopLeft()).Floor();
 			dragging = true;
 			args.Handled = true;
 
