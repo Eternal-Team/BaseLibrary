@@ -112,7 +112,7 @@ public class WindowUI : BaseElement
 		if (panel is null) return;
 
 		panel.Position = Dimension.FromPercent(50);
-		panel.Size = Dimension.FromPixels(532, 880);
+		panel.Size = Dimension.FromPixels(532, 440);
 
 		Add(panel);
 		Panels.Add(entity.GetID(), panel);
@@ -170,8 +170,10 @@ public class WindowUI : BaseElement
 			Add(panel);
 
 			args.Handled = true;
+			return;
 		}
-		else if (element is not null)
+
+		if (element is not WindowUI)
 		{
 			while (element is not BaseUIPanel)
 			{
@@ -180,9 +182,9 @@ public class WindowUI : BaseElement
 
 			Remove(element);
 			Add(element);
-
-			base.MouseDown(args);
 		}
+
+		base.MouseDown(args);
 	}
 
 	protected override void MouseUp(MouseButtonEventArgs args)
