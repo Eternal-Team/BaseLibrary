@@ -55,4 +55,17 @@ public static class ReflectionUtility
 	{
 		fieldInfo.SetValue(null, value);
 	}
+	
+	public static bool IsSubclassOfRawGeneric(Type toCheck, Type generic)
+	{
+		while (toCheck != null && toCheck != typeof(object))
+		{
+			Type cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+			if (generic == cur) return true;
+
+			toCheck = toCheck.BaseType;
+		}
+
+		return false;
+	}
 }
