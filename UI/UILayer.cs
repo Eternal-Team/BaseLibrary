@@ -10,7 +10,7 @@ namespace BaseLibrary.UI;
 
 public class UISystem : ModSystem
 {
-	public static readonly UILayer UILayer = new();
+	public static readonly UILayer UILayer = new UILayer();
 
 	public override void OnModLoad()
 	{
@@ -28,11 +28,14 @@ public class UISystem : ModSystem
 	}
 }
 
+// BUG: scaling artifacts (floating point positions) -> might solve by rendering to target, then scaling it
+// BUG: intercepts events in things like mod configuration menu
+// BUG: changing scale doesn't change element dims
 public class UILayer : Layer
 {
 	public override bool Enabled => !Main.gameMenu;
 
-	private readonly BaseElement Element = new() { Size = Dimension.FromPercent(100) };
+	private readonly BaseElement Element = new BaseElement { Size = Dimension.FromPercent(100) };
 	private BaseElement? current;
 	private BaseElement? mouseDownElement;
 
@@ -56,10 +59,10 @@ public class UILayer : Layer
 		Element.InternalUpdate(gameTime);
 
 		Modifiers modifiers = KeyboardUtil.GetModifiers(MouseInput.Keyboard);
-		Vector2 mouse = new(MouseInput.currentMouseState.X, MouseInput.currentMouseState.Y);
+		Vector2 mouse = new Vector2(MouseInput.currentMouseState.X, MouseInput.currentMouseState.Y);
 		foreach (MouseButton button in MouseInput.GetHeldButtons())
 		{
-			MouseButtonEventArgs args = new(mouse * (1f / Main.UIScale), button, modifiers);
+			MouseButtonEventArgs args = new MouseButtonEventArgs(mouse * (1f / Main.UIScale), button, modifiers);
 
 			Element.InternalMouseHeld(args);
 		}
@@ -67,7 +70,7 @@ public class UILayer : Layer
 
 	public override void OnMouseDown(MouseButtonEventArgs args)
 	{
-		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		MouseButtonEventArgs a = new MouseButtonEventArgs(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
 
 		mouseDownElement = Element.InternalMouseDown(a);
 		args.Handled = a.Handled;
@@ -75,7 +78,7 @@ public class UILayer : Layer
 
 	public override void OnMouseUp(MouseButtonEventArgs args)
 	{
-		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		MouseButtonEventArgs a = new MouseButtonEventArgs(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
 
 		if (mouseDownElement is not null)
 		{
@@ -93,7 +96,7 @@ public class UILayer : Layer
 
 	public override void OnMouseMove(MouseMoveEventArgs args)
 	{
-		MouseMoveEventArgs a = new(args.Position * (1f / Main.UIScale), args.Delta);
+		MouseMoveEventArgs a = new MouseMoveEventArgs(args.Position * (1f / Main.UIScale), args.Delta);
 
 		Element.InternalMouseMove(a);
 
@@ -117,28 +120,28 @@ public class UILayer : Layer
 
 	public override void OnMouseScroll(MouseScrollEventArgs args)
 	{
-		MouseScrollEventArgs a = new(args.Position * (1f / Main.UIScale), args.Offset);
+		MouseScrollEventArgs a = new MouseScrollEventArgs(args.Position * (1f / Main.UIScale), args.Offset);
 		Element.InternalMouseScroll(a);
 		args.Handled = a.Handled;
 	}
 
 	public override void OnClick(MouseButtonEventArgs args)
 	{
-		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		MouseButtonEventArgs a = new MouseButtonEventArgs(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
 		Element.InternalMouseClick(a);
 		args.Handled = a.Handled;
 	}
 
 	public override void OnDoubleClick(MouseButtonEventArgs args)
 	{
-		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		MouseButtonEventArgs a = new MouseButtonEventArgs(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
 		Element.InternalDoubleClick(a);
 		args.Handled = a.Handled;
 	}
 
 	public override void OnTripleClick(MouseButtonEventArgs args)
 	{
-		MouseButtonEventArgs a = new(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
+		MouseButtonEventArgs a = new MouseButtonEventArgs(args.Position * (1f / Main.UIScale), args.Button, args.Modifiers);
 		Element.InternalTripleClick(a);
 		args.Handled = a.Handled;
 	}

@@ -19,8 +19,6 @@ public static class DrawingUtility
 		public static readonly Color Outline = new(18, 18, 38);
 	}
 
-	// public static Asset<Texture2D> Pixel = ModContent.Request<Texture2D>(BaseLibrary.TexturePath + "UI/Pixel");
-
 	public static Texture2D GetTexturePremultiplied(string path)
 	{
 		Texture2D texture = ModContent.Request<Texture2D>(path, AssetRequestMode.ImmediateLoad).Value;
@@ -83,7 +81,7 @@ public static class DrawingUtility
 		DrawPanel(spriteBatch, rectangle, Main.Assets.Request<Texture2D>("Images/UI/PanelBorder").Value, borderColor ?? Color.Black);
 	}
 
-	private static Asset<Texture2D> AchievementTexture;
+	private static Asset<Texture2D>? AchievementTexture;
 
 	// TODO: this could be generalized for any border type
 	public static void DrawAchievementBorder(SpriteBatch spriteBatch, Vector2 position, Vector2 size, Color? color = null)

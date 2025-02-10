@@ -117,6 +117,7 @@ public class UIGrid<T> : BaseElement where T : BaseElement
 		}
 	}
 
+	// TODO: might want to add a overload with list of elements to reduce recalculation
 	public override void Add(BaseElement item)
 	{
 		base.Add(item);
