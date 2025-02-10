@@ -28,7 +28,7 @@ public partial class BaseElement
 	{
 		GraphicsDevice device = spriteBatch.GraphicsDevice;
 		SamplerState sampler = SamplerState.LinearClamp;
-		RasterizerState rasterizer = new() { CullMode = CullMode.None, ScissorTestEnable = true };
+		RasterizerState rasterizer = new RasterizerState { CullMode = CullMode.None, ScissorTestEnable = true };
 
 		Rectangle original = device.ScissorRectangle;
 

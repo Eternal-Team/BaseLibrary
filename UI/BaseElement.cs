@@ -65,8 +65,8 @@ public partial class BaseElement : IComparable<BaseElement>, IEnumerable<BaseEle
 		MathUtility.Clamp(ref dimensions.Height, minHeight, maxHeight);
 
 		// BUG: shouldn't position be based on outer dimensions?
-		dimensions.X = (int)(parent.X + (Position.PercentX * parent.Width * 0.01f - dimensions.Width * Position.PercentX * 0.01f) + Position.PixelsX) + Margin.Left;
-		dimensions.Y = (int)(parent.Y + (Position.PercentY * parent.Height * 0.01f - dimensions.Height * Position.PercentY * 0.01f) + Position.PixelsY) + Margin.Top;
+		dimensions.X = (int)(parent.X + (Position.PercentX * parent.Width * 0.01f - dimensions.Width * Position.PercentX * 0.01f) + Position.PixelsX) + Margin.Left - Margin.Right;
+		dimensions.Y = (int)(parent.Y + (Position.PercentY * parent.Height * 0.01f - dimensions.Height * Position.PercentY * 0.01f) + Position.PixelsY) + Margin.Top - Margin.Bottom;
 
 		Dimensions = dimensions;
 		InnerDimensions = new Rectangle(dimensions.X + Padding.Left, dimensions.Y + Padding.Top, dimensions.Width - Padding.Left - Padding.Right, dimensions.Height - Padding.Top - Padding.Bottom);
