@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using BaseLibrary.Input;
 using Microsoft.Xna.Framework;
@@ -12,7 +11,7 @@ namespace BaseLibrary.UI;
 
 public struct DragZone(Dimension size, Dimension position)
 {
-	public static readonly DragZone Panel = new(Dimension.FromPercent(100), Dimension.Zero);
+	public static readonly DragZone Panel = new DragZone(Dimension.FromPercent(100), Dimension.Zero);
 	// public static readonly DragZone LeftBorder = new(new Dimension(8, 0, 0, 100), Dimension.Zero);
 	// public static readonly DragZone RightBorder = new() { X = { Percent = 100 }, Width = { Pixels = 8 }, Height = { Percent = 100 } };
 	// public static readonly DragZone TopBorder = new() { Width = { Percent = 100 }, Height = { Pixels = 8 } };
@@ -32,19 +31,20 @@ public struct DragZone(Dimension size, Dimension position)
 
 public struct UIPanelSettings
 {
-	public static readonly UIPanelSettings Default = new()
-	{
+	public static readonly UIPanelSettings Default = new UIPanelSettings {
 		BackgroundColor = UICommon.DefaultUIBlue,
 		BorderColor = Color.Black,
 		Draggable = false,
 		Resizeable = false,
 		DragZones = [DragZone.Panel],
-		Texture = null
+		Texture = null,
+		CaptureAllInputs = false
 	};
 
 	public Color BackgroundColor;
 	public Color BorderColor;
 	public bool Draggable;
+	public bool CaptureAllInputs;
 	public List<DragZone> DragZones;
 	public bool Resizeable;
 	public Asset<Texture2D>? Texture;
@@ -59,8 +59,6 @@ public class UIPanel : BaseElement
 		Padding = new Padding(8);
 	}
 
-	// note: block all event from going through?
-
 	#region Dragging
 
 	private Vector2 offset;
@@ -68,6 +66,8 @@ public class UIPanel : BaseElement
 
 	protected override void MouseDown(MouseButtonEventArgs args)
 	{
+		if (Settings.CaptureAllInputs) args.Handled = true;
+
 		if (!Settings.Draggable || args.Button != MouseButton.Left /*|| GetElementAt(args.Position) != this*/)
 		{
 			base.MouseDown(args);
@@ -96,6 +96,8 @@ public class UIPanel : BaseElement
 
 	protected override void MouseUp(MouseButtonEventArgs args)
 	{
+		// if (Settings.CaptureAllInputs) args.Handled = true;
+
 		if (!Settings.Draggable || args.Button != MouseButton.Left)
 		{
 			base.MouseUp(args);
@@ -124,10 +126,32 @@ public class UIPanel : BaseElement
 
 	#endregion
 
+	protected override void MouseHeld(MouseButtonEventArgs args)
+	{
+		base.MouseHeld(args);
+
+		if (Settings.CaptureAllInputs) args.Handled = true;
+	}
+
+	protected override void MouseScroll(MouseScrollEventArgs args)
+	{
+		base.MouseScroll(args);
+
+		if (Settings.CaptureAllInputs) args.Handled = true;
+	}
+
+	protected override void MouseClick(MouseButtonEventArgs args)
+	{
+		base.MouseClick(args);
+
+		if (Settings.CaptureAllInputs) args.Handled = true;
+	}
+
 	protected override void Draw(SpriteBatch spriteBatch)
 	{
 		if (IsMouseHovering)
 		{
+			// BUG: stuff like sort inventory is still overdrawing
 			Main.LocalPlayer.mouseInterface = true;
 			Main.instance.SetMouseNPC(-1, -1);
 			Main.LocalPlayer.cursorItemIconEnabled = false;
