@@ -4,6 +4,7 @@ using System.Linq;
 using BaseLibrary.Input;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
@@ -14,9 +15,9 @@ public interface IHasUI
 {
 	Guid GetID();
 
-	// SoundStyle? GetOpenSound() => null;
+	SoundStyle? GetOpenSound() => null;
 
-	// SoundStyle? GetCloseSound() => null;
+	SoundStyle? GetCloseSound() => null;
 }
 
 public class BaseUIPanel : UIPanel
@@ -92,10 +93,10 @@ public class WindowUI : BaseElement
 		Panels.Remove(entity.GetID());
 
 		/*panel.Display = Display.None;
-		panel.InternalDeactivate();
+		panel.InternalDeactivate();*/
 
 		SoundStyle? closeSound = entity.GetCloseSound();
-		if (closeSound != null) SoundEngine.PlaySound(closeSound.Value);*/
+		if (closeSound != null) SoundEngine.PlaySound(closeSound.Value);
 	}
 
 	public void OpenUI(IHasUI? entity)
@@ -112,15 +113,15 @@ public class WindowUI : BaseElement
 		if (panel is null) return;
 
 		panel.Position = Dimension.FromPercent(50);
-		panel.Size = Dimension.FromPixels(532, 440);
 
 		Add(panel);
 		Panels.Add(entity.GetID(), panel);
 
-		/*SoundStyle? openSound = entity.GetOpenSound();
-		Guid id = entity.GetID();
+		SoundStyle? openSound = entity.GetOpenSound();
+		if (openSound != null) SoundEngine.PlaySound(openSound.Value);
+		// Guid id = entity.GetID();
 
-		if (Panels.TryGetValue(id, out BaseUIPanel? ui) && ui.Display == Display.None)
+		/*if (Panels.TryGetValue(id, out BaseUIPanel? ui) && ui.Display == Display.None)
 		{
 			ui.Display = Display.Visible;
 			ui.InternalActivate();
@@ -173,7 +174,7 @@ public class WindowUI : BaseElement
 			return;
 		}
 
-		if (element is not WindowUI)
+		if (element is not null and not WindowUI)
 		{
 			while (element is not BaseUIPanel)
 			{
@@ -203,14 +204,10 @@ public class WindowUI : BaseElement
 
 	public void CloseAllUIs()
 	{
-		for (int i = 0; i < Children.Count; i++)
+		foreach (BaseElement element in Children)
 		{
-			BaseElement element = Children[i];
-			if (element is BaseUIPanel panel)
-			{
-				panel.Display = Display.None;
-				panel.InternalDeactivate();
-			}
+			element.Display = Display.None;
+			element.InternalDeactivate();
 		}
 
 		Clear();
