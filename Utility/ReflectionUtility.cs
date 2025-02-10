@@ -10,6 +10,13 @@ public readonly struct StaticField<T>(FieldInfo fieldInfo)
 	public void SetValue(T? value) => fieldInfo.SetValue(null, value);
 }
 
+public readonly struct Field<T, K>(FieldInfo fieldInfo)
+{
+	public K? GetValue(T instance) => (K?)fieldInfo.GetValue(instance);
+
+	public void SetValue(T instance, K? value) => fieldInfo.SetValue(instance, value);
+}
+
 public readonly struct StaticMethod<T>(MethodInfo methodInfo)
 {
 	public T? Invoke(object[]? args = null) => (T?)methodInfo.Invoke(null, args);
@@ -25,11 +32,18 @@ public static class ReflectionUtility
 	public const BindingFlags DefaultFlags_Static = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 	public const BindingFlags DefaultFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-	public static StaticField<K> GetField<T, K>(string field, BindingFlags flags = DefaultFlags_Static)
+	public static StaticField<K> GetStaticField<T, K>(string field, BindingFlags flags = DefaultFlags_Static)
 	{
 		FieldInfo? fieldInfo = typeof(T).GetField(field, flags);
 		if (fieldInfo is null) throw new Exception($"Failed to find field '{field}' in {typeof(T).FullName}");
 		return new StaticField<K>(fieldInfo);
+	}
+	
+	public static Field<T, K> GetField<T, K>(string field, BindingFlags flags = DefaultFlags)
+	{
+		FieldInfo? fieldInfo = typeof(T).GetField(field, flags);
+		if (fieldInfo is null) throw new Exception($"Failed to find field '{field}' in {typeof(T).FullName}");
+		return new Field<T, K>(fieldInfo);
 	}
 
 	public static StaticMethod<K> GetMethod<T, K>(string method, BindingFlags flags = DefaultFlags_Static)

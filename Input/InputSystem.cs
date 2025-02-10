@@ -99,9 +99,9 @@ internal static class InputSystem
 		};
 	}
 
-	private static readonly StaticField<bool> reinitialize = ReflectionUtility.GetField<PlayerInput, bool>("reinitialize");
+	private static readonly StaticField<bool> reinitialize = ReflectionUtility.GetStaticField<PlayerInput, bool>("reinitialize");
 
-	private static readonly StaticField<Action> OnActionableInput = ReflectionUtility.GetField<PlayerInput, Action>("OnActionableInput");
+	private static readonly StaticField<Action> OnActionableInput = ReflectionUtility.GetStaticField<PlayerInput, Action>("OnActionableInput");
 	private static readonly StaticMethod ReInitialize = ReflectionUtility.GetMethod<PlayerInput>("ReInitialize");
 	private static readonly StaticMethod<bool> GamePadInput = ReflectionUtility.GetMethod<PlayerInput, bool>("GamePadInput");
 	private static readonly StaticMethod PostInput = ReflectionUtility.GetMethod<PlayerInput>("PostInput");
