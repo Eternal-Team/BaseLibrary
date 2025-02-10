@@ -45,7 +45,7 @@ public class PanelUISystem : ModSystem
 
 public class WindowUI : BaseElement
 {
-	public static WindowUI? Instance;
+	public static WindowUI Instance = null!;
 
 	private Dictionary<Type, Type> EntityToUIMap = [];
 	private Dictionary<Guid, BaseElement> Panels = [];
@@ -298,5 +298,12 @@ public class WindowUI : BaseElement
 		}*/
 
 		base.Update(gameTime);
+	}
+
+	public bool IsOpen(IHasUI? entity)
+	{
+		if (Main.netMode == NetmodeID.Server || entity is null) return false;
+
+		return Panels.TryGetValue(entity.GetID(), out BaseElement element) && element.Display == Display.Visible;
 	}
 }
