@@ -39,11 +39,10 @@ public class UISystem : ModSystem
 }
 
 // BUG: scaling artifacts (floating point positions) -> might solve by rendering to target, then scaling it
-// BUG: intercepts events in things like mod configuration menu
 // NOTE: freeze mouseX/Y (except for cursor) when in UIs? (would prevent hovering animations and SFX)
 public class UILayer : Layer
 {
-	public override bool Enabled => !Main.gameMenu;
+	public override bool Enabled => !Main.gameMenu && !Main.ingameOptionsWindow && Main.InGameUI.CurrentState == null;
 
 	private readonly BaseElement Element = new BaseElement { Size = Dimension.FromPercent(100) };
 	private BaseElement? current;
