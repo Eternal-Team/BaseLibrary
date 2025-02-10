@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using BaseLibrary.Input;
 using Microsoft.Xna.Framework;
@@ -12,6 +13,8 @@ public class UISystem : ModSystem
 {
 	public static readonly UILayer UILayer = new UILayer();
 
+	private static float lastUIScale;
+
 	public override void OnModLoad()
 	{
 		InputSystem.LayerStack.PushLayer(UILayer);
@@ -19,6 +22,13 @@ public class UISystem : ModSystem
 
 	public override void PostDrawInterface(SpriteBatch spriteBatch)
 	{
+		if (Math.Abs(lastUIScale - Main.UIScale) > 0.001f)
+		{
+			lastUIScale = Main.UIScale;
+
+			UILayer.OnScaleChanged();
+		}
+
 		UILayer.OnDraw(spriteBatch, Main.gameTimeCache);
 	}
 
@@ -30,7 +40,7 @@ public class UISystem : ModSystem
 
 // BUG: scaling artifacts (floating point positions) -> might solve by rendering to target, then scaling it
 // BUG: intercepts events in things like mod configuration menu
-// BUG: changing scale doesn't change element dims
+// NOTE: freeze mouseX/Y (except for cursor) when in UIs? (would prevent hovering animations and SFX)
 public class UILayer : Layer
 {
 	public override bool Enabled => !Main.gameMenu;
@@ -168,10 +178,7 @@ public class UILayer : Layer
 
 	public override void OnScaleChanged()
 	{
-		// foreach (BaseElement element in VisibleElements())
-		// {
-		// 	element.Recalculate();
-		// }
+		Element.Recalculate();
 	}
 
 	public void Remove(BaseElement element)

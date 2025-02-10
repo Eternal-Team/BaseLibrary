@@ -38,7 +38,7 @@ public static class ReflectionUtility
 		if (fieldInfo is null) throw new Exception($"Failed to find field '{field}' in {typeof(T).FullName}");
 		return new StaticField<K>(fieldInfo);
 	}
-	
+
 	public static Field<T, K> GetField<T, K>(string field, BindingFlags flags = DefaultFlags)
 	{
 		FieldInfo? fieldInfo = typeof(T).GetField(field, flags);
@@ -69,7 +69,7 @@ public static class ReflectionUtility
 	{
 		fieldInfo.SetValue(null, value);
 	}
-	
+
 	public static bool IsSubclassOfRawGeneric(Type toCheck, Type generic)
 	{
 		while (toCheck != null && toCheck != typeof(object))

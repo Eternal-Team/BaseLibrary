@@ -300,6 +300,19 @@ public class WindowUI : BaseElement
 		base.Update(gameTime);
 	}
 
+	protected override void RecalculateChildren()
+	{
+		base.RecalculateChildren();
+
+		foreach (BaseElement element in Children)
+		{
+			element.Position.PixelsX = Utils.Clamp(element.Position.PixelsX, 0, InnerDimensions.Width - element.OuterDimensions.Width);
+			element.Position.PixelsY = Utils.Clamp(element.Position.PixelsY, 0, InnerDimensions.Height - element.OuterDimensions.Height);
+
+			element.Recalculate();
+		}
+	}
+
 	public bool IsOpen(IHasUI? entity)
 	{
 		if (Main.netMode == NetmodeID.Server || entity is null) return false;

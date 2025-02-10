@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using BaseLibrary.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -149,11 +150,13 @@ public class UIPanel : BaseElement
 		if (Settings.CaptureAllInputs) args.Handled = true;
 	}
 
-	protected static Type? TypeMouseTextCache= typeof(Main).GetNestedType("MouseTextCache", BindingFlags.NonPublic);
-	protected static FieldInfo? FieldIsValid= TypeMouseTextCache.GetField("isValid");
-	protected static FieldInfo? FieldMouseTextCache= typeof(Main).GetField("_mouseTextCache",BindingFlags.Instance| BindingFlags.NonPublic);
-	protected static Field<Main, AchievementAdvisor> FieldAchievementAdvisor= ReflectionUtility.GetField<Main, AchievementAdvisor>("_achievementAdvisor");
-	
+	protected static Type? TypeMouseTextCache = typeof(Main).GetNestedType("MouseTextCache", BindingFlags.NonPublic);
+	protected static FieldInfo? FieldIsValid = TypeMouseTextCache.GetField("isValid");
+	protected static FieldInfo? FieldMouseTextCache = typeof(Main).GetField("_mouseTextCache", BindingFlags.Instance | BindingFlags.NonPublic);
+
+	[UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_achievementAdvisor")]
+	protected static extern ref AchievementAdvisor? FieldAchievementAdvisor(Main? c);
+
 	protected override void Draw(SpriteBatch spriteBatch)
 	{
 		if (IsMouseHovering)
@@ -167,12 +170,12 @@ public class UIPanel : BaseElement
 			Main.mouseText = true;
 			Main.HoverItem = new Item();
 			Main.hoverItemName = "";
-			
+
 			object mouseTextCache = FieldMouseTextCache.GetValue(Main.instance);
 			FieldIsValid.SetValue(mouseTextCache, false);
 			FieldMouseTextCache.SetValue(Main.instance, mouseTextCache);
-			
-			FieldAchievementAdvisor.GetValue(Main.instance).Update();
+
+			FieldAchievementAdvisor(Main.instance)?.Update();
 		}
 
 		if (Settings.Texture is not null) spriteBatch.Draw(Settings.Texture.Value, Dimensions, Color.White);
