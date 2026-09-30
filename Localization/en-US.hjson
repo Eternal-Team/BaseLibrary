@@ -1,17 +1,36 @@
 Mods: {
-	BaseLibrary: {  
+	BaseLibrary: {
 		Items: {
 			ThePreciousOne: {
 				DisplayName: The Precious One
 				Tooltip: Corrupts the mind
-			},
+			}
+
 			LightedWallItem: {
 				DisplayName: Lighted Wall
 				Tooltip: Produces light
-			},
+			}
+
 			LightedBlackWallItem: {
 				DisplayName: Lighted Black Wall
 				Tooltip: Produces light
+			}
+		}
+
+		Configs: {
+			BaseLibraryConfig: {
+				DisplayName: Base Library Config
+				Headers.UI: UI
+
+				WindowSnapDistance: {
+					Label: Window Snap Distance
+					Tooltip: Distance at which two windows will snap together
+				}
+
+				tileDefinitionExample: {
+					Label: tile Definition Example
+					Tooltip: ""
+				}
 			}
 		}
 	}

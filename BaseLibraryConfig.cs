@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Terraria.ID;
 using Terraria.ModLoader.Config;
 
 namespace BaseLibrary;

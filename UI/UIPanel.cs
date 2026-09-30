@@ -47,7 +47,7 @@ public struct UIPanelSettings
 	public Color BackgroundColor;
 	public Color BorderColor;
 	public bool Draggable;
-	public bool CaptureAllInputs;
+	public bool CaptureAllInputs; // BUG: this is broken, child elements don't get message
 	public List<DragZone> DragZones;
 	public bool Resizeable;
 	public Asset<Texture2D>? Texture;
